@@ -7,11 +7,11 @@ import java.util.Date;
 /**
  * @className: BorrowDto
  * @author: lizhichao
- * @description: TODO 书籍借阅Vo
+ * @description: TODO 书籍借阅Dto
  * @date: 2024/5/7 21:52
  * @version: 1.0
  */
-public class BorrowBookDto {
+public class BorrowBookVo {
     /**
      * 主键唯一标识
      */
