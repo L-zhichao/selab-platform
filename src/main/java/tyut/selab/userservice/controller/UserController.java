@@ -1,0 +1,74 @@
+package tyut.selab.userservice.controller;
+
+import tyut.selab.bookservice.utils.Result;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/**
+ * @className: UserController
+ * @author: lizhichao
+ * @description: TODO
+ * @date: 2024/5/5 23:31
+ * @version: 1.0
+ */
+public class UserController extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doGet(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doPost(req, resp);
+    }
+
+    private Result<> queryByUserId(HttpServletRequest request,HttpServletResponse response){
+        return null;
+    }
+
+    /**
+     *  查询小组所有用户
+     *  param: groupId
+     * @param request
+     * @param response
+     * @return list<User>
+     */
+    private Result<> queryByGroupId(HttpServletRequest request,HttpServletResponse response){
+        return null;
+    }
+
+    /**
+     *  增加用户
+     *  param: UserDto
+     * @param request
+     * @param response
+     * @return
+     */
+    private Result<> save(HttpServletRequest request,HttpServletResponse response){return null;}
+
+    /**
+     *  修改用户信息
+     *  param: User对象
+     * @param request
+     * @param response
+     * @return
+     */
+    private Result<> update(HttpServletRequest request,HttpServletResponse response){return null;}
+
+    /**
+     *  注销用户
+     *  param: 要删除用户的userId
+     * @param request
+     * @param response
+     * @return
+     */
+    private Result<> logout(HttpServletRequest request,HttpServletResponse response){
+        return null;
+    }
+}
