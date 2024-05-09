@@ -70,13 +70,15 @@ CREATE TABLE `registration_form`  (
   `email` int NULL DEFAULT NULL COMMENT '邮箱地址',
   `phone` int NULL DEFAULT NULL COMMENT '联系方式',
   `intent_department` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '意向部门',
-  `class` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '所属班级',
+  `classroom` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '所属班级',
   `interview_time` time NULL DEFAULT NULL COMMENT '面试时间',
   `introduce` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '个人介绍',
   `purpose` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '加入目的',
   `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '备注',
   `init_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `del_flag` int NULL DEFAULT NULL COMMENT '删除状态:（ 1/删除、0/保存）',
+
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
@@ -172,14 +174,15 @@ CREATE TABLE `task_manager`  (
   `down_status` int NULL DEFAULT NULL COMMENT '完成状态（1/完成，0/未完成）',
   `down_time` datetime NULL DEFAULT NULL COMMENT '完成时间',
   `report_status` int NULL DEFAULT NULL COMMENT '汇报状态:（ 1/已完成、2/已红温）',
+  `del_flag` int NULL DEFAULT NULL COMMENT '删除状态:（ 1/删除、0/保存）',
   `report_remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '汇报备注信息',
   `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
   `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
   `publish_time` datetime NULL DEFAULT NULL COMMENT '发布时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `status` datetime NULL DEFAULT NULL COMMENT '是否启用（1/启用，0/停止）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;DROP TABLE IF EXISTS `task_manager`;
 -- ----------------------------
 -- Records of task_manager
 -- ----------------------------

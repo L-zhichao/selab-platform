@@ -3,7 +3,6 @@ package tyut.selab.bookservice.dto;
 import tyut.selab.bookservice.domain.BookInfo;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @className: BookVo

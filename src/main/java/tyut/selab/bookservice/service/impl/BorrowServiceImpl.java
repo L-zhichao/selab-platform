@@ -34,7 +34,7 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     @Override
-    public List<BorrowBook> selectList() {
+    public List<BorrowBook> selectList(Integer cur, Integer size) {
         return null;
     }
 
