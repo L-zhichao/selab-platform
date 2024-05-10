@@ -1,5 +1,7 @@
 package tyut.selab.loginservice.controller;
 
+import tyut.selab.utils.Result;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,7 +35,7 @@ public class LoginController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> login(HttpServletRequest request,HttpServletResponse response){
+    private Result login(HttpServletRequest request, HttpServletResponse response){
         return null;
     }
 
@@ -44,7 +46,7 @@ public class LoginController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> register(HttpServletRequest request,HttpServletResponse response){
+    private Result register(HttpServletRequest request,HttpServletResponse response){
 
         return null;
     }

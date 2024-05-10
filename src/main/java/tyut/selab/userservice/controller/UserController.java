@@ -1,6 +1,6 @@
 package tyut.selab.userservice.controller;
 
-import tyut.selab.bookservice.utils.Result;
+import tyut.selab.utils.Result;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,7 +27,7 @@ public class UserController extends HttpServlet {
         super.doPost(req, resp);
     }
 
-    private Result<> queryByUserId(HttpServletRequest request,HttpServletResponse response){
+    private Result queryByUserId(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
 
@@ -39,7 +39,7 @@ public class UserController extends HttpServlet {
      * @param response
      * @return list<User>
      */
-    private Result<> query(HttpServletRequest request,HttpServletResponse response){
+    private Result query(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
 
@@ -50,7 +50,7 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> save(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result save(HttpServletRequest request,HttpServletResponse response){return null;}
 
     /**
      *  修改用户信息
@@ -59,7 +59,7 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> update(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result update(HttpServletRequest request, HttpServletResponse response){return null;}
 
     /**
      *  注销用户
@@ -68,7 +68,7 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> logout(HttpServletRequest request,HttpServletResponse response){
+    private Result logout(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
 }
