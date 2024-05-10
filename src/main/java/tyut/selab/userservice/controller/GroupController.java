@@ -50,7 +50,7 @@ public class GroupController extends HttpServlet {
      * @param resp
      * @return
      */
-    private Result<> delect(HttpServletRequest req, HttpServletResponse resp){return null;}
+    private Result<> delete(HttpServletRequest req, HttpServletResponse resp){return null;}
 
     /**
      * 查询所有小组信息
