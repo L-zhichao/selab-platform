@@ -54,7 +54,7 @@ public class UserController extends HttpServlet {
 
     /**
      *  修改用户信息
-     *  param: User对象
+     *  param: UserVo对象
      * @param request
      * @param response
      * @return

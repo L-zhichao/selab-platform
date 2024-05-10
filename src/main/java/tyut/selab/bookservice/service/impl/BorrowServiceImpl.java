@@ -2,6 +2,7 @@ package tyut.selab.bookservice.service.impl;
 
 import tyut.selab.bookservice.domain.BorrowBook;
 import tyut.selab.bookservice.service.BorrowService;
+import tyut.selab.bookservice.vo.BorrowBookVo;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @version: 1.0
  */
 public class BorrowServiceImpl implements BorrowService {
+
     @Override
     public Integer borrowBook(Integer bookId) {
         return null;
@@ -24,22 +26,22 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     @Override
-    public List<BorrowBook> selectListByUserid(Integer userId) {
+    public List<BorrowBookVo> selectListByUserid(Integer userId, Integer cur, Integer size) {
         return null;
     }
 
     @Override
-    public List<BorrowBook> selectListByBookId(Integer bookId) {
+    public List<BorrowBookVo> selectListByBookId(Integer bookId, Integer cur, Integer size) {
         return null;
     }
 
     @Override
-    public List<BorrowBook> selectList(Integer cur, Integer size) {
+    public List<BorrowBookVo> selectList(Integer cur, Integer size) {
         return null;
     }
 
     @Override
-    public List<BorrowBook> selectAllForNoReturn() {
+    public List<BorrowBookVo> selectAllForNoReturn(Integer cur, Integer size) {
         return null;
     }
 }

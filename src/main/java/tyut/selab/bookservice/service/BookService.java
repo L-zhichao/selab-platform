@@ -18,7 +18,7 @@ public interface BookService {
 
     /**
      *  增加书籍
-     * @param BookDto bookDto
+     * @param  bookDto
      * @return
      */
 
@@ -26,10 +26,10 @@ public interface BookService {
 
     /**
      *   修改书籍信息(管理员操作)
-     * @param bookInfo
+     * @param bookVo
      * @return
      */
-    public Integer updateBook(BookDto bookDto);
+    public Integer updateBook(BookVo bookVo);
 
     /**
      *  分页查询所有书籍
@@ -52,8 +52,8 @@ public interface BookService {
     public BookVo selectBookByBookName(String bookName);
 
     /**
-     *  通过userid查询用户所拥有的所有书籍 （要不要分页）
+     *  通过userid查询用户所拥有的所有书籍
      * @return
      */
-    public List<BookVo> selectListByOwnerId(Integer userid);
+    public List<BookVo> selectListByOwnerId(Integer userid,Integer cur,Integer size);
 }

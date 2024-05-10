@@ -14,9 +14,10 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public Integer updateRegistration(RegistrationDto registrationDto) {
+    public Integer updateRegistration(RegistrationVo registrationVo) {
         return null;
     }
+
 
     @Override
     public List<RegistrationVo> selectList(Integer cur, Integer size) {

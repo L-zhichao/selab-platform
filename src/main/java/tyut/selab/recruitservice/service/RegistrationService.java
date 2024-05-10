@@ -18,10 +18,10 @@ public interface RegistrationService {
 
     /**
      *   修改报名表信息(管理员操作)
-     * @param registrationDto
+     * @param registrationVo
      * @return
      */
-    public Integer updateRegistration(RegistrationDto registrationDto);
+    public Integer updateRegistration(RegistrationVo registrationVo);
 
     /**
      *  分页查询所有报名表
