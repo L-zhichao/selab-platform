@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 08/05/2024 18:04:01
+ Date: 10/05/2024 17:11:58
 */
 
 SET NAMES utf8mb4;
@@ -30,7 +30,7 @@ CREATE TABLE `book_borrow`  (
   `borrow_time` datetime NULL DEFAULT NULL COMMENT '借阅时间',
   `return_time` datetime NOT NULL COMMENT '归还时间',
   PRIMARY KEY (`borrow_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '书籍借阅表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '书籍借阅表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of book_borrow
@@ -53,7 +53,7 @@ CREATE TABLE `book_info`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注信息',
   `book_ref` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '书籍编号(定位书籍位置)',
   PRIMARY KEY (`book_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '书籍信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '书籍信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of book_info
@@ -65,11 +65,12 @@ CREATE TABLE `book_info`  (
 DROP TABLE IF EXISTS `registration_form`;
 CREATE TABLE `registration_form`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  `interviewees_id` int NOT NULL COMMENT '面试者id',
-  `interviewees` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '面试者名字',
+  `interview_id` int NOT NULL COMMENT '面试者id',
+  `interview` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '面试者名字',
   `email` int NULL DEFAULT NULL COMMENT '邮箱地址',
   `phone` int NULL DEFAULT NULL COMMENT '联系方式',
-  `intent_department` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '意向部门',
+  `intent_department` int NULL DEFAULT NULL COMMENT '意向部门 （1开发 2网安 3人工智能 4虚拟现实）',
+  `grade` int NULL DEFAULT NULL COMMENT '所属年级 [1为大一 2为大二 ...]',
   `classroom` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '所属班级',
   `interview_time` time NULL DEFAULT NULL COMMENT '面试时间',
   `introduce` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '个人介绍',
@@ -78,9 +79,8 @@ CREATE TABLE `registration_form`  (
   `init_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` int NULL DEFAULT NULL COMMENT '删除状态:（ 1/删除、0/保存）',
-
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of registration_form
@@ -98,7 +98,7 @@ CREATE TABLE `sys_group`  (
   `update_user` int NOT NULL COMMENT '执行修改/添加操作的用户',
   `del_flag` int NULL DEFAULT NULL COMMENT '删除标识(0为正常1为删除)',
   PRIMARY KEY (`group_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '小组信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '小组信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_group
@@ -116,7 +116,7 @@ CREATE TABLE `sys_logout`  (
   `admin_id` int NULL DEFAULT NULL COMMENT '操作管理员用户id',
   `admin_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`logout_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_logout
@@ -131,7 +131,7 @@ CREATE TABLE `sys_role`  (
   `role_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色名称',
   `role_details` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色介绍',
   PRIMARY KEY (`role_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_role
@@ -154,37 +154,64 @@ CREATE TABLE `sys_user`  (
   `sex` int NOT NULL COMMENT '用户性别',
   `del_flag` int NOT NULL COMMENT '删除标识( 0 为正常 1 为删除)',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for task
+-- Table structure for task_group
 -- ----------------------------
-DROP TABLE IF EXISTS `task`;
-CREATE TABLE `task`  (
+DROP TABLE IF EXISTS `task_group`;
+CREATE TABLE `task_group`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `task_id` int NOT NULL COMMENT '任务id',
+  `group_id` int NULL DEFAULT NULL COMMENT '小组id',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of task_group
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for task_info
+-- ----------------------------
+DROP TABLE IF EXISTS `task_info`;
+CREATE TABLE `task_info`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  `publisher_id` int NULL DEFAULT NULL COMMENT '发布者id',
+  `publisher_id` int NULL DEFAULT NULL COMMENT '发布者userId',
   `updater_id` int NULL DEFAULT NULL COMMENT '更新者id',
-  `group_id` int NULL DEFAULT NULL COMMENT '任务小组id',
   `name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '任务名',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '任务内容',
-  `down_status` int NULL DEFAULT NULL COMMENT '完成状态（1/完成，0/未完成）',
-  `down_time` datetime NULL DEFAULT NULL COMMENT '完成时间',
-  `report_status` int NULL DEFAULT NULL COMMENT '汇报状态:（ 1/已完成、2/已红温）',
-  `del_flag` int NULL DEFAULT NULL COMMENT '删除状态:（ 1/删除、0/保存）',
-  `report_remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '汇报备注信息',
-  `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
-  `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
+  `deal_time` datetime NULL DEFAULT NULL COMMENT '截止时间<精确到时分秒>',
   `publish_time` datetime NULL DEFAULT NULL COMMENT '发布时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  `status` datetime NULL DEFAULT NULL COMMENT '是否启用（1/启用，0/停止）',
+  `del_flag` int NULL DEFAULT NULL COMMENT '删除状态:（ 1/删除、0/保存）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
 -- ----------------------------
--- Records of task
+-- Records of task_info
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for task_report
+-- ----------------------------
+DROP TABLE IF EXISTS `task_report`;
+CREATE TABLE `task_report`  (
+  `report_id` int NOT NULL COMMENT '主键唯一索引',
+  `task_id` int NULL DEFAULT NULL,
+  `user_id` int NULL DEFAULT NULL,
+  `report_status` int NULL DEFAULT NULL COMMENT '汇报状态(1 已完成 0已红温)',
+  `details` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '汇报信息',
+  `create_time` datetime NULL DEFAULT NULL,
+  PRIMARY KEY (`report_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of task_report
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;
