@@ -18,7 +18,11 @@ import java.io.IOException;
  * @date: 2024/5/4 11:27
  * @version: 1.0
  */
+<<<<<<< HEAD
 @WebServlet(name = "BookController", urlPatterns = {})
+=======
+@WebServlet(name = "BookController",urlPatterns = {"/book/save","book/update","/book/query","book/list"})
+>>>>>>> c47df4a (init)
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
@@ -42,12 +46,21 @@ public class BookController extends HttpServlet {
     }
 
     /**
+<<<<<<< HEAD
      * 通过BookId查询书籍信息
      * 传入 bookId & bookName & userId(书籍拥有者)[可以都传，也可以传入单个参数 | 调用前先判断参数是都为空(是否有效) | 为空跳过此参数 ]
      *
      * @return
      */
     private Result queryOne(HttpServletRequest request, HttpServletResponse response) {
+=======
+     *  通过BookId查询书籍信息
+     *  传入 bookId & bookName & userId(书籍拥有者)[可以都传，也可以传入单个参数 | 调用前先判断参数是都为空(是否有效) | 为空跳过此参数 ]
+     *  param: bookId bookName userId cur[不为空] size[不为空]
+     * @return list<BookVo>
+     */
+    private Result query(HttpServletRequest request,HttpServletResponse response){
+>>>>>>> c47df4a (init)
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
         String bookName = request.getAttribute("bookName").toString();

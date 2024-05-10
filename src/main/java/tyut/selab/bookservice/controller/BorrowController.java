@@ -16,7 +16,7 @@ import java.io.IOException;
  * @date: 2024/5/4 11:40
  * @version: 1.0
  */
-@WebServlet(name = "BorrowController",urlPatterns = {})
+@WebServlet(name = "BorrowController",urlPatterns = {"/borrow/book","/borrow/return/*","/borrow/record","/borrow/my","borrow/noReturn"})
 public class BorrowController extends HttpServlet {
 
 
@@ -41,7 +41,7 @@ public class BorrowController extends HttpServlet {
 
     /**
      *  归还书籍
-     *  param: bookId
+     *  path param: bookId (路径变量)
      * @return
      */
     private Result returnBook(HttpServletRequest request,HttpServletResponse response){
@@ -49,30 +49,21 @@ public class BorrowController extends HttpServlet {
     }
 
     /**
-     *  查询借阅信息
-     *  param: bookId | userId | borrowId [三选一，先进行非空判断确定查询参数]，选择相应的方法
+     *  分页查询借阅信息
+     *  param: bookId | userId | borrowId [三选一或全为空，先进行非空判断确定查询参数]，选择相应的方法  全为空是表示查询全部
+     *  param: [必须] cur size <当前页数> <每页数量>
      * @param request
      * @param response
-     * @return
+     * @return BorrowBookVo对象
      */
-    private Result queryOne(HttpServletRequest request,HttpServletResponse response){
+    private Result query(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
 
-    /**
-     *  分页查询所有借阅信息
-     *  param: cur[当前页] size[每页数量]
-     * @param request
-     * @param response
-     * @return
-     */
-    private Result queryAll(HttpServletRequest request,HttpServletResponse response){
-        return null;
-    }
 
     /**
-     *  查询所有未归还书籍
-     *  param: null
+     *  分页查询所有未归还书籍
+     *  param: cur size
      * @param request
      * @param response
      * @return
@@ -82,8 +73,8 @@ public class BorrowController extends HttpServlet {
     }
 
     /**
-     *  查询本人借阅书籍记录
-     *  param: null (userId 通过登录模块获取)
+     *  分页查询本人借阅书籍记录
+     *  param: cur size (userId 通过登录模块获取)
      * @param request
      * @param response
      * @return
