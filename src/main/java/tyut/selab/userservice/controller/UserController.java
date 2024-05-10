@@ -2,7 +2,6 @@ package tyut.selab.userservice.controller;
 
 import tyut.selab.bookservice.utils.Result;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,12 +33,13 @@ public class UserController extends HttpServlet {
 
     /**
      *  查询小组所有用户
-     *  param: groupId
+     *
+     *  param: cur size groupId | userId | roleId 三个中有一个不为空或全为空，全为空则查询全部
      * @param request
      * @param response
      * @return list<User>
      */
-    private Result<> queryByGroupId(HttpServletRequest request,HttpServletResponse response){
+    private Result<> query(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
 

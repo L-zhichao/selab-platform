@@ -26,6 +26,11 @@ public class UserVo implements Serializable {
     private Integer groupId;
 
     /**
+     * 用户所属小组名称
+     */
+    private Integer groupName;
+
+    /**
      * 添加时间
      */
     private Date createTime;
@@ -39,6 +44,10 @@ public class UserVo implements Serializable {
      * 角色id
      */
     private Integer roleId;
+    /**
+     *  角色名称
+     */
+    private String roleName;
 
     /**
      * 邮箱地址
@@ -60,12 +69,25 @@ public class UserVo implements Serializable {
      */
     private Integer sex;
 
-    /**
-     * 删除标识( 0 为正常 1 为删除)
-     */
-    private Integer delFlag;
+
 
     private static final long serialVersionUID = 1L;
+
+    public Integer getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(Integer groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
 
     /**
      * 主键id
@@ -207,19 +229,6 @@ public class UserVo implements Serializable {
         this.sex = sex;
     }
 
-    /**
-     * 删除标识( 0 为正常 1 为删除)
-     */
-    public Integer getDelFlag() {
-        return delFlag;
-    }
-
-    /**
-     * 删除标识( 0 为正常 1 为删除)
-     */
-    public void setDelFlag(Integer delFlag) {
-        this.delFlag = delFlag;
-    }
 
     @Override
     public boolean equals(Object that) {
@@ -242,8 +251,7 @@ public class UserVo implements Serializable {
             && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
             && (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()))
             && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
-            && (this.getSex() == null ? other.getSex() == null : this.getSex().equals(other.getSex()))
-            && (this.getDelFlag() == null ? other.getDelFlag() == null : this.getDelFlag().equals(other.getDelFlag()));
+            && (this.getSex() == null ? other.getSex() == null : this.getSex().equals(other.getSex()));
     }
 
     @Override
@@ -260,7 +268,6 @@ public class UserVo implements Serializable {
         result = prime * result + ((getRemark() == null) ? 0 : getRemark().hashCode());
         result = prime * result + ((getPhone() == null) ? 0 : getPhone().hashCode());
         result = prime * result + ((getSex() == null) ? 0 : getSex().hashCode());
-        result = prime * result + ((getDelFlag() == null) ? 0 : getDelFlag().hashCode());
         return result;
     }
 
@@ -280,7 +287,6 @@ public class UserVo implements Serializable {
         sb.append(", remark=").append(remark);
         sb.append(", phone=").append(phone);
         sb.append(", sex=").append(sex);
-        sb.append(", delFlag=").append(delFlag);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

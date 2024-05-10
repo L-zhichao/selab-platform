@@ -1,4 +1,4 @@
-package tyut.selab.bookservice.dto;
+package tyut.selab.bookservice.vo;
 
 import tyut.selab.bookservice.domain.BorrowBook;
 
@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * @className: BorrowDto
  * @author: lizhichao
- * @description: TODO 书籍借阅Dto
+ * @description: TODO 书籍借阅Vo
  * @date: 2024/5/7 21:52
  * @version: 1.0
  */

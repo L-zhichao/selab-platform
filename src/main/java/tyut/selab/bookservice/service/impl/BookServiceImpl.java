@@ -1,7 +1,9 @@
 package tyut.selab.bookservice.service.impl;
 
 import tyut.selab.bookservice.domain.BookInfo;
+import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
+import tyut.selab.bookservice.vo.BookVo;
 
 import java.util.List;
 
@@ -14,32 +16,32 @@ import java.util.List;
  */
 public class BookServiceImpl implements BookService {
     @Override
-    public Integer insertBook(BookInfo bookInfo) {
+    public Integer insertBook(BookDto bookDto) {
         return null;
     }
 
     @Override
-    public Integer updateBook(BookInfo bookInfo) {
+    public Integer updateBook(BookDto bookDto) {
         return null;
     }
 
     @Override
-    public List<BookInfo> selectList(Integer cur,Integer size) {
+    public List<BookVo> selectList(Integer cur, Integer size) {
         return null;
     }
 
     @Override
-    public BookInfo selectBookById(Integer bookId) {
+    public BookVo selectBookById(Integer bookId) {
         return null;
     }
 
     @Override
-    public BookInfo selectBookByBookName(String bookName) {
+    public BookVo selectBookByBookName(String bookName) {
         return null;
     }
 
     @Override
-    public List<BookInfo> selectListByOwnerId(Integer userid) {
+    public List<BookVo> selectListByOwnerId(Integer userid) {
         return null;
     }
 }
