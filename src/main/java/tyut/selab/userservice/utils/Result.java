@@ -1,4 +1,4 @@
-package tyut.selab.bookservice.utils;
+package tyut.selab.userservice.utils;
 
 /**
  * @className: Result
