@@ -6,6 +6,7 @@ import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.service.impl.TaskManagerServiceImpl;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
+import tyut.selab.taskservice.view.TaskInfoVo;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -62,7 +63,25 @@ public class TaskController extends HttpServlet {
 
    }
 
+    /**
+     *  修改任务信息
+     * @param request
+     * @param response
+     * @return
+     */
+  private Result<> update(HttpServletRequest request,HttpServletResponse response){
+     return null;
+  }
 
+    /**
+     * 通过taskId查询任务信息
+     * @param request
+     * @param response
+     * @return
+     */
+   private Result<TaskInfoVo> queryById(HttpServletRequest request, HttpServletResponse response){
+
+   }
 
 
     /**  删除任务

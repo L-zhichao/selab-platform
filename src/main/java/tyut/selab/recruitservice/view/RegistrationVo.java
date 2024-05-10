@@ -1,8 +1,9 @@
-package tyut.selab.registration.view;
+package tyut.selab.recruitservice.view;
 
 import tyut.selab.userservice.vo.UserVo;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
 public class RegistrationVo {
@@ -25,15 +26,15 @@ public class RegistrationVo {
     /**
      *意向部门
      */
-    private String intentDepartment;
+    private Integer intentDepartment;
     /**
      *所属班级（注：class为关键字）
      */
-    private String classroom;
+    private Integer classroom;
     /**
      *面试时间
      */
-    private LocalDateTime interviewTime;
+    private Date interviewTime;
     /**
      *个人介绍
      */
@@ -110,27 +111,28 @@ public class RegistrationVo {
         this.phone = phone;
     }
 
-    public String getIntentDepartment() {
+
+    public Integer getIntentDepartment() {
         return intentDepartment;
     }
 
-    public void setIntentDepartment(String intentDepartment) {
+    public void setIntentDepartment(Integer intentDepartment) {
         this.intentDepartment = intentDepartment;
     }
 
-    public String getClassroom() {
+    public Integer getClassroom() {
         return classroom;
     }
 
-    public void setClassroom(String classroom) {
+    public void setClassroom(Integer classroom) {
         this.classroom = classroom;
     }
 
-    public LocalDateTime getInterviewTime() {
+    public Date getInterviewTime() {
         return interviewTime;
     }
 
-    public void setInterviewTime(LocalDateTime interviewTime) {
+    public void setInterviewTime(Date interviewTime) {
         this.interviewTime = interviewTime;
     }
 
@@ -158,7 +160,7 @@ public class RegistrationVo {
         this.remark = remark;
     }
 
-    public RegistrationVo(Integer id, UserVo interviewees, String email, Integer phone, String intentDepartment, String classroom, LocalDateTime interviewTime, String introduce, String purpose, String remark) {
+    public RegistrationVo(Integer id, UserVo interviewees, String email, Integer phone, Integer intentDepartment, Integer classroom, Date interviewTime, String introduce, String purpose, String remark) {
         this.id = id;
         this.interviewees = interviewees;
         this.email = email;
