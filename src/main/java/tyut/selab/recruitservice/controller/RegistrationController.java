@@ -1,8 +1,9 @@
 package tyut.selab.recruitservice.controller;
 
-import tyut.selab.bookservice.utils.Result;
 import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
 import tyut.selab.recruitservice.service.RegistrationService;
+import tyut.selab.utils.Result;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +24,7 @@ public class RegistrationController extends HttpServlet {
         super.doPost(req, resp);
     }
 
-    private Result<Void> save(HttpServletRequest request, HttpServletResponse response){
+    private Result save(HttpServletRequest request, HttpServletResponse response){
         return null;
     }
 

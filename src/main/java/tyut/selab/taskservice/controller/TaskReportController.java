@@ -1,5 +1,7 @@
 package tyut.selab.taskservice.controller;
 
+import tyut.selab.utils.Result;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +35,7 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> report(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result report(HttpServletRequest request,HttpServletResponse response){return null;}
 
     /**
      *  查询当前汇报数量
@@ -42,7 +44,7 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> queryCount(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result queryCount(HttpServletRequest request,HttpServletResponse response){return null;}
 
 
 
@@ -53,7 +55,7 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return TaskReportDto
      */
-    private Result<> queryMyReport(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result queryMyReport(HttpServletRequest request, HttpServletResponse response){return null;}
 
     /**
      *  通过id查询任务的所有汇报记录
@@ -62,7 +64,7 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return List<TaskInfoVo>
      */
-    private Result<> queryAllResport(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){return null;}
 
     /**
      *  删除汇报记录[管理员]
@@ -71,7 +73,7 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> delete(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result delete(HttpServletRequest request,HttpServletResponse response){return null;}
 
     /**
      *  查询所有需要汇报的用户
@@ -80,7 +82,7 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return List<TaskReportVo>
      */
-    private Result<> queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response){return null;}
 
 
 

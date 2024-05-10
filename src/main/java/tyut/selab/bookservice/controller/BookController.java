@@ -2,7 +2,7 @@ package tyut.selab.bookservice.controller;
 
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.service.impl.BookServiceImpl;
-import tyut.selab.bookservice.utils.Result;
+import tyut.selab.utils.Result;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -69,7 +69,7 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> list(HttpServletRequest request, HttpServletResponse response) {
+    private Result list(HttpServletRequest request, HttpServletResponse response) {
         return null;
     }
 

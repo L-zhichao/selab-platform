@@ -31,5 +31,5 @@ public interface EmailDao {
      * @param userId
      * @return
      */
-    public Integer delect(Integer userId);
+    public Integer delete(Integer userId);
 }

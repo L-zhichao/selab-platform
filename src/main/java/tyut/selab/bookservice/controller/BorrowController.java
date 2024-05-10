@@ -1,6 +1,6 @@
 package tyut.selab.bookservice.controller;
 
-import tyut.selab.bookservice.utils.Result;
+import tyut.selab.utils.Result;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,7 +35,7 @@ public class BorrowController extends HttpServlet {
      *  param: BorrowBookDto对象
      * @return
      */
-    private Result borrowingBook(HttpServletRequest request,HttpServletResponse response){
+    private Result borrowingBook(HttpServletRequest request, HttpServletResponse response){
         return null;
     }
 
