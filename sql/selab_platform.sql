@@ -66,7 +66,6 @@ DROP TABLE IF EXISTS `registration_form`;
 CREATE TABLE `registration_form`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `interview_id` int NOT NULL COMMENT '面试者id',
-  `interview` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '面试者名字',
   `email` int NULL DEFAULT NULL COMMENT '邮箱地址',
   `phone` int NULL DEFAULT NULL COMMENT '联系方式',
   `intent_department` int NULL DEFAULT NULL COMMENT '意向部门 （1开发 2网安 3人工智能 4虚拟现实）',

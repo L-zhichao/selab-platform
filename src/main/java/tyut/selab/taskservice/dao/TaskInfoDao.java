@@ -18,14 +18,14 @@ public interface TaskInfoDao {
      * @param id
      * @return
      */
-    int deleteByPrimaryKey(Long id);
+    Integer deleteByPrimaryKey(Long id);
 
     /**
      *  增加任务信息
      * @param record
      * @return
      */
-    int insert(TaskInfo record);
+    Integer insert(TaskInfo record);
 
     /**
      *  通过taskId查询任务信息
@@ -39,7 +39,7 @@ public interface TaskInfoDao {
      * @param record
      * @return
      */
-    int updateBytaskId(TaskInfo record);
+    Integer updateBytaskId(TaskInfo record);
 
     /**
      *  查询所有任务信息

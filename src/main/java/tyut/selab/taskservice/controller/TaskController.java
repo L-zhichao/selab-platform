@@ -4,7 +4,6 @@ import tyut.selab.bookservice.utils.Result;
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
-import tyut.selab.taskservice.service.impl.TaskManagerServiceImpl;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
 import tyut.selab.taskservice.view.TaskInfoVo;
 
@@ -15,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "TaskController",urlPatterns = {})
+@WebServlet(name = "TaskController",urlPatterns = {"/"})
 public class TaskController extends HttpServlet {
     private TaskInfoService taskInfoService = new TaskServiceImpl();
     @Override
@@ -46,10 +45,6 @@ public class TaskController extends HttpServlet {
      */
     private Result<> queryAll(HttpServletRequest request,HttpServletResponse response){
 
-    }
-
-    private Result update(HttpServletRequest request,HttpServletResponse response){
-        return null;
     }
 
     /**

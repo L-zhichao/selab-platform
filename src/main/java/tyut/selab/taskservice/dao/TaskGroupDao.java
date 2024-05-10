@@ -17,7 +17,7 @@ public interface TaskGroupDao {
      * @param id
      * @return
      */
-    int deleteByPrimaryKey(Integer id);
+    Integer deleteByPrimaryKey(Integer id);
 
     /**
      *  对任务发布添加范围小组
@@ -25,7 +25,7 @@ public interface TaskGroupDao {
      * @return
      */
 
-    int insert(List<TaskGroup> records);
+    Integer insert(List<TaskGroup> records);
 
     /**
      *  通过任务小组对应id查询指定对应信息
@@ -46,7 +46,7 @@ public interface TaskGroupDao {
      * @param record
      * @return
      */
-    int updateById(TaskGroup record);
+    Integer updateById(TaskGroup record);
 
     /**
      *  通过groupId查询所有任务

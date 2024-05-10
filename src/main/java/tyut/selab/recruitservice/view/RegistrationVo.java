@@ -30,7 +30,7 @@ public class RegistrationVo {
     /**
      *所属班级（注：class为关键字）
      */
-    private Integer classroom;
+    private String classroom;
     /**
      *面试时间
      */

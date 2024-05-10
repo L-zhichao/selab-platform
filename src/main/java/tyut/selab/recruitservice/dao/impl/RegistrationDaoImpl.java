@@ -1,6 +1,7 @@
 package tyut.selab.recruitservice.dao.impl;
 
 import tyut.selab.recruitservice.dao.RegistrationDao;
+import tyut.selab.recruitservice.domain.RegistrationForm;
 import tyut.selab.recruitservice.dto.RegistrationDto;
 import tyut.selab.recruitservice.view.RegistrationVo;
 
@@ -9,19 +10,19 @@ import java.util.List;
 public class RegistrationDaoImpl implements RegistrationDao {
     /**
      *  增加一个报名表
-     * @param registrationDto
+     * @param registrationForm
      * @return
      */
-    public Integer insert(RegistrationDto registrationDto){
+    public Integer insert(RegistrationForm registrationForm){
         return null;
     }
 
     /**
      *  修改报名表信息
-     * @param registrationId
+     * @param registrationForm
      * @return
      */
-    public Integer update(RegistrationDto registrationId){
+    public Integer update(RegistrationForm registrationForm){
         return null;
     }
 
@@ -30,7 +31,7 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * @param registrationId
      * @return
      */
-    public RegistrationVo selectByRegistrationId(Integer registrationId){
+    public RegistrationForm selectByRegistrationId(Integer registrationId){
         return null;
     }
 
@@ -39,7 +40,7 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * @param intervieweesName
      * @return
      */
-    public RegistrationVo selectByIntervieweesName(String intervieweesName){
+    public RegistrationForm selectByIntervieweesName(String intervieweesName){
         return null;
     }
 
@@ -47,7 +48,24 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * 查询所有报名表
      * @return
      */
-    public List<RegistrationVo> selectAll(){
+    public List<RegistrationForm> selectAll(Integer cur, Integer size){
+        return null;
+    }
+
+    /**
+     *  通过意向部门查询报名表
+     * @return
+     */
+    public List<RegistrationForm> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size){
+        return null;
+    }
+
+    /**
+     *  通过年级查询报名表
+     * @param grade
+     * @return
+     */
+    public List<RegistrationForm> selectByGradeId(Integer grade, Integer cur, Integer size){
         return null;
     }
 }

@@ -13,14 +13,14 @@ import java.util.List;
 public interface TaskReportDao {
 
 
-    int deleteByPrimaryKey(Long id);
+    Integer deleteByPrimaryKey(Long id);
 
     /**
      *  增加汇报信息
      * @param record
      * @return
      */
-    int insert(TaskReport record);
+    Integer insert(TaskReport record);
 
     /**
      *  通过用户id和taskId查询汇报信息
@@ -55,13 +55,13 @@ public interface TaskReportDao {
      * @param record
      * @return
      */
-    int updateByReportId(TaskReport record);
+    Integer updateByReportId(TaskReport record);
 
     /**
      *
      * @param reportId
      * @return
      */
-    int deleteByReportId(Integer reportId);
+    Integer deleteByReportId(Integer reportId);
 
 }

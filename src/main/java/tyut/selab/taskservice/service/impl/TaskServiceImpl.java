@@ -3,7 +3,6 @@ package tyut.selab.taskservice.service.impl;
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.view.TaskInfoVo;
-import tyut.selab.taskservice.view.TaskManagerVo;
 
 import java.util.List;
 

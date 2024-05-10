@@ -30,7 +30,7 @@ public class RegistrationServiceImpl implements RegistrationService {
      *  分页查询所有报名表
      * @return
      */
-    public List<RegistrationDto> selectList(Integer cur,Integer size){
+    public List<RegistrationVo> selectList(Integer cur,Integer size){
         return null;
     }
 
@@ -39,7 +39,7 @@ public class RegistrationServiceImpl implements RegistrationService {
      * @param registrationId 报名表id
      * @return
      */
-    public RegistrationDto selectRegistrationById(Integer registrationId){
+    public RegistrationVo selectRegistrationById(Integer registrationId){
         return null;
     }
 
@@ -51,4 +51,30 @@ public class RegistrationServiceImpl implements RegistrationService {
     public RegistrationVo selectByIntervieweesName(String intervieweesName){
         return null;
     }
+
+    /**
+     *  通过意向部门查询报名表
+     * @return
+     */
+    public List<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size){
+        return null;
+    }
+
+    /**
+     *  通过年级查询报名表
+     * @param grade
+     * @return
+     */
+    public List<RegistrationVo> selectByGradeId(Integer grade, Integer cur, Integer size){
+        return null;
+    }
+
+    /**
+     *  查询本人提交报名表
+     * @return
+     */
+    public RegistrationVo queryMyRecruit(Integer userId){
+        return null;
+    }
+
 }

@@ -27,7 +27,7 @@ public class RegistrationController extends HttpServlet {
         return null;
     }
 
-    private Result update(HttpServletRequest request,HttpServletResponse response){
+    private Result<Void> update(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
 
