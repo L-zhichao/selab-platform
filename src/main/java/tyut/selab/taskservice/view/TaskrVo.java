@@ -9,7 +9,7 @@ import java.util.Objects;
  * 任务管理vo表(后端传给前端参数)
  * @TableName task_manager
  */
-public class TaskManagerVo {
+public class TaskrVo {
     /**
      *主键id
      */
@@ -73,7 +73,7 @@ public class TaskManagerVo {
 
     @Override
     public String toString() {
-        return "TaskManagerVo{" +
+        return "TaskrVo{" +
                 "taskId=" + taskId +
                 ", publisher=" + publisher +
                 ", updater=" + updater +
@@ -95,7 +95,7 @@ public class TaskManagerVo {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TaskManagerVo that)) return false;
+        if (!(o instanceof TaskrVo that)) return false;
         return Objects.equals(getTaskId(), that.getTaskId()) && Objects.equals(getPublisher(), that.getPublisher()) && Objects.equals(getUpdater(), that.getUpdater()) && Objects.equals(getGroupName(), that.getGroupName()) && Objects.equals(getTaskName(), that.getTaskName()) && Objects.equals(getContent(), that.getContent()) && Objects.equals(getDownStatus(), that.getDownStatus()) && Objects.equals(getDownTime(), that.getDownTime()) && Objects.equals(getReportStatus(), that.getReportStatus()) && Objects.equals(getReportRemark(), that.getReportRemark()) && Objects.equals(getStartTime(), that.getStartTime()) && Objects.equals(getEndTime(), that.getEndTime()) && Objects.equals(getPublishTime(), that.getPublishTime()) && Objects.equals(getUpdateTime(), that.getUpdateTime()) && Objects.equals(getStatus(), that.getStatus());
     }
 
@@ -224,10 +224,10 @@ public class TaskManagerVo {
         this.status = status;
     }
 
-    public TaskManagerVo() {
+    public TaskrVo() {
     }
 
-    public TaskManagerVo(Integer taskId, UserVo publisher, UserVo updater, UserVo groupName, String taskName, String content, Integer downStatus, LocalDateTime downTime, Integer reportStatus, String reportRemark, LocalDateTime startTime, LocalDateTime endTime, LocalDateTime publishTime, LocalDateTime updateTime, Integer status) {
+    public TaskrVo(Integer taskId, UserVo publisher, UserVo updater, UserVo groupName, String taskName, String content, Integer downStatus, LocalDateTime downTime, Integer reportStatus, String reportRemark, LocalDateTime startTime, LocalDateTime endTime, LocalDateTime publishTime, LocalDateTime updateTime, Integer status) {
         this.taskId = taskId;
         this.publisher = publisher;
         this.updater = updater;

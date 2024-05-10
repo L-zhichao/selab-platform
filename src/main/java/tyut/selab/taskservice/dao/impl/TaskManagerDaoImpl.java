@@ -1,7 +1,7 @@
 package tyut.selab.taskservice.dao.impl;
 
-import tyut.selab.taskservice.dto.TaskManagerDto;
-import tyut.selab.taskservice.view.TaskManagerVo;
+import tyut.selab.taskservice.dto.TaskDto;
+import tyut.selab.taskservice.view.TaskrVo;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class TaskManagerDaoImpl {
      * @param taskManagerDto
      * @return
      */
-    Integer insert(TaskManagerDto taskManagerDto){
+    Integer insert(TaskDto taskManagerDto){
         return null;
     }
 
@@ -21,7 +21,7 @@ public class TaskManagerDaoImpl {
      * @param taskManagerDto
      * @return
      */
-    Integer update(TaskManagerDto taskManagerDto){
+    Integer update(TaskDto taskManagerDto){
         return null;
     }
 
@@ -30,7 +30,7 @@ public class TaskManagerDaoImpl {
      * @param taskId
      * @return
      */
-    TaskManagerVo selectByTaskId(Integer taskId){
+    TaskrVo selectByTaskId(Integer taskId){
         return null;
     }
 
@@ -39,7 +39,7 @@ public class TaskManagerDaoImpl {
      * @param publisherId
      * @return
      */
-    List<TaskManagerVo> selectByPublisherId(Integer publisherId){
+    List<TaskrVo> selectByPublisherId(Integer publisherId){
         return null;
     }
 
@@ -47,7 +47,7 @@ public class TaskManagerDaoImpl {
      * 查询所有任务
      * @return
      */
-    List<TaskManagerVo> selectAll(){
+    List<TaskrVo> selectAll(){
         return null;
     }
 
@@ -55,7 +55,7 @@ public class TaskManagerDaoImpl {
      * 通过任务名称<模糊查询>任务信息
      * @return
      */
-    List<TaskManagerVo> selectAllByTaskName(){
+    List<TaskrVo> selectAllByTaskName(){
         return null;
     }
 }

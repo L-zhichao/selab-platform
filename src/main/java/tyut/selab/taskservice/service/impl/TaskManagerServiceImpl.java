@@ -1,8 +1,8 @@
 package tyut.selab.taskservice.service.impl;
 
-import tyut.selab.taskservice.dto.TaskManagerDto;
+import tyut.selab.taskservice.dto.TaskDto;
 import tyut.selab.taskservice.service.TaskManagerService;
-import tyut.selab.taskservice.view.TaskManagerVo;
+import tyut.selab.taskservice.view.TaskrVo;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class TaskManagerServiceImpl implements TaskManagerService {
      * @return
      */
 
-    public Integer insertTask(TaskManagerDto taskManagerDto){
+    public Integer insertTask(TaskDto taskManagerDto){
         return null;
     }
 
@@ -23,7 +23,7 @@ public class TaskManagerServiceImpl implements TaskManagerService {
      * @param taskManagerDto
      * @return
      */
-    public Integer updateTask(TaskManagerDto taskManagerDto){
+    public Integer updateTask(TaskDto taskManagerDto){
         return null;
     }
 
@@ -31,7 +31,7 @@ public class TaskManagerServiceImpl implements TaskManagerService {
      *  分页查询所有任务
      * @return
      */
-    public List<TaskManagerDto> selectList(Integer cur,Integer size){
+    public List<TaskDto> selectList(Integer cur, Integer size){
         return null;
     }
 
@@ -40,7 +40,7 @@ public class TaskManagerServiceImpl implements TaskManagerService {
      * @param taskId 任务id
      * @return
      */
-    public TaskManagerVo selectTaskById(Integer taskId){
+    public TaskrVo selectTaskById(Integer taskId){
         return null;
     }
 
@@ -49,7 +49,7 @@ public class TaskManagerServiceImpl implements TaskManagerService {
      * @param taskName
      * @return
      */
-    public TaskManagerVo selectTaskByTaskName(String taskName){
+    public TaskrVo selectTaskByTaskName(String taskName){
         return null;
     }
 
@@ -57,7 +57,7 @@ public class TaskManagerServiceImpl implements TaskManagerService {
      *  通过publisherId查询任务 （要不要分页）
      * @return
      */
-    public List<TaskManagerVo> selectListByPublisherId(Integer publisherId){
+    public List<TaskrVo> selectListByPublisherId(Integer publisherId){
         return null;
     }
 }

@@ -13,7 +13,7 @@ public class RegistrationVo {
     /**
      *面试者Name
      */
-    private UserVo Interviewees;
+    private UserVo interviewees;
     /**
      *邮箱地址
      */
@@ -47,11 +47,14 @@ public class RegistrationVo {
      */
     private String remark;
 
+    public RegistrationVo() {
+    }
+
     @Override
     public String toString() {
         return "RegistrationVo{" +
                 "id=" + id +
-                ", Interviewees=" + Interviewees +
+                ", interviewees=" + interviewees +
                 ", email='" + email + '\'' +
                 ", phone=" + phone +
                 ", intentDepartment='" + intentDepartment + '\'' +
@@ -84,11 +87,11 @@ public class RegistrationVo {
     }
 
     public UserVo getInterviewees() {
-        return Interviewees;
+        return interviewees;
     }
 
     public void setInterviewees(UserVo interviewees) {
-        Interviewees = interviewees;
+        this.interviewees = interviewees;
     }
 
     public String getEmail() {
@@ -155,12 +158,9 @@ public class RegistrationVo {
         this.remark = remark;
     }
 
-    public RegistrationVo() {
-    }
-
     public RegistrationVo(Integer id, UserVo interviewees, String email, Integer phone, String intentDepartment, String classroom, LocalDateTime interviewTime, String introduce, String purpose, String remark) {
         this.id = id;
-        Interviewees = interviewees;
+        this.interviewees = interviewees;
         this.email = email;
         this.phone = phone;
         this.intentDepartment = intentDepartment;

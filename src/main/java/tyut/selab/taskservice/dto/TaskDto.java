@@ -6,7 +6,7 @@ import java.util.Objects;
  * 任务管理param表（后端接受前端传来参数）
  * @TableName task_manager
  */
-public class TaskManagerDto {
+public class TaskDto {
     /**
      *主键id
      */
@@ -42,7 +42,7 @@ public class TaskManagerDto {
 
     @Override
     public String toString() {
-        return "TaskManagerDto{" +
+        return "TaskDto{" +
                 "taskId=" + taskId +
                 ", publisher='" + publisher + '\'' +
                 ", updater='" + updater + '\'' +
@@ -57,7 +57,7 @@ public class TaskManagerDto {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TaskManagerDto that)) return false;
+        if (!(o instanceof TaskDto that)) return false;
         return Objects.equals(getTaskId(), that.getTaskId()) && Objects.equals(getPublisher(), that.getPublisher()) && Objects.equals(getUpdater(), that.getUpdater()) && Objects.equals(getGroupName(), that.getGroupName()) && Objects.equals(getTaskName(), that.getTaskName()) && Objects.equals(getContent(), that.getContent()) && Objects.equals(getReportRemark(), that.getReportRemark()) && Objects.equals(getStatus(), that.getStatus());
     }
 
@@ -130,10 +130,10 @@ public class TaskManagerDto {
         this.status = status;
     }
 
-    public TaskManagerDto() {
+    public TaskDto() {
     }
 
-    public TaskManagerDto(Integer taskId, String publisher, String updater, String groupName, String taskName, String content, String reportRemark, Integer status) {
+    public TaskDto(Integer taskId, String publisher, String updater, String groupName, String taskName, String content, String reportRemark, Integer status) {
         this.taskId = taskId;
         this.publisher = publisher;
         this.updater = updater;

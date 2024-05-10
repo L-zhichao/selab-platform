@@ -161,10 +161,10 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for task_manager
+-- Table structure for task
 -- ----------------------------
-DROP TABLE IF EXISTS `task_manager`;
-CREATE TABLE `task_manager`  (
+DROP TABLE IF EXISTS `task`;
+CREATE TABLE `task`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `publisher_id` int NULL DEFAULT NULL COMMENT '发布者id',
   `updater_id` int NULL DEFAULT NULL COMMENT '更新者id',
@@ -182,9 +182,9 @@ CREATE TABLE `task_manager`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `status` datetime NULL DEFAULT NULL COMMENT '是否启用（1/启用，0/停止）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;DROP TABLE IF EXISTS `task_manager`;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 -- ----------------------------
--- Records of task_manager
+-- Records of task
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

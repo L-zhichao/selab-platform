@@ -5,9 +5,9 @@ import java.util.Objects;
 
 /**
  * 任务管理表（与数据库字段一一对应）
- * @TableName task_manager
+ * @TableName task
  */
-public class TaskManager {
+public class Task {
     /**
      *主键id
      */
@@ -75,7 +75,7 @@ public class TaskManager {
 
     @Override
     public String toString() {
-        return "TaskManager{" +
+        return "Task{" +
                 "id=" + id +
                 ", publisherId=" + publisherId +
                 ", updaterId=" + updaterId +
@@ -98,7 +98,7 @@ public class TaskManager {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TaskManager that)) return false;
+        if (!(o instanceof Task that)) return false;
         return Objects.equals(getId(), that.getId()) && Objects.equals(getPublisherId(), that.getPublisherId()) && Objects.equals(getUpdaterId(), that.getUpdaterId()) && Objects.equals(getGroupId(), that.getGroupId()) && Objects.equals(getName(), that.getName()) && Objects.equals(getContent(), that.getContent()) && Objects.equals(getDownStatus(), that.getDownStatus()) && Objects.equals(getDownTime(), that.getDownTime()) && Objects.equals(getReportStatus(), that.getReportStatus()) && Objects.equals(getReportRemark(), that.getReportRemark()) && Objects.equals(getStartTime(), that.getStartTime()) && Objects.equals(getEndTime(), that.getEndTime()) && Objects.equals(getPublishTime(), that.getPublishTime()) && Objects.equals(getUpdateTime(), that.getUpdateTime()) && Objects.equals(getDelFlag(), that.getDelFlag()) && Objects.equals(getStatus(), that.getStatus());
     }
 
@@ -107,7 +107,7 @@ public class TaskManager {
         return Objects.hash(getId(), getPublisherId(), getUpdaterId(), getGroupId(), getName(), getContent(), getDownStatus(), getDownTime(), getReportStatus(), getReportRemark(), getStartTime(), getEndTime(), getPublishTime(), getUpdateTime(), getDelFlag(), getStatus());
     }
 
-    public TaskManager() {
+    public Task() {
     }
 
     public Integer getId() {
@@ -238,7 +238,7 @@ public class TaskManager {
         this.status = status;
     }
 
-    public TaskManager(Integer id, Integer publisherId, Integer updaterId, Integer groupId, String name, String content, Integer downStatus, LocalDateTime downTime, Integer reportStatus, String reportRemark, LocalDateTime startTime, LocalDateTime endTime, LocalDateTime publishTime, LocalDateTime updateTime, Integer delFlag, Integer status) {
+    public Task(Integer id, Integer publisherId, Integer updaterId, Integer groupId, String name, String content, Integer downStatus, LocalDateTime downTime, Integer reportStatus, String reportRemark, LocalDateTime startTime, LocalDateTime endTime, LocalDateTime publishTime, LocalDateTime updateTime, Integer delFlag, Integer status) {
         this.id = id;
         this.publisherId = publisherId;
         this.updaterId = updaterId;
