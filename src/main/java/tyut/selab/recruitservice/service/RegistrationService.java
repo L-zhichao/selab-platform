@@ -41,7 +41,7 @@ public interface RegistrationService {
      * @param intervieweesName
      * @return
      */
-    public RegistrationVo selectByIntervieweesName(String intervieweesName);
+    public List<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size,String intervieweesName);
 
     /**
      *  通过意向部门查询报名表

@@ -1,6 +1,5 @@
 package tyut.selab.recruitservice.dao;
 
-import com.sun.mail.imap.protocol.INTERNALDATE;
 import tyut.selab.recruitservice.domain.RegistrationForm;
 import tyut.selab.recruitservice.dto.RegistrationDto;
 import tyut.selab.recruitservice.view.RegistrationVo;

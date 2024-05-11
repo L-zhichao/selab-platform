@@ -1,6 +1,8 @@
 package tyut.selab.recruitservice.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
 public class RegistrationDto {
@@ -38,7 +40,7 @@ public class RegistrationDto {
     /**
      *面试时间
      */
-    private LocalDateTime interviewTime;
+    private Date interviewTime;
 
     @Override
     public String toString() {
@@ -122,18 +124,18 @@ public class RegistrationDto {
     }
 
 
-    public LocalDateTime getInterviewTime() {
+    public Date getInterviewTime() {
         return interviewTime;
     }
 
-    public void setInterviewTime(LocalDateTime interviewTime) {
+    public void setInterviewTime(Date interviewTime) {
         this.interviewTime = interviewTime;
     }
 
     public RegistrationDto() {
     }
 
-    public RegistrationDto(String email, Integer phone, Integer intentDepartment, Integer grade, String classroom, String introduce, String purpose, LocalDateTime interviewTime) {
+    public RegistrationDto(String email, Integer phone, Integer intentDepartment, Integer grade, String classroom, String introduce, String purpose, Date interviewTime) {
         this.email = email;
         this.phone = phone;
         this.intentDepartment = intentDepartment;
