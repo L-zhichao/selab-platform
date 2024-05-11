@@ -1,11 +1,12 @@
 package tyut.selab.taskservice.controller;
 
-import tyut.selab.bookservice.utils.Result;
+
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
 import tyut.selab.taskservice.view.TaskInfoVo;
+import tyut.selab.utils.Result;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,11 +30,11 @@ public class TaskController extends HttpServlet {
 
     /**
      *  增加任务
-     * @param TaskInfoDto taskInfoDto
+     * param TaskInfoDto taskInfoDto
      * @return
      */
-    private Result<Void> save(HttpServletRequest request,HttpServletResponse response){
-
+    private Result<Void> save(HttpServletRequest request, HttpServletResponse response){
+     return null;
     }
 
     /**
@@ -43,8 +44,8 @@ public class TaskController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<> queryAll(HttpServletRequest request,HttpServletResponse response){
-
+    private Result queryAll(HttpServletRequest request,HttpServletResponse response){
+         return null;
     }
 
     /**
@@ -55,7 +56,7 @@ public class TaskController extends HttpServlet {
      * @return
      */
    private Result queryMyTask(HttpServletRequest request,HttpServletResponse response){
-
+    return null;
    }
 
     /**
@@ -64,7 +65,7 @@ public class TaskController extends HttpServlet {
      * @param response
      * @return
      */
-  private Result<> update(HttpServletRequest request,HttpServletResponse response){
+  private Result update(HttpServletRequest request,HttpServletResponse response){
      return null;
   }
 
@@ -75,7 +76,7 @@ public class TaskController extends HttpServlet {
      * @return
      */
    private Result<TaskInfoVo> queryById(HttpServletRequest request, HttpServletResponse response){
-
+     return null;
    }
 
 
