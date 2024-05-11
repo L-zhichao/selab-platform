@@ -1,6 +1,5 @@
 package tyut.selab.taskservice.controller;
 
-
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
@@ -45,7 +44,7 @@ public class TaskController extends HttpServlet {
      * @return
      */
     private Result queryAll(HttpServletRequest request,HttpServletResponse response){
-         return null;
+      return null;
     }
 
     /**
@@ -56,7 +55,7 @@ public class TaskController extends HttpServlet {
      * @return
      */
    private Result queryMyTask(HttpServletRequest request,HttpServletResponse response){
-    return null;
+     return null;
    }
 
     /**
@@ -76,7 +75,7 @@ public class TaskController extends HttpServlet {
      * @return
      */
    private Result<TaskInfoVo> queryById(HttpServletRequest request, HttpServletResponse response){
-     return null;
+    return null;
    }
 
 
