@@ -21,7 +21,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Integer updateBook(BookDto bookDto) {
+    public Integer updateBook(BookVo bookVo) {
         return null;
     }
 
@@ -41,7 +41,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookVo> selectListByOwnerId(Integer userid) {
+    public List<BookVo> selectListByOwnerId(Integer userid, Integer cur, Integer size) {
         return null;
     }
+
 }

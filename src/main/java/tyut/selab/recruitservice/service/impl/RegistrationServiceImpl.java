@@ -30,9 +30,11 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public RegistrationVo selectByIntervieweesName(String intervieweesName) {
+    public List<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size, String intervieweesName) {
         return null;
     }
+
+
 
     @Override
     public List<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size) {
