@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 10/05/2024 17:11:58
+ Date: 11/05/2024 16:17:18
 */
 
 SET NAMES utf8mb4;
@@ -91,6 +91,7 @@ CREATE TABLE `registration_form`  (
 DROP TABLE IF EXISTS `sys_group`;
 CREATE TABLE `sys_group`  (
   `group_id` int NOT NULL COMMENT '唯一标识',
+  `parent_id` int NOT NULL COMMENT '父部门id',
   `group_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '小组名称',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
@@ -110,10 +111,8 @@ DROP TABLE IF EXISTS `sys_logout`;
 CREATE TABLE `sys_logout`  (
   `logout_id` int NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `user_id` int NULL DEFAULT NULL,
-  `user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `create_time` datetime NULL DEFAULT NULL,
   `admin_id` int NULL DEFAULT NULL COMMENT '操作管理员用户id',
-  `admin_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`logout_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
@@ -135,6 +134,9 @@ CREATE TABLE `sys_role`  (
 -- ----------------------------
 -- Records of sys_role
 -- ----------------------------
+INSERT INTO `sys_role` VALUES (1, '超级管理员', '可以对用户权限进行修改');
+INSERT INTO `sys_role` VALUES (2, '管理员', '查看业务数据信息，删改一个业务数据');
+INSERT INTO `sys_role` VALUES (3, '用户', '限定权限');
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -143,7 +145,6 @@ DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user`  (
   `user_id` bigint NOT NULL COMMENT '主键id',
   `user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名称',
-  `group_id` int NOT NULL COMMENT '用户所属小组编号',
   `create_time` datetime NOT NULL COMMENT '添加时间',
   `update_time` datetime NOT NULL COMMENT '修改时间',
   `role_id` int NULL DEFAULT NULL COMMENT '角色id',
@@ -211,6 +212,21 @@ CREATE TABLE `task_report`  (
 
 -- ----------------------------
 -- Records of task_report
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for user_group
+-- ----------------------------
+DROP TABLE IF EXISTS `user_group`;
+CREATE TABLE `user_group`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NULL DEFAULT NULL,
+  `group_id` int NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_group
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;
