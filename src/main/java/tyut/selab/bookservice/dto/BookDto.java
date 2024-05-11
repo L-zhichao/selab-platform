@@ -40,7 +40,6 @@ public class BookDto implements Serializable {
      */
     private Integer owner;
 
-
     /**
      * 备注信息
      */
