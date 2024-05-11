@@ -56,9 +56,10 @@ public class GroupController extends HttpServlet {
 
     /**
      * 查询所有小组信息
+     *  param: cur size
      * @param request
      * @param response
-     * @return list<Group>
+     * @return list<GroupVo>
      */
     private Result queryAllGroup(HttpServletRequest request,HttpServletResponse response){return null;}
 }

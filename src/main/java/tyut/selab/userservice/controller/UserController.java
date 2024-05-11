@@ -34,12 +34,22 @@ public class UserController extends HttpServlet {
     /**
      *  查询小组所有用户
      *
-     *  param: cur size groupId | userId | roleId 三个中有一个不为空或全为空，全为空则查询全部
+     *  param: cur size groupId  roleId 两个中有一个不为空或全为空，全为空则查询全部
      * @param request
      * @param response
      * @return list<User>
      */
     private Result query(HttpServletRequest request,HttpServletResponse response){
+        return null;
+    }
+
+    /**
+     *  通过id查询用户信息 [id在路径后面]  " queryById/2  (id = 2)
+     * @param request
+     * @param response
+     * @return
+     */
+    private Result queryById(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
 
@@ -71,4 +81,14 @@ public class UserController extends HttpServlet {
     private Result logout(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
+
+    /**
+     *  修改用户权限
+     *  param: UserRoleDto
+     * @param request
+     * @param response
+     * @return
+     */
+    private Result updateRole(HttpServletRequest request, HttpServletResponse response){return null;}
+
 }

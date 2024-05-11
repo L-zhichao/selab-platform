@@ -31,6 +31,7 @@ public class LoginController extends HttpServlet {
     /**
      *  登录操作
      *  param: UserLoginReq
+     *  return: UserLocal
      * @param request
      * @param response
      * @return

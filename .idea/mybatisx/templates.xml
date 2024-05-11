@@ -6,7 +6,7 @@
         <option name="generateConfig">
           <GenerateConfig>
             <option name="annotationType" value="NONE" />
-            <option name="basePackage" value="tyut.selab.taskservice" />
+            <option name="basePackage" value="tyut.selab.userservice" />
             <option name="basePath" value="src/main/java" />
             <option name="classNameStrategy" value="camel" />
             <option name="encoding" value="UTF-8" />
@@ -27,7 +27,7 @@
                   <option name="fileName" value="${domain.fileName}Mapper" />
                   <option name="fileNameWithSuffix" value="${domain.fileName}Mapper.java" />
                   <option name="modulePath" value="$PROJECT_DIR$" />
-                  <option name="packageName" value="tyut.selab.taskservice.dao" />
+                  <option name="packageName" value="tyut.selab.userservice.dao" />
                 </ModuleInfoGo>
               </list>
             </option>
@@ -39,8 +39,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="TaskReport" />
-                  <option name="tableName" value="task_report" />
+                  <option name="className" value="SysRole" />
+                  <option name="tableName" value="sys_role" />
                 </TableUIInfo>
               </list>
             </option>

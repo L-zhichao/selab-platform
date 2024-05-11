@@ -2,6 +2,7 @@ package tyut.selab.userservice.vo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @className: GroupVo
@@ -25,6 +26,11 @@ public class GroupVo implements Serializable {
      * 创建时间
      */
     private Date createTime;
+
+    /**
+     *  所在组的所有用户
+     */
+    private List<UserVo> userVos;
 
 
     private static final long serialVersionUID = 1L;
