@@ -34,7 +34,10 @@ public class GroupController extends HttpServlet {
      * @param resp
      * @return
      */
-    private Result save(HttpServletRequest req, HttpServletResponse resp){return null;}
+    private Result save(HttpServletRequest req, HttpServletResponse resp){
+
+
+        return null;}
 
     /**
      *  修改小组信息
