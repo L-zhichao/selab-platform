@@ -1,5 +1,6 @@
 package tyut.selab.userservice.Dto;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,5 +19,6 @@ public class GroupDto implements Serializable {
 
 
 
+    @Serial
     private static final long serialVersionUID = 1L;
 }

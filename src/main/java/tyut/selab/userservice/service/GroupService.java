@@ -4,6 +4,7 @@ import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.vo.GroupVo;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface GroupService {
