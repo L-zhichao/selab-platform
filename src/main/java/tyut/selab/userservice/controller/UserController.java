@@ -1,5 +1,7 @@
 package tyut.selab.userservice.controller;
 
+import tyut.selab.userservice.domain.User;
+import tyut.selab.userservice.service.UserService;
 import tyut.selab.utils.Result;
 
 import javax.servlet.ServletException;
@@ -15,6 +17,7 @@ import java.io.IOException;
  * @date: 2024/5/5 23:31
  * @version: 1.0
  */
+
 public class UserController extends HttpServlet {
 
     @Override
@@ -40,6 +43,12 @@ public class UserController extends HttpServlet {
      * @return list<User>
      */
     private Result query(HttpServletRequest request,HttpServletResponse response){
+        String method = request.getMethod();
+
+
+
+
+
         return null;
     }
 
