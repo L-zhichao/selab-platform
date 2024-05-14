@@ -1,7 +1,9 @@
 package tyut.selab.bookservice.dao;
 
 import tyut.selab.bookservice.domain.BookInfo;
+import tyut.selab.bookservice.vo.BookVo;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -17,7 +19,7 @@ public interface BookInfoDao {
      * @param bookInfo
      * @return
      */
-    public Integer insert(BookInfo bookInfo);
+    public Integer insert(BookInfo bookInfo) throws SQLException;
 
     /**
      *  修改书籍信息
@@ -44,7 +46,7 @@ public interface BookInfoDao {
      * 查询所有书籍
      * @return
      */
-    public List<BookInfo> selectAll();
+    public List<BookVo> selectAll(Integer cur, Integer size);
 
     /**
      * 通过书籍名称<模糊查询>书籍信息

@@ -1,5 +1,7 @@
 package tyut.selab.bookservice.service.impl;
 
+import tyut.selab.bookservice.dao.BookInfoDao;
+import tyut.selab.bookservice.dao.impl.BookInfoDaoImpl;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
@@ -15,6 +17,7 @@ import java.util.List;
  * @version: 1.0
  */
 public class BookServiceImpl implements BookService {
+    private BookInfoDao bookDao = new BookInfoDaoImpl();
     @Override
     public Integer insertBook(BookDto bookDto) {
         return null;
@@ -29,7 +32,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookVo> selectList(Integer cur, Integer size) {
-        return null;
+        return bookDao.selectAll(cur,size);
     }
 
     @Override
