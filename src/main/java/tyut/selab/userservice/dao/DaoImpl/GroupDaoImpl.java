@@ -33,6 +33,7 @@ public class GroupDaoImpl implements GroupDao {
             preparedStatement.setDate(5, (java.sql.Date) updateTime);
             preparedStatement.setInt(6,updateUser);
             preparedStatement.execute(sql);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {

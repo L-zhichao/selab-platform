@@ -1,6 +1,8 @@
 package tyut.selab.userservice.service.ServiceImpl;
 
 import tyut.selab.userservice.Dto.GroupDto;
+import tyut.selab.userservice.dao.GroupDao;
+import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.GroupVo;
@@ -11,14 +13,13 @@ import java.util.List;
 
 
 public class GroupServiceImpl implements GroupService {
+    private GroupDao groupDao;
     @Override
     public Integer insert(GroupDto groupDto)  {
 
-
-
-
-
-        return null;
+        Group group = null;
+        group.setGroupName(groupDto.getGroupName());
+        return groupDao.insert(group);
     }
 
     @Override
