@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         }
 
 
-        userVo.setUserId(userid);
+        userVo.setUserName(username);
 //        userVo.setGroupId();
 //        userVo.setGroupName();
         userVo.setRoleId(roleld);
