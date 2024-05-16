@@ -11,7 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @WebServlet(name = "RegistrationController",urlPatterns = {})
@@ -24,13 +26,22 @@ public class RegistrationController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        BufferedReader reader = req.getReader();
+        StringBuilder jsonRequest = new StringBuilder();
+        String line;
+        while((line=reader.readLine())!=null){
+            jsonRequest.append(line);
+        }
+        ObjectMapper objectMapper =new ObjectMapper();
+        String requestURI = req.getRequestURI();
+        String []split =requestURI.split("/");
+        String methodName =split[split.length-1];
+        if(methodName.equals("insertRegistration")){
+            RegistrationDto registrationDto
+        } else if (methodName.equals("updateRegistration")) {
+
+        }
     }
-
-
-
-
-
 
     /** 新增报名表
      *  param: registrationDto
@@ -39,7 +50,7 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result save(HttpServletRequest request,HttpServletResponse response){
-        return null;
+        RegistrationDto registrationDto;
     }
 
     /**
@@ -48,7 +59,7 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result update(HttpServletRequest request,HttpServletResponse response){
-        return null;
+        RegistrationVo registrationVo;
     }
 
     /**
