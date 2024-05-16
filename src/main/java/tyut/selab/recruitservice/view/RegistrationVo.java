@@ -32,6 +32,10 @@ public class RegistrationVo {
      */
     private String classroom;
     /**
+     * 所属年级
+     */
+    private int grade;
+    /**
      *面试时间
      */
     private Date interviewTime;
@@ -126,6 +130,14 @@ public class RegistrationVo {
 
     public void setClassroom(String classroom) {
         this.classroom = classroom;
+    }
+
+    public int getGrade() {
+        return grade;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
     }
 
     public Date getInterviewTime() {
