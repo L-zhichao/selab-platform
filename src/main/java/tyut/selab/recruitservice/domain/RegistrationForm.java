@@ -1,5 +1,8 @@
 package tyut.selab.recruitservice.domain;
 
+import tyut.selab.recruitservice.view.RegistrationVo;
+import tyut.selab.userservice.vo.UserVo;
+
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
@@ -111,6 +114,24 @@ public class RegistrationForm {
         return Objects.hash(getId(), getIntervieweesId(), getEmail(), getPhone(), getIntentDepartment(), getClassroom(), getInterviewTime(), getIntroduce(), getPurpose(), getRemark(), getInitTime(), getUpdateTime());
     }
 
+    /**
+     * 将RegistrationForm转换为RegistrationVo
+     * @return
+     */
+    public RegistrationVo getRegistrationVo(UserVo userVo){
+        return new RegistrationVo(
+                getId(),
+                userVo,
+                getEmail(),
+                Integer.parseInt(getPhone()),
+                getIntentDepartment(),
+                getClassroom(),
+                getInterviewTime(),
+                getIntroduce(),
+                getPurpose(),
+                getRemark()
+                );
+    }
     public void setId(Integer id) {
         this.id = id;
     }
