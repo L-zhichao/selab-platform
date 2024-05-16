@@ -1,15 +1,18 @@
 package tyut.selab.userservice.controller;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.utils.Result;
 
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * @className: GroupController
@@ -19,29 +22,42 @@ import java.io.IOException;
  * @version: 1.0
  */
 
-//@WebServlet(name = "GroupController",urlPatterns = {"/group/get"})
+@WebServlet(name = "GroupController",urlPatterns = {"/group"})
 public class GroupController extends HttpServlet {
     private GroupService groupService;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("hello doGet");
         String path = req.getPathInfo();
         if ("/delete".equals(path)) {
-            save(req,resp);
+            System.out.println("hello doGet delete");
         } else if ("/queryAll".equals(path)) {
+            System.out.println("hello doGet queryAll");
         }
-        super.doGet(req, resp);
+//        resp.setContentType("text/html;charset=utf-8");
+//        PrintWriter out = resp.getWriter();
+//        out.write("还是牛掰");
+//        out.flush();
+//        out.close();
+//        super.doGet(req, resp);
+
+
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req,resp);
         String path = req.getPathInfo();
         if ("/save".equals(path)) {
             save(req,resp);
         } else if ("/update".equals(path)) {
         }
         super.doPost(req, resp);
+        resp.setContentType("text/html;charset=utf-8");
+        PrintWriter out = resp.getWriter();
+        out.print("测试");
+        out.flush();
+        out.close();
     }
 
     /**
