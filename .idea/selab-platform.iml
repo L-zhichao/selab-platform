@@ -23,6 +23,7 @@
         <webroots>
           <root url="file://$MODULE_DIR$/web" relative="/" />
         </webroots>
+        <sourceRoots />
       </configuration>
     </facet>
   </component>
@@ -36,7 +37,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="javax.activation-api-1.2.0" level="project" />
-    <orderEntry type="library" name="javax.servlet-api-3.0.1" level="project" />
     <orderEntry type="library" name="fastjson-1.2.83-javadoc" level="project" />
+    <orderEntry type="library" name="jakarta.servlet-api-6.0.0" level="project" />
   </component>
 </module>

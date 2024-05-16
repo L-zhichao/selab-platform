@@ -8,6 +8,7 @@ import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.GroupVo;
 import tyut.selab.userservice.vo.UserVo;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -19,6 +20,12 @@ public class GroupServiceImpl implements GroupService {
 
         Group group = null;
         group.setGroupName(groupDto.getGroupName());
+        group.setCreateTime(new Date());
+        group.setUpdateTime(new Date());
+
+        //目前不清楚咋搞
+        group.setParentId(1);
+        group.setUpdateUser(01);
         return groupDao.insert(group);
     }
 
