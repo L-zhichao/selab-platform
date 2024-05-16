@@ -62,8 +62,34 @@ public class User implements Serializable {
      * 删除标识( 0 为正常 1 为删除)
      */
     private Integer delFlag;
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     private static final long serialVersionUID = 1L;
+
+    public User() {
+    }
+
+    public User( String userName, Integer groupId, Date createTime, Date updateTime, Integer roleId, String email, String remark, String phone, Integer sex, Integer delFlag) {
+
+        this.userName=userName;
+        this.groupId = groupId;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+        this.roleId = roleId;
+        this.email = email;
+        this.remark = remark;
+        this.phone = phone;
+        this.sex = sex;
+        this.delFlag = delFlag;
+    }
 
     /**
      * 主键id
@@ -110,8 +136,8 @@ public class User implements Serializable {
     /**
      * 添加时间
      */
-    public Date getCreateTime() {
-        return createTime;
+    public java.sql.Date getCreateTime() {
+        return (java.sql.Date) createTime;
     }
 
     /**
@@ -124,8 +150,8 @@ public class User implements Serializable {
     /**
      * 修改时间
      */
-    public Date getUpdateTime() {
-        return updateTime;
+    public java.sql.Date getUpdateTime() {
+        return (java.sql.Date) updateTime;
     }
 
     /**
@@ -138,13 +164,15 @@ public class User implements Serializable {
     /**
      * 角色id
      */
-    public Integer getRoleId() {
-        return roleId;
-    }
+
 
     /**
      * 角色id
      */
+    public Integer getRoleId() {
+        return roleId;
+    }
+
     public void setRoleId(Integer roleId) {
         this.roleId = roleId;
     }

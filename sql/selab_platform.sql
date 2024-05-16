@@ -90,7 +90,7 @@ CREATE TABLE `registration_form`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_group`;
 CREATE TABLE `sys_group`  (
-  `group_id` int NOT NULL COMMENT '唯一标识',
+  `group_id` int NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `parent_id` int NOT NULL COMMENT '父部门id',
   `group_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '小组名称',
   `create_time` datetime NOT NULL COMMENT '创建时间',
@@ -125,7 +125,7 @@ CREATE TABLE `sys_logout`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role`  (
-  `role_id` int NOT NULL COMMENT '角色id',
+  `role_id` int NOT NULL  COMMENT '角色id',
   `role_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色名称',
   `role_details` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色介绍',
   PRIMARY KEY (`role_id`) USING BTREE
@@ -143,7 +143,7 @@ INSERT INTO `sys_role` VALUES (3, '用户', '限定权限');
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user`  (
-  `user_id` bigint NOT NULL COMMENT '主键id',
+  `user_id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名称',
   `create_time` datetime NOT NULL COMMENT '添加时间',
   `update_time` datetime NOT NULL COMMENT '修改时间',
@@ -230,3 +230,7 @@ CREATE TABLE `user_group`  (
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;
+select *
+from sys_group
+limit 1,10;
+

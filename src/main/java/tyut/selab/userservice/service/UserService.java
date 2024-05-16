@@ -26,7 +26,7 @@ public interface UserService {
      * @param userId
      * @return
      */
-    public UserVo selectByUserId(Integer userId);
+    public UserVo selectByUserId(Long userId);
 
     /**
      *  通过id删除用户
@@ -41,4 +41,7 @@ public interface UserService {
      * @return
      */
     public Integer save(UserVo userVo);
+    public Integer update(UserVo userVo);
+
+    Integer groupUpdate(UserVo userVo);
 }

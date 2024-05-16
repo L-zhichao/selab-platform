@@ -19,4 +19,19 @@ public class GroupDto implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
+
+    public GroupDto() {
+    }
+
+    public GroupDto(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }

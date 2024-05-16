@@ -16,7 +16,7 @@ public interface UserDao {
      * 增加用户
      * @return
      */
-    public Integer insertUser();
+    public Integer insertUser(User user);
 
     /**
      *  修改用户
@@ -24,13 +24,14 @@ public interface UserDao {
      * @return
      */
     public Integer updateUser(User user);
+    public Integer updateUserRole(User user);
 
     /**
      * 通过用户id查询用户信息
      * @param userId
      * @return
      */
-    public User selectByUserIdUser(Integer userId);
+    public User selectByUserIdUser(Long userId);
 
     /**
      * 通过groupId查询用户信息
@@ -52,6 +53,10 @@ public interface UserDao {
      * @return
      */
     public Integer deleteByUserId(Integer userId);
+
+    Integer groupUpdate(User user);
+
+    String groupName(Integer groupId);
 }
 
 

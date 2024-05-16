@@ -14,6 +14,28 @@ public class Group implements Serializable {
      */
     private Integer groupId;
 
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public Group(Integer groupId, Integer parentId, String groupName, Date createTime, Date updateTime, Integer updateUser) {
+        this.groupId = groupId;
+        this.parentId = parentId;
+        this.groupName = groupName;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+        this.updateUser = updateUser;
+    }
+
+    public Group() {
+    }
+
+    private Integer parentId;
+
     /**
      * 小组名称
      */
@@ -67,8 +89,8 @@ public class Group implements Serializable {
     /**
      * 创建时间
      */
-    public Date getCreateTime() {
-        return createTime;
+    public java.sql.Date getCreateTime() {
+        return (java.sql.Date) createTime;
     }
 
     /**
@@ -81,8 +103,8 @@ public class Group implements Serializable {
     /**
      * 修改时间
      */
-    public Date getUpdateTime() {
-        return updateTime;
+    public java.sql.Date getUpdateTime() {
+        return (java.sql.Date) updateTime;
     }
 
     /**
