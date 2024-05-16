@@ -3,6 +3,7 @@ package tyut.selab.taskservice.controller;
 import tyut.selab.utils.Result;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,7 @@ import java.lang.reflect.Method;
  * @date: 2024/5/10 16:32
  * @version: 1.0
  */
+@WebServlet("/task/report/*")
 public class TaskReportController extends HttpServlet {
 
 

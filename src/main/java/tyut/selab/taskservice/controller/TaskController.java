@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-@WebServlet(name = "TaskController",urlPatterns = {"/"})
+@WebServlet(name = "TaskController",urlPatterns = {"/task/*"})
 public class TaskController extends HttpServlet {
     private TaskInfoService taskInfoService = new TaskServiceImpl();
     @Override
