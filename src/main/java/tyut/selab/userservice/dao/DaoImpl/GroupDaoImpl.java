@@ -15,7 +15,6 @@ public class GroupDaoImpl implements GroupDao {
     public Integer insert(Group group) {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
-        Integer groupId = group.getGroupId();
         String groupName = group.getGroupName();
         Integer parentId = group.getParentIdId();
         Date createTime = group.getCreateTime();
@@ -23,10 +22,9 @@ public class GroupDaoImpl implements GroupDao {
         Integer updateUser = group.getUpdateUser();
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "INSERT INTO sys_group (group_id,parent_id,group_name, create_time, update_time, update_user, del_flag )\n" +
+            String sql = "INSERT INTO sys_group (parent_id,group_name, create_time, update_time, update_user, del_flag )\n" +
                     "VALUES\n" +
-                    "\t( ?,?,?,?,?,?,0 )";
-            preparedStatement.setInt(1,groupId);
+                    "\t( ?,?,?,?,?,0 )";
             preparedStatement.setInt(2,parentId);
             preparedStatement.setString(3,groupName);
             preparedStatement.setDate(4, (java.sql.Date) createTime);
