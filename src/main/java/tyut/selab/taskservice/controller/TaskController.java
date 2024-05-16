@@ -13,18 +13,53 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 @WebServlet(name = "TaskController",urlPatterns = {"/"})
 public class TaskController extends HttpServlet {
     private TaskInfoService taskInfoService = new TaskServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        // 响应的MIME类型和乱码问题
+        resp.setContentType("application/json;charset=UTF-8");
+
+        String requestURI = req.getRequestURI();
+        String[] split = requestURI.split("/");
+        String methodName =split[split.length-1];
+        // 通过反射获取要执行的方法
+        Class clazz = this.getClass();
+        try {
+            Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
+            // 设置方法可以访问
+            method.setAccessible(true);
+            // 通过反射执行代码
+            method.invoke(this,req,resp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        // 响应的MIME类型和乱码问题
+        resp.setContentType("application/json;charset=UTF-8");
+
+        String requestURI = req.getRequestURI();
+        String[] split = requestURI.split("/");
+        String methodName =split[split.length-1];
+        // 通过反射获取要执行的方法
+        Class clazz = this.getClass();
+        try {
+            Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
+            // 设置方法可以访问
+            method.setAccessible(true);
+            // 通过反射执行代码
+            method.invoke(this,req,resp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     /**
