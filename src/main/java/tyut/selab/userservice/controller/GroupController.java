@@ -9,10 +9,11 @@ import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.utils.Result;
 
-
-
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * @className: GroupController
@@ -22,19 +23,21 @@ import java.io.PrintWriter;
  * @version: 1.0
  */
 
-@WebServlet(name = "GroupController",urlPatterns = {"/group"})
+@WebServlet("/group/*")
 public class GroupController extends HttpServlet {
     private GroupService groupService;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getPathInfo();
-        if ("/delete".equals(path)) {
-            System.out.println("hello doGet delete");
-        } else if ("/queryAll".equals(path)) {
-            System.out.println("hello doGet queryAll");
+
+        String requestURI = req.getRequestURI();
+        String[] split = requestURI.split("/");
+        String methodName = split[split.length - 1];
+        if(methodName.equals("delete")){
+            delete(req,resp);
+        } else if (methodName.equals("queryAllGroup")) {
+            queryAllGroup(req,resp);
         }
-//        resp.setContentType("text/html;charset=utf-8");
 //        PrintWriter out = resp.getWriter();
 //        out.write("还是牛掰");
 //        out.flush();
@@ -42,22 +45,25 @@ public class GroupController extends HttpServlet {
 //        super.doGet(req, resp);
 
 
+
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req,resp);
-        String path = req.getPathInfo();
-        if ("/save".equals(path)) {
+        //super.doPost(req, resp);
+        String requestURI = req.getRequestURI();
+        String[] split = requestURI.split("/");
+        String methodName = split[split.length - 1];
+        if(methodName.equals("save")){
             save(req,resp);
-        } else if ("/update".equals(path)) {
+        } else if (methodName.equals("update")) {
+            update(req,resp);
         }
-        super.doPost(req, resp);
-        resp.setContentType("text/html;charset=utf-8");
-        PrintWriter out = resp.getWriter();
-        out.print("测试");
-        out.flush();
-        out.close();
+        else{
+
+        }
+
+
     }
 
     /**
@@ -68,9 +74,13 @@ public class GroupController extends HttpServlet {
      * @param resp POST
      * @return
      */
-    private Result save(HttpServletRequest req, HttpServletResponse resp) {
+    public Result save(HttpServletRequest req, HttpServletResponse resp) throws ServletException ,IOException{
+        //设置请求体字符集
+        req.setCharacterEncoding("UTF-8");
+        System.out.println("hello save");
         GroupDto groupDto = null;
-        groupDto.setGroupName(req.getParameter("groupName"));
+        String groupName = getString(req);
+        groupDto.setGroupName(groupName);
         Integer insert = groupService.insert(groupDto);
         return Result.success(insert);
     }
@@ -83,7 +93,7 @@ public class GroupController extends HttpServlet {
      * @param resp POST
      * @return
      */
-    private Result update(HttpServletRequest req, HttpServletResponse resp) {
+    public Result update(HttpServletRequest req, HttpServletResponse resp) {
         return null;
     }
 
@@ -95,7 +105,9 @@ public class GroupController extends HttpServlet {
      * @param resp GET
      * @return
      */
-    private Result delete(HttpServletRequest req, HttpServletResponse resp) {
+    public Result delete(HttpServletRequest req, HttpServletResponse resp) {
+        GroupDto groupDto = null;
+        groupDto.setGroupName(req.getParameter("groupName"));
         return null;
     }
 
@@ -107,7 +119,25 @@ public class GroupController extends HttpServlet {
      * @param response GET
      * @return list<GroupVo>
      */
-    private Result queryAllGroup(HttpServletRequest request, HttpServletResponse response) {
+    public Result queryAllGroup(HttpServletRequest request, HttpServletResponse response) {
         return null;
     }
+
+    public static String getString(HttpServletRequest request) throws IOException {
+        BufferedReader reader = request.getReader();
+        char[] buf = new char[512];
+        int len = 0;
+        StringBuffer contentBuffer = new StringBuffer();
+        while ((len = reader.read(buf)) != -1) {
+            contentBuffer.append(buf, 0, len);
+        }
+        String content = contentBuffer.toString();
+        if (content == null) {
+            content = "";
+        }
+        return content;
+    }
 }
+
+
+
