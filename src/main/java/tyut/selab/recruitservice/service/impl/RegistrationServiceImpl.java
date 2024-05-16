@@ -1,5 +1,7 @@
 package tyut.selab.recruitservice.service.impl;
 
+import tyut.selab.recruitservice.dao.RegistrationDao;
+import tyut.selab.recruitservice.domain.RegistrationForm;
 import tyut.selab.recruitservice.dto.RegistrationDto;
 import tyut.selab.recruitservice.service.RegistrationService;
 import tyut.selab.recruitservice.view.RegistrationVo;
@@ -7,14 +9,21 @@ import tyut.selab.recruitservice.view.RegistrationVo;
 import java.util.List;
 
 public class RegistrationServiceImpl implements RegistrationService {
+    private RegistrationDao registrationDao;
+    public void setDao(RegistrationDao registrationDao){
+        this.registrationDao = registrationDao;
+    }
+    private RegistrationDto registrationDto;
 
     @Override
-    public Integer insertRegistration(RegistrationDto registrationDto) {
+    public Integer insertRegistration(RegistrationDto registrationDto){
+        registrationDao.insert(RegistrationForm.fromDto(registrationDto));
         return null;
     }
 
     @Override
     public Integer updateRegistration(RegistrationVo registrationVo) {
+        registrationDao.update(RegistrationForm.fromVo(registrationVo));
         return null;
     }
 
@@ -48,6 +57,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public RegistrationVo queryMyRecruit(Integer userId) {
+
         return null;
     }
 }
