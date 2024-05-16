@@ -4,6 +4,7 @@ import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.vo.BookVo;
 
+import java.awt.print.Book;
 import java.util.List;
 
 /**
@@ -32,7 +33,8 @@ public interface BookService {
     public Integer updateBook(BookVo bookVo);
 
     /**
-     *  分页查询所有书籍
+     * 分页查询所有书籍
+     *
      * @return
      */
     public List<BookVo> selectList(Integer cur, Integer size);

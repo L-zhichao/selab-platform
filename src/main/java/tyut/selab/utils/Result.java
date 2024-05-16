@@ -1,5 +1,9 @@
 package tyut.selab.utils;
 
+import tyut.selab.bookservice.vo.BookVo;
+
+import java.util.List;
+
 /**
  * @className: Result
  * @author: try.
