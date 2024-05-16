@@ -73,6 +73,7 @@ public class RegistrationDto {
         this.intentDepartment = intentDepartment;
     }
 
+    public Integer getIntentDepartment(){return intentDepartment;}
     public Integer getGrade() {
         return grade;
     }
