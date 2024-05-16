@@ -1,5 +1,6 @@
 package tyut.selab.taskservice.dao.impl;
 
+import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskInfoDao;
 import tyut.selab.taskservice.domain.TaskInfo;
 
@@ -11,7 +12,7 @@ import java.util.List;
 * @createDate 2024-05-10 10:44:51
 * @Entity tyut.selab.taskservice.domain.TaskInfo
 */
-public class TaskInfoDaoImpl implements TaskInfoDao {
+public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
 
 
     /**

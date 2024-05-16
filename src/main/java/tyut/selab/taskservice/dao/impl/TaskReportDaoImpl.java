@@ -1,5 +1,6 @@
 package tyut.selab.taskservice.dao.impl;
 
+import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.domain.TaskReport;
 
@@ -11,7 +12,7 @@ import java.util.List;
 * @createDate 2024-05-10 11:02:14
 * @Entity tyut.selab.taskservice.domain.TaskReport
 */
-public class TaskReportDaoImpl implements TaskReportDao {
+public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
 
 
     public Integer deleteByPrimaryKey(Long id){
