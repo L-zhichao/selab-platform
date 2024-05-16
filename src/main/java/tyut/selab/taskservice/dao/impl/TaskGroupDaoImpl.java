@@ -1,5 +1,6 @@
 package tyut.selab.taskservice.dao.impl;
 
+import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskGroupDao;
 import tyut.selab.taskservice.domain.TaskGroup;
 
@@ -11,7 +12,7 @@ import java.util.List;
 * @createDate 2024-05-10 10:46:31
 * @Entity tyut.selab.taskservice.domain.TaskGroup
 */
-public class TaskGroupDaoImpl implements TaskGroupDao {
+public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
 
     /**
      *  通过id删除任务对应小组
