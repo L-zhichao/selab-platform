@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "RegistrationController",urlPatterns = {})
 public class RegistrationController extends HttpServlet {
@@ -66,6 +69,48 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result selectRegistrationById(HttpServletRequest request,HttpServletResponse response){
+        int registrationId = Integer.parseInt(request.getParameter("registrationId"));
+        RegistrationVo rev = RegistrationService.selectRegistrationById(registrationId);
+        if(rev != null){
+//            int grade = 0;
+//            switch (rev.getClassroom().substring(0,2)){
+//                case "23":
+//                    grade = 1;
+//                    break;
+//                case "22":
+//                    grade = 2;
+//                    break;
+//                case "21":
+//                    grade = 3;
+//                    break;
+//                case "20":
+//                    grade = 4;
+//                default:
+//                    try{
+//                    }catch(Exception e){
+//                        e.printStackTrace();
+//                        System.out.println("年级输入有误");
+//                    }
+//
+//            }
+
+            Map data = new HashMap();
+            data.put("id",rev.getId());
+            data.put("interviewees",rev.getInterviewees());
+            data.put("email",rev.getEmail());
+            data.put("phone",rev.getPhone());
+            data.put("intentDepartment",rev.getIntentDepartment());
+            data.put("classroom",rev.getClassroom());
+            data.put("interviewTime",rev.getInterviewTime());
+            data.put("introduce",rev.getIntroduce());
+            data.put("purpose",rev.getPurpose());
+            data.put("remark",rev.getRemark());
+            data.put("grade",rev.getGrade());
+            Map user = new HashMap();
+            user.put("code",200);
+            user.put("data",data);
+            user.put("msg","string");
+        }
         return null;
     }
 
@@ -75,6 +120,10 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result selectRegistrationByUserName(HttpServletRequest request,HttpServletResponse response){
+        String intervieweesName = request.getParameter("intervieweesName");
+        Integer cur = Integer.valueOf(request.getParameter("cur"));
+        Integer size = Integer.valueOf(request.getParameter("size"));
+        List<RegistrationVo> registrationVos = RegistrationService.selectByIntervieweesName(cur, size, intervieweesName);
         return null;
     }
 
@@ -85,6 +134,10 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result intentDepartment(HttpServletRequest request,HttpServletResponse response){
+        String intentDepartment = request.getParameter("intentDepartment");
+        Integer cur = Integer.valueOf(request.getParameter("cur"));
+        Integer size = Integer.valueOf(request.getParameter("size"));
+        List<RegistrationVo> registrationVos = RegistrationService.selectByIntentDepartment(cur, size, Integer.valueOf(intentDepartment));
         return null;
     }
 
