@@ -1,5 +1,8 @@
 package tyut.selab.recruitservice.domain;
 
+import tyut.selab.recruitservice.dto.RegistrationDto;
+import tyut.selab.recruitservice.view.RegistrationVo;
+
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
@@ -81,6 +84,45 @@ public class RegistrationForm {
         this.updateTime = updateTime;
     }
 
+    public void toDto(){
+    }
+    public static RegistrationForm fromDto(RegistrationDto registrationDto){
+        RegistrationForm registrationForm = new RegistrationForm();
+        registrationForm.setEmail(registrationDto.getEmail());
+        registrationForm.setPhone(Integer.toString(registrationDto.getPhone()));
+        registrationForm.setIntentDepartment(registrationDto.getIntentDepartment());
+        registrationForm.setGrade(registrationDto.getGrade());
+        registrationForm.setClassroom(registrationDto.getClassroom());
+        registrationForm.setIntroduce(registrationDto.getIntroduce());
+        registrationForm.setPurpose(registrationDto.getPurpose());
+        registrationForm.setInterviewTime(registrationDto.getInterviewTime());
+        return registrationForm;
+    }
+    public static RegistrationForm fromVo(RegistrationVo registrationVo){
+        RegistrationForm registrationForm = new RegistrationForm();
+        registrationForm.setId(registrationVo.getId());
+        registrationForm.setEmail(registrationVo.getEmail());
+        registrationForm.setPhone(Integer.toString(registrationVo.getPhone()));
+        registrationForm.setIntentDepartment(registrationVo.getIntentDepartment());
+        registrationForm.setClassroom(registrationVo.getClassroom());
+        registrationForm.setGrade(registrationVo.getGrade());
+        registrationForm.setIntroduce(registrationVo.getIntroduce());
+        registrationForm.setPurpose(registrationVo.getPurpose());
+        registrationForm.setInterviewTime(registrationVo.getInterviewTime());
+        registrationForm.setRemark(registrationVo.getRemark());
+        return registrationForm;
+    }
+    /*public void toDto(RegistrationForm registrationForm){
+        registrationDto.setEmail(registrationForm.getEmail());
+        registrationDto.setPhone(Integer.parseInt(registrationForm.getPhone()));
+        registrationDto.setIntentDepartment(registrationForm.getIntentDepartment());
+        registrationDto.setGrade(registrationForm.getGrade());
+        registrationDto.setClassroom(registrationForm.getClassroom());
+        registrationDto.setIntroduce(registrationForm.getIntroduce());
+        registrationDto.setPurpose(registrationForm.getPurpose());
+        registrationDto.setInterviewTime(registrationForm.getInterviewTime());
+    }
+*/
     @Override
     public String toString() {
         return "RegistrationVo{" +
