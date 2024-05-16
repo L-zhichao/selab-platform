@@ -37,6 +37,12 @@ public interface RegistrationDao {
     RegistrationForm selectByIntervieweesName(String intervieweesName);
 
     /**
+     *  通过面试者姓名查询报名表
+     * @param intervieweesName
+     */
+    List<RegistrationForm> selectByIntervieweesNameList(String intervieweesName);
+
+    /**
      * 查询所有报名表
      * @return
      */
