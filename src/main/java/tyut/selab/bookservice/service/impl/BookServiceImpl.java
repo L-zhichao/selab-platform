@@ -1,5 +1,6 @@
 package tyut.selab.bookservice.service.impl;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.dao.impl.BookInfoDaoImpl;
 import tyut.selab.bookservice.domain.BookInfo;
@@ -7,6 +8,7 @@ import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.vo.BookVo;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -19,12 +21,18 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
     private BookInfoDao bookDao = new BookInfoDaoImpl();
     @Override
-    public Integer insertBook(BookDto bookDto) {
-        return null;
+    public Integer insertBook(BookDto bookDto) throws SQLException {
+        BookInfo bookInfo = new BookInfo();
+        String Str = JSONUtils.toJSONString(bookDto);
+        bookInfo = (BookInfo) JSONUtils.parse(Str);
+        return bookDao.insert(bookInfo);
     }
 
     @Override
-    public Integer updateBook(BookVo bookVo) {
+    public Integer updateBook(BookVo bookVo) throws SQLException {
+        BookInfo bookInfo = new BookInfo();
+
+        bookDao.update(bookInfo);
         return null;
     }
 

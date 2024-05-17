@@ -26,7 +26,7 @@ public interface BookInfoDao {
      * @param bookInfo
      * @return
      */
-    public Integer update(BookInfo bookInfo);
+    public Integer update(BookInfo bookInfo) throws SQLException;
 
     /**
      * 通过id查询书籍信息

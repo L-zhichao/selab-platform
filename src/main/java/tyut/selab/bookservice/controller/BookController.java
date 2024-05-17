@@ -1,7 +1,10 @@
 package tyut.selab.bookservice.controller;
 
+import com.alibaba.druid.support.json.JSONParser;
+import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.druid.support.json.JSONWriter;
 import tyut.selab.bookservice.domain.BookInfo;
+import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.service.impl.BookServiceImpl;
 import tyut.selab.bookservice.vo.BookVo;
@@ -12,10 +15,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -33,16 +38,25 @@ public class BookController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 设置请求和响应的编码
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
+        // 获取url并拆成段
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
+        // 获取此次请求是save? update? query? list? 还是 delete? [要操作的方法名]
         String methodName = split[split.length - 1];
         Class aClass = this.getClass();
         try {
             Method declaredMethod = aClass.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
+            // 设置 暴力破解 方法的访问修饰符的限制
             declaredMethod.setAccessible(true);
+            // 执行方法
             declaredMethod.invoke(this,req, resp);
         } catch (Exception e) {
             e.printStackTrace();
+            req.getRequestDispatcher("跳转到异常处理页面").forward(req,resp);
         }
 
 
@@ -60,8 +74,16 @@ public class BookController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        this.doGet(req,resp);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 获取请求消息体(其实对应的就是请求参数)
+        BufferedReader br = request.getReader();
+        StringBuilder sb= new StringBuilder();
+        // 读取数据
+        String line = null;
+        while((line = br.readLine())!=null){
+            sb.append(line);
+        }
+
     }
 
     /**
@@ -70,7 +92,10 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<Void> save(HttpServletRequest request, HttpServletResponse response) {
+    private Result<Void> save(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        doPost(request,response);
+
+
         return null;
     }
 
