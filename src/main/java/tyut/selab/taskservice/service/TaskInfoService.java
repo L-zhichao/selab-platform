@@ -12,7 +12,7 @@ import java.util.List;
 public interface TaskInfoService {
 
     /**
-     * 增加任务信息
+     * 增加任务信息 (返回数字标识为任务的id，返回0 标识任务标题和内容都重复)
      * @return
      */
     public Integer save(TaskInfoDto taskInfoDto);

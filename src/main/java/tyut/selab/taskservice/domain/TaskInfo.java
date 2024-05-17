@@ -55,6 +55,17 @@ public class TaskInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public TaskInfo() {
+    }
+
+    public TaskInfo(Integer publisherId, Integer updaterId, String name, String content, Date dealTime) {
+        this.publisherId = publisherId;
+        this.updaterId = updaterId;
+        this.name = name;
+        this.content = content;
+        this.dealTime = dealTime;
+    }
+
     /**
      * 主键id
      */

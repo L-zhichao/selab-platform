@@ -44,6 +44,7 @@ public class BaseDao {
                     Object value = resultSet.getObject(columnName);
                     // 处理datetime类型字段和java.util.Data转换问题
                     if(value.getClass().equals(LocalDateTime.class)){
+                        //将datetime类型的数据转换为Timestamp类型的数据。
                         value= Timestamp.valueOf((LocalDateTime) value);
                     }
                     Field field = clazz.getDeclaredField(columnName);

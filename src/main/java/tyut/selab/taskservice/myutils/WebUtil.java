@@ -1,10 +1,11 @@
 package tyut.selab.taskservice.myutils;
 
 import com.alibaba.druid.support.json.JSONUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.utils.Result;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -31,7 +32,7 @@ public class WebUtil {
             while((line = reader.readLine())!= null){
                 buffer.append(line);
             }
-
+            Object o = JSONUtils.parse(buffer.toString());
             t= (T) JSONUtils.parse(buffer.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);

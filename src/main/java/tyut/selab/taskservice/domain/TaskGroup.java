@@ -24,6 +24,15 @@ public class TaskGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public TaskGroup() {
+    }
+
+    public TaskGroup(Integer id, Integer taskId, Integer groupId) {
+        this.id = id;
+        this.taskId = taskId;
+        this.groupId = groupId;
+    }
+
     /**
      * 
      */
