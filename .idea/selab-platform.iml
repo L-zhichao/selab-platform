@@ -15,6 +15,16 @@
         </sourceRoots>
       </configuration>
     </facet>
+    <facet type="web" name="Web2">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/web/WEB-INF/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/web" relative="/" />
+        </webroots>
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
@@ -28,5 +38,72 @@
     <orderEntry type="library" name="javax.activation-api-1.2.0" level="project" />
     <orderEntry type="library" name="javax.servlet-api-3.0.1" level="project" />
     <orderEntry type="library" name="fastjson-1.2.83-javadoc" level="project" />
+    <orderEntry type="module-library">
+      <library name="spring-beans-4.2.4.RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/spring-beans-4.2.4.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-core-4.2.4.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-jdbc-4.2.4.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-tx-4.2.4.RELEASE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-logging-1.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/druid-1.1.12.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/mysql-connector-j-8.0.32.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES />
+        <JAVADOC>
+          <root url="jar://$MODULE_DIR$/lib/fastjson-1.2.83-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES />
+        <JAVADOC>
+          <root url="jar://$MODULE_DIR$/lib/fastjson-1.2.83-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="JUnit4">
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.13.1/junit-4.13.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

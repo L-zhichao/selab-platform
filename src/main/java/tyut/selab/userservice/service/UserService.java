@@ -41,4 +41,11 @@ public interface UserService {
      * @return
      */
     public Integer save(UserVo userVo);
+
+    /**
+    * Description: 修改用户信息
+    * @param userVo
+    * @return 返回修改条数Integer
+    */
+    public Integer updateUser(UserVo userVo);
 }
