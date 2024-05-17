@@ -29,7 +29,7 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public Integer updateUser(User user) {
-        //动态sql or 数据回显 怎么写啊怎么啊？？？
+        //动态sql or 数据回显 ？？？
 
         //判断roleId 管理员修改所用，用户仅自己
         if (user.getUserId().equals(1) || user.getUserId().equals(2)) {
@@ -43,7 +43,7 @@ public class UserDaoImpl implements UserDao {
         if (user.getUserId().equals(3)) {
             String sql = "UPDATE sys_user SET user_name=?," +
                     "group_id=?,group_name=?" +
-                    "email=?,phone=?,sex=?,where userid=?";
+                    "email=?,phone=?,sex=? where userid=?";
             int rows = template.update(sql, 1,1,1,1,1,1,1, user.getUserId());
             return rows;
         }
