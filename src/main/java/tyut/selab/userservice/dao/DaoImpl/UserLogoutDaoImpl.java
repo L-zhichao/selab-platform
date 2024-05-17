@@ -4,10 +4,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import tyut.selab.userservice.dao.UserLogoutDao;
 import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.utils.JDBCUtils;
+import tyut.selab.utils.JDBCUtils02;
 
 public class UserLogoutDaoImpl implements UserLogoutDao {
 
-    private JdbcTemplate  template = new JdbcTemplate(JDBCUtils.getDataSource());
+    private JdbcTemplate  template = new JdbcTemplate(JDBCUtils02.getDataSource());
     @Override
     public Integer insert(UserLogout userLogout) {
         String sql = "INSERT INTO user_logout VALUES(?,?,?,?)";

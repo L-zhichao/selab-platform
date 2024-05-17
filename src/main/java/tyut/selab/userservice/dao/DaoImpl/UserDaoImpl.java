@@ -5,6 +5,7 @@ import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.JDBCUtils;
+import tyut.selab.utils.JDBCUtils02;
 
 import java.sql.Connection;
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
 
     //JdbcTemplate连接数据、库释放资源
-    private JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDataSource());
+    private JdbcTemplate template = new JdbcTemplate(JDBCUtils02.getDataSource());
 
     @Override
     public Integer insertUser() {
