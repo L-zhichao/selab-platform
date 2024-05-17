@@ -9,10 +9,12 @@ import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.Result;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.List;
 
 import static com.alibaba.druid.sql.dialect.oracle.ast.expr.OracleSizeExpr.Unit.T;
@@ -25,10 +27,24 @@ import static com.alibaba.druid.sql.dialect.oracle.ast.expr.OracleSizeExpr.Unit.
  * @version: 1.0
  */
 
+
+@WebServlet("/user")
 public class UserController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = req.getPathInfo();
+
+        if("/query".equals(path)){
+            query(req, resp);
+            resp.getWriter().println("Handling /user/query path");
+        }else if("/save".equals(path)){
+            save(req, resp);
+        }else if("update".equals(path)){
+            update(req, resp);
+        }else if("/queryById".equals(path)){
+            queryById(req, resp);
+        }
         super.doGet(req, resp);
     }
 
@@ -36,6 +52,7 @@ public class UserController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.doPost(req, resp);
     }
+    //是否还有用
 
     private UserService userService;
 
@@ -51,7 +68,19 @@ public class UserController extends HttpServlet {
      * @param response
      * @return list<User>
      */
-    private Result query(HttpServletRequest request,HttpServletResponse response){return null;}
+
+
+    private Result query(HttpServletRequest request,HttpServletResponse response){
+        String groupId = request.getParameter("groupId");
+        String roleId = request.getParameter("roleId");
+        List<UserVo> usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId));
+
+
+
+
+
+        return null;
+    }
 
     /**
      *  通过id查询用户信息 [id在路径后面]  " queryById/2  (id = 2)
@@ -60,7 +89,12 @@ public class UserController extends HttpServlet {
      * @return
      */
     private Result queryById(HttpServletRequest request,HttpServletResponse response){
-        return null;
+
+        String userId = request.getParameter("id");
+        UserVo userVo = userService.selectByUserId(Integer.valueOf(userId));
+
+        Result<UserVo> result = new Result<>(null,null);
+        return result.success(userVo);
     }
 
     /**

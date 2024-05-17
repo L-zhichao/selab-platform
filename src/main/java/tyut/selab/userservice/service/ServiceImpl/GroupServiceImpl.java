@@ -1,24 +1,32 @@
 package tyut.selab.userservice.service.ServiceImpl;
 
 import tyut.selab.userservice.Dto.GroupDto;
+import tyut.selab.userservice.dao.GroupDao;
+import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.GroupVo;
 import tyut.selab.userservice.vo.UserVo;
 
+import java.util.Date;
 import java.util.List;
 
 
 
 public class GroupServiceImpl implements GroupService {
+    private GroupDao groupDao;
     @Override
     public Integer insert(GroupDto groupDto)  {
 
+        Group group = null;
+        group.setGroupName(groupDto.getGroupName());
+        group.setCreateTime(new Date());
+        group.setUpdateTime(new Date());
 
-
-
-
-        return null;
+        //目前不清楚咋搞
+        group.setParentId(1);
+        group.setUpdateUser(01);
+        return groupDao.insert(group);
     }
 
     @Override
