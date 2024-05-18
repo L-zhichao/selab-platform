@@ -54,11 +54,16 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
     }
 
     /**
-     *  通过任务id查询所有对应小组
+     * 通过任务id查询所有对应小组
+     *
      * @return
      */
-    public List<TaskGroup> selectAllTaskGroupsByTaskId(Integer taskId){
-        return null;
+    public List<TaskGroup> selectAllTaskGroupsByTaskId(Integer taskId) {
+        List<TaskGroup> list = null;
+        String sql = """
+                select group_id groupId from task_group where task_id = ?
+                """;
+        return baseQuery(TaskGroup.class,sql,taskId);
     }
 
     /**

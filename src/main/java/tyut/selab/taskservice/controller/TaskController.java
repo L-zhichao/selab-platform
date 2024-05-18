@@ -12,12 +12,16 @@ import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
+import tyut.selab.taskservice.view.TaskInfoForUser;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.utils.Result;
 
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.CacheRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "TaskController",urlPatterns = {"/task/*"})
 public class TaskController extends HttpServlet {
@@ -90,8 +94,9 @@ public class TaskController extends HttpServlet {
     }
 
     /**
-     *  查询所有任务 【cur size为必需参数】（参数不为空是则查询指定用户发布任务，为空则查询所有任务）
+     *  查询本人接收的所有任务 【cur size为必需参数】
      *  param: cur size publish 任务发布者名称userName
+     *  param:null 【userId 通过loginservice模块SecurityUtil方法获取】
      * @param request
      * @param response
      * @return
@@ -101,15 +106,28 @@ public class TaskController extends HttpServlet {
     }
 
     /**
-     *  用户查询本人的任务信息（参数不为空是则查询指定用户发布任务，为空则查询所有任务）
-     *  param: cur size publish 任务发布者名称userName
-     *  param:null 【userId 通过loginservice模块SecurityUtil方法获取】
+     *  用户查询本人发布的任务信息（参数不为空是则查询指定用户发布的任务，为空则查询所有任务）
+     *  param: cur(页数） size（每页的大小） publish 任务发布者名称userName
      * @param request
      * @param response
      * @return
      */
    private Result queryMyTask(HttpServletRequest request,HttpServletResponse response){
-     return null;
+       String publisherName = request.getParameter("publisherName");
+       int cur = Integer.parseInt(request.getParameter("cur"));
+       int size = Integer.parseInt(request.getParameter("size"));
+       List<TaskInfoVo> taskInfoVoPage = null;
+       if (publisherName == null){
+           //查询所有
+           List<TaskInfoVo> taskInfoVos = taskInfoService.queryAllTask();
+           taskInfoVoPage = taskInfoVos.subList((cur - 1) * size , cur * size );
+       }else{
+           //查询本人发布的任务信息
+           List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(publisherName);
+           taskInfoVoPage = taskInfoVos.subList((cur - 1) * size , cur * size );
+       }
+       //查询后进行分页
+       return resultMaker.success(taskInfoVoPage);
    }
 
     /**
@@ -119,7 +137,17 @@ public class TaskController extends HttpServlet {
      * @return
      */
   private Result update(HttpServletRequest request,HttpServletResponse response){
-     return null;
+      //如果不是任务发布者或者是超级管理员的话，权限不够禁止修改
+
+
+      TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
+      int taskId = Integer.parseInt(request.getParameter("taskId"));
+      Integer row = taskInfoService.update(taskInfoDto, taskId);
+      if(row == 0){
+          return resultMaker.error(HttpStatus.NOT_FOUND,"任务不存在");
+      }else {
+          return resultMaker.success(null);
+      }
   }
 
     /**
@@ -129,7 +157,13 @@ public class TaskController extends HttpServlet {
      * @return
      */
    private Result<TaskInfoVo> queryById(HttpServletRequest request, HttpServletResponse response){
-    return null;
+       int taskId = Integer.parseInt(request.getParameter("taskId"));
+       TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
+       if (taskInfoVo != null){
+           return resultMaker.success(taskInfoVo);
+       }
+
+       return resultMaker.error(HttpStatus.NOT_FOUND,"该任务不存在");
    }
 
 

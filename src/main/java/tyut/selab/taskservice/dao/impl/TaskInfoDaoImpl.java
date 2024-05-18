@@ -56,7 +56,14 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
      * @return
      */
     public TaskInfo selectByTaskId(Integer id){
-        return null;
+        TaskInfo taskInfo = null;
+        String sql = """
+                select id,publisher_id publisherId,updater_id updaterId,name,content,deal_time dealTime,publish_time publishTime,update_time updateTime
+                from task_info
+                where id = ? and del_flag = 0
+                """;
+        taskInfo = baseQueryObject(TaskInfo.class,sql,id);
+        return taskInfo;
     }
 
     /**
@@ -65,7 +72,10 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
      * @return
      */
     public Integer updateBytaskId(TaskInfo record){
-        return null;
+        String sql = """
+                update task_info set updater_id = ?,name = ?,content=?,deal_time = ?,update_time = now() where id = ?
+                """;
+        return baseUpdate(sql,record.getUpdaterId(), record.getName(),record.getContent(),record.getDealTime(),record.getId());
     }
 
     /**
@@ -73,7 +83,13 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
      * @return
      */
     public List<TaskInfo> selectAllTaskInfo(){
-        return null;
+        String sql = """
+                select id,publisher_id publisherId,updater_id updaterId,name,content,deal_time dealTime,publish_time publishTime,update_time updateTime
+                from task_info
+                where del_flag = 0
+                """;
+        List<TaskInfo> taskInfos = baseQuery(TaskInfo.class, sql);
+        return taskInfos;
     }
 
     /**

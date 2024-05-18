@@ -77,7 +77,7 @@ public class BaseDao {
     }
     // 公共的查询方法  返回的是对象的集合
 
-    public <T> List<T> baseQuery(Class clazz, String sql, Object ... args){
+    public <T> List<T> baseQuery(Class<T> clazz, String sql, Object ... args){
         List<T> list =new ArrayList<>();
         Connection connection = JDBCUtil.getConnection();
         PreparedStatement preparedStatement=null;
