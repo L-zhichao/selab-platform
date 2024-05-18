@@ -1,17 +1,20 @@
 package tyut.selab.bookservice.controller;
 
-import com.alibaba.druid.support.json.JSONWriter;
+import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSON;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.bookservice.domain.BookInfo;
+import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.service.impl.BookServiceImpl;
 import tyut.selab.bookservice.vo.BookVo;
 import tyut.selab.utils.Result;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -26,37 +29,50 @@ import java.util.List;
  * @version: 1.0
  */
 
-@WebServlet(name = "BookController",urlPatterns = {"/book/save","book/update","/book/query","book/list","book/delete"})
+@WebServlet(name = "BookController",urlPatterns = {"/book/save","/book/update","/book/query","/book/list","/book/delete"})
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName = split[split.length - 1];
-        Class aClass = this.getClass();
-        try {
-            Method declaredMethod = aClass.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
-            declaredMethod.setAccessible(true);
-            declaredMethod.invoke(this,req, resp);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-//        if (methodName.equals("save")) {
-//            save(req, resp);
-//        }else if (methodName.equals("update")) {
-//            update(req, resp);
-//        }else if (methodName.equals("query")){
-//            query(req, resp);
-//        }else if (methodName.equals("list")){
-//            list(req, resp);
-//        }else{
-//
+//        Class aClass = this.getClass();
+//        try {
+//            Method declaredMethod = aClass.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
+//            declaredMethod.setAccessible(true);
+//            declaredMethod.invoke(this,req, resp);
+//        } catch (Exception e) {
+//            e.printStackTrace();
 //        }
+
+
+        Result result = null;
+        if (methodName.equals("save")) {
+            save(req, resp);
+        } else if (methodName.equals("update")) {
+            update(req, resp);
+        } else if (methodName.equals("query")) {
+            query(req, resp);
+        } else if (methodName.equals("list")) {
+            result = list(req, resp);
+        } else if (methodName.equals("delete")) {
+            result = delete(req, resp);
+        } else {
+            result.setCode(404);
+            result.setData(null);
+            result.setMsg("filed");
+        }
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json");
+        String jsonString = JSON.toJSONString(result);
+        PrintWriter writer = resp.getWriter();
+        writer.print(jsonString);
+        writer.flush();
+        writer.close();
     }
 
     @Override
@@ -71,6 +87,11 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result<Void> save(HttpServletRequest request, HttpServletResponse response) {
+
+
+        String bookDto = request.getParameter("bookDto");
+        Object Result = null;
+        String jsonString = JSONUtils.toJSONString(Result);
         return null;
     }
 
@@ -117,20 +138,18 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result list(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.setCharacterEncoding("UTF-8");
         //接受请求参数
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
         //将参数传递给服务层，进行分页查询
         List<BookVo> bookVoList = bookService.selectList(cur, size);
         //将分页查询的结果响应给客户端
-        response.setCharacterEncoding("UTF-8");
-        Result result = new Result(200,bookVoList);
-        result.setMsg("success");
-        PrintWriter writer = response.getWriter();
-        writer.print(result);
-        writer.flush();
-        writer.close();
+        Result result = Result.success("bookVoList");
+        if(bookVoList == null) {
+            result.setMsg("falied");
+            result.setData(null);
+            result.setCode(404);
+        }
         return result;
     }
 
