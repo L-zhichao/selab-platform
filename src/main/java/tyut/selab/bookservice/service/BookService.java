@@ -5,6 +5,7 @@ import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.vo.BookVo;
 
 import java.awt.print.Book;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -23,14 +24,14 @@ public interface BookService {
      * @return
      */
 
-    public Integer insertBook(BookDto bookDto);
+    public Integer insertBook(BookDto bookDto) throws SQLException;
 
     /**
      *   修改书籍信息(管理员操作)
      * @param bookVo
      * @return
      */
-    public Integer updateBook(BookVo bookVo);
+    public Integer updateBook(BookVo bookVo) throws SQLException;
 
     /**
      * 分页查询所有书籍

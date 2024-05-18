@@ -19,20 +19,24 @@ import java.util.List;
  */
 public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
+    private BaseDao baseDao = new BaseDao();
     @Override
     public Integer insert(BookInfo bookInfo) throws SQLException {
-        String sql = "insert into book_info values(DEFAULT,?,?,?,?,?,?,?,?,?,?)";
-        int rows = baseUpdate(sql,bookInfo.getBookName(),bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getStatus(),bookInfo.getCreateTime(),bookInfo.getUpdateTime(),bookInfo.getRemark(),bookInfo.getBookRef());
-        return rows;
+        String sql = "insert into book_info (book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef) values (DEFAULT,?,?,?,?,?,?,?,?,?,?)";
+        Object[] params = {bookInfo.getBookName(),bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getRemark(),bookInfo.getBookRef()};
+        return baseDao.baseUpdate(sql,params);
     }
 
     @Override
-    public Integer update(BookInfo bookInfo) {
-        return null;
+    public Integer update(BookInfo bookInfo) throws SQLException {
+        String sql = "update book_info set book_author=?,book_details=?,price=?,owner=?,status=? where book_name=?";
+        Object[] params = {bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getStatus(),bookInfo.getBookName()};
+        return baseDao.baseUpdate(sql,params);
     }
 
     @Override
     public BookInfo selectByBookIdBookInfo(Integer bookId) {
+        String sql = "select bookName userId cur size from book_info where bookId = ?";
         return null;
     }
 
