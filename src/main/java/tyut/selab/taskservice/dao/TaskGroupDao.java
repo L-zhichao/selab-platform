@@ -37,7 +37,7 @@ public interface TaskGroupDao {
 
     /**
      *  通过任务id查询所有对应小组
-     * @return
+     * @return 返回null标识此任务没有分配小组
      */
     List<TaskGroup> selectAllTaskGroupsByTaskId(Integer taskId);
 

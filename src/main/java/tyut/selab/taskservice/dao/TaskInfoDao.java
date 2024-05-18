@@ -30,7 +30,7 @@ public interface TaskInfoDao {
     /**
      *  通过taskId查询任务信息
      * @param id
-     * @return
+     * @return 返回null标识任务不存在
      */
     TaskInfo selectByTaskId(Integer id);
 
@@ -43,7 +43,7 @@ public interface TaskInfoDao {
 
     /**
      *  查询所有任务信息
-     * @return
+     * @return 返回null标识当前数据库中还没有任务
      */
     List<TaskInfo> selectAllTaskInfo();
 

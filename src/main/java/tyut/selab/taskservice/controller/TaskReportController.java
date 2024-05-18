@@ -1,12 +1,15 @@
 package tyut.selab.taskservice.controller;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import tyut.selab.taskservice.common.HttpStatus;
+import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.utils.Result;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 
@@ -20,7 +23,7 @@ import java.lang.reflect.Method;
 @WebServlet("/task/report/*")
 public class TaskReportController extends HttpServlet {
 
-
+    private Result resultMaker = new Result(HttpStatus.SUCCESS,null);
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // 响应的MIME类型和乱码问题
@@ -31,15 +34,18 @@ public class TaskReportController extends HttpServlet {
         String methodName =split[split.length-1];
         // 通过反射获取要执行的方法
         Class clazz = this.getClass();
+        Result result = null;
         try {
             Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
             // 设置方法可以访问
             method.setAccessible(true);
             // 通过反射执行代码
-            method.invoke(this,req,resp);
+            result = (Result) method.invoke(this,req,resp);
+            WebUtil.writeJson(resp,result);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            result = resultMaker.error(HttpStatus.NOT_FOUND,"未找到该接口");
+            WebUtil.writeJson(resp,result);
         }
     }
 
@@ -53,15 +59,18 @@ public class TaskReportController extends HttpServlet {
         String methodName =split[split.length-1];
         // 通过反射获取要执行的方法
         Class clazz = this.getClass();
+        Result result = null;
         try {
             Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
             // 设置方法可以访问
             method.setAccessible(true);
             // 通过反射执行代码
-            method.invoke(this,req,resp);
+            result = (Result) method.invoke(this,req,resp);
+            WebUtil.writeJson(resp,result);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            result = resultMaker.error(HttpStatus.NOT_FOUND,"未找到该接口");
+            WebUtil.writeJson(resp,result);
         }
     }
 

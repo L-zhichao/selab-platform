@@ -24,13 +24,23 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
     }
 
     /**
-     *  对任务发布添加范围小组
+     *  对任务发布添加范围小组 （测试ok)
      * @param records 小组对应信息列表
-     * @return
+     * @return 返回 1 标识添加成功 返回0 标识添加失败
      */
 
     public Integer insert(List<TaskGroup> records){
-        return null;
+        String sql = "insert into task_group(id,task_id,group_id) values(default,?,?)";
+        int i = 0;
+        for (TaskGroup taskGroup : records){
+            baseUpdate(sql, taskGroup.getTaskId(), taskGroup.getGroupId());
+            i ++ ;
+        }
+        if(i == records.size()){
+            return 1;
+        }else{
+            return 0;
+        }
     }
 
     /**
@@ -44,11 +54,16 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
     }
 
     /**
-     *  通过任务id查询所有对应小组
+     * 通过任务id查询所有对应小组
+     *
      * @return
      */
-    public List<TaskGroup> selectAllTaskGroupsByTaskId(Integer taskId){
-        return null;
+    public List<TaskGroup> selectAllTaskGroupsByTaskId(Integer taskId) {
+        List<TaskGroup> list = null;
+        String sql = """
+                select group_id groupId from task_group where task_id = ?
+                """;
+        return baseQuery(TaskGroup.class,sql,taskId);
     }
 
     /**

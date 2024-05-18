@@ -12,21 +12,28 @@ import java.util.List;
 public interface TaskInfoService {
 
     /**
-     * 增加任务信息
+     * 增加任务信息 (返回数字标识为任务的id，返回0 标识任务标题和内容都重复)
      * @return
      */
     public Integer save(TaskInfoDto taskInfoDto);
 
     /**
-     *
+     * 更新任务信息
      * @param taskInfoDto
-     * @return
+     * @return 返回0 标识任务不存在，返回数字标识任务修改完成
      */
-    public Integer update(TaskInfoDto taskInfoDto);
+    public Integer update(TaskInfoDto taskInfoDto,Integer taskId);
+
+    /**
+     * 通过 taskId查询对应的任务信息
+     * @param taskId
+     * @return 返回null标识任务不存在
+     */
+    public TaskInfoVo queryById(Integer taskId);
 
     /**
      *  查询所有任务
-     * @return
+     * @return 返回null 标识当前没有任务
      */
     public List<TaskInfoVo> queryAllTask();
 
