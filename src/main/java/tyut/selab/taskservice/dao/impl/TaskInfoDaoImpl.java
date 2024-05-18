@@ -2,6 +2,7 @@ package tyut.selab.taskservice.dao.impl;
 
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskInfoDao;
+import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskInfo;
 
 import java.sql.Timestamp;
@@ -23,7 +24,10 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
      * @return
      */
     public Integer deleteByPrimaryKey(Long id){
-        return null;
+
+        String sql="delete from task_group where task_id=?";
+        int basedUpdate = baseUpdate(sql,new TaskGroup().getTaskId());
+        return basedUpdate;
     }
 
     /**

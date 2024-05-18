@@ -105,6 +105,7 @@ public class BaseDao {
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnLabel(i);
                     Object value = resultSet.getObject(columnName);
+                    System.out.println();
                     // 处理datetime类型字段和java.util.Data转换问题
                     if(value.getClass().equals(LocalDateTime.class)){
                         value= Timestamp.valueOf((LocalDateTime) value);
