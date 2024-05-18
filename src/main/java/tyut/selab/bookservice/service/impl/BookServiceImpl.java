@@ -6,7 +6,11 @@ import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.vo.BookVo;
+import tyut.selab.userservice.dao.UserDao;
+import tyut.selab.userservice.dao.impl.UserDaoImpl;
+import tyut.selab.userservice.domain.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +22,7 @@ import java.util.List;
  */
 public class BookServiceImpl implements BookService {
     private BookInfoDao bookDao = new BookInfoDaoImpl();
+    private UserDao userDao = new UserDaoImpl();
     @Override
     public Integer insertBook(BookDto bookDto) {
         return null;
@@ -32,7 +37,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookVo> selectList(Integer cur, Integer size) {
-        return bookDao.selectAll(cur,size);
+        List<BookVo> list = new ArrayList<BookVo>();
+        List<BookInfo> bookInfos = bookDao.selectAll(cur, size);
+        for (BookInfo bookInfo : bookInfos) {
+            Integer owner = bookInfo.getOwner();
+            BookVo bookVo = bookIofoToBookVo(bookInfo);
+            User user = userDao.selectByUserIdUser(owner);
+            String ownerName = user.getUserName();
+            bookVo.setOwnerName(ownerName);
+            list.add(bookVo);
+        }
+        return list;
     }
 
     @Override
@@ -48,5 +63,19 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookVo> selectListByOwnerId(Integer userid, Integer cur, Integer size) {
         return null;
+    }
+
+    private BookVo bookIofoToBookVo(BookInfo bookInfo) {
+        BookVo bookVo = new BookVo();
+        bookVo.setBookAuthor(bookInfo.getBookAuthor());
+        bookVo.setBookDetails(bookInfo.getBookDetails());
+        bookVo.setBookId(bookInfo.getBookId());
+        bookVo.setBookName(bookInfo.getBookName());
+        bookVo.setCreateTime(bookInfo.getCreateTime());
+        bookVo.setPrice(bookInfo.getPrice());
+        bookVo.setStatus(bookInfo.getStatus());
+        bookVo.setUpdateTime(bookInfo.getUpdateTime());
+        bookVo.setBookRef(bookInfo.getBookRef());
+        return bookVo;
     }
 }
