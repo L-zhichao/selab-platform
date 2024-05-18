@@ -5,6 +5,7 @@ import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.vo.BookVo;
 
+import java.lang.reflect.Field;
 import java.sql.Ref;
 import java.sql.SQLException;
 import java.util.List;
@@ -41,17 +42,12 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     }
 
     @Override
-    public List<BookVo> selectAll(Integer cur, Integer size) {
-        String sql = "select t1.book_id bookId,t1.book_name bookName,t1.book_author bookAuthor,t1.book_details bookDetails,t1.price,t1.owner owner,t2.user_name ownerName,t1.status status,t1.create_time createTime,t1.update_time updateTime,t1.book_ref book\n" +
-                "Ref from Book_info t1 join sys_user t2 on t1.owner = t2.user_id limit ";
+    public List<BookInfo> selectAll(Integer cur, Integer size) {
+        String sql = "select t1.book_id bookId,t1.book_name bookName,t1.book_author bookAuthor,t1.book_details bookDetails,t1.price,t1.owner owner,t1.status status,t1.create_time createTime,t1.update_time updateTime,t1.book_ref bookRef from Book_info t1 limit ";
         int index = (cur - 1) * size;
-        sql.concat(index + "," + size);
-        try {
-            List<BookVo> bookVos = baseQuery(BookVo.class, sql);
-            return bookVos;
-        } catch (SQLException | InstantiationException | IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
+        sql += index + "," + size + ";";
+        List<BookInfo> bookInfos = baseQuery(BookInfo.class, sql);
+        return bookInfos;
     }
 
     @Override
