@@ -36,7 +36,7 @@ public class BookInfo implements Serializable {
     /**
      * 书籍拥有者
      */
-    private Long owner;
+    private Integer owner;
 
     /**
      * 书籍状态(0为可借阅 1为借阅 2为不可借阅)
@@ -138,14 +138,14 @@ public class BookInfo implements Serializable {
     /**
      * 书籍拥有者
      */
-    public Long getOwner() {
+    public Integer getOwner() {
         return owner;
     }
 
     /**
      * 书籍拥有者
      */
-    public void setOwner(Long owner) {
+    public void setOwner(Integer owner) {
         this.owner = owner;
     }
 
