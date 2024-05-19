@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tyut.selab.loginservice.utils.TokenTools;
 import tyut.selab.utils.Result;
 
 import javax.mail.Message;
@@ -45,6 +46,9 @@ public class LoginController extends HttpServlet {
      * @return
      */
     private Result login(HttpServletRequest request, HttpServletResponse response){
+
+        TokenTools.createToken(request,request.getParameter("username"));//创建Token并将Token存入到Session对象中
+
         return null;
     }
 
@@ -56,6 +60,8 @@ public class LoginController extends HttpServlet {
      * @return
      */
     private Result register(HttpServletRequest request,HttpServletResponse response){
+
+
         String head = "登录验证码信息";
         String body = "验证码为Token";
         try {
