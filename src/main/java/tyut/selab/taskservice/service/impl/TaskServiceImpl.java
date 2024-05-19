@@ -70,7 +70,6 @@ public class TaskServiceImpl implements TaskInfoService {
         if(taskInfo!=null){//任务存在
             //通过id删除任务
             taskInfoDao.deleteByPrimaryKey(taskId);
-
         }
         return null;
     }

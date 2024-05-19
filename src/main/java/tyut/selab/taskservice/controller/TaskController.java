@@ -20,6 +20,7 @@ import tyut.selab.utils.Result;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet(name = "TaskController",urlPatterns = {"/task/*"})
@@ -117,28 +118,37 @@ public class TaskController extends HttpServlet {
         TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
 
         //判断用户身份，不同身份发布任务的范围不一样，权限不够就返回error(其他组接口没有实现，先注释）
-//        int roleId = getUserMessage(request, response).getRoleId();
-//        if (roleId == 3 ){
-//            return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能发布任务");
-//        }
+        UserLocal userMessage = getUserMessage(request, response);
+        Integer roleId = userMessage.getRoleId();
+        if (roleId == 3 ){
+            return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能发布任务");
+        }
         //
         //
         //
         //
 
-        //相同的用户发布的任务最大个数应该有限制
-        //
-        //
-        //
-        //
+        //相同的用户发布的任务最大个数应该有限制，超级管理员没有此限制
+        if (roleId == 2){
+            //获取用户发布的所有任务
+            String userName = userMessage.getUserName();
+            List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(userName);
+            //如果任务数量 >= 3 返回权限问题
+            if (taskInfoVos.size() >= 3){
+                return Result.error(HttpStatus.UNAUTHORIZED,"管理员最多只能发布三个任务");
+            }
+        }
+
         //相关的一些接口功能上是否有线程安全问题？
         //
         //
         //
         //保存和修改任务的时候，截至时间是不是应该比当前时间多
-        //
-        //
-        //
+        Date dealTime = taskInfoDto.getDealTime();
+        Date date = new Date();
+        if (date.getTime() > dealTime.getTime()){
+            return Result.error(HttpStatus.WARN,"截止时间设置不合理");
+        }
 
         int i = taskInfoService.save(taskInfoDto);
         //添加任务的时候标题和内容不能重复
@@ -397,6 +407,7 @@ public class TaskController extends HttpServlet {
 
 
     /**
+     * 非业务接口方法
      * 进行身份认定，返回用户的身份信息
      * @param request
      * @param response
