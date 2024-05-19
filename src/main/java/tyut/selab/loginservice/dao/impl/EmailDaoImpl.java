@@ -7,6 +7,8 @@ import tyut.selab.loginservice.utils.BaseDao;
 public class EmailDaoImpl extends BaseDao implements EmailDao {
     @Override
     public Integer insert(Email email) {
+        String sql = "insert into email user_id , email , create_time";
+        executeUpdate();
         return null;
     }
 
