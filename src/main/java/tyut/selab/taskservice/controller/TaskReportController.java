@@ -6,12 +6,17 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.taskservice.common.HttpStatus;
+import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.WebUtil;
+import tyut.selab.taskservice.service.TaskInfoService;
+import tyut.selab.taskservice.service.impl.TaskReportServiceImpl;
+import tyut.selab.taskservice.service.impl.TaskServiceImpl;
 import tyut.selab.utils.Result;
 
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
 
 /**
  * @className: TaskReportController
@@ -24,6 +29,7 @@ import java.lang.reflect.Method;
 public class TaskReportController extends HttpServlet {
 
     private Result resultMaker = new Result(HttpStatus.SUCCESS,null);
+    private TaskInfoService taskInfoService = (TaskInfoService) new TaskReportServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // 响应的MIME类型和乱码问题
@@ -110,7 +116,17 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return List<TaskInfoVo>
      */
-    private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
+        TaskReportDto taskReportDto = new TaskReportDto();
+        //将数据封装成TaskReportDto对象
+            //读取参数
+        Enumeration<String> parameterNames = request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String paramName = parameterNames.nextElement();
+            String paramValue = request.getParameter(paramName);
+                //读取完参数，如何封装？
+        }
+        return null;}
 
     /**
      *  删除汇报记录[管理员]
@@ -128,9 +144,7 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return List<TaskReportVo>
      */
-    private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response){return null;}
-
-
-
+    private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response){
+        return null;}
 }
 
