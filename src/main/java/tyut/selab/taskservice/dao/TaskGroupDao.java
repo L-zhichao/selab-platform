@@ -19,6 +19,8 @@ public interface TaskGroupDao {
      */
     Integer deleteByPrimaryKey(Integer id);
 
+
+
     /**
      *  对任务发布添加范围小组
      * @param records 小组对应信息列表

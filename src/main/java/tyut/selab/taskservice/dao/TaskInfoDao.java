@@ -18,7 +18,8 @@ public interface TaskInfoDao {
      * @param id
      * @return
      */
-    Integer deleteByPrimaryKey(Long id);
+    Integer deleteByPrimaryKey(Integer id);
+    //此处的参数主键id就是任务id
 
     /**
      *  增加任务信息

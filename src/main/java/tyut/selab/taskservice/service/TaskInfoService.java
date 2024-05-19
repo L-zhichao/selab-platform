@@ -18,6 +18,13 @@ public interface TaskInfoService {
     public Integer save(TaskInfoDto taskInfoDto);
 
     /**
+     *  通过任务id删除任务
+     * @param taskId
+     * @return
+     */
+    public Integer delete(Integer taskId);
+
+    /**
      * 更新任务信息
      * @param taskInfoDto
      * @return 返回0 标识任务不存在,返回1 标识修改的任务和现有的任务冲突，返回数字标识任务修改完成
