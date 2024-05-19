@@ -13,6 +13,8 @@ import tyut.selab.loginservice.service.EmailService;
 public class EmailServiceImpl implements EmailService {
     @Override
     public Integer save(Email email) {
+
+
         return null;
     }
 
