@@ -16,6 +16,45 @@ public class Email implements Serializable {
     private String email;
     private Integer userId;
     private Date createTime;
+    public Email() {
+    }
 
+    public Email(String email, Integer userId, Date createTime) {
+        this.email = email;
+        this.userId = userId;
+        this.createTime = createTime;
+    }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Email{" +
+                "email='" + email + '\'' +
+                ", userId=" + userId +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

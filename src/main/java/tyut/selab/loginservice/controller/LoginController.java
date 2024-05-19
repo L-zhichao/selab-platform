@@ -5,7 +5,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import tyut.selab.loginservice.utils.TokenTools;
+import tyut.selab.loginservice.dto.UserLoginReq;
+import tyut.selab.loginservice.utils.WebUtils;
 import tyut.selab.utils.Result;
 
 import javax.mail.Message;
@@ -47,7 +48,8 @@ public class LoginController extends HttpServlet {
      */
     private Result login(HttpServletRequest request, HttpServletResponse response){
 
-        TokenTools.createToken(request,request.getParameter("username"));//创建Token并将Token存入到Session对象中
+        UserLoginReq userLoginReq = WebUtils.readJson(request, UserLoginReq.class);
+
 
         return null;
     }

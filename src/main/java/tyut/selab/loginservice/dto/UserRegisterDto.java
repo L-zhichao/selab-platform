@@ -1,7 +1,6 @@
 package tyut.selab.loginservice.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @className: UserRegisterDto
@@ -41,4 +40,66 @@ public class UserRegisterDto implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
+
+    public UserRegisterDto() {
+    }
+
+    public UserRegisterDto(String userName, Integer groupId, String email, String phone, Integer sex) {
+        this.userName = userName;
+        this.groupId = groupId;
+        this.email = email;
+        this.phone = phone;
+        this.sex = sex;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRegisterDto{" +
+                "userName='" + userName + '\'' +
+                ", groupId=" + groupId +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", sex=" + sex +
+                '}';
+    }
 }
