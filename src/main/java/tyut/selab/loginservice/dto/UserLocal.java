@@ -13,4 +13,5 @@ public class UserLocal {
     private String userName;
     private Integer groupId;
     private Integer roleId;
+    private String token;
 }
