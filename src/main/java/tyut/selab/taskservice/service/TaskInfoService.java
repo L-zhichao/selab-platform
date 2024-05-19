@@ -27,7 +27,7 @@ public interface TaskInfoService {
     /**
      * 更新任务信息
      * @param taskInfoDto
-     * @return 返回0 标识任务不存在，返回数字标识任务修改完成
+     * @return 返回0 标识任务不存在,返回1 标识修改的任务和现有的任务冲突，返回数字标识任务修改完成
      */
     public Integer update(TaskInfoDto taskInfoDto,Integer taskId);
 

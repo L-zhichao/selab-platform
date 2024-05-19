@@ -17,12 +17,11 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
     /**
      *  通过id删除任务对应小组
      * @param id
-     * @return 受影响的条数
+     * @return
      */
     public Integer deleteByPrimaryKey(Integer id){
-        String sql="delete from task_group where id=?";
-        int basedUpdate = baseUpdate(sql,new TaskGroup().getId());
-        return basedUpdate;
+        String sql = "delete from task_group where id = ?";
+        return baseUpdate(sql,id);
     }
 
     /**
@@ -63,7 +62,7 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
     public List<TaskGroup> selectAllTaskGroupsByTaskId(Integer taskId) {
         List<TaskGroup> list = null;
         String sql = """
-                select group_id groupId from task_group where task_id = ?
+                select id,task_id taskId,group_id groupId from task_group where task_id = ?
                 """;
         return baseQuery(TaskGroup.class,sql,taskId);
     }

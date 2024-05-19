@@ -34,12 +34,12 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
 
     /**
      *  增加任务信息.返回的正数标识添加成功，正数是任务的id，0 标识添加失败
-     *  任务的name和content不能相同，否则返回0,标识任务已存在
+     *  任务的name和content 和数据库中没有删除的任务 不能相同，否则返回0,标识任务已存在
      * @param record
      * @return
      */
     public Integer insert(TaskInfo record){
-        String sql3 = "select id from task_info where name = ? and content = ?";
+        String sql3 = "select id from task_info where name = ? and content = ?  and del_flag = 0 ";
         TaskInfo taskInfo2 = baseQueryObject(TaskInfo.class, sql3, record.getName(), record.getContent());
         if (taskInfo2 != null){
             return 0;
@@ -50,7 +50,7 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
                 """;
             Timestamp timestamp = new Timestamp(record.getDealTime().getTime());
             baseUpdate(sql1,record.getPublisherId(),record.getUpdaterId(),record.getName(),record.getContent(),timestamp);
-            String sql2 = "select id from task_info where name = ? and content = ?";
+            String sql2 = "select id from task_info where name = ? and content = ? and del_flag = 0";
             TaskInfo taskInfo1 = baseQueryObject(TaskInfo.class, sql2, record.getName(), record.getContent());
             return taskInfo1.getId();
         }
@@ -78,7 +78,8 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
      * @return
      */
     public Integer updateBytaskId(TaskInfo record){
-        String sql = """
+        String sql =
+                """
                 update task_info set updater_id = ?,name = ?,content=?,deal_time = ?,update_time = now() where id = ?
                 """;
         return baseUpdate(sql,record.getUpdaterId(), record.getName(),record.getContent(),record.getDealTime(),record.getId());
