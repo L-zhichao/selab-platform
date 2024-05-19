@@ -11,7 +11,6 @@ import tyut.selab.loginservice.service.EmailService;
  * @version: 1.0
  */
 public class EmailServiceImpl implements EmailService {
-    EmailImpl emailDao = new EmailImpl();
     @Override
     public Integer save(Email email) {
         return null;
