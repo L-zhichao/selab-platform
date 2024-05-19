@@ -23,16 +23,14 @@ public class TestTaskGroupDao {
     @Test
     public void test1(){
         TaskGroupDao taskGroupDao = new TaskGroupDaoImpl();
-        TaskGroup TaskGroup1 = new TaskGroup(null,1,1);
-        TaskGroup TaskGroup2 = new TaskGroup(null,2,2);
-        TaskGroup TaskGroup3 = new TaskGroup(null,3,3);
+        TaskGroup TaskGroup1 = new TaskGroup(null,1,2);
+        TaskGroup TaskGroup2 = new TaskGroup(null,1,2);
+        TaskGroup TaskGroup3 = new TaskGroup(null,1,2);
         List list = new ArrayList();
         list.add(TaskGroup1);
         list.add(TaskGroup2);
         list.add(TaskGroup3);
         taskGroupDao.insert(list);
-
-
     }
 
 

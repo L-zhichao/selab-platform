@@ -1,6 +1,8 @@
 package tyut.selab.taskservice.myutils;
 
-import com.alibaba.druid.support.json.JSONUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.utils.Result;
@@ -8,7 +10,6 @@ import tyut.selab.utils.Result;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 /**
  * ClassName: WebUtil
@@ -29,11 +30,10 @@ public class WebUtil {
             reader = request.getReader();
             StringBuffer buffer =new StringBuffer();
             String line =null;
-            while((line = reader.readLine())!= null){
+            while((line = reader.readLine())!= null) {
                 buffer.append(line);
             }
-            Object o = JSONUtils.parse(buffer.toString());
-            t= (T) JSONUtils.parse(buffer.toString());
+            t = JSON.parseObject(buffer.toString(),clazz);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -43,7 +43,7 @@ public class WebUtil {
     public static void writeJson(HttpServletResponse response, Result result){
         response.setContentType("application/json;charset=UTF-8");
         try {
-            String json = JSONUtils.toJSONString(result);
+            String json = JSONObject.toJSONString(result);
             response.getWriter().write(json);
         } catch (IOException e) {
             throw new RuntimeException(e);

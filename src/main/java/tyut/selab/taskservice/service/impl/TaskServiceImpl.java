@@ -59,43 +59,49 @@ public class TaskServiceImpl implements TaskInfoService {
         }else{
             return 0;
         }
-
-
-
     }
 
     @Override
     public Integer update(TaskInfoDto taskInfoDto,Integer taskId) {
-        //判断任务是否存在
-        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
-        if (taskInfo != null) {//标识存在任务对象
-            //将数据封装进入 TaskInfo 对象
-            TaskInfo tInfo = new TaskInfo();
-            tInfo.setId(taskId);
-            tInfo.setPublisherId(taskInfoDto.getPublisherId());
-            tInfo.setUpdaterId(taskInfoDto.getUpdaterId());
-            tInfo.setName(taskInfoDto.getName());
-            tInfo.setContent(taskInfoDto.getContent());
-            tInfo.setDealTime(taskInfoDto.getDealTime());
-
-
-            //删除上次保存的任务和小组对应关系
-            List<TaskGroup> pastList = taskGroupDao.selectAllTaskGroupsByTaskId(taskId);
-            for (TaskGroup pastTaskGroup : pastList) {
-                taskGroupDao.deleteByPrimaryKey(pastTaskGroup.getTaskId());
-            }
-            //重新存入任务和小组的对应关系
-            List<TaskGroup> newList = new ArrayList<>();
-            for (Integer groupId : taskInfoDto.getGroupIds()) {
-                TaskGroup taskGroup = new TaskGroup(null,taskId,groupId);
-                newList.add(taskGroup);
-            }
-            taskGroupDao.insert(newList);
-            //调用相关方法，修改数据库
-            taskInfoDao.updateBytaskId(tInfo);
+        //判断修改后的任务在数据库中是否和其他的任务信息冲突
+        String sql = "select id from task_info where name = ? and content = ?  and del_flag = 0 and id != ?";
+        BaseDao baseDao = new BaseDao();
+        TaskInfo taskInfo1 = baseDao.baseQueryObject(TaskInfo.class, sql, taskInfoDto.getName(), taskInfoDto.getContent(),taskId);
+        if (taskInfo1 != null) {
             return 1;
-        }else{
-            return 0;
+        }else {
+            //判断任务是否存在
+            TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
+
+            if (taskInfo != null) {//标识存在任务对象
+                //将数据封装进入 TaskInfo 对象
+                TaskInfo tInfo = new TaskInfo();
+                tInfo.setId(taskId);
+                tInfo.setPublisherId(taskInfoDto.getPublisherId());
+                tInfo.setUpdaterId(taskInfoDto.getUpdaterId());
+                tInfo.setName(taskInfoDto.getName());
+                tInfo.setContent(taskInfoDto.getContent());
+                tInfo.setDealTime(taskInfoDto.getDealTime());
+
+
+                //删除上次保存的任务和小组对应关系
+                List<TaskGroup> pastList = taskGroupDao.selectAllTaskGroupsByTaskId(taskId);
+                for (TaskGroup pastTaskGroup : pastList) {
+                    taskGroupDao.deleteByPrimaryKey(pastTaskGroup.getId());
+                }
+                //重新存入任务和小组的对应关系
+                List<TaskGroup> newList = new ArrayList<>();
+                for (Integer groupId : taskInfoDto.getGroupIds()) {
+                    TaskGroup taskGroup = new TaskGroup(null, taskId, groupId);
+                    newList.add(taskGroup);
+                }
+                taskGroupDao.insert(newList);
+                //调用相关方法，修改数据库
+                taskInfoDao.updateBytaskId(tInfo);
+                return 2;
+            } else {
+                return 0;
+            }
         }
 
     }
@@ -154,6 +160,8 @@ public class TaskServiceImpl implements TaskInfoService {
         //在数据库中查询所有的，没有被删除的任务
         List<TaskInfo> taskInfos = taskInfoDao.selectAllTaskInfo();
         List<TaskInfoVo> taskInfoVos = new ArrayList<>();
+
+        //有任务的话就封装，没有任务的话就返回null
         for (TaskInfo taskInfo : taskInfos) {
             TaskInfoVo taskInfoVo = new TaskInfoVo();
             taskInfoVo.setId(taskInfo.getId());

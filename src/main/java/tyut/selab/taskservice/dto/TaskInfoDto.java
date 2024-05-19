@@ -46,6 +46,18 @@ public class TaskInfoDto implements Serializable {
      */
     private Date dealTime;
 
+    public TaskInfoDto() {
+    }
+
+    public TaskInfoDto(Integer publisherId, Integer updaterId, String name, String content, List<Integer> groupIds, Date dealTime) {
+        this.publisherId = publisherId;
+        this.updaterId = updaterId;
+        this.name = name;
+        this.content = content;
+        this.groupIds = groupIds;
+        this.dealTime = dealTime;
+    }
+
     public Integer getPublisherId() {
         return publisherId;
     }

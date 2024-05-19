@@ -49,10 +49,10 @@ public class Result<T> {
     public void setMsg(String msg) {
         this.msg = msg;
     }
-    public Result<T> success(T data){
+    public static <T> Result<T> success(T data){
         return new Result(200,data,"");
     }
-    public Result<T> error(Integer code,String msg){
+    public static <T> Result<T> error(Integer code,String msg){
         return new Result<>(code,null,msg);
     }
 

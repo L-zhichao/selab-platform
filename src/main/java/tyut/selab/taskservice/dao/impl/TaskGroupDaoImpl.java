@@ -20,7 +20,8 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
      * @return
      */
     public Integer deleteByPrimaryKey(Integer id){
-        return null;
+        String sql = "delete from task_group where id = ?";
+        return baseUpdate(sql,id);
     }
 
     /**
@@ -61,7 +62,7 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
     public List<TaskGroup> selectAllTaskGroupsByTaskId(Integer taskId) {
         List<TaskGroup> list = null;
         String sql = """
-                select group_id groupId from task_group where task_id = ?
+                select id,task_id taskId,group_id groupId from task_group where task_id = ?
                 """;
         return baseQuery(TaskGroup.class,sql,taskId);
     }
