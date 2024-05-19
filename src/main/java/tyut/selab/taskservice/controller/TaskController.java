@@ -173,7 +173,16 @@ public class TaskController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result delete(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result delete(HttpServletRequest request,HttpServletResponse response){
+        //从请求中获取taskId
+       String taskId= request.getParameter("taskId");
+        if (taskId == null || taskId.isEmpty()) {
+            // 如果 taskId 为空或不存在，返回错误结果
+            return resultMaker.error(resultMaker.getCode(), resultMaker.getMsg());
+        }
+        else return resultMaker;
+    }
+
 
 
 }

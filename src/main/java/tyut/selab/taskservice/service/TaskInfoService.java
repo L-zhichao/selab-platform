@@ -18,7 +18,7 @@ public interface TaskInfoService {
     public Integer save(TaskInfoDto taskInfoDto);
 
     /**
-     *  删除任务
+     *  通过任务id删除任务
      * @param taskId
      * @return
      */

@@ -23,11 +23,13 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
      * @param id
      * @return
      */
-    public Integer deleteByPrimaryKey(Long id){
+    public Integer deleteByPrimaryKey(Integer id){
+        //参数主键id就是任务id
 
-        String sql="delete from task_group where task_id=?";
-        int basedUpdate = baseUpdate(sql,new TaskGroup().getTaskId());
-        return basedUpdate;
+        String sql="delete from task_info where id=?";
+        int row = baseUpdate(sql,new TaskInfo().getId());
+        //返回受影响行数
+        return row;
     }
 
     /**

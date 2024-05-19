@@ -64,10 +64,12 @@ public class TaskServiceImpl implements TaskInfoService {
 
     @Override
     public Integer delete(Integer taskId) {
-        //通过任务id判断任务是否存在
+        //参数taskId就是taskInfo中的主键id
+        //通过id判断任务是否存在
         TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
         if(taskInfo!=null){//任务存在
-            //通过任务id删除任务
+            //通过id删除任务
+            taskInfoDao.deleteByPrimaryKey(taskId);
 
         }
         return null;
