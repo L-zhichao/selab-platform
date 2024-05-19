@@ -5,7 +5,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-@WebFilter("/register")
+//@WebFilter("/register")
 public class RegisterFilter extends BaseFilter{
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
