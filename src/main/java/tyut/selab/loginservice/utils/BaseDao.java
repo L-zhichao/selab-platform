@@ -56,4 +56,43 @@ public abstract class BaseDao {
         }
         return arrayList;
     }
+
+    /**
+     * 查询一条信息，为我们所需要的类型，如果查询多条信息，类型正确会返回第一条信息
+     * @param clazz
+     * @param sql
+     * @param params
+     * @return
+     * @param <T>
+     * @throws SQLException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
+     */
+    public <T> T executeQueryOne(Class<T> clazz,String sql,Object... params) throws SQLException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+        Connection connection = JdbcUtilsV2.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        if (params != null && params.length != 0) {//如果不进行判断到时候可能会抛出空指针异常，要让代码具有一些健壮性
+            for (int i = 1; i <= params.length ; i++) {
+                statement.setObject(i,params[i-1]);
+            }
+        }
+        ResultSet resultSet = statement.executeQuery();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        //创建一个实现类进行结果接收，数据库中字段作为其属性通过反射进行赋值
+        T t = null;
+        while (resultSet.next()) {
+            t = clazz.newInstance();//使用 newInstance() 时，需要确保类具有公共的无参数构造方法或者符合预期的构造方法
+            for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                String propertyName = metaData.getColumnLabel(i);
+                Object value = resultSet.getObject(i);
+                Field field = clazz.getDeclaredField(propertyName);//如果类中没有相关的属性，那么就会抛出异常，所以我们得先创建一个javabean来存放数据库信息
+                field.setAccessible(true);
+                field.set(t,value);
+                break;
+            }
+        }
+        return t;
+    }
 }
