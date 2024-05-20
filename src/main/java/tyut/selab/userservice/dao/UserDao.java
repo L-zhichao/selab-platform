@@ -1,6 +1,7 @@
 package tyut.selab.userservice.dao;
 
 import tyut.selab.userservice.domain.User;
+import tyut.selab.userservice.vo.UserVo;
 
 import java.util.List;
 
@@ -24,6 +25,12 @@ public interface UserDao {
      * @return
      */
     public Integer updateUser(User user);
+
+    /**
+    * Description: 修改用户权限
+    * @return Integer
+    */
+    public Integer updateUserRole(User user);
 
     /**
      * 通过用户id查询用户信息
@@ -52,6 +59,7 @@ public interface UserDao {
      * @return
      */
     public Integer deleteByUserId(Integer userId);
+
 }
 
 

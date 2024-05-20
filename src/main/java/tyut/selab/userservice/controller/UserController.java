@@ -1,18 +1,23 @@
 package tyut.selab.userservice.controller;
 
+import tyut.selab.userservice.Dto.UserDto;
+import tyut.selab.userservice.common.Constant;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.service.ServiceImpl.UserServiceImpl;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.Result;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.List;
+
+import static com.alibaba.druid.sql.dialect.oracle.ast.expr.OracleSizeExpr.Unit.T;
 
 /**
  * @className: UserController
@@ -25,11 +30,6 @@ import java.util.List;
 
 @WebServlet("/user")
 public class UserController extends HttpServlet {
-
-    private UserServiceImpl userService;
-
-
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -53,6 +53,9 @@ public class UserController extends HttpServlet {
         super.doPost(req, resp);
     }
     //是否还有用
+
+    private UserService userService;
+
     private Result queryByUserId(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
@@ -108,9 +111,21 @@ public class UserController extends HttpServlet {
      *  param: UserVo对象
      * @param request
      * @param response
-     * @return
+     * @return post 无返回参数
      */
-    private Result update(HttpServletRequest request, HttpServletResponse response){return null;}
+    private Result update(HttpServletRequest request, HttpServletResponse response){
+        //请求路径 user/update？？？
+
+        // token 获得目前登录用户roleId ？？？
+        UserVo userVo = null;
+        //userVo.getUserId(request.getHeader());
+
+        //调用userService方法
+        Integer userUpdateVo = userService.updateUser(userVo);
+
+        //返回响应  什么情况？？？
+        return null;
+    }
 
     /**
      *  注销用户
@@ -120,6 +135,23 @@ public class UserController extends HttpServlet {
      * @return
      */
     private Result logout(HttpServletRequest request,HttpServletResponse response){
+        //请求路径 user/update？？？
+
+        // token 获得目前登录用户roleId ？？？
+        UserVo userVo = null;
+        //判断是否为管理员
+        if (userVo.getUserId().equals(2)) {
+            //获取被注销用户userId，调用userService方法
+            Integer userId = Integer.valueOf(request.getParameter("id"));
+            //调用userService方法
+            Integer userUpdateVo = userService.delete(userId);
+            // success
+            return null;
+        }
+        else {
+            System.out.println("没有权限");
+        }
+        // error
         return null;
     }
 
@@ -130,6 +162,27 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result updateRole(HttpServletRequest request, HttpServletResponse response){return null;}
+    private Result updateRole(HttpServletRequest request, HttpServletResponse response){
+        //请求路径 user/update？？？
+
+        // token 获得目前登录用户roleId ？？？
+       UserVo loginUserVo = null;
+
+        //使用Dto，常量接口  ？？？
+        //判断是否为超级管理员
+        if (loginUserVo.getRoleId().equals(1)) {
+            //调用userService方法，封装被修改用户
+            UserVo userVo = null;
+            userVo.setUserId(Long.valueOf(request.getParameter("id")));
+            Integer userUpdateVo = userService.updateUserRole(userVo);
+            // success
+            return null;
+        }
+        else {
+            System.out.println("您没有权限");
+        }
+        //返回响应  error
+        return null;
+    }
 
 }

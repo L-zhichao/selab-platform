@@ -11,6 +11,7 @@ import java.util.List;
 
 public class GroupDaoImpl implements GroupDao {
 
+
     @Override
     public Integer insert(Group group) {
         Connection conn = null;
@@ -35,7 +36,7 @@ public class GroupDaoImpl implements GroupDao {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
-            JDBCUtils.closeResource(conn,preparedStatement);
+ //           JDBCUtils.closeResource(conn,preparedStatement);
         }
         return null;
     }
