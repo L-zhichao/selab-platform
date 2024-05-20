@@ -49,13 +49,18 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
         return result;
     }
 
+    /**
+     * 获取邮箱注册次数，如果返回0则是邮箱还没有被注册，返回其他值则为注册次数
+     * @param email
+     * @return
+     */
     @Override
     public Integer selectNumForSameEmail(String email) {
-        String sql = "select count(*) from sys_email where email = ?";
+        String sql = "select * from sys_email where email = ?";
         int result = 0;
-        List<Integer> integer = null;
+        List<Email> integer = null;
         try {
-            integer = executeQuery(Integer.class, sql, email);
+            integer = executeQuery(Email.class, sql, email);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
@@ -65,17 +70,27 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        return integer.get(0);
+        Object[] array = {};
+        if(null != integer) {
+            array = integer.toArray();
+        }
+        return array.length;
     }
 
     /**
-     * 删除指定的email数据
+     * 删除指定的email数据，删除成功返回更改行数，删除失败返回-1
      * @param userId
      * @return
      */
     @Override
     public Integer delete(Integer userId) {
-
-        return null;
+        String sql = "delete from sys_email where userId = ?";
+        int rows = -1;
+        try {
+            rows = executeUpdate(sql,userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rows;
     }
 }
