@@ -47,7 +47,7 @@ public interface BookInfoDao {
      * @param userId
      * @return
      */
-    public List<BookInfo> selectByOwnerBookInfo(Integer userId);
+    public List<BookInfo> selectByOwnerBookInfo(Integer userId) throws SQLException;
 
     /**
      * 查询所有书籍

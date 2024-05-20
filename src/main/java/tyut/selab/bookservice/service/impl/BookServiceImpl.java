@@ -11,6 +11,7 @@ import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.impl.UserDaoImpl;
 import tyut.selab.userservice.domain.User;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 

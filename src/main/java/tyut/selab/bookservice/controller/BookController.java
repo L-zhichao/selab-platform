@@ -18,11 +18,6 @@ import tyut.selab.bookservice.service.impl.BookServiceImpl;
 import tyut.selab.bookservice.vo.BookVo;
 import tyut.selab.utils.Result;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -43,6 +38,7 @@ import java.util.List;
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
+    static private BookDto bookDto = new BookDto();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -91,7 +87,9 @@ public class BookController extends HttpServlet {
         while((line = br.readLine())!=null){
             sb.append(line);
         }
-
+        // 先转换为JSON字符串，再封装为BookDao类
+        String DTO = sb.toString();
+        bookDto = JSONObject.parseObject(DTO,BookDto.class);
     }
 
     /**
@@ -102,7 +100,7 @@ public class BookController extends HttpServlet {
      */
     private Result<Void> save(HttpServletRequest request, HttpServletResponse response) throws Exception {
         doPost(request,response);
-
+        bookService.insertBook(bookDto);
 
         return null;
     }
@@ -114,6 +112,7 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result update(HttpServletRequest request, HttpServletResponse response) {
+        bookService.updateBook();
         return null;
     }
 
@@ -175,8 +174,9 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result delete(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+    private Result delete(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
+        bookService.deleteBook(bookId);
     }
 
 
