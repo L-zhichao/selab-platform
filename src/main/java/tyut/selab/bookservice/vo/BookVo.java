@@ -153,6 +153,13 @@ public class BookVo {
         this.owner = owner;
     }
 
+    public String getOwnerName(){
+        return ownerName;
+    }
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
     /**
      * 书籍状态(0为可借阅 1为借阅 2为不可借阅)
      */
