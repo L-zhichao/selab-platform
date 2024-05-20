@@ -36,7 +36,7 @@ public class GroupDaoImpl implements GroupDao {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
- //           JDBCUtils.closeResource(conn,preparedStatement);
+            JDBCUtils.closeResource(conn,preparedStatement);
         }
         return null;
     }

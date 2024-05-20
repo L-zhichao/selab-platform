@@ -3,8 +3,6 @@ package tyut.selab.userservice.dao.DaoImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import tyut.selab.userservice.dao.UserLogoutDao;
 import tyut.selab.userservice.domain.UserLogout;
-import tyut.selab.utils.JDBCUtils;
-import tyut.selab.utils.JDBCUtils02;
 
 public class UserLogoutDaoImpl implements UserLogoutDao {
 
