@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.WebUtil;
@@ -20,6 +21,7 @@ import tyut.selab.utils.Result;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -121,29 +123,37 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return List<TaskInfoVo>
      */
-    private Result queryAllResport(HttpServletRequest request,HttpServletResponse response) throws SQLException {
+    private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
        // TaskReportVo taskReportVo = new TaskReportVo();
+        List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
         //1.0读取参数
         Integer taskid = Integer.parseInt(request.getParameter("taskid"));
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
-        //2.0封装对象
+        //权限处理 不会
+
         //3.0调用service方法
         if (taskid!=null){
             //通过id查询任务汇报记录
-            List<TaskReportVo> taskReportVos = taskReportService.queryAllTask(taskid);
+            //异常未处理
+            try {
+                taskReportVos = taskReportService.queryAllTask(taskid);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }else {
-            //无id?
+            //无id咋搞?
         }
 //返回josn数据
-        if (true){
-            //返回错误
-           // return Result.error();
+        if (taskReportVos==null){
+            //返回错误 ????
+            return Result.error(204,"操作已经执行成功，但是没有返回数据");
+
         }else {
             //成功返回
-           // return Result.success(taskReportVo);
+            WebUtil.writeJson(response,Result.success(taskReportVos));
+            return Result.success(taskReportVos);
         }
-        return null;
     }
 
     /**
@@ -153,7 +163,15 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result delete(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result delete(HttpServletRequest request,HttpServletResponse response){
+        //权限判断:只有管理员才能进行删除操作
+
+        //读取参数
+        Integer reportid = Integer.parseInt(request.getParameter("reportid"));
+        int cur = Integer.parseInt(request.getParameter("cur"));
+        int size = Integer.parseInt(request.getParameter("size"));
+
+        return null;}
 
     /**
      *  查询所有需要汇报的用户
