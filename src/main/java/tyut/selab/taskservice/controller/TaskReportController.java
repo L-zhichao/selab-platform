@@ -12,12 +12,15 @@ import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.service.impl.TaskReportServiceImpl;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
+import tyut.selab.taskservice.view.TaskInfoVo;
+import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.utils.Result;
 
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
+import java.util.List;
 
 /**
  * @className: TaskReportController
@@ -118,16 +121,29 @@ public class TaskReportController extends HttpServlet {
      * @return List<TaskInfoVo>
      */
     private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
-        TaskReportDto taskReportDto = new TaskReportDto();
-        //将数据封装成TaskReportDto对象
-            //读取参数
-        Enumeration<String> parameterNames = request.getParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String paramName = parameterNames.nextElement();
-            String paramValue = request.getParameter(paramName);
-                //读取完参数，如何封装？
+       // TaskReportVo taskReportVo = new TaskReportVo();
+        //1.0读取参数
+        Integer taskid = Integer.parseInt(request.getParameter("taskid"));
+        int cur = Integer.parseInt(request.getParameter("cur"));
+        int size = Integer.parseInt(request.getParameter("size"));
+        //2.0封装对象
+        //3.0调用service方法
+        if (taskid!=null){
+            //通过id查询任务汇报记录
+            List<TaskInfoVo> taskInfoVos = taskReportService.queryAllTask(taskid);
+        }else {
+            //无id?
         }
-        return null;}
+//返回josn数据
+        if (true){
+            //返回错误
+           // return Result.error();
+        }else {
+            //成功返回
+            return Result.success(taskReportVo);
+        }
+        return null;
+    }
 
     /**
      *  删除汇报记录[管理员]

@@ -42,4 +42,52 @@ public class TaskReportVo implements Serializable {
     private Date reportTime;
 
     private static final long serialVersionUID = 1L;
+
+    public Integer getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Integer reportId) {
+        this.reportId = reportId;
+    }
+
+    public Integer getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public Integer getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(Integer reportStatus) {
+        this.reportStatus = reportStatus;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public Date getReportTime() {
+        return reportTime;
+    }
+
+    public void setReportTime(Date reportTime) {
+        this.reportTime = reportTime;
+    }
 }

@@ -33,7 +33,7 @@ public interface TaskReportService {
      * @param taskId
      * @return
      */
-    public List<TaskInfoVo> queryAllTask(Integer taskId);
+    public List<TaskInfoVo>  queryAllTask(Integer taskId);
 
     /**
      *  通过id查询某一任务汇报数量
