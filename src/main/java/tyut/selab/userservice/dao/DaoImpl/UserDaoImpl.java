@@ -21,12 +21,11 @@ public class UserDaoImpl implements UserDao {
      * 增加用户
      * @return
      */
+
     @Override
-    public Integer insertUser() {
-        return null;
+    public Integer insertUser(User user) {
+        return 0;
     }
-
-
 
     /**
      * Description: 修改用户信息
@@ -35,12 +34,9 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public Integer updateUser(User user) {
-        //动态sql or 数据回显 ？？？
-
-        //判断roleId 管理员修改所用，用户仅自己
         Connection conn = null;
         PreparedStatement ps = null;
-        Long userId = user.getUserId();
+        Integer userId = Math.toIntExact(user.getUserId());
         try {
             conn = JDBCUtils.getConnection();
             String sql = "UPDATE sys_user SET user_name=?,group_id=?," +
@@ -72,7 +68,7 @@ public class UserDaoImpl implements UserDao {
             JDBCUtils.closeResource(conn,ps);
         }
 
-        return null;
+        return userId;
     }
     /**
     * Description: 修改用户权限

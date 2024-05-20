@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
             userLogout.setCreateTime(Date.valueOf(String.valueOf(LocalDateTime.now())));
             userLogoutDao.insert(userLogout);
         }
-        return null;
+        return rows;
     }
 
     @Override
@@ -127,13 +127,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer updateUser(UserVo userVo) {
 
-        //转换对象类型 ？？？
-        User user = null;
-        user.setUserId(userVo.getUserId());
+
 
         //更新修改时间
         userVo.setUpdateTime(Date.valueOf(LocalDate.now()));
         //调用sql方法
-        return userDao.updateUser(user);
+        return null;
     }
 }

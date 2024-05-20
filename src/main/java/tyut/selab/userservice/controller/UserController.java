@@ -114,17 +114,21 @@ public class UserController extends HttpServlet {
      * @return post 无返回参数
      */
     private Result update(HttpServletRequest request, HttpServletResponse response){
-        //请求路径 user/update？？？
+        //请求路径 user/update,无返回数据
 
-        // token 获得目前登录用户roleId ？？？
-        UserVo userVo = null;
-        //userVo.getUserId(request.getHeader());
+        // token 获得目前登录用户roleId，判断是否为管理员
+        Integer roleId = Integer.valueOf(request.getParameter("roleId"));
 
-        //调用userService方法
-        Integer userUpdateVo = userService.updateUser(userVo);
-
-        //返回响应  什么情况？？？
-        return null;
+        if (roleId.equals(2)) {
+            //获取请求参数
+            UserVo userVo = new UserVo();
+            userVo.setUserId(Long.valueOf(request.getParameter("userId")));
+            //调用userService方法
+            userService.updateUser(userVo);
+            return Result.success(null);
+        } else {
+            return Result.error(null, null);
+        }
     }
 
     /**
@@ -135,24 +139,20 @@ public class UserController extends HttpServlet {
      * @return
      */
     private Result logout(HttpServletRequest request,HttpServletResponse response){
-        //请求路径 user/update？？？
+        //请求路径 user/logout,无返回数据
 
-        // token 获得目前登录用户roleId ？？？
-        UserVo userVo = null;
+        // token 获得目前登录用户roleId
+        Integer roleId = Integer.valueOf(request.getParameter("roleId"));
         //判断是否为管理员
-        if (userVo.getUserId().equals(2)) {
-            //获取被注销用户userId，调用userService方法
-            Integer userId = Integer.valueOf(request.getParameter("id"));
-            //调用userService方法
-            Integer userUpdateVo = userService.delete(userId);
-            // success
-            return null;
+        if (roleId.equals(2)) {
+            //获取被注销用户userId
+            Integer userId = Integer.valueOf(request.getParameter("userId"));
+            userService.delete(userId);
+            return Result.success(null);
         }
         else {
-            System.out.println("没有权限");
+            return Result.error(null, null);
         }
-        // error
-        return null;
     }
 
     /**
@@ -163,26 +163,25 @@ public class UserController extends HttpServlet {
      * @return
      */
     private Result updateRole(HttpServletRequest request, HttpServletResponse response){
-        //请求路径 user/update？？？
+        //请求路径 user/role/update
 
         // token 获得目前登录用户roleId ？？？
-       UserVo loginUserVo = null;
+       Integer roleId = Integer.valueOf(request.getParameter("roleId"));
 
         //使用Dto，常量接口  ？？？
         //判断是否为超级管理员
-        if (loginUserVo.getRoleId().equals(1)) {
+        if (roleId.equals(1)) {
             //调用userService方法，封装被修改用户
             UserVo userVo = null;
             userVo.setUserId(Long.valueOf(request.getParameter("id")));
             Integer userUpdateVo = userService.updateUserRole(userVo);
-            // success
-            return null;
+            return Result.success(null);
         }
         else {
-            System.out.println("您没有权限");
+            return Result.error(null, null);
+
         }
-        //返回响应  error
-        return null;
+
     }
 
 }
