@@ -29,11 +29,18 @@ public interface BookInfoDao {
     public Integer update(BookInfo bookInfo) throws SQLException;
 
     /**
+     *  删除图书信息
+     * @param bookId
+     * @return
+     */
+    public Integer delete(Integer bookId) throws SQLException;
+
+    /**
      * 通过id查询书籍信息
      * @param bookId
      * @return
      */
-    public BookInfo selectByBookIdBookInfo(Integer bookId);
+    public BookInfo selectByBookIdBookInfo(Integer bookId) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 
     /**
      *  通过拥有者id查询本人所有书籍

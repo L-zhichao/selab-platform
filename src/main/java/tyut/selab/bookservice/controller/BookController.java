@@ -3,6 +3,7 @@ package tyut.selab.bookservice.controller;
 import com.alibaba.druid.support.json.JSONParser;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.druid.support.json.JSONWriter;
+import com.alibaba.fastjson.JSON;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
@@ -35,6 +36,7 @@ import java.util.List;
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
+    static private BookDto bookDto = new BookDto();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -83,7 +85,9 @@ public class BookController extends HttpServlet {
         while((line = br.readLine())!=null){
             sb.append(line);
         }
-
+        // 先转换成JSON字符串，再转换为BookDto对象
+        String DTO = sb.toString();
+        bookDto = JSON.parseObject(DTO,BookDto.class);
     }
 
     /**
@@ -94,9 +98,8 @@ public class BookController extends HttpServlet {
      */
     private Result<Void> save(HttpServletRequest request, HttpServletResponse response) throws Exception {
         doPost(request,response);
-
-
-        return null;
+        Integer i = bookService.insertBook(bookDto);
+        Result result = new Result();
     }
 
     /**
@@ -106,7 +109,9 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result update(HttpServletRequest request, HttpServletResponse response) {
+        bookService.updateBook();
         return null;
+
     }
 
     /**
@@ -116,7 +121,8 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result queryOne(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
+        bookService.selectBookById(bookId);
     }
 
     /**
@@ -129,7 +135,7 @@ public class BookController extends HttpServlet {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
         String bookName = request.getAttribute("bookName").toString();
-
+        bookService.selectListByOwnerId();
         return null;
     }
 
@@ -167,7 +173,9 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result delete(HttpServletRequest request, HttpServletResponse response) {
+    private Result delete(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
+        bookService.deleteBook(bookId);
         return null;
     }
 

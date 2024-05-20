@@ -32,11 +32,13 @@ public class BookServiceImpl implements BookService {
     public Integer updateBook(BookVo bookVo) throws SQLException {
         BookInfo bookInfo = new BookInfo();
 
-        bookDao.update(bookInfo);
-        return null;
+        return bookDao.update(bookInfo);
+
     }
 
-
+    public Integer deleteBook(Integer bookId) throws SQLException {
+        return bookDao.delete(bookId);
+    }
 
     @Override
     public List<BookVo> selectList(Integer cur, Integer size) {

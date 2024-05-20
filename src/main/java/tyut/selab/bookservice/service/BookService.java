@@ -34,6 +34,13 @@ public interface BookService {
     public Integer updateBook(BookVo bookVo) throws SQLException;
 
     /**
+     *  删除书籍
+     * @param bookId
+     * @return
+     */
+    public Integer deleteBook(Integer bookId) throws SQLException;
+
+    /**
      * 分页查询所有书籍
      *
      * @return

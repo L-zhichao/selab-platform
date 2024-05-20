@@ -1,5 +1,6 @@
 package tyut.selab.bookservice.dao.impl;
 
+import org.junit.experimental.theories.ParameterSignature;
 import tyut.selab.bookservice.dao.BaseDao;
 import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.domain.BookInfo;
@@ -34,14 +35,24 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     }
 
     @Override
-    public BookInfo selectByBookIdBookInfo(Integer bookId) {
-        String sql = "select bookName userId cur size from book_info where bookId = ?";
-        return null;
+    public Integer delete(Integer bookId) throws SQLException {
+        String sql = "delete from book_info where bookId=?";
+        int param = bookId;
+        return baseDao.baseUpdate(sql,param);
+    }
+
+    @Override
+    public BookInfo selectByBookIdBookInfo(Integer bookId) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where bookId = ?";
+        int param = bookId;
+        return (BookInfo) baseDao.baseQuery(BookInfo.class,sql,param);
     }
 
     @Override
     public List<BookInfo> selectByOwnerBookInfo(Integer userId) {
-        return null;
+        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where userId = ?";
+        int param = userId;
+        return (BookInfo) baseDao.baseQuery(BookInfo.class,sql,param);
     }
 
     @Override
