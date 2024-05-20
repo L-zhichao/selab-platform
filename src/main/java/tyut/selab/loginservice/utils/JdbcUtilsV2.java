@@ -17,7 +17,7 @@ public class JdbcUtilsV2 {
     private static ThreadLocal<Connection> tl = new ThreadLocal<>();
     static{
         Properties properties = new Properties();
-        InputStream ips = JdbcUtilsV2.class.getClassLoader().getResourceAsStream("druid.properties");
+        InputStream ips = JdbcUtilsV2.class.getClassLoader().getResourceAsStream("/resources/druid.properties");
         try {
             properties.load(ips);
         } catch (IOException e) {

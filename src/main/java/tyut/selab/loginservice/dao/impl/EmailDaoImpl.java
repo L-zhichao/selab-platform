@@ -6,6 +6,7 @@ import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.utils.BaseDao;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
     /**
@@ -21,22 +22,27 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
     @Override
     public Integer insert(Email email) {
         //添加email表中的字段为user_id,email,create_time
-        String sql = "insert into email values(null,?,? )";
+        String sql = "insert into email values(?,?,now())";
         int result = 0;
         try {
-            result = executeUpdate(sql,email.getEmail(),email.getCreateTime(),email.getUserId());
+            result = executeUpdate(sql,email.getUserId(),email.getEmail());
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
     }
 
+    /**
+     * 修改Email表信息
+     * @param email
+     * @return
+     */
     @Override
     public Integer update(Email email) {
-        String sql = "update email set email = ?,create_time = ? where user_id = ?";
+        String sql = "update email set email = ?,create_time = now() where user_id = ?";
         int result = 0;
         try {
-            result = executeUpdate(sql,email.getUserId(),email.getEmail(),email.getCreateTime());
+            result = executeUpdate(sql,email.getEmail(),email.getUserId());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -47,8 +53,9 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
     public Integer selectNumForSameEmail(String email) {
         String sql = "select count(*) from email where email = ?";
         int result = 0;
+        List<Integer> integer = null;
         try {
-            result = executeQueryOne(Integer.class,sql,email);
+            integer = executeQuery(Integer.class, sql, email);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
@@ -58,7 +65,7 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        return result;
+        return integer.get(0);
     }
 
     /**
@@ -68,7 +75,7 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
      */
     @Override
     public Integer delete(Integer userId) {
-        //由于我们的user_id是主键递增的，所以我们只要删除email信息的话，就需要重新截断进行存储
+
         return null;
     }
 }

@@ -5,6 +5,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tyut.selab.loginservice.dao.impl.EmailDaoImpl;
+import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.utils.WebUtils;
 import tyut.selab.utils.Result;
@@ -35,7 +37,10 @@ public class LoginController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        register(req,resp);
+//        register(req,resp);
+        EmailDaoImpl emailDao = new EmailDaoImpl();
+        Email email = new Email();email.setEmail("2072349810@qq.com");email.setUserId(1);
+        emailDao.insert(email);
     }
 
     /**

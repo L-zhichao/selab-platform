@@ -13,15 +13,14 @@ import java.util.Date;
 public class Email implements Serializable {
 
     public static final Long serialVersionUID = 1L;
-    private String email;
     private Integer userId;
+    private String email;
     private Date createTime;
     public Email() {
     }
-
-    public Email(String email, Integer userId, Date createTime) {
-        this.email = email;
+    public Email(Integer userId, String email, Date createTime) {
         this.userId = userId;
+        this.email = email;
         this.createTime = createTime;
     }
 
