@@ -3,7 +3,11 @@ package tyut.selab.taskservice.dao.impl;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.domain.TaskReport;
+import tyut.selab.taskservice.myutils.JDBCUtil;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -42,8 +46,9 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @param taskId
      * @return
      */
-    public List<TaskReport> selectByTaskIdTaskReports(Integer taskId){
-
+    public List<TaskReport> selectByTaskIdTaskReports(Integer taskId)  {
+        String sql1="select id from selab_platform where id=?";
+        List<TaskReport> taskReports = baseQuery(TaskReport.class, sql1, taskId);
         return null;
     }
 

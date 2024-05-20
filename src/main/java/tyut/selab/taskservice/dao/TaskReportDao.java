@@ -2,6 +2,7 @@ package tyut.selab.taskservice.dao;
 
 import tyut.selab.taskservice.domain.TaskReport;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public interface TaskReportDao {
      * @param taskId
      * @return
      */
-    List<TaskReport> selectByTaskIdTaskReports(Integer taskId);
+    List<TaskReport> selectByTaskIdTaskReports(Integer taskId) throws SQLException;
 
     /**
      *  通过任务id查询所有汇报用户

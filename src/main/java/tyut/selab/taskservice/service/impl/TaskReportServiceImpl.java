@@ -2,12 +2,14 @@ package tyut.selab.taskservice.service.impl;
 
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
+import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -41,9 +43,10 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @param taskId
      * @return
      */
-    public List<TaskInfoVo> queryAllTask(Integer taskId){
+    public List<TaskReportVo> queryAllTask(Integer taskId) throws SQLException {
         //调用dao层方法
-        taskReportDao.selectByTaskIdTaskReports(taskId);
+        //异常处理
+        List<TaskReport> taskReports = taskReportDao.selectByTaskIdTaskReports(taskId);
         return null;
     }
 

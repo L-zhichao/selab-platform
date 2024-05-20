@@ -19,6 +19,7 @@ import tyut.selab.utils.Result;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -120,7 +121,7 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return List<TaskInfoVo>
      */
-    private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
+    private Result queryAllResport(HttpServletRequest request,HttpServletResponse response) throws SQLException {
        // TaskReportVo taskReportVo = new TaskReportVo();
         //1.0读取参数
         Integer taskid = Integer.parseInt(request.getParameter("taskid"));
@@ -130,7 +131,7 @@ public class TaskReportController extends HttpServlet {
         //3.0调用service方法
         if (taskid!=null){
             //通过id查询任务汇报记录
-            List<TaskInfoVo> taskInfoVos = taskReportService.queryAllTask(taskid);
+            List<TaskReportVo> taskReportVos = taskReportService.queryAllTask(taskid);
         }else {
             //无id?
         }
@@ -140,7 +141,7 @@ public class TaskReportController extends HttpServlet {
            // return Result.error();
         }else {
             //成功返回
-            return Result.success(taskReportVo);
+           // return Result.success(taskReportVo);
         }
         return null;
     }

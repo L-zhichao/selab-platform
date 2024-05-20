@@ -6,6 +6,7 @@ import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public interface TaskReportService {
      * @param taskId
      * @return
      */
-    public List<TaskInfoVo>  queryAllTask(Integer taskId);
+    public List<TaskReportVo>  queryAllTask(Integer taskId) throws SQLException;
 
     /**
      *  通过id查询某一任务汇报数量
