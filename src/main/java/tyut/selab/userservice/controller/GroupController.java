@@ -9,11 +9,10 @@ import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.utils.Result;
 
-import java.io.BufferedReader;
+
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
+
+
 
 /**
  * @className: GroupController
@@ -78,9 +77,7 @@ public class GroupController extends HttpServlet {
         //设置请求体字符集
         req.setCharacterEncoding("UTF-8");
         System.out.println("hello save");
-        GroupDto groupDto = null;
-        String groupName = getString(req);
-        groupDto.setGroupName(groupName);
+       GroupDto groupDto =
         Integer insert = groupService.insert(groupDto);
         return Result.success(insert);
     }
@@ -123,7 +120,7 @@ public class GroupController extends HttpServlet {
         return null;
     }
 
-    public static String getString(HttpServletRequest request) throws IOException {
+    /*public static String getString(HttpServletRequest request) throws IOException {
         BufferedReader reader = request.getReader();
         char[] buf = new char[512];
         int len = 0;
@@ -136,7 +133,7 @@ public class GroupController extends HttpServlet {
             content = "";
         }
         return content;
-    }
+    }*/
 }
 
 

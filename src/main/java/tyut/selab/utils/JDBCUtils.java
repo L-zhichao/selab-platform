@@ -1,6 +1,5 @@
 package tyut.selab.utils;
 
-import com.alibaba.druid.pool.DruidDataSourceFactory;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -11,7 +10,7 @@ import java.util.Properties;
 
 /**封装数据库连接和关闭**/
 public class JDBCUtils {
-    /*public static Connection getConnection() throws Exception{
+    public static Connection getConnection() throws Exception{
         //读取配置文件基本信息
         InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("jdbc.properties");
         Properties pros = new Properties();
@@ -60,7 +59,7 @@ public class JDBCUtils {
         }catch (SQLException e){
             e.printStackTrace();
         }
-    }*/
+    }
 
     private static DataSource ds ;
 
@@ -84,21 +83,5 @@ public class JDBCUtils {
             e.printStackTrace();
         }
     }
-
-
-    //获取连接池对象
-    public static DataSource getDataSource(){
-        return ds;
-    }
-
-
-    //获取连接Connection对象
-    public static Connection getConnection() throws SQLException {
-        return  ds.getConnection();
-    }
-    
-
-
-
 }
 

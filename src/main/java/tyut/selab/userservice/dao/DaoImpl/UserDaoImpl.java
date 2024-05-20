@@ -1,22 +1,13 @@
 package tyut.selab.userservice.dao.DaoImpl;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import tyut.selab.userservice.Dto.UserDto;
-import org.springframework.jdbc.core.JdbcTemplate;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.domain.User;
-import tyut.selab.userservice.vo.UserVo;
-import tyut.selab.utils.JDBCUtils;
-import tyut.selab.utils.JDBCUtils02;
-import tyut.selab.utils.Result;
 
 import java.sql.Connection;
-import java.time.LocalDate;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
@@ -96,7 +87,7 @@ public class UserDaoImpl implements UserDao {
         User user = new User();
 
         try {
-            conn = JDBCUtils.getConnection();
+            //conn = JDBCUtils.getConnection();
             String sql = "select * from sys_user where user_id = ?";
             pstmt.setInt(1,userId);
             resultSet = pstmt.executeQuery();
@@ -132,7 +123,7 @@ public class UserDaoImpl implements UserDao {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
-            JDBCUtils.closeResource(conn,pstmt);
+            //JDBCUtils.closeResource(conn,pstmt);
         }
         return user;
     }
@@ -148,7 +139,7 @@ public class UserDaoImpl implements UserDao {
 
         Connection conn = null;
         try {
-            conn = JDBCUtils.getConnection();
+            //conn = JDBCUtils.getConnection();
             String sql = "select * from sys_user where id = userId";
 
         } catch (Exception e) {
@@ -166,14 +157,14 @@ public class UserDaoImpl implements UserDao {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
-            conn = JDBCUtils.getConnection();
+            //conn = JDBCUtils.getConnection();
             String sql = "select * from sys_user where user_name = ?";
             pstmt.setString(1,userName);
             int count = pstmt.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
-            JDBCUtils.closeResource(conn,pstmt);
+            //JDBCUtils.closeResource(conn,pstmt);
         }
 
 
