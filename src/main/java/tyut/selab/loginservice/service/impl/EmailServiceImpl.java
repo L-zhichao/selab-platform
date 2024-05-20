@@ -15,18 +15,18 @@ public class EmailServiceImpl implements EmailService {
     EmailDaoImpl emailDao = new EmailDaoImpl();
     @Override
     public Integer save(Email email) {
-
-
-        return null;
+        int result = emailDao.insert(email);
+        return result;
     }
-
     @Override
     public Integer update(Email email) {
-        return null;
+        Integer i = emailDao.update(email);
+        return i;
     }
-
     @Override
     public Integer queryNumForSameEmail(String email) {
-        return null;
+        Integer countOfEmail = emailDao.selectNumForSameEmail(email);
+        return countOfEmail;
     }
+
 }
