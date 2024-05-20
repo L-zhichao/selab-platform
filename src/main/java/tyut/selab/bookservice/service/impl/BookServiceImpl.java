@@ -1,5 +1,6 @@
 package tyut.selab.bookservice.service.impl;
 
+import com.alibaba.druid.support.json.JSONParser;
 import com.alibaba.druid.support.json.JSONUtils;
 import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.dao.impl.BookInfoDaoImpl;
@@ -26,8 +27,11 @@ public class BookServiceImpl implements BookService {
     private BookInfoDao bookDao = new BookInfoDaoImpl();
     private UserDao userDao = new UserDaoImpl();
     @Override
-    public Integer insertBook(BookDto bookDto) {
-        return null;
+    public Integer insertBook(BookDto bookDto) throws SQLException {
+        BookInfo bookInfo = new BookInfo();
+        String jsonString = JSONUtils.toJSONString(bookDto);
+        bookInfo = (BookInfo) JSONUtils.parse(jsonString);
+        return bookDao.insert(bookInfo);
     }
 
     @Override
