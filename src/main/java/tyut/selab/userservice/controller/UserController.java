@@ -8,11 +8,11 @@ import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.Result;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
 import java.util.List;

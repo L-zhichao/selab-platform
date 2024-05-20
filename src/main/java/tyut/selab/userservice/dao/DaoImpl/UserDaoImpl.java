@@ -3,12 +3,10 @@ package tyut.selab.userservice.dao.DaoImpl;
 import tyut.selab.userservice.Dto.UserDto;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.domain.User;
-import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.JDBCUtils;
 import tyut.selab.utils.Result;
 
 import java.sql.Connection;
-import java.time.LocalDate;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +16,6 @@ import java.util.List;
 
 public class UserDaoImpl implements UserDao {
 
-    //JdbcTemplate连接数据、库释放资源
 
     /**
      * 增加用户

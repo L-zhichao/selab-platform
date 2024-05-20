@@ -17,7 +17,7 @@ public interface UserDao {
      * 增加用户
      * @return
      */
-    public Integer insertUser();
+    public Integer insertUser(User user);
 
     /**
      *  修改用户
