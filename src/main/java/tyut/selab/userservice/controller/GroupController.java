@@ -77,7 +77,7 @@ public class GroupController extends HttpServlet {
         //设置请求体字符集
         req.setCharacterEncoding("UTF-8");
         System.out.println("hello save");
-       GroupDto groupDto =
+       GroupDto groupDto = null;
         Integer insert = groupService.insert(groupDto);
         return Result.success(insert);
     }
