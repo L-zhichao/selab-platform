@@ -1,13 +1,10 @@
 package tyut.selab.userservice.dao.DaoImpl;
 
-import org.springframework.jdbc.core.JdbcTemplate;
 import tyut.selab.userservice.Dto.UserDto;
-import org.springframework.jdbc.core.JdbcTemplate;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.JDBCUtils;
-import tyut.selab.utils.JDBCUtils02;
 import tyut.selab.utils.Result;
 
 import java.sql.Connection;
@@ -22,7 +19,6 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
 
     //JdbcTemplate连接数据、库释放资源
-    private JdbcTemplate template = new JdbcTemplate(JDBCUtils02.getDataSource());
 
     /**
      * 增加用户
@@ -45,29 +41,42 @@ public class UserDaoImpl implements UserDao {
         //动态sql or 数据回显 ？？？
 
         //判断roleId 管理员修改所用，用户仅自己
-        if (user.getUserId().equals(1) || user.getUserId().equals(2)) {
-            String sql = "UPDATE sys_user SET user_name=?," +
-                    "group_id=?,group_name=?," +
-                    "email=?,phone=?,sex=?,where user_id=?";
-            //调用JdbcTemplate方法，执行sql
-            int rows = template.update(sql, 1,1,1,1,1,1,8);
-            return rows;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        Long userId = user.getUserId();
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "UPDATE sys_user SET user_name=?,group_id=?," +
+                    "group_name=?,email=?,phone=?,sex=?,where user_id=?";
+
+            if (userId.equals(2)) {
+                if (user.getUserName()!=null){
+                    ps.setString(1, user.getUserName());
+                }
+                if (user.getGroupId()!=null){
+                    ps.setLong(2, user.getGroupId());
+                }
+                //updatetime
+                //角色id
+                if (user.getEmail()!=null){
+                    ps.setString(4, user.getEmail());
+                }
+                if (user.getPhone()!=null){
+                    ps.setString(5, user.getPhone());
+                }
+                if (user.getSex()!=null){
+                    ps.setInt(6,user.getSex());
+                }
+                ps.execute(sql);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            JDBCUtils.closeResource(conn,ps);
         }
-        if (user.getUserId().equals(3)) {
-            String sql = "UPDATE sys_user SET user_name=?," +
-                    "group_id=?,group_name=?" +
-                    "email=?,phone=?,sex=? where userid=?";
-            int rows = template.update(sql, 1,1,1,1,1,1,1, user.getUserId());
-            return rows;
-        }
+
         return null;
     }
-    /**
-     * 通过用户id查询用户信息
-     * @param userId
-     * @return
-     */
-
     /**
     * Description: 修改用户权限
     * @param user
@@ -76,9 +85,21 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Integer updateUserRole(User user) {
-        String sql = "UPDATE sys_user SET role_id=? where user_id=?";
-        int rows = template.update(sql,1,user.getUserId());
-        return rows;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "UPDATE sys_user SET role_id=? where user_id=?";
+            ps.setInt(1,user.getRoleId());
+            ps.setLong(2,user.getUserId());
+            ps.execute(sql);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            JDBCUtils.closeResource(conn,ps);
+        }
+
+        return null;
     }
 
     /**
@@ -190,8 +211,20 @@ public class UserDaoImpl implements UserDao {
     */
     @Override
     public Integer deleteByUserId(Integer userId) {
-        String sql = "DELETE FROM sys_user WHERE user_id=?";
-        int rows = template.update(sql,userId);
-        return rows;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "DELETE FROM sys_user WHERE user_id=?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1,userId);
+            ps.execute(sql);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            JDBCUtils.closeResource(conn,ps);
+        }
+
+        return null;
     }
 }

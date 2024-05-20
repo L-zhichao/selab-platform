@@ -12,6 +12,7 @@ public class UserLogoutDaoImpl implements UserLogoutDao {
     @Override
     public Integer insert(UserLogout userLogout) {
         String sql = "INSERT INTO user_logout VALUES(?,?,?,?)";
+
         //如何传递amdin_id,从token获取？
         int rows = template.update(sql,null,userLogout.getUserId(),userLogout.getCreateTime(),1);
         return 0;
