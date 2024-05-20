@@ -22,7 +22,7 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
     @Override
     public Integer insert(Email email) {
         //添加email表中的字段为user_id,email,create_time
-        String sql = "insert into email values(?,?,now())";
+        String sql = "insert into sys_email values(?,?,now())";
         int result = 0;
         try {
             result = executeUpdate(sql,email.getUserId(),email.getEmail());
@@ -39,7 +39,7 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
      */
     @Override
     public Integer update(Email email) {
-        String sql = "update email set email = ?,create_time = now() where user_id = ?";
+        String sql = "update sys_email set email = ?,createTime = now() where userId = ?";
         int result = 0;
         try {
             result = executeUpdate(sql,email.getEmail(),email.getUserId());
@@ -51,7 +51,7 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
 
     @Override
     public Integer selectNumForSameEmail(String email) {
-        String sql = "select count(*) from email where email = ?";
+        String sql = "select count(*) from sys_email where email = ?";
         int result = 0;
         List<Integer> integer = null;
         try {

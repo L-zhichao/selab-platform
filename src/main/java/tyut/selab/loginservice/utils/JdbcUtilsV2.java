@@ -17,29 +17,28 @@ public class JdbcUtilsV2 {
     private static ThreadLocal<Connection> tl = new ThreadLocal<>();
     static{
         Properties properties = new Properties();
-        InputStream ips = JdbcUtilsV2.class.getClassLoader().getResourceAsStream("/resources/druid.properties");
+        InputStream ips = JdbcUtilsV2.class.getClassLoader().getResourceAsStream("druid.properties");
         try {
             properties.load(ips);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         try {
             dataSource = DruidDataSourceFactory.createDataSource(properties);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-
     }
     public static Connection getConnection() throws SQLException {
         Connection connection = tl.get();
-        if(connection == null){
-            connection = dataSource.getConnection();
-            tl.set(connection);
+        if(null == connection){
+            tl.set(dataSource.getConnection());
+            connection = tl.get();
         }
         return connection;
     }
     public static void freeConnection() throws SQLException {
-        if(tl.get()!=null) {
+        if(null != tl.get()) {
             tl.get().setAutoCommit(true);
             tl.get().close();
             tl.remove();
