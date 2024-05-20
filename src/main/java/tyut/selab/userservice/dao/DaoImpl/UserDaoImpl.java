@@ -1,75 +1,50 @@
 package tyut.selab.userservice.dao.DaoImpl;
 
-import org.springframework.jdbc.core.JdbcTemplate;
+import tyut.selab.userservice.Dto.UserDto;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.domain.User;
+import tyut.selab.utils.JDBCUtils;
+import tyut.selab.utils.Result;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
 
-    //JdbcTemplate连接数据、库释放资源
-    private JdbcTemplate template = new JdbcTemplate(JDBCUtils02.getDataSource());
 
     /**
      * 增加用户
      * @return
      */
     @Override
-    public Integer insertUser() {
+    public Integer insertUser(User user) {
+        
+
+
+
+
+
+
         return null;
     }
-
-
-
     /**
-     * Description: 修改用户信息
+     *  修改用户
      * @param user
-     * @return Integer
+     * @return
      */
     @Override
     public Integer updateUser(User user) {
-        //动态sql or 数据回显 ？？？
-
-        //判断roleId 管理员修改所用，用户仅自己
-        if (user.getUserId().equals(1) || user.getUserId().equals(2)) {
-            String sql = "UPDATE sys_user SET user_name=?," +
-                    "group_id=?,group_name=?," +
-                    "email=?,phone=?,sex=?,where user_id=?";
-            //调用JdbcTemplate方法，执行sql
-            int rows = template.update(sql, 1,1,1,1,1,1,8);
-            return rows;
-        }
-        if (user.getUserId().equals(3)) {
-            String sql = "UPDATE sys_user SET user_name=?," +
-                    "group_id=?,group_name=?" +
-                    "email=?,phone=?,sex=? where userid=?";
-            int rows = template.update(sql, 1,1,1,1,1,1,1, user.getUserId());
-            return rows;
-        }
         return null;
     }
-    /**
-     * 通过用户id查询用户信息
-     * @param userId
-     * @return
-     */
-
-    /**
-    * Description: 修改用户权限
-    * @param user
-    * @return Integer
-    */
 
     @Override
     public Integer updateUserRole(User user) {
-        String sql = "UPDATE sys_user SET role_id=? where user_id=?";
-        int rows = template.update(sql,1,user.getUserId());
-        return rows;
+        return null;
     }
 
     /**
@@ -77,7 +52,6 @@ public class UserDaoImpl implements UserDao {
      * @param userId
      * @return
      */
-
     @Override
     public User selectByUserIdUser(Integer userId) {
 
@@ -87,7 +61,7 @@ public class UserDaoImpl implements UserDao {
         User user = new User();
 
         try {
-            //conn = JDBCUtils.getConnection();
+            conn = JDBCUtils.getConnection();
             String sql = "select * from sys_user where user_id = ?";
             pstmt.setInt(1,userId);
             resultSet = pstmt.executeQuery();
@@ -123,7 +97,7 @@ public class UserDaoImpl implements UserDao {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
-            //JDBCUtils.closeResource(conn,pstmt);
+            JDBCUtils.closeResource(conn,pstmt);
         }
         return user;
     }
@@ -139,7 +113,7 @@ public class UserDaoImpl implements UserDao {
 
         Connection conn = null;
         try {
-            //conn = JDBCUtils.getConnection();
+            conn = JDBCUtils.getConnection();
             String sql = "select * from sys_user where id = userId";
 
         } catch (Exception e) {
@@ -157,14 +131,14 @@ public class UserDaoImpl implements UserDao {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
-            //conn = JDBCUtils.getConnection();
+            conn = JDBCUtils.getConnection();
             String sql = "select * from sys_user where user_name = ?";
             pstmt.setString(1,userName);
             int count = pstmt.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
-            //JDBCUtils.closeResource(conn,pstmt);
+            JDBCUtils.closeResource(conn,pstmt);
         }
 
 
@@ -175,14 +149,12 @@ public class UserDaoImpl implements UserDao {
     }
 
     /**
-    * Description: 注销用户
-    * @param userId
-    * @return Integer
-    */
+     *  通过用户id删除用户
+     * @param userId
+     * @return
+     */
     @Override
     public Integer deleteByUserId(Integer userId) {
-        String sql = "DELETE FROM sys_user WHERE user_id=?";
-        int rows = template.update(sql,userId);
-        return rows;
+        return null;
     }
 }
