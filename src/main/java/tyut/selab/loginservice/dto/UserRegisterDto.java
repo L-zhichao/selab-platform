@@ -37,6 +37,10 @@ public class UserRegisterDto implements Serializable {
      * 用户性别
      */
     private Integer sex;
+    /**
+     * 用户密码
+     */
+    private String password;
 
 
     private static final long serialVersionUID = 1L;
@@ -44,12 +48,13 @@ public class UserRegisterDto implements Serializable {
     public UserRegisterDto() {
     }
 
-    public UserRegisterDto(String userName, Integer groupId, String email, String phone, Integer sex) {
+    public UserRegisterDto(String userName, Integer groupId, String email, String phone, Integer sex, String password) {
         this.userName = userName;
         this.groupId = groupId;
         this.email = email;
         this.phone = phone;
         this.sex = sex;
+        this.password=password;
     }
 
     public String getUserName() {
@@ -92,6 +97,14 @@ public class UserRegisterDto implements Serializable {
         this.sex = sex;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "UserRegisterDto{" +
@@ -100,6 +113,7 @@ public class UserRegisterDto implements Serializable {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", sex=" + sex +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

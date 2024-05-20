@@ -1,12 +1,10 @@
 package tyut.selab.loginservice.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
+import tyut.selab.loginservice.service.impl.LoginServiceImpl;
+import tyut.selab.loginservice.utils.MD5util;
 import tyut.selab.loginservice.utils.WebUtils;
 import tyut.selab.utils.Result;
 
@@ -17,6 +15,11 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -120,7 +123,7 @@ public class LoginController extends HttpServlet {
         // 接收要注册的用户信息
         UserRegisterDto registUser = WebUtils.readJson(req, UserRegisterDto.class);
         //实现UserServiceImp类
-        UserServiceImp userService = new UserServiceImp();
+        LoginServiceImpl userService = new LoginServiceImpl();
         // 调用服务层方法,将用户注册进入数据库
         int rows =userService.register(registUser);
         Result result =new Result(null,null);
@@ -144,7 +147,7 @@ public class LoginController extends HttpServlet {
         // 获取要登录的用户名密码
         UserLoginReq inputUser = WebUtils.readJson(req, UserLoginReq.class);
         //实例化UserService
-        UserServiceImp userService = new UserServiceImp();
+        LoginServiceImpl userService = new LoginServiceImpl();
         // 调用服务层方法,根据用户名查询数据库中是否有一个用户
         UserLoginReq loginUser =userService.findByUsername(inputUser.getUsername());
 

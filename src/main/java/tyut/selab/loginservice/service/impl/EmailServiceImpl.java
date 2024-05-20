@@ -2,7 +2,10 @@ package tyut.selab.loginservice.service.impl;
 
 import tyut.selab.loginservice.dao.impl.EmailDaoImpl;
 import tyut.selab.loginservice.domain.Email;
+import tyut.selab.loginservice.dto.UserLoginReq;
+import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.EmailService;
+import tyut.selab.loginservice.service.LoginService;
 
 /**
  * @className: EmailServiceImpl
@@ -13,6 +16,7 @@ import tyut.selab.loginservice.service.EmailService;
  */
 public class EmailServiceImpl implements EmailService {
     EmailDaoImpl emailDao = new EmailDaoImpl();
+
     @Override
     public Integer save(Email email) {
 
@@ -29,4 +33,6 @@ public class EmailServiceImpl implements EmailService {
     public Integer queryNumForSameEmail(String email) {
         return null;
     }
+
 }
+
