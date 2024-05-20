@@ -3,6 +3,7 @@ package tyut.selab.loginservice.dao.impl;
 import tyut.selab.loginservice.common.Constant;
 import tyut.selab.loginservice.dao.EmailDao;
 import tyut.selab.loginservice.domain.Email;
+import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.utils.BaseDao;
 import tyut.selab.userservice.domain.UserLogout;
@@ -23,6 +24,9 @@ public class UserLogoutDao extends BaseDao  {
 
     public Integer insert(UserRegisterDto userRegisterDto) {
 
+        return null;
+    }
+    public UserLoginReq findByUsername(String username){
         return null;
     }
 

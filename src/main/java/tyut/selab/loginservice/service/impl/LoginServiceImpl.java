@@ -27,7 +27,8 @@ public class LoginServiceImpl implements LoginService {
         int rows = userLogoutDao.insert(userRegisterDto);
         return rows;
     }
-    public UserLoginReq findByUsername(String name){
-        return null;
+    public UserLoginReq findByUsername(String username){
+        UserLogoutDao userLogoutDao = new UserLogoutDao();
+        return  userLogoutDao.findByUsername(username);
     }
 }

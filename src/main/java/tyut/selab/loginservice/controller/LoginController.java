@@ -32,6 +32,7 @@ import java.util.Properties;
  */
 @WebServlet(name="LoginController",urlPatterns = {"/login","/register"})
 public class LoginController extends HttpServlet {
+    EmailServiceImpl serviceImpl = new EmailServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.doPost(req,resp);//因为前端发的关于登录的请求都是post类型，所以我们处理Get也用post的方式
@@ -123,7 +124,7 @@ public class LoginController extends HttpServlet {
         // 接收要注册的用户信息
         UserRegisterDto registUser = WebUtils.readJson(req, UserRegisterDto.class);
         //实现UserServiceImp类
-        UserServiceImp userService = new UserServiceImp();
+        LoginServiceImpl userService = new LoginServiceImpl();
         // 调用服务层方法,将用户注册进入数据库
         int rows =userService.register(registUser);
         Result result =new Result(null,null);
@@ -147,7 +148,7 @@ public class LoginController extends HttpServlet {
         // 获取要登录的用户名密码
         UserLoginReq inputUser = WebUtils.readJson(req, UserLoginReq.class);
         //实例化UserService
-        UserServiceImp userService = new UserServiceImp();
+        LoginServiceImpl userService = new LoginServiceImpl();
         // 调用服务层方法,根据用户名查询数据库中是否有一个用户
         UserLoginReq loginUser =userService.findByUsername(inputUser.getUsername());
 
