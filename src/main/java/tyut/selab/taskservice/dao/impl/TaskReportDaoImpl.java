@@ -21,6 +21,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
 
 
     public Integer deleteByPrimaryKey(Long id){
+
         return null;
     }
 
@@ -87,7 +88,11 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @return
      */
     public Integer deleteByReportId(Integer reportId){
-        return null;
+String sql= """
+        DELETE FROM users WHERE reportid = ?;
+        """;
+        Integer i = baseUpdate(sql, reportId);
+        return i;
     }
 
 }

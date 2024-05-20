@@ -47,11 +47,11 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @return
      */
     public List<TaskReportVo> queryAllTask(Integer taskId) throws SQLException {
+        List<TaskReportVo> taskReportVos=new ArrayList<>();
+        BaseDao baseDao=new BaseDao();
         //调用dao层方法
         //异常未处理
         List<TaskReport> taskReports = taskReportDao.selectByTaskIdTaskReports(taskId);
-        List<TaskReportVo> taskReportVos=new ArrayList<>();
-        BaseDao baseDao=new BaseDao();
         //将TaskReport封装成TaskReportVo对象
         for (TaskReport taskReport:taskReports){
             TaskReportVo taskReportVo=new TaskReportVo();

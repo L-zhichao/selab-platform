@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.loginservice.dto.UserLocal;
+import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
+import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.taskservice.service.TaskInfoService;
@@ -130,8 +132,9 @@ public class TaskReportController extends HttpServlet {
         Integer taskid = Integer.parseInt(request.getParameter("taskid"));
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
-        //权限处理 不会
-
+        //权限处理 不会 待细化?????
+        UserLocal userMessage = getUserMessage(request, response);
+        Integer roleId = userMessage.getRoleId();
         //3.0调用service方法
         if (taskid!=null){
             //通过id查询任务汇报记录
@@ -147,7 +150,7 @@ public class TaskReportController extends HttpServlet {
 //返回josn数据
         if (taskReportVos==null){
             //返回错误 ????
-            return Result.error(204,"操作已经执行成功，但是没有返回数据");
+            return Result.error(HttpStatus.NO_CONTENT,"操作已经执行成功，但是没有返回数据");
 
         }else {
             //成功返回
@@ -162,16 +165,32 @@ public class TaskReportController extends HttpServlet {
      * @param request
      * @param response
      * @return
+     * 直接将汇报记录删除了，并不是逻辑删除(表中没用状态列,所以直接删了)
      */
     private Result delete(HttpServletRequest request,HttpServletResponse response){
+        TaskReportDaoImpl taskReportDao=new TaskReportDaoImpl();
         //权限判断:只有管理员才能进行删除操作
-
+        UserLocal userMessage = getUserMessage(request, response);
+        Integer roleId = userMessage.getRoleId();
         //读取参数
         Integer reportid = Integer.parseInt(request.getParameter("reportid"));
-        int cur = Integer.parseInt(request.getParameter("cur"));
-        int size = Integer.parseInt(request.getParameter("size"));
-
-        return null;}
+        //权限判断
+        if (roleId == 3 ){
+            return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能删除汇报记录");
+        }else {
+            //直接调用dao方法
+            Integer i = taskReportDao.deleteByReportId(reportid);
+            //检查执行结果
+            if (i==1){
+                //成功找到任务，并且完成删除操作
+                WebUtil.writeJson(response,resultMaker);
+                return resultMaker;
+            }else {
+                //未找到
+                return Result.error(HttpStatus.NOT_FOUND,"未找到该汇报记录");
+            }
+        }
+        }
 
     /**
      *  查询所有需要汇报的用户
@@ -181,6 +200,30 @@ public class TaskReportController extends HttpServlet {
      * @return List<TaskReportVo>
      */
     private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response){
-        return null;}
+        List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
+        //权限判断 未完成
+        UserLocal userMessage = getUserMessage(request, response);
+        Integer roleId = userMessage.getRoleId();
+
+        //读取参数
+        Integer taskid = Integer.parseInt(request.getParameter("taskid"));
+        int cur = Integer.parseInt(request.getParameter("cur"));
+        int size = Integer.parseInt(request.getParameter("size"));
+
+
+        return Result.success(taskReportVos);}
+    /**
+     * 非业务接口方法
+     * 进行身份认定，返回用户的身份信息
+     * @param request
+     * @param response
+     * @return 返回一个UserLocal对象
+     *  user 中的 roleId   1 标识超级管理员，返回 2 标识管理员，返回 3 表示普通用户
+     */
+    private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
+        String authorization = request.getHeader("Authorization");
+        UserLocal user = SecurityUtil.getUser(authorization);
+        return user;
+    }
 }
 
