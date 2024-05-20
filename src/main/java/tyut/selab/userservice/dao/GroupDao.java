@@ -4,6 +4,7 @@ import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.vo.GroupVo;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 public interface GroupDao {
 
 
-    public Integer insert(Group group);
+    public Integer insert(Group group) throws SQLException;
 
     public Integer delete(Integer groupId);
 

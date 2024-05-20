@@ -1,17 +1,22 @@
 package tyut.selab.userservice.controller;
 
+import com.alibaba.fastjson.JSON;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.service.GroupService;
+import tyut.selab.userservice.service.ServiceImpl.GroupServiceImpl;
 import tyut.selab.utils.Result;
 
-
+import java.io.BufferedReader;
 import java.io.IOException;
-
+import java.io.InputStreamReader;
+import java.sql.SQLException;
+import java.util.stream.Collectors;
 
 
 /**
@@ -24,7 +29,7 @@ import java.io.IOException;
 
 @WebServlet("/group/*")
 public class GroupController extends HttpServlet {
-    private GroupService groupService;
+    private GroupService groupService = new GroupServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,10 +37,10 @@ public class GroupController extends HttpServlet {
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName = split[split.length - 1];
-        if(methodName.equals("delete")){
-            delete(req,resp);
+        if (methodName.equals("delete")) {
+            delete(req, resp);
         } else if (methodName.equals("queryAllGroup")) {
-            queryAllGroup(req,resp);
+            queryAllGroup(req, resp);
         }
 //        PrintWriter out = resp.getWriter();
 //        out.write("还是牛掰");
@@ -44,21 +49,30 @@ public class GroupController extends HttpServlet {
 //        super.doGet(req, resp);
 
 
-
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)  {
         //super.doPost(req, resp);
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName = split[split.length - 1];
-        if(methodName.equals("save")){
-            save(req,resp);
+        if (methodName.equals("save")) {
+            try {
+                save(req, resp);
+            } catch (ServletException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
         } else if (methodName.equals("update")) {
-            update(req,resp);
-        }
-        else{
+            update(req, resp);
+        } else {
 
         }
 
@@ -73,12 +87,12 @@ public class GroupController extends HttpServlet {
      * @param resp POST
      * @return
      */
-    public Result save(HttpServletRequest req, HttpServletResponse resp) throws ServletException ,IOException{
+    public Result save(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException, ClassNotFoundException {
         //设置请求体字符集
         req.setCharacterEncoding("UTF-8");
-        System.out.println("hello save");
-       GroupDto groupDto =
-        Integer insert = groupService.insert(groupDto);
+        String jsonData = req.getReader().lines().collect(Collectors.joining());
+        GroupDto groupDto = JSON.parseObject(jsonData,GroupDto.class);
+        int insert = groupService.insert(groupDto);
         return Result.success(insert);
     }
 
@@ -134,6 +148,7 @@ public class GroupController extends HttpServlet {
         }
         return content;
     }*/
+
 }
 
 

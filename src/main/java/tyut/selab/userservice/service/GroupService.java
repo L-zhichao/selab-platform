@@ -5,11 +5,12 @@ import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.vo.GroupVo;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface GroupService {
 
-    public Integer insert(GroupDto groupDto);
+    public Integer insert(GroupDto groupDto) throws SQLException;
 
 
     public Integer delete(Integer groupId);

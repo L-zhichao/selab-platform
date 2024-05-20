@@ -8,9 +8,15 @@
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="javax.activation-api-1.2.0" />
+          <element id="library" level="project" name="jakarta.servlet-api-6.0.0" />
+          <element id="library" level="project" name="servlet-api" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/druid-1.1.12.jar" />
+          <element id="library" level="project" name="fastjson-1.2.83" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="selab-platform/web/Web" />
+      <element id="javaee-facet-resources" facet="selab-platform/web/Web2" />
+      <element id="javaee-facet-resources" facet="selab-platform/javaeeApplication/javaEEApplication" />
     </root>
   </artifact>
 </component>
