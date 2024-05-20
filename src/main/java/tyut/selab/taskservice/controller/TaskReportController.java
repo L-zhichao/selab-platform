@@ -9,6 +9,7 @@ import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.taskservice.service.TaskInfoService;
+import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.service.impl.TaskReportServiceImpl;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
 import tyut.selab.utils.Result;
@@ -29,7 +30,7 @@ import java.util.Enumeration;
 public class TaskReportController extends HttpServlet {
 
     private Result resultMaker = new Result(HttpStatus.SUCCESS,null);
-    private TaskInfoService taskInfoService = (TaskInfoService) new TaskReportServiceImpl();
+    private TaskReportService taskReportService =new TaskReportServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // 响应的MIME类型和乱码问题
