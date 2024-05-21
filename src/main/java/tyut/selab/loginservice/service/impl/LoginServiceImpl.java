@@ -22,7 +22,5 @@ public class LoginServiceImpl implements LoginService {
     public Integer register(UserRegisterDto userRegisterDto) {
         return null;
     }
-    public UserLoginReq findByUsername(String username){
-        return null;
-    }
+
 }
