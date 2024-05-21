@@ -6,9 +6,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Test;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
+import tyut.selab.taskservice.dao.impl.TaskInfoDaoImpl;
+import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.taskservice.service.TaskInfoService;
@@ -394,14 +397,28 @@ public class TaskController extends HttpServlet {
      * @return
      */
     private Result delete(HttpServletRequest request,HttpServletResponse response){
-//        //从请求中获取taskId
-//       String taskId= request.getParameter("taskId");
-//        if (taskId == null || taskId.isEmpty()) {
-//            // 如果 taskId 为空或不存在，返回错误结果
-//            return resultMaker.error(resultMaker.getCode(), resultMaker.getMsg());
-//        }
-//        else return resultMaker;
-        return null;
+        //从请求中获取taskId
+       String taskId= request.getParameter("taskId");
+       Integer id=Integer.valueOf(taskId);
+
+        // 如果 taskId 为空或不存在，返回错误信息
+        if (taskId == null || taskId.isEmpty()) {
+            return Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
+        }
+
+        //执行删除任务的逻辑
+        TaskInfo taskInfo = new TaskInfo();
+        taskInfo.setDelFlag(taskInfoService.delete(id));
+        Integer delFlag= taskInfo.getDelFlag();
+
+        //根据操作结果构造Result对象并返回
+        if(delFlag!=null){
+            return Result.success(null);
+        }else{
+            return Result.error(HttpStatus.NOT_FOUND, "删除任务失败");
+        }
+
+
     }
 
 
@@ -420,3 +437,4 @@ public class TaskController extends HttpServlet {
         return user;
     }
 }
+

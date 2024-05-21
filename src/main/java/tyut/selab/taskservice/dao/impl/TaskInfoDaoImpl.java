@@ -27,7 +27,7 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
         //参数主键id就是任务id
 
         String sql="delete from task_info where id=?";
-        int row = baseUpdate(sql,new TaskInfo().getId());
+        Integer row = baseUpdate(sql,new TaskInfo().getId());
         //返回受影响行数
         return row;
     }
