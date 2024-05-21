@@ -9,12 +9,14 @@ import java.util.Date;
  */
 public class BorrowBook implements Serializable {
 
-
+    private int borrowId;
 
     /**
      * book_id
      */
-    private Long bookId;
+    private Integer bookId;
+
+    private Integer borrowUser;
 
     /**
      * 借阅时长(已天为单位)
@@ -22,6 +24,9 @@ public class BorrowBook implements Serializable {
     private Integer borrowDuration;
 
 
+    private Integer status;
+
+    private Date borrowTime;
     /**
      * 归还时间
      */
@@ -34,14 +39,14 @@ public class BorrowBook implements Serializable {
     /**
      * book_id
      */
-    public Long getBookId() {
+    public Integer getBookId() {
         return bookId;
     }
 
     /**
      * book_id
      */
-    public void setBookId(Long bookId) {
+    public void setBookId(Integer bookId) {
         this.bookId = bookId;
     }
 
@@ -117,5 +122,37 @@ public class BorrowBook implements Serializable {
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
+    }
+
+    public int getBorrowId() {
+        return borrowId;
+    }
+
+    public void setBorrowId(Integer borrowId) {
+        this.borrowId = borrowId;
+    }
+
+    public Integer getBorrowUser() {
+        return borrowUser;
+    }
+
+    public void setBorrowUser(Integer borrowUser) {
+        this.borrowUser = borrowUser;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Date getBorrowTime() {
+        return borrowTime;
+    }
+
+    public void setBorrowTime(Date borrowTime) {
+        this.borrowTime = borrowTime;
     }
 }
