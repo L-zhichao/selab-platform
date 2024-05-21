@@ -8,6 +8,7 @@ import tyut.selab.taskservice.myutils.JDBCUtil;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,18 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @return
      */
     public Integer insert(TaskReport record){
-        return null;
+        String sql1="select report_id from task_report where task_id=? and user_id=? and report_status=? and details=? and create_time=?";
+        String sql="INSERT INTO task_reports (task_id, user_id, report_status, details, create_time) VALUES (?, ?, ?, ?, ?)";
+
+        Object[] report =new Object[]{
+                record.getTaskId(),
+                record.getUserId(),
+                record.getReportStatus(),
+                record.getDetails(),
+                record.getCreateTime()
+        };
+
+        return baseUpdate(sql,report);
     }
 
     /**
