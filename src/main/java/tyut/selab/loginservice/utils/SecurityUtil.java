@@ -12,7 +12,7 @@ import tyut.selab.loginservice.dto.UserLocal;
 public class SecurityUtil {
 
 
-    public static UserLocal getUser(String token){
+    public static UserLocal getUser(){
         return null;
     }
 
