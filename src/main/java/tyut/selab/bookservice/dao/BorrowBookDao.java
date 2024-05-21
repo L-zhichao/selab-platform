@@ -45,7 +45,13 @@ public interface BorrowBookDao {
      * @param bookId
      * @return
      */
-    public List<BorrowBook> selectAllByBookId(Integer bookId);
+    public List<BorrowBook> selectAllByBookId(Integer bookId,Integer cur,Integer size);
+
+    public List<BorrowBook> selectAllByUserId(Integer userId,Integer cur,Integer size);
+
+    public List<BorrowBook> selectAll(Integer cur, Integer size);
+
+//    public List<BorrowBook> selectAllByBookId(Integer bookId);
 }
 
 
