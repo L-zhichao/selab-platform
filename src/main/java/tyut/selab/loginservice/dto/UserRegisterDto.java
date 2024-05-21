@@ -15,6 +15,7 @@ public class UserRegisterDto implements Serializable {
      * 用户名称
      */
     private String userName;
+    private String password;
 
     /**
      * 用户所属小组编号
@@ -92,10 +93,17 @@ public class UserRegisterDto implements Serializable {
         this.sex = sex;
     }
 
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
     @Override
     public String toString() {
         return "UserRegisterDto{" +
                 "userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
                 ", groupId=" + groupId +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
