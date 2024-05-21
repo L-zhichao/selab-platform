@@ -60,13 +60,7 @@ public class GroupController extends HttpServlet {
         if (methodName.equals("save")) {
             try {
                 save(req, resp);
-            } catch (ServletException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
@@ -87,7 +81,7 @@ public class GroupController extends HttpServlet {
      * @param resp POST
      * @return
      */
-    public Result save(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException, ClassNotFoundException {
+    public Result save(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         //设置请求体字符集
         req.setCharacterEncoding("UTF-8");
         String jsonData = req.getReader().lines().collect(Collectors.joining());

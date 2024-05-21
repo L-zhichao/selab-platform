@@ -146,7 +146,7 @@ public class UserDaoImpl implements UserDao {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
-            JDBCUtils.release(conn,pstmt);
+            JDBCUtils.closeResource(conn,pstmt);
         }
         return user;
     }
@@ -187,7 +187,7 @@ public class UserDaoImpl implements UserDao {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
-            JDBCUtils.release(conn,pstmt);
+            JDBCUtils.closeResource(conn,pstmt);
         }
 
 

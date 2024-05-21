@@ -18,7 +18,7 @@ import java.util.List;
 public class GroupServiceImpl implements GroupService {
     private GroupDao groupDao = new GroupDaoImpl();
     @Override
-    public Integer insert(GroupDto groupDto) throws SQLException {
+    public Integer insert(GroupDto groupDto) throws Exception {
 
         Group group = new Group();
         group.setGroupName(groupDto.getGroupName());

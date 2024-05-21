@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface GroupService {
 
-    public Integer insert(GroupDto groupDto) throws SQLException;
+    public Integer insert(GroupDto groupDto) throws Exception;
 
 
     public Integer delete(Integer groupId);

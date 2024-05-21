@@ -13,11 +13,11 @@ import java.util.Properties;
 public class JDBCUtils {
     public static Connection getConnection() throws Exception{
         //读取配置文件基本信息
-        InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("jdbc.properties");
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties");
         Properties pros = new Properties();
         pros.load(is);
 
-        String username = pros.getProperty("user");
+        String username = pros.getProperty("username");
         String password = pros.getProperty("password");
         String url = pros.getProperty("url");
         String driverClassName = pros.getProperty("driver-class-name");

@@ -13,31 +13,25 @@ public class GroupDaoImpl implements GroupDao {
 
 
     @Override
-    public Integer insert(Group group) {
-        Connection conn = null;
-        PreparedStatement preparedStatement = null;
+    public Integer insert(Group group) throws Exception {
+        Connection conn = JDBCUtils.getConnection();
         String groupName = group.getGroupName();
         Integer parentId = group.getParentIdId();
-        Date createTime = group.getCreateTime();
-        Date updateTime = group.getUpdateTime();
+//        Date createTime = group.getCreateTime();
+//        Date updateTime = group.getUpdateTime();
+        java.util.Date date = new java.util.Date();
         Integer updateUser = group.getUpdateUser();
-        try {
-            conn = JDBCUtils.getConnection();
-            String sql = "INSERT INTO sys_group (parent_id,group_name, create_time, update_time, update_user, del_flag )\n" +
-                    "VALUES\n" +
-                    "\t( ?,?,?,?,?,0 )";
-            preparedStatement.setInt(2,parentId);
-            preparedStatement.setString(3,groupName);
-            preparedStatement.setDate(4, (java.sql.Date) createTime);
-            preparedStatement.setDate(5, (java.sql.Date) updateTime);
-            preparedStatement.setInt(6,updateUser);
-            preparedStatement.execute(sql);
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }finally {
-            JDBCUtils.closeResource(conn,preparedStatement);
-        }
+        String sql = "INSERT INTO sys_group (parent_id,group_name, create_time, update_time, update_user, del_flag ) VALUES ( 1,'fufu','2024-05-21 12:03:12','2024-05-21 12:03:12',2,0 )";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+//        preparedStatement.setInt(1, parentId);
+//        preparedStatement.setString(2, groupName);
+//        preparedStatement.setDate(3,  new java.sql.Date(date.getTime()));
+//        preparedStatement.setDate(4,  new java.sql.Date(date.getTime()));
+//        preparedStatement.setInt(5, updateUser);
+        preparedStatement.execute(sql);
+        JDBCUtils.closeResource(conn, preparedStatement);
+
         return null;
     }
 
