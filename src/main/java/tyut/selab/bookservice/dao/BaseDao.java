@@ -1,6 +1,6 @@
 package tyut.selab.bookservice.dao;
 
-import tyut.selab.utils.JDBCUtil;
+import tyut.selab.utils.JdbcUtil;
 import tyut.selab.utils.JdbcUtil;
 
 import java.lang.reflect.Field;

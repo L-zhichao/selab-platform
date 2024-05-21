@@ -53,7 +53,7 @@ public interface BookInfoDao {
      * 查询所有书籍
      * @return
      */
-    public List<BookInfo> selectAll(Integer cur, Integer size);
+    public List<BookInfo> selectAll(Integer cur, Integer size) throws SQLException;
 
     /**
      * 通过书籍名称<模糊查询>书籍信息

@@ -46,18 +46,18 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     public BookInfo selectByBookIdBookInfo(Integer bookId) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
         String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where bookId = ?";
         int param = bookId;
-        return (BookInfo) baseDao.baseQuery(BookInfo.class,sql,param);
+        return baseDao.baseQueryObject(BookInfo.class,sql,param);
     }
 
     @Override
-    public List<BookInfo> selectByOwnerBookInfo(Integer userId) {
+    public List<BookInfo> selectByOwnerBookInfo(Integer userId) throws SQLException {
         String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where userId = ?";
         int param = userId;
-        return (BookInfo) baseDao.baseQuery(BookInfo.class,sql,param);
+        return baseDao.baseQuery(BookInfo.class,sql,param);
     }
 
     @Override
-    public List<BookInfo> selectAll(Integer cur, Integer size) {
+    public List<BookInfo> selectAll(Integer cur, Integer size) throws SQLException {
         String sql = "select t1.book_id bookId,t1.book_name bookName,t1.book_author bookAuthor,t1.book_details bookDetails,t1.price,t1.owner owner,t1.status status,t1.create_time createTime,t1.update_time updateTime,t1.book_ref bookRef from Book_info t1 limit ";
         int index = (cur - 1) * size;
         sql += index + "," + size + ";";

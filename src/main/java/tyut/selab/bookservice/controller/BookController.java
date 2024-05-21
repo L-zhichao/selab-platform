@@ -112,11 +112,12 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result update(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+    private Result update(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        doPost(request,response);
         // 把Java对象转换成字符串
-        String json = (String) JSONObject.toJSON(bookDto);
+        String json = JSON.toJSONString(bookDto);
         // 再把字符串转换为Java对象
-        BookVo bookVo = JSONObject.parseObject(json, BookVo.class);
+        BookVo bookVo = JSON.parseObject(json, BookVo.class);
         Integer i = bookService.updateBook(bookVo);
         return null;
     }
@@ -128,6 +129,7 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result queryOne(HttpServletRequest request, HttpServletResponse response) {
+
         return null;
     }
 

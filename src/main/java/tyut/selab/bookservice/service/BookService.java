@@ -52,7 +52,7 @@ public interface BookService {
      * @param bookId 书籍id
      * @return
      */
-    public BookVo selectBookById(Integer bookId);
+    public BookVo selectBookById(Integer bookId) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 
     /**
      *   通过书籍名称查询书籍信息(支持模糊查询)
