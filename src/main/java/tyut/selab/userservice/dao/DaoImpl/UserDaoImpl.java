@@ -21,29 +21,77 @@ public class UserDaoImpl implements UserDao {
      * 增加用户
      * @return
      */
+
     @Override
     public Integer insertUser(User user) {
-        
-
-
-
-
-
-
-        return null;
+        return 0;
     }
+
     /**
-     *  修改用户
+     * Description: 修改用户信息
      * @param user
-     * @return
+     * @return Integer
      */
     @Override
     public Integer updateUser(User user) {
-        return null;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        Integer userId = Math.toIntExact(user.getUserId());
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "UPDATE sys_user SET user_name=?,group_id=?," +
+                    "group_name=?,email=?,phone=?,sex=?,where user_id=?";
+
+            if (userId.equals(2)) {
+                if (user.getUserName()!=null){
+                    ps.setString(1, user.getUserName());
+                }
+                if (user.getGroupId()!=null){
+                    ps.setLong(2, user.getGroupId());
+                }
+                //updatetime
+                //角色id
+                if (user.getEmail()!=null){
+                    ps.setString(4, user.getEmail());
+                }
+                if (user.getPhone()!=null){
+                    ps.setString(5, user.getPhone());
+                }
+                if (user.getSex()!=null){
+                    ps.setInt(6,user.getSex());
+                }
+                ps.execute(sql);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            JDBCUtils.closeResource(conn,ps);
+        }
+
+        return userId;
     }
+    /**
+    * Description: 修改用户权限
+    * @param user
+    * @return Integer
+    */
 
     @Override
     public Integer updateUserRole(User user) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "UPDATE sys_user SET role_id=? where user_id=?";
+            ps.setInt(1,user.getRoleId());
+            ps.setLong(2,user.getUserId());
+            ps.execute(sql);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            JDBCUtils.closeResource(conn,ps);
+        }
+
         return null;
     }
 
@@ -52,6 +100,7 @@ public class UserDaoImpl implements UserDao {
      * @param userId
      * @return
      */
+
     @Override
     public User selectByUserIdUser(Integer userId) {
 
@@ -149,12 +198,26 @@ public class UserDaoImpl implements UserDao {
     }
 
     /**
-     *  通过用户id删除用户
-     * @param userId
-     * @return
-     */
+    * Description: 注销用户
+    * @param userId
+    * @return Integer
+    */
     @Override
     public Integer deleteByUserId(Integer userId) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "DELETE FROM sys_user WHERE user_id=?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1,userId);
+            ps.execute(sql);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            JDBCUtils.closeResource(conn,ps);
+        }
+
         return null;
     }
 }
