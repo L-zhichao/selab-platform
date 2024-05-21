@@ -6,11 +6,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.Test;
 import tyut.selab.loginservice.dto.UserLocal;
-import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
-import tyut.selab.taskservice.dao.impl.TaskInfoDaoImpl;
 import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.myutils.WebUtil;
@@ -32,84 +29,12 @@ public class TaskController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //权限判断的,用于获取用户身份
-//        String authorization = req.getHeader("Authorization");
-//        System.out.println("Bear d 权限校验");
-//        UserLocal user = SecurityUtil.getUser(authorization);
-
-        // 响应的MIME类型和乱码问题
-        resp.setContentType("application/json;charset=UTF-8");
-
-        String requestURI = req.getRequestURI();
-        String[] split = requestURI.split("/");
-        System.out.println(requestURI);
-
-        String methodName = split[split.length - 1];
-        // 通过反射获取要执行的方法
-        Class clazz = this.getClass();
-        Result result = null;
-        try {
-            Method method = clazz.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
-            // 设置方法可以访问
-            method.setAccessible(true);
-            // 通过反射执行代码
-            result = (Result) method.invoke(this, req, resp);
-            WebUtil.writeJson(resp, result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = Result.error(HttpStatus.NOT_FOUND, "未找到该接口");
-            WebUtil.writeJson(resp, result);
-        }
-
+        findMethod(req,resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 响应的MIME类型和乱码问题
-        resp.setContentType("application/json;charset=UTF-8");
-
-        String requestURI = req.getRequestURI();
-        String[] split = requestURI.split("/");
-        try {
-            //如果没有报错，就说明最后的一个参数是数字。
-            Integer.parseInt(split[split.length - 1]);
-
-            String methodName =split[split.length - 2];
-            // 通过反射获取要执行的方法
-            Class clazz = this.getClass();
-            Result result = null;
-            try {
-                Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
-                // 设置方法可以访问
-                method.setAccessible(true);
-                // 通过反射执行代码
-                result = (Result) method.invoke(this,req,resp);
-                WebUtil.writeJson(resp,result);
-            } catch (Exception e2) {
-                e2.printStackTrace();
-                result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
-                WebUtil.writeJson(resp,result);
-            }
-        }catch(Exception e1) {
-            //如果最后一个参数不是数字的话执行下面的方法
-            String methodName =split[split.length-1];
-            // 通过反射获取要执行的方法
-            Class clazz = this.getClass();
-            Result result = null;
-            try {
-                Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
-                // 设置方法可以访问
-                method.setAccessible(true);
-                // 通过反射执行代码
-                result = (Result) method.invoke(this,req,resp);
-                WebUtil.writeJson(resp,result);
-            } catch (Exception e2) {
-                e2.printStackTrace();
-                result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
-                WebUtil.writeJson(resp,result);
-            }
-        }
-
+        findMethod(req,resp);
     }
 
     /**
@@ -126,10 +51,6 @@ public class TaskController extends HttpServlet {
         if (roleId == 3 ){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能发布任务");
         }
-        //
-        //
-        //
-        //
 
         //相同的用户发布的任务最大个数应该有限制，超级管理员没有此限制
         if (roleId == 2){
@@ -142,10 +63,6 @@ public class TaskController extends HttpServlet {
             }
         }
 
-        //相关的一些接口功能上是否有线程安全问题？
-        //
-        //
-        //
         //保存和修改任务的时候，截至时间是不是应该比当前时间多
         Date dealTime = taskInfoDto.getDealTime();
         Date date = new Date();
@@ -188,13 +105,13 @@ public class TaskController extends HttpServlet {
        //传参数的话，超级管理员看到的是某个人的任务，管理员看到的只是自己的任务
 
        //获取请求用户的相关信息
-//       UserLocal userMessage = getUserMessage(request, response);
-//       Integer roleId = userMessage.getRoleId();
-//       String userName = userMessage.getUserName();
-//
-//       if (roleId == 3 ){
-//           return Result.error(HttpStatus.UNAUTHORIZED,"普通用户没有发布的任务");
-//       }
+       UserLocal userMessage = getUserMessage(request, response);
+       Integer roleId = userMessage.getRoleId();
+       String userName = userMessage.getUserName();
+
+       if (roleId == 3 ){
+           return Result.error(HttpStatus.UNAUTHORIZED,"普通用户没有发布的任务");
+       }
        //
        //
        //
@@ -210,21 +127,21 @@ public class TaskController extends HttpServlet {
            List<TaskInfoVo> taskInfoVosOrigin = taskInfoService.queryAllTask();
 
            //判断管理员的权限。超级管理员就查看所有，普通管理员就查看自己的
-//           List<TaskInfoVo> taskInfoVos = new ArrayList<>();
-//           if (roleId == 1){
-//               taskInfoVos = taskInfoVosOrigin;
-//           }else {
-//               for (TaskInfoVo taskInfoVo : taskInfoVosOrigin) {
-//                   if (taskInfoVo.getPublisherName().equals(userName)){
-//                       taskInfoVos.add(taskInfoVo);
-//                   }
-//               }
-//           }
+           List<TaskInfoVo> taskInfoVos = new ArrayList<>();
+           if (roleId == 1){
+               taskInfoVos = taskInfoVosOrigin;
+           }else {
+               for (TaskInfoVo taskInfoVo : taskInfoVosOrigin) {
+                   if (taskInfoVo.getPublisherName().equals(userName)){
+                       taskInfoVos.add(taskInfoVo);
+                   }
+               }
+           }
            //
            //
            //
            //
-           List<TaskInfoVo> taskInfoVos = taskInfoVosOrigin;
+//           List<TaskInfoVo> taskInfoVos = taskInfoVosOrigin;
 
            //判断前端查询的页面是否存在，如果不存在，返回空集合
            int beginIndex = (cur - 1) * size;
@@ -244,22 +161,22 @@ public class TaskController extends HttpServlet {
            List<TaskInfoVo> taskInfoVosOrigin = taskInfoService.queryTaskInfoBypublish(publisherName);
 
            //判断管理员的权限。如果是超级管理员就能查别人发布的任务，如果是普通管理员就只能查看自己发布的任务
-//           List<TaskInfoVo> taskInfoVos = new ArrayList<>();
-//           if (roleId == 1 ){
-//               taskInfoVos = taskInfoVosOrigin;
-//           }else{
-//               //判断所差的管理员名称和请求管理员是否相同
-//               if (userName.equals(publisherName)){
-//                   taskInfoVos = taskInfoVosOrigin;
-//               }else{
-//                   return Result.error(HttpStatus.UNAUTHORIZED,"普通管理员不能查看其他管理员发布的任务");
-//               }
-//           }
+           List<TaskInfoVo> taskInfoVos = new ArrayList<>();
+           if (roleId == 1 ){
+               taskInfoVos = taskInfoVosOrigin;
+           }else{
+               //判断所差的管理员名称和请求管理员是否相同
+               if (userName.equals(publisherName)){
+                   taskInfoVos = taskInfoVosOrigin;
+               }else{
+                   return Result.error(HttpStatus.UNAUTHORIZED,"普通管理员不能查看其他管理员发布的任务");
+               }
+           }
            //
            //
            //
            //
-           List<TaskInfoVo> taskInfoVos = taskInfoVosOrigin;
+//           List<TaskInfoVo> taskInfoVos = taskInfoVosOrigin;
 
            //判断前端查询的页面是否存在，如果不存在，返回空集合
            int beginIndex = (cur - 1) * size;
@@ -295,13 +212,13 @@ public class TaskController extends HttpServlet {
 
 
       //如果不是任务发布者或者是超级管理员的话，权限不够禁止修改
-//      UserLocal loginUser = getUserMessage(request, response);
-//      Integer roleId = loginUser.getRoleId();
-//      String userName = loginUser.getUserName();
-//      TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
-//      if (!(taskInfoVo.getPublisherName().equals(userName)) && roleId != 1){
-//          return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止修改");
-//      }
+      UserLocal loginUser = getUserMessage(request, response);
+      Integer roleId = loginUser.getRoleId();
+      String userName = loginUser.getUserName();
+      TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
+      if (!(taskInfoVo.getPublisherName().equals(userName)) && roleId != 1){
+          return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止修改");
+      }
       //
       //
       //
@@ -339,53 +256,53 @@ public class TaskController extends HttpServlet {
         }
 
 //        //权限问题，超级管理员能查询所有的任务id，管理员只能查看自己发布的任务，用户只能查看自己接收的任务
-//        //
-//        boolean flag = false;
-//        //获取请求用户的相关信息
-//        UserLocal userMessage = getUserMessage(request, response);
-//        Integer roleId = userMessage.getRoleId();
-//        String userName = userMessage.getUserName();
-//        //判断请求用户是否为超级管理员
-//        if (roleId == 1 ){
-//            flag = true;
-//        }
-//        if(!flag) {
-//            //判断请求用户的查询任务是否是该用户所接取的任务之一
-//            Integer userId = userMessage.getUserId();
-//            //未实现，等别人写完queryTaskInfoByUserId接口后再写
-//            //查询用户收到的信息
-//                //查询用户所在的小组
-//                //查小组对应的任务id
-//                //查询task_info表格返回taskinfo对象
-//                //将查询到的taskinfo对象封装成一个taskinfovo对象，放在list集合中返回
-//            List<TaskInfoVo> taskInfoVos1 = taskInfoService.queryTaskInfoByUserId(userId);
-//            for (TaskInfoVo taskInfoVo1 : taskInfoVos1) {
-//                if (taskInfoVo1.getId() == taskId) {
-//                    flag = true;
-//                }
-//            }
-//        }
-//        if (!flag){
-//            //判断请求用户是否为任务的发布者
-//            List<TaskInfoVo> taskInfoVos2 = taskInfoService.queryTaskInfoBypublish(userName);
-//            for (TaskInfoVo taskInfoVo2 : taskInfoVos2) {
-//                if (taskInfoVo2.getId() == taskId) {
-//                    flag = true;
-//                }
-//            }
-//        }
-//
-//
-//        if (flag){
-//            return Result.success(taskInfoVo);
-//        }else{
-//            return Result.error(HttpStatus.UNAUTHORIZED,"权限不允许查询");
-//        }
+        //
+        boolean flag = false;
+        //获取请求用户的相关信息
+        UserLocal userMessage = getUserMessage(request, response);
+        Integer roleId = userMessage.getRoleId();
+        String userName = userMessage.getUserName();
+        //判断请求用户是否为超级管理员
+        if (roleId == 1 ){
+            flag = true;
+        }
+        if(!flag) {
+            //判断请求用户的查询任务是否是该用户所接取的任务之一
+            Integer userId = userMessage.getUserId();
+            //未实现，等别人写完queryTaskInfoByUserId接口后再写
+            //查询用户收到的信息
+                //查询用户所在的小组
+                //查小组对应的任务id
+                //查询task_info表格返回taskinfo对象
+                //将查询到的taskinfo对象封装成一个taskinfovo对象，放在list集合中返回
+            List<TaskInfoVo> taskInfoVos1 = taskInfoService.queryTaskInfoByUserId(userId);
+            for (TaskInfoVo taskInfoVo1 : taskInfoVos1) {
+                if (taskInfoVo1.getId() == taskId) {
+                    flag = true;
+                }
+            }
+        }
+        if (!flag){
+            //判断请求用户是否为任务的发布者
+            List<TaskInfoVo> taskInfoVos2 = taskInfoService.queryTaskInfoBypublish(userName);
+            for (TaskInfoVo taskInfoVo2 : taskInfoVos2) {
+                if (taskInfoVo2.getId() == taskId) {
+                    flag = true;
+                }
+            }
+        }
+
+
+        if (flag){
+            return Result.success(taskInfoVo);
+        }else{
+            return Result.error(HttpStatus.UNAUTHORIZED,"权限不允许查询");
+        }
         //
         //
         //
         //
-        return Result.success(taskInfoVo);
+//        return Result.success(taskInfoVo);
 
     }
 
@@ -434,18 +351,55 @@ public class TaskController extends HttpServlet {
         //TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
         return null;
     }
+
     /**
      * 非业务接口方法
      * 进行身份认定，返回用户的身份信息
+     *
      * @param request
      * @param response
      * @return 返回一个UserLocal对象
-     *  user 中的 roleId   1 标识超级管理员，返回 2 标识管理员，返回 3 表示普通用户
+     * user 中的 roleId   1 标识超级管理员，返回 2 标识管理员，返回 3 表示普通用户
      */
-    private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
-        String authorization = request.getHeader("Authorization");
-        UserLocal user = SecurityUtil.getUser(authorization);
+    private UserLocal getUserMessage(HttpServletRequest request, HttpServletResponse response) {
+//        UserLocal user = SecurityUtil.getUser();
+        UserLocal user = new UserLocal();
+        user.setUserName("zhangsan");
+        user.setRoleId(1);
+        user.setUserId(1);
         return user;
+    }
+
+
+    protected void findMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 响应的MIME类型和乱码问题
+        resp.setContentType("application/json;charset=UTF-8");
+
+        String requestURI = req.getRequestURI();
+        String[] split = requestURI.split("/");
+        String methodName = null;
+        try{
+            //如果没有报错，就说明最后的一个参数是数字。
+            Integer.parseInt(split[split.length - 1]);
+            methodName = split[split.length - 2];
+        }catch (NumberFormatException e){
+            methodName =split[split.length - 1];
+        }
+        // 通过反射获取要执行的方法
+        Class clazz = this.getClass();
+        Result result = null;
+        try {
+            Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
+            // 设置方法可以访问
+            method.setAccessible(true);
+            // 通过反射执行代码
+            result = (Result) method.invoke(this,req,resp);
+            WebUtil.writeJson(resp,result);
+        } catch (Exception e2) {
+            e2.printStackTrace();
+            result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
+            WebUtil.writeJson(resp,result);
+        }
     }
 }
 
