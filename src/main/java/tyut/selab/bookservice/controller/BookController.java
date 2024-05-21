@@ -65,7 +65,7 @@ public class BookController extends HttpServlet {
         } else {
             result.setCode(404);
             result.setData(null);
-            result.setMsg("filed");
+            result.setMsg("路径有误");
         }
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json");
@@ -145,12 +145,12 @@ public class BookController extends HttpServlet {
         int size = Integer.parseInt(request.getParameter("size"));
         //将参数传递给服务层，进行分页查询
         List<BookVo> bookVoList = bookService.selectList(cur, size);
-        //将分页查询的结果响应给客户端
+        //将分页查询的结果传入Result对象中
         Result result = Result.success(bookVoList);
-        if(bookVoList == null) {
-            result.setMsg("falied");
+        if(bookVoList.isEmpty()) {
+            result.setMsg("信息为空");
             result.setData(null);
-            result.setCode(404);
+            result.setCode(507);
         }
         return result;
     }
