@@ -100,9 +100,10 @@ public class BookController extends HttpServlet {
      */
     private Result<Void> save(HttpServletRequest request, HttpServletResponse response) throws Exception {
         doPost(request,response);
-        bookService.insertBook(bookDto);
-
-        return null;
+        Integer i = bookService.insertBook(bookDto);
+        Class<Result> resultClass = Result.class;
+        Method method = resultClass.getDeclaredMethod("success", BookDto.class);
+        return (Result) method.invoke(bookDto);
     }
 
     /**
@@ -111,8 +112,12 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result update(HttpServletRequest request, HttpServletResponse response) {
-        bookService.updateBook();
+    private Result update(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+        // 把Java对象转换成字符串
+        String json = (String) JSONObject.toJSON(bookDto);
+        // 再把字符串转换为Java对象
+        BookVo bookVo = JSONObject.parseObject(json, BookVo.class);
+        Integer i = bookService.updateBook(bookVo);
         return null;
     }
 
@@ -174,9 +179,15 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result delete(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+    private Result delete(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
-        bookService.deleteBook(bookId);
+        Integer i = bookService.deleteBook(bookId);
+        Class<Result> resultClass = Result.class;
+        if (i >= 0) {
+            Method method = resultClass.getDeclaredMethod("success", Integer.class);
+            return (Result) method.invoke(i);
+        }
+        return null;
     }
 
 
