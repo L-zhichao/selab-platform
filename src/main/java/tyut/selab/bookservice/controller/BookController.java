@@ -15,7 +15,7 @@ import tyut.selab.bookservice.service.impl.BookServiceImpl;
 import tyut.selab.bookservice.vo.BookVo;
 import tyut.selab.utils.Result;
 
-
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -30,16 +30,22 @@ import java.util.List;
  * @version: 1.0
  */
 
-@WebServlet(name = "BookController",urlPatterns = {"/book/save","/book/update","/book/query","/book/list","/book/delete"})
+@WebServlet(name = "BookController",urlPatterns = {"/book/save","book/update","/book/query","book/list","book/delete"})
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
+    static private BookDto bookDto = new BookDto();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 设置请求和响应的编码
         req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
+        // 获取url并拆成段
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
+        // 获取此次请求是save? update? query? list? 还是 delete? [要操作的方法名]
         String methodName = split[split.length - 1];
 //        Class aClass = this.getClass();
 //        try {
@@ -78,8 +84,18 @@ public class BookController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        this.doGet(req,resp);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 获取请求消息体(其实对应的就是请求参数)
+        BufferedReader br = request.getReader();
+        StringBuilder sb= new StringBuilder();
+        // 读取数据
+        String line = null;
+        while((line = br.readLine())!=null){
+            sb.append(line);
+        }
+        // 先转换为JSON字符串，再封装为BookDao类
+        String DTO = sb.toString();
+        bookDto = JSONObject.parseObject(DTO,BookDto.class);
     }
 
     /**
@@ -88,13 +104,12 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<Void> save(HttpServletRequest request, HttpServletResponse response) {
-
-
-        String bookDto = request.getParameter("bookDto");
-        Object Result = null;
-        String jsonString = JSONUtils.toJSONString(Result);
-        return null;
+    private Result<Void> save(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        doPost(request,response);
+        Integer i = bookService.insertBook(bookDto);
+        Class<Result> resultClass = Result.class;
+        Method method = resultClass.getDeclaredMethod("success", BookDto.class);
+        return (Result) method.invoke(bookDto);
     }
 
     /**
@@ -103,7 +118,13 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result update(HttpServletRequest request, HttpServletResponse response) {
+    private Result update(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        doPost(request,response);
+        // 把Java对象转换成字符串
+        String json = JSON.toJSONString(bookDto);
+        // 再把字符串转换为Java对象
+        BookVo bookVo = JSON.parseObject(json, BookVo.class);
+        Integer i = bookService.updateBook(bookVo);
         return null;
     }
 
@@ -145,7 +166,7 @@ public class BookController extends HttpServlet {
         int size = Integer.parseInt(request.getParameter("size"));
         //将参数传递给服务层，进行分页查询
         List<BookVo> bookVoList = bookService.selectList(cur, size);
-        //将分页查询的结果传入Result对象中
+        //将分页查询的结果响应给客户端
         Result result = Result.success(bookVoList);
         if(bookVoList.isEmpty()) {
             result.setMsg("信息为空");
@@ -163,7 +184,14 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result delete(HttpServletRequest request, HttpServletResponse response) {
+    private Result delete(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
+        Integer i = bookService.deleteBook(bookId);
+        Class<Result> resultClass = Result.class;
+        if (i >= 0) {
+            Method method = resultClass.getDeclaredMethod("success", Integer.class);
+            return (Result) method.invoke(i);
+        }
         return null;
     }
 

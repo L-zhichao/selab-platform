@@ -36,10 +36,10 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     }
 
     @Override
-    public BookInfo selectByBookIdBookInfo(Integer bookId) {
-        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,remark,book_ref bookRef from book_info where book_id = ?";
-        List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class, sql, bookId);
-        return bookInfos.get(0);
+    public Integer delete(Integer bookId) throws SQLException {
+        String sql = "delete from book_info where bookId=?";
+        int param = bookId;
+        return baseDao.baseUpdate(sql,param);
     }
 
     @Override
@@ -48,8 +48,15 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     }
 
     @Override
-    public List<BookInfo> selectAll(Integer cur, Integer size) {
-        String sql = "select t1.book_id bookId,t1.book_name bookName,t1.book_author bookAuthor,t1.book_details bookDetails,t1.price,t1.owner owner,t1.status status,t1.create_time createTime,t1.update_time updateTime,t1.remark remark,t1.book_ref bookRef from Book_info t1 limit ";
+    public List<BookInfo> selectByOwnerBookInfo(Integer userId) throws SQLException {
+        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where userId = ?";
+        int param = userId;
+        return baseDao.baseQuery(BookInfo.class,sql,param);
+    }
+
+    @Override
+    public List<BookInfo> selectAll(Integer cur, Integer size) throws SQLException {
+        String sql = "select t1.book_id bookId,t1.book_name bookName,t1.book_author bookAuthor,t1.book_details bookDetails,t1.price,t1.owner owner,t1.status status,t1.create_time createTime,t1.update_time updateTime,t1.book_ref bookRef from Book_info t1 limit ";
         int index = (cur - 1) * size;
         sql += index + "," + size + ";";
         List<BookInfo> bookInfos = baseQuery(BookInfo.class, sql);

@@ -1,5 +1,8 @@
 package tyut.selab.bookservice.service.impl;
 
+import com.alibaba.druid.support.json.JSONParser;
+import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSONObject;
 import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.dao.impl.BookInfoDaoImpl;
 import tyut.selab.bookservice.domain.BookInfo;
@@ -10,6 +13,8 @@ import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.impl.UserDaoImpl;
 import tyut.selab.userservice.domain.User;
 
+import java.awt.print.Book;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,16 +29,22 @@ public class BookServiceImpl implements BookService {
     private BookInfoDao bookDao = new BookInfoDaoImpl();
     private UserDao userDao = new UserDaoImpl();
     @Override
-    public Integer insertBook(BookDto bookDto) {
-        return null;
+    public Integer insertBook(BookDto bookDto) throws SQLException {
+        String jsonString = JSONUtils.toJSONString(bookDto);
+        BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
+        return bookDao.insert(bookInfo);
     }
 
     @Override
-    public Integer updateBook(BookVo bookVo) {
-        return null;
+    public Integer updateBook(BookVo bookVo) throws SQLException {
+        String jsonString = JSONUtils.toJSONString(bookVo);
+        BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
+        return bookDao.update(bookInfo);
     }
 
-
+    public Integer deleteBook(Integer bookId) throws SQLException {
+        return bookDao.delete(bookId);
+    }
 
     @Override
     public List<BookVo> selectList(Integer cur, Integer size) {
@@ -51,8 +62,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookVo selectBookById(Integer bookId) {
-        return null;
+    public BookVo selectBookById(Integer bookId) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        BookInfo bookInfo = bookDao.selectByBookIdBookInfo(bookId);
+
     }
 
     @Override

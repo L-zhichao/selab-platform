@@ -25,6 +25,7 @@ public class UserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.doPost(req, resp);
+        return null;
     }
 
     private Result queryByUserId(HttpServletRequest request,HttpServletResponse response){
