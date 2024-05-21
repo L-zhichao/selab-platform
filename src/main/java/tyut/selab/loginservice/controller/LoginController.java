@@ -1,32 +1,16 @@
 package tyut.selab.loginservice.controller;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.junit.Test;
-import tyut.selab.loginservice.domain.Email;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.loginservice.dto.UserLoginReq;
-import tyut.selab.loginservice.dto.UserRegisterDto;
-import tyut.selab.loginservice.service.EmailService;
-import tyut.selab.loginservice.service.impl.EmailServiceImpl;
-import tyut.selab.loginservice.service.impl.LoginServiceImpl;
-import tyut.selab.loginservice.utils.MD5util;
 import tyut.selab.loginservice.service.impl.EmailServiceImpl;
 import tyut.selab.loginservice.utils.WebUtils;
 import tyut.selab.utils.Result;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.io.IOException;
-import java.util.Properties;
 
 /**
  * @className: LoginController
@@ -73,50 +57,7 @@ public class LoginController extends HttpServlet {
      * @return
      */
     private Result register(HttpServletRequest request,HttpServletResponse response){
-
-
-        String head = "登录验证码信息";
-        String body = "验证码为Token";
-        try {
-            qqemail("2072349810@qq.com",head,body);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return null;
-    }
-    public void qqemail(String QQmail,String head,String body) throws AddressException, MessagingException, IOException {
-        Properties properties = new Properties();
-        properties.put("mail.transport.protocol", "smtp");// 连接协议
-        properties.put("mail.smtp.host", "smtp.qq.com");// 主机名
-        properties.put("mail.smtp.port", 465);// 端口号
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.ssl.enable", "true");// 设置是否使用ssl安全连接 ---一般都使用
-        properties.put("mail.debug", "true");// 设置是否显示debug信息 true 会在控制台显示相关信息
-        // 得到回话对象
-        Session session = Session.getInstance(properties);
-        // 获取邮件对象
-        Message message = new MimeMessage(session);
-        // 设置发件人邮箱地址
-        message.setFrom(new InternetAddress("2072349810@qq.com"));
-        // 设置收件人邮箱地址
-        message.setRecipients(Message.RecipientType.TO,
-                new InternetAddress[]{new InternetAddress(QQmail)});
-        //new InternetAddress();设置同时发送多个好友
-        // 设置邮件标题
-        message.setSubject(head);
-        // 设置邮件内容
-        message.setText(body);
-        // 得到邮差对象
-        Transport transport = session.getTransport();
-        // 连接自己的邮箱账户
-        transport.connect("2072349810@qq.com", "ldyckdzmsxgfdddf");// 密码为QQ邮箱开通的stmp服务后得到的客户端授权码
-        // 发送邮件
-        int i = 0;
-        transport.sendMessage(message, message.getAllRecipients());
-        System.out.println("成功！");
-        transport.close();
     }
     /**
      * 通过账号密码实现注册的接口
@@ -125,21 +66,21 @@ public class LoginController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    protected void registerByUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 接收要注册的用户信息
-        UserRegisterDto registUser = WebUtils.readJson(req, UserRegisterDto.class);
-        //实现UserServiceImp类
-        LoginServiceImpl userService = new LoginServiceImpl();
-        // 调用服务层方法,将用户注册进入数据库
-        int rows =userService.register(registUser);
-        Result result =new Result(null,null);
-        if(rows>0){
-            result=result.success("null");
-        }else{
-            result =result.error(501,"fail to register");
-        }
-        WebUtils.writeJson(resp,result);
-    }
+//    protected void registerByUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        // 接收要注册的用户信息
+//        UserRegisterDto registUser = WebUtils.readJson(req, UserRegisterDto.class);
+//        //实现UserServiceImp类
+//        UserServiceImp userService = new UserServiceImp();
+//        // 调用服务层方法,将用户注册进入数据库
+//        int rows =userService.register(registUser);
+//        Result result =new Result(null,null);
+//        if(rows>0){
+//            result=result.success("null");
+//        }else{
+//            result =result.error(501,"fail to register");
+//        }
+//        WebUtils.writeJson(resp,result);
+//    }
     /**
      * 用户使用账密登录的业务接口
      * @param req
@@ -147,72 +88,29 @@ public class LoginController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    protected void loginByUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        // 接收用户请求参数
-        // 获取要登录的用户名密码
-        UserLoginReq inputUser = WebUtils.readJson(req,UserLoginReq.class);
-        //实例化UserService
-        LoginServiceImpl userService = new LoginServiceImpl();
-        // 调用服务层方法,根据用户名查询数据库中是否有一个用户
-        UserLoginReq loginUser =userService.findByUsername(inputUser.getUsername());
-
-        Result result = new Result(null,null);
-
-        if(null == loginUser){
-            // 没有根据用户名找到用户,说明用户名有误
-            result=result.error(502,"not found user by username");
-        }else if(! loginUser.getPassword().equals(MD5util.encrypt(inputUser.getPassword()))){
-            // 用户密码有误,
-            result=result.error(503,"password failed");
-        }else{
-            // 登录成功
-            result=result.success(null);
-        }
-        WebUtils.writeJson(resp,result);
-    }
-    /**
-     * 用户使用邮箱登录的业务接口
-     * @param req
-     * @param resp
-     * @throws ServletException
-     * @throws IOException
-     */
-
-    protected void loginByEmail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        // 接收用户请求参数
-        // 获取要登录的用户邮箱
-        Email UserEmail = WebUtils.readJson(req, Email.class);
-        //实例化emailService
-        EmailServiceImpl emailService = new EmailServiceImpl();
-        // 调用服务层方法,根据用户名查询数据库中该邮箱数量
-        Integer loginEmail = emailService.queryNumForSameEmail(UserEmail.getEmail());
-
-        Result result = new Result(null,null);
-
-        if(0 == loginEmail){
-            // 未找到该邮箱,说明邮箱有误
-            result=result.error(504,"not found user by email");
-        }else{
-            // 进入验证码登录
-            // 生成随机验证码
-            String code = emailService.generateRandomCode();
-            // 发送验证码邮件
-            emailService.sendVerificationCodeEmail(UserEmail.getEmail(), code);
-            // 验证用户输入的验证码是否正确
-            if (emailService.validateVerificationCode(UserEmail.getEmail(), code)) {
-                // 验证通过，进行登录操作
-                result=result.success(null);
-            } else {
-                // 验证失败，返回错误信息
-                result=result.error(505,"验证码错误");
-            }
-            result=result.error(503,"password failed");
-            // 登录成功
-            result=result.success(null);
-        }
-        WebUtils.writeJson(resp,result);
-    }
+//    protected void loginByUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//
+//        // 接收用户请求参数
+//        // 获取要登录的用户名密码
+//        UserLoginReq inputUser = WebUtils.readJson(req, UserLoginReq.class);
+//        //实例化UserService
+//        UserServiceImp userService = new UserServiceImp();
+//        // 调用服务层方法,根据用户名查询数据库中是否有一个用户
+//        UserLoginReq loginUser =userService.findByUsername(inputUser.getUsername());
+//
+//        Result result = new Result(null,null);
+//
+//        if(null == loginUser){
+//            // 没有根据用户名找到用户,说明用户名有误
+//            result=result.error(502,"not found user by username");
+//        }else if(! loginUser.getPassword().equals(MD5util.encrypt(inputUser.getPassword()))){
+//            // 用户密码有误,
+//            result=result.error(503,"password failed");
+//        }else{
+//            // 登录成功
+//            result=result.success(null);
+//        }
+//        WebUtils.writeJson(resp,result);
+//    }
 
 }

@@ -2,6 +2,10 @@ import org.junit.Test;
 import tyut.selab.loginservice.dao.impl.EmailDaoImpl;
 import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.service.impl.EmailServiceImpl;
+import tyut.selab.loginservice.service.impl.QQEmailService;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
 
 public class EmailTest {
     @Test
@@ -22,5 +26,15 @@ public class EmailTest {
         Integer i = emailService.queryNumForSameEmail("3388532526@qq.com");
         System.out.println(i);
     }
-
+    @Test
+    public void sendEmail(){
+        QQEmailService emailService = new QQEmailService();
+        String head = "qq邮箱发送";
+        String body = "验证码信息";
+        try {
+            emailService.qqemail("2767882448@qq.com",head,body);
+        } catch (IOException | MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
