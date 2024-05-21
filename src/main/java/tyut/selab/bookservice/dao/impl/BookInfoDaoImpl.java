@@ -5,6 +5,7 @@ import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.vo.BookVo;
 
+import java.awt.print.Book;
 import java.lang.reflect.Field;
 import java.sql.Ref;
 import java.sql.SQLException;
@@ -36,8 +37,9 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public BookInfo selectByBookIdBookInfo(Integer bookId) {
-        String sql = "select bookName userId cur size from book_info where bookId = ?";
-        return null;
+        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,remark,book_ref bookRef from book_info where book_id = ?";
+        List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class, sql, bookId);
+        return bookInfos.get(0);
     }
 
     @Override
@@ -47,7 +49,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public List<BookInfo> selectAll(Integer cur, Integer size) {
-        String sql = "select t1.book_id bookId,t1.book_name bookName,t1.book_author bookAuthor,t1.book_details bookDetails,t1.price,t1.owner owner,t1.status status,t1.create_time createTime,t1.update_time updateTime,t1.book_ref bookRef from Book_info t1 limit ";
+        String sql = "select t1.book_id bookId,t1.book_name bookName,t1.book_author bookAuthor,t1.book_details bookDetails,t1.price,t1.owner owner,t1.status status,t1.create_time createTime,t1.update_time updateTime,t1.remark remark,t1.book_ref bookRef from Book_info t1 limit ";
         int index = (cur - 1) * size;
         sql += index + "," + size + ";";
         List<BookInfo> bookInfos = baseQuery(BookInfo.class, sql);
