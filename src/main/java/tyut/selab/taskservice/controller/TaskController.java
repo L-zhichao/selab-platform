@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
+import tyut.selab.taskservice.dto.TaskDto;
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.taskservice.service.TaskInfoService;
@@ -411,10 +412,11 @@ public class TaskController extends HttpServlet {
      * @param request
      * @param response
      * @return List<TaskReportVo>
-     *     是否需要重新创建一个vo类
+     *
      */
     private Result queryForUser(HttpServletRequest request,HttpServletResponse response){
-        //TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
+        TaskDto taskDto = WebUtil.readJson(request, TaskDto.class);
+
         return null;
     }
     /**

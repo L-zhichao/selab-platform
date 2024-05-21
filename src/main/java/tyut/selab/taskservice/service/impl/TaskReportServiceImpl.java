@@ -90,7 +90,7 @@ public class TaskReportServiceImpl implements TaskReportService {
         List<NeedReportUser> needReportUsers=new ArrayList<>();
         //调用dao层selectByTaskIdForUserId方法 返回的是userid
         List<Integer> integers = taskReportDao.selectByTaskIdForUserId(taskId);
-        //userid ->username
+
 
         return needReportUsers;
     }

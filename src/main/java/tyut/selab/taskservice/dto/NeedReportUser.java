@@ -12,7 +12,6 @@ public class NeedReportUser {
     private String userName;
     /**
      *  是否汇报
-     *  1是需要汇报 0是不需要汇报
      */
     private Integer isReport;
 }

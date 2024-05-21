@@ -9,6 +9,7 @@ import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
+import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.taskservice.service.TaskInfoService;
@@ -21,6 +22,7 @@ import tyut.selab.utils.Result;
 
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -229,7 +231,7 @@ public class TaskReportController extends HttpServlet {
      * @return List<TaskReportVo>
      */
     private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response){
-        List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
+        List<NeedReportUser> needReportUsers = new ArrayList<>();
         //权限判断 未完成
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
@@ -241,19 +243,17 @@ public class TaskReportController extends HttpServlet {
             Integer taskid = Integer.parseInt(request.getParameter("taskid"));
             int cur = Integer.parseInt(request.getParameter("cur"));
             int size = Integer.parseInt(request.getParameter("size"));
-            //通过taskid调用queryAllUserForReport查询需要汇报的用户 返回值是NeedReportUser
+            //读取xml数据
 
-            // 将NeedReportUser类转换成TaskReportVo类对象
-            //username
 
-            return Result.success(taskReportVos);
+            return Result.success(needReportUsers);
         }else {
             //超级管理员能查看所有发布的需要汇报的用户信息
            //超级管理员也可以输入id
 
             //获取所有任务id
 
-            return Result.success(taskReportVos);
+            return Result.success(needReportUsers);
         }
 
 
