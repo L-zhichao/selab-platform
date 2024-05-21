@@ -59,4 +59,6 @@ public interface BookService {
      * @return
      */
     public List<BookVo> selectListByOwnerId(Integer userid,Integer cur,Integer size);
+
+    public BookVo bookIofoToBookVo(BookInfo bookInfo);
 }
