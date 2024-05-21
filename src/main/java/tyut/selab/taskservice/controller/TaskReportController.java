@@ -268,8 +268,7 @@ public class TaskReportController extends HttpServlet {
      *  user 中的 roleId   1 标识超级管理员，返回 2 标识管理员，返回 3 表示普通用户
      */
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
-        String authorization = request.getHeader("Authorization");
-        UserLocal user = SecurityUtil.getUser(authorization);
+        UserLocal user = SecurityUtil.getUser();
         return user;
     }
 }
