@@ -33,6 +33,7 @@ public class TaskReportServiceImpl implements TaskReportService {
 
     /**
      *  通过任务id和用户id查询汇报信息
+     *
      * @param taskId
      * @param userId
      * @return
@@ -86,7 +87,12 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @return
      */
     public List<NeedReportUser> queryAllUserForReport(Integer taskId){
-        return null;
+        List<NeedReportUser> needReportUsers=new ArrayList<>();
+        //调用dao层selectByTaskIdForUserId方法 返回的是userid
+        List<Integer> integers = taskReportDao.selectByTaskIdForUserId(taskId);
+        //userid ->username
+
+        return needReportUsers;
     }
 
 
