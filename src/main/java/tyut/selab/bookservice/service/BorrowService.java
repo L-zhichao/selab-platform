@@ -2,7 +2,10 @@ package tyut.selab.bookservice.service;
 
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.domain.BorrowBook;
+import tyut.selab.bookservice.dto.BorrowBookDto;
 import tyut.selab.bookservice.vo.BorrowBookVo;
+import tyut.selab.loginservice.dto.UserLocal;
+import tyut.selab.userservice.domain.User;
 
 import java.util.List;
 
@@ -13,17 +16,17 @@ public interface BorrowService {
 
     /**
      * 借阅书籍
-     * @param bookId
+     * @param
      * @return
      */
-    public Integer borrowBook(Integer bookId);
+    public Integer borrowBook(BorrowBookDto borrowBookDto);
 
     /**
      *  归还书籍
-     * @param bookId
+     * @param
      * @return
      */
-    public Integer returnBook(Integer bookId);
+    public Integer returnBook(Integer borrowId);
 
     /**
      * 通过userId查询用户借阅记录
@@ -50,4 +53,7 @@ public interface BorrowService {
      * @return
      */
     public List<BorrowBookVo> selectAllForNoReturn(Integer cur,Integer size);
+
+    public BorrowBook borrowBookDtoToBorrowBook(BorrowBookDto borrowBookDto, UserLocal userLocal);
+
 }
