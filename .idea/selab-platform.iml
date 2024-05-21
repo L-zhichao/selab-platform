@@ -30,5 +30,17 @@
     <orderEntry type="library" name="fastjson-1.2.83-javadoc" level="project" />
     <orderEntry type="library" name="commons-lang3-3.12.0" level="project" />
     <orderEntry type="library" name="fastjson-1.2.83" level="project" />
+    <orderEntry type="library" name="lib  (2)" level="project" />
+    <orderEntry type="library" name="lib (2)" level="project" />
+    <orderEntry type="module-library">
+      <library name="JUnit4">
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.13.1/junit-4.13.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

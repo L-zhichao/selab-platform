@@ -6,14 +6,14 @@ import java.nio.channels.InterruptedByTimeoutException;
 
 public interface EmailDao {
     /**
-     * 新增书籍
+     * 新增邮箱
      * @param email
      * @return
      */
     public Integer insert(Email email);
 
     /**
-     *  修改书籍信息
+     *  修改邮箱信息
      * @param email
      * @return
      */

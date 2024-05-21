@@ -16,6 +16,23 @@ public class Email implements Serializable {
     private Integer userId;
     private String email;
     private Date createTime;
+    private Integer CheckCode;
+
+    public Integer getCheckCode() {
+        return CheckCode;
+    }
+
+    public void setCheckCode(Integer checkCode) {
+        CheckCode = checkCode;
+    }
+
+    public Email(Integer userId, String email, Date createTime, Integer checkCode) {
+        this.userId = userId;
+        this.email = email;
+        this.createTime = createTime;
+        CheckCode = checkCode;
+    }
+
     public Email() {
     }
     public Email(Integer userId, String email, Date createTime) {
@@ -51,9 +68,10 @@ public class Email implements Serializable {
     @Override
     public String toString() {
         return "Email{" +
-                "email='" + email + '\'' +
-                ", userId=" + userId +
+                "userId=" + userId +
+                ", email='" + email + '\'' +
                 ", createTime=" + createTime +
+                ", CheckCode=" + CheckCode +
                 '}';
     }
 }

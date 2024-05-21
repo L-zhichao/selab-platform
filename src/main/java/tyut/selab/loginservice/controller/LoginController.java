@@ -5,8 +5,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.junit.Test;
+import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
+import tyut.selab.loginservice.service.EmailService;
+import tyut.selab.loginservice.service.impl.EmailServiceImpl;
 import tyut.selab.loginservice.service.impl.LoginServiceImpl;
 import tyut.selab.loginservice.utils.MD5util;
 import tyut.selab.loginservice.service.impl.EmailServiceImpl;
@@ -146,7 +151,7 @@ public class LoginController extends HttpServlet {
 
         // 接收用户请求参数
         // 获取要登录的用户名密码
-        UserLoginReq inputUser = WebUtils.readJson(req, UserLoginReq.class);
+        UserLoginReq inputUser = WebUtils.readJson(req,UserLoginReq.class);
         //实例化UserService
         LoginServiceImpl userService = new LoginServiceImpl();
         // 调用服务层方法,根据用户名查询数据库中是否有一个用户
@@ -161,6 +166,49 @@ public class LoginController extends HttpServlet {
             // 用户密码有误,
             result=result.error(503,"password failed");
         }else{
+            // 登录成功
+            result=result.success(null);
+        }
+        WebUtils.writeJson(resp,result);
+    }
+    /**
+     * 用户使用邮箱登录的业务接口
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
+
+    protected void loginByEmail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        // 接收用户请求参数
+        // 获取要登录的用户邮箱
+        Email UserEmail = WebUtils.readJson(req, Email.class);
+        //实例化emailService
+        EmailServiceImpl emailService = new EmailServiceImpl();
+        // 调用服务层方法,根据用户名查询数据库中该邮箱数量
+        Integer loginEmail = emailService.queryNumForSameEmail(UserEmail.getEmail());
+
+        Result result = new Result(null,null);
+
+        if(0 == loginEmail){
+            // 未找到该邮箱,说明邮箱有误
+            result=result.error(504,"not found user by email");
+        }else{
+            // 进入验证码登录
+            // 生成随机验证码
+            String code = emailService.generateRandomCode();
+            // 发送验证码邮件
+            emailService.sendVerificationCodeEmail(UserEmail.getEmail(), code);
+            // 验证用户输入的验证码是否正确
+            if (emailService.validateVerificationCode(UserEmail.getEmail(), code)) {
+                // 验证通过，进行登录操作
+                result=result.success(null);
+            } else {
+                // 验证失败，返回错误信息
+                result=result.error(505,"验证码错误");
+            }
+            result=result.error(503,"password failed");
             // 登录成功
             result=result.success(null);
         }
