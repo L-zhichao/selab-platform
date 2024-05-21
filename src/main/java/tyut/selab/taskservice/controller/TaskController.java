@@ -422,7 +422,18 @@ public class TaskController extends HttpServlet {
     }
 
 
-
+    /**
+     *  用户查询其需要汇报的任务
+     *  param: taskId
+     * @param request
+     * @param response
+     * @return List<TaskReportVo>
+     *     是否需要重新创建一个vo类
+     */
+    private Result queryForUser(HttpServletRequest request,HttpServletResponse response){
+        //TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
+        return null;
+    }
     /**
      * 非业务接口方法
      * 进行身份认定，返回用户的身份信息

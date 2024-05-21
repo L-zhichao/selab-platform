@@ -8,6 +8,7 @@ import tyut.selab.taskservice.myutils.JDBCUtil;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
 
 
     public Integer deleteByPrimaryKey(Long id){
+
         return null;
     }
 
@@ -47,9 +49,10 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @return
      */
     public List<TaskReport> selectByTaskIdTaskReports(Integer taskId)  {
-        String sql1="select id from selab_platform where id=?";
-        List<TaskReport> taskReports = baseQuery(TaskReport.class, sql1, taskId);
-        return null;
+        List<TaskReport> taskReports=new ArrayList<>();
+        String sql1="select * from task_report where id=?";
+        taskReports = baseQuery(TaskReport.class, sql1, taskId);
+        return taskReports;
     }
 
     /**
@@ -85,7 +88,11 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @return
      */
     public Integer deleteByReportId(Integer reportId){
-        return null;
+String sql= """
+        DELETE FROM users WHERE reportid = ?;
+        """;
+        Integer i = baseUpdate(sql, reportId);
+        return i;
     }
 
 }

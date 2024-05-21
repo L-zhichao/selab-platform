@@ -1,5 +1,6 @@
 package tyut.selab.taskservice.service.impl;
 
+import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
 import tyut.selab.taskservice.domain.TaskReport;
@@ -8,8 +9,10 @@ import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;
+import tyut.selab.userservice.domain.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,10 +47,28 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @return
      */
     public List<TaskReportVo> queryAllTask(Integer taskId) throws SQLException {
+        List<TaskReportVo> taskReportVos=new ArrayList<>();
+        BaseDao baseDao=new BaseDao();
         //调用dao层方法
-        //异常处理
+        //异常未处理
         List<TaskReport> taskReports = taskReportDao.selectByTaskIdTaskReports(taskId);
-        return null;
+        //将TaskReport封装成TaskReportVo对象
+        for (TaskReport taskReport:taskReports){
+            TaskReportVo taskReportVo=new TaskReportVo();
+            taskReportVo.setTaskId(taskReport.getTaskId());
+            taskReportVo.setReportId(taskReport.getReportId());
+            taskReportVo.setReportStatus(taskReport.getReportStatus());
+            taskReportVo.setDetails(taskReport.getDetails());
+            taskReportVo.setReportTime(taskReport.getCreateTime());
+            //如何获取用户的名字 taskReportVo.setUserName(); sys_user内存有用户的名字
+            String sql = """
+                    select user_name userName from sys_user where user_id = ?
+                    """;
+            User UserName = baseDao.baseQueryObject(User.class, sql,taskReport.getUserId());
+            taskReportVo.setUserName(UserName.getUserName());
+            taskReportVos.add(taskReportVo);
+        }
+        return taskReportVos;
     }
 
     /**
