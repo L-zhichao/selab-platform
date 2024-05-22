@@ -63,6 +63,8 @@ public class TaskController extends HttpServlet {
             }
         }
 
+        //设置任务小组不能是自己小组的父组
+
         //保存和修改任务的时候，截至时间是不是应该比当前时间多
         Date dealTime = taskInfoDto.getDealTime();
         Date date = new Date();
@@ -79,17 +81,6 @@ public class TaskController extends HttpServlet {
         }
     }
 
-    /**
-     *  查询本人接收的所有任务 【cur size为必需参数】
-     *  param: cur size publish 任务发布者名称userName
-     *  param:null 【userId 通过loginservice模块SecurityUtil方法获取】
-     * @param request
-     * @param response
-     * @return
-     */
-    private Result queryAll(HttpServletRequest request,HttpServletResponse response){
-      return null;
-    }
 
     /**
      *  用户查询本人发布的任务信息（参数不为空是则查询指定用户发布的任务，为空则查询所有任务）
