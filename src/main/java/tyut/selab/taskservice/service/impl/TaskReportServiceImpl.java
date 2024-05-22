@@ -1,5 +1,6 @@
 package tyut.selab.taskservice.service.impl;
 
+import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
 import tyut.selab.taskservice.domain.TaskReport;
@@ -7,8 +8,10 @@ import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.view.TaskReportVo;
+import tyut.selab.userservice.domain.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 
