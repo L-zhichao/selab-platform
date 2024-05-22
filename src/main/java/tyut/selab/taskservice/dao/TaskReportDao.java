@@ -65,4 +65,10 @@ public interface TaskReportDao {
      */
     Integer deleteByReportId(Integer reportId);
 
+
+    /**
+     * 通过id查询某一任务汇报数量
+     * */
+    Integer queryTaskReportCount(Integer taskId);
+
 }

@@ -65,9 +65,6 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
         List<TaskReport> taskReports=new ArrayList<>();
         String sql1="select * from task_report where task_id=?";
 
-        //用于查询当前taskId的汇报数量
-        String sql2="SELECT COUNT(*) AS total_reports from task_report where task_id=?";
-
         taskReports = baseQuery(TaskReport.class, sql1, taskId);
         return taskReports;
     }
@@ -130,4 +127,20 @@ String sql= """
         return i;
     }
 
+
+    /**
+     * 通过id查询某一任务汇报数量
+     * @param taskId
+     * @return
+     * */
+    @Override
+    public Integer queryTaskReportCount(Integer taskId) {
+       // String sql="SELECT COUNT(*) AS reports_count FROM task_reports where task_id=?";
+
+        String sql="SELECT * FROM task_report WHERE report_id = ?";
+        List<TaskReport> reports = baseQuery(TaskReport.class, sql, taskId);
+        Integer taskReportCount=reports.size();
+        return taskReportCount;
+
+    }
 }
