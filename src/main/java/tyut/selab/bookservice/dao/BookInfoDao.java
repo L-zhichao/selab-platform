@@ -59,9 +59,13 @@ public interface BookInfoDao {
      * 通过书籍名称<模糊查询>书籍信息
      * @return
      */
-    public List<BookInfo> selectAllByBookName();
+    public List<BookInfo> selectAllByBookName(String bookName) throws SQLException;
 
-
+    /**
+     *  通过图书id，拥有者id和书籍名称三者多条件查询书籍信息
+     * @return
+     */
+    public BookInfo selectByBookIdUserIdBookName(Integer bookId,Integer userId,String bookName) throws SQLException;
 
 }
 

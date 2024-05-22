@@ -27,7 +27,7 @@ public class TestBookInfoDao {
         bookInfo.setBookName("nihao");
         bookInfo.setBookDetails("hahaha");
         bookInfo.setPrice(100);
-        bookInfo.setOwner(1L);
+        bookInfo.setOwner(1);
         bookInfo.setStatus(1);
         bookInfo.setBookRef("zxc");
         bookInfo.setCreateTime(new Date());

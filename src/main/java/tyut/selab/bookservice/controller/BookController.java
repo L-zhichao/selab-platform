@@ -3,6 +3,7 @@ package tyut.selab.bookservice.controller;
 import com.alibaba.druid.support.json.JSONParser;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.druid.support.json.JSONWriter;
+import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -18,9 +19,11 @@ import tyut.selab.bookservice.service.impl.BookServiceImpl;
 import tyut.selab.bookservice.vo.BookVo;
 import tyut.selab.utils.Result;
 
+import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -34,18 +37,16 @@ import java.util.List;
  * @version: 1.0
  */
 
-@WebServlet(name = "BookController",urlPatterns = {"/book/save","book/update","/book/query","book/list","book/delete"})
+@WebServlet(name = "BookController",urlPatterns = {"/book/save","/book/update","/book/query","/book/list","/book/delete"})
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
-    static private BookDto bookDto = new BookDto();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         // 设置请求和响应的编码
+        resp.setContentType("text/html;charset=utf-8");
         req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html;charset=UTF-8");
         // 获取url并拆成段
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
@@ -57,14 +58,14 @@ public class BookController extends HttpServlet {
             // 设置 暴力破解 方法的访问修饰符的限制
             declaredMethod.setAccessible(true);
             // 执行方法
-            declaredMethod.invoke(this,req, resp);
+            declaredMethod.invoke(this,req,resp);
         } catch (Exception e) {
             e.printStackTrace();
-            req.getRequestDispatcher("跳转到异常处理页面").forward(req,resp);
+            System.out.println("异常处理");
+
         }
 
-
-//        if (methodName.equals("save")) {
+//        if (methodName.equals("save")){
 //            save(req, resp);
 //        }else if (methodName.equals("update")) {
 //            update(req, resp);
@@ -73,23 +74,21 @@ public class BookController extends HttpServlet {
 //        }else if (methodName.equals("list")){
 //            list(req, resp);
 //        }else{
-//
+//            delete(req, resp);
 //        }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // 获取请求消息体(其实对应的就是请求参数)
         BufferedReader br = request.getReader();
-        StringBuilder sb= new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         // 读取数据
         String line = null;
-        while((line = br.readLine())!=null){
+        while ((line = br.readLine()) != null) {
             sb.append(line);
         }
-        // 先转换为JSON字符串，再封装为BookDao类
-        String DTO = sb.toString();
-        bookDto = JSONObject.parseObject(DTO,BookDto.class);
+        System.out.println(sb.toString());
     }
 
     /**
@@ -98,12 +97,33 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<Void> save(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        doPost(request,response);
+    private Result<Void> save(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        BookDto bookDto = tool(request, response);
         Integer i = bookService.insertBook(bookDto);
         Class<Result> resultClass = Result.class;
-        Method method = resultClass.getDeclaredMethod("success", BookDto.class);
-        return (Result) method.invoke(bookDto);
+        if (i >= 0) {
+            Method method = resultClass.getDeclaredMethod("success", BookDto.class);
+            return (Result) method.invoke(bookDto);
+        }
+        else{
+            Method method = resultClass.getDeclaredMethod("error", Integer.class,String.class);
+            return (Result) method.invoke(400,"删除失败");
+        }
+    }
+
+    public static BookDto tool (HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 获取请求消息体(其实对应的就是请求参数)
+        BufferedReader br = request.getReader();
+        StringBuilder sb = new StringBuilder();
+        // 读取数据
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        // 先转换为JSON字符串，再封装为BookDao类
+        String DTO = sb.toString();
+        BookDto bookDto = JSONObject.parseObject(DTO, BookDto.class);
+        return bookDto;
     }
 
     /**
@@ -112,14 +132,26 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result update(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        doPost(request,response);
+    private Result update(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        BookDto bookDto = tool(request,response);
         // 把Java对象转换成字符串
         String json = JSON.toJSONString(bookDto);
         // 再把字符串转换为Java对象
         BookVo bookVo = JSON.parseObject(json, BookVo.class);
+        // 执行更新方法，得到改变行数的返回值
         Integer i = bookService.updateBook(bookVo);
-        return null;
+        // 通过反射调用Result中的success方法
+        Class<Result> resultClass = Result.class;
+        if (i >= 0) {
+            Method method = resultClass.getDeclaredMethod("success", BookDto.class);
+            // 请求转发到查询所有书籍
+            request.getRequestDispatcher("book/list").forward(request,response);
+            return (Result) method.invoke(bookDto);
+        }
+        else{
+            Method method = resultClass.getDeclaredMethod("error", Integer.class,String.class);
+            return (Result) method.invoke(400,"删除失败");
+        }
     }
 
     /**
@@ -143,8 +175,10 @@ public class BookController extends HttpServlet {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
         String bookName = request.getAttribute("bookName").toString();
-
+        int cur = Integer.parseInt(request.getParameter("cur"));
+        int size = Integer.parseInt(request.getParameter("size"));
         return null;
+
     }
 
     /**
@@ -155,7 +189,7 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result list(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private Result list(HttpServletRequest request, HttpServletResponse response) throws Exception{
         request.setCharacterEncoding("UTF-8");
         //接受请求参数
         int cur = Integer.parseInt(request.getParameter("cur"));
@@ -184,13 +218,16 @@ public class BookController extends HttpServlet {
     private Result delete(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         Integer i = bookService.deleteBook(bookId);
+        response.setCharacterEncoding("UTF-8");
         Class<Result> resultClass = Result.class;
         if (i >= 0) {
             Method method = resultClass.getDeclaredMethod("success", Integer.class);
             return (Result) method.invoke(i);
         }
-        return null;
+        else{
+            Method method = resultClass.getDeclaredMethod("error", Integer.class,String.class);
+            return (Result) method.invoke(400,"删除失败");
+        }
     }
-
 
 }
