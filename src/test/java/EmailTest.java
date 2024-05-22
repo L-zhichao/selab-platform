@@ -44,4 +44,10 @@ public class EmailTest {
         Email email = emailDao.executeQueryOne(Email.class,sql);
         System.out.println(email);
     }
+    @Test
+    public void insertTest(){
+        EmailDaoImpl emailDao = new EmailDaoImpl();
+        Email email = new Email(4,"2072349810@qq.com");
+        emailDao.insert(email);
+    }
 }

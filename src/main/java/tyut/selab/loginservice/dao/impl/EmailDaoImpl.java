@@ -39,7 +39,7 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
      */
     @Override
     public Integer update(Email email) {
-        String sql = "update sys_email set email = ?,createTime = now() where userId = ?";
+        String sql = "update sys_email set email = ?,create_time = now() where user_id = ?";
         int result = 0;
         try {
             result = executeUpdate(sql,email.getEmail(),email.getUserId());
@@ -56,7 +56,7 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
      */
     @Override
     public Integer selectNumForSameEmail(String email) {
-        String sql = "select * from sys_email where email = ?";
+        String sql = "select user_id userId,email,create_time createTime from sys_email where email = ?";
         int result = 0;
         List<Email> integer = null;
         try {
@@ -84,7 +84,7 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
      */
     @Override
     public Integer delete(Integer userId) {
-        String sql = "delete from sys_email where userId = ?";
+        String sql = "delete from sys_email where user_id = ?";
         int rows = -1;
         try {
             rows = executeUpdate(sql,userId);

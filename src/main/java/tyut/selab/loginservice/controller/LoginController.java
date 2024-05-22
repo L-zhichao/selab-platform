@@ -44,10 +44,10 @@ public class LoginController extends HttpServlet {
      * @return
      */
     private Result login(HttpServletRequest request, HttpServletResponse response){
-
+        //获取前端发来的账号密码信息
         UserLoginReq userLoginReq = WebUtils.readJson(request, UserLoginReq.class);
-
-
+        //验证账号密码信息
+        //
         return null;
     }
 

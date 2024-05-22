@@ -24,6 +24,10 @@ public class Email implements Serializable {
         this.createTime = createTime;
     }
 
+    public Email(Integer userId, String email) {
+        this.userId = userId;
+        this.email = email;
+    }
     public String getEmail() {
         return email;
     }
