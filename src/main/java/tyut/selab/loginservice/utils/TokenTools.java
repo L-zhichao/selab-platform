@@ -1,7 +1,7 @@
 package tyut.selab.loginservice.utils;
 
 import com.alibaba.druid.util.StringUtils;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 public class TokenTools {
     /**
