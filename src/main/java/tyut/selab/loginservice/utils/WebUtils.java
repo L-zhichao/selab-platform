@@ -23,7 +23,7 @@ public class WebUtils {
             }
             t = JSON.parseObject(buffer.toString(),clazz);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return t;
     }

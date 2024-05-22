@@ -11,14 +11,15 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class QQEmailService {
-    public void qqemail(String QQmail,String head,String body) throws AddressException, MessagingException, IOException {
+    public static void qqemail(String QQmail, String head, String body) throws AddressException, MessagingException, IOException {
         Properties properties = new Properties();
         properties.put("mail.transport.protocol", "smtp");// 连接协议
         properties.put("mail.smtp.host", "smtp.qq.com");// 主机名
-        properties.put("mail.smtp.port", 456);// 端口号
+        properties.put("mail.smtp.port", 465);// 端口号
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.ssl.enable", "true");// 设置是否使用ssl安全连接 ---一般都使用
         properties.put("mail.debug", "true");// 设置是否显示debug信息 true 会在控制台显示相关信息
+        properties.put("mail.smtp.ssl.protocols", "TLSv1.2");
         // 得到回话对象
         Session session = Session.getInstance(properties);
         // 获取邮件对象
@@ -42,5 +43,28 @@ public class QQEmailService {
         transport.sendMessage(message, message.getAllRecipients());
         System.out.println("成功！");
         transport.close();
+    }
+
+    /**
+     * 判断用户注册时输入的邮箱信息是否正确
+     * @param QQemail
+     * @return 默认返回false，如果格式正确返回true
+     */
+    public static boolean checkEmail(String QQemail){
+        String email = QQemail;
+        boolean flag = false;
+        if(email.matches("\\w{1,30}@[a-zA-Z0-9]{2,20}(\\.[a-zA-Z0-9]{2,20}){1,2}")){
+            flag = true;
+        }
+        return flag;
+    }
+    public static boolean checkPhone(String phone){
+        //判断设手机号码格式是否正确
+        String pho = phone;
+        boolean flag = false;
+        if (pho.matches("1[3-9]\\d{9}")){
+            flag = true;
+        }
+        return flag;
     }
 }

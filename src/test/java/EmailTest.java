@@ -32,9 +32,23 @@ public class EmailTest {
         String head = "qq邮箱发送";
         String body = "验证码信息";
         try {
-            emailService.qqemail("2767882448@qq.com",head,body);
+            emailService.qqemail("3388532526@qq.com",head,body);
         } catch (IOException | MessagingException e) {
             throw new RuntimeException(e);
+        }
+    }
+    @Test
+    public void falseEmailTest(){
+        QQEmailService emailService = new QQEmailService();
+        String head = "qq邮箱发送";
+        String body = "验证码信息";
+        try {
+            System.out.println(QQEmailService.checkEmail("3388532526@qq.com"));
+            emailService.qqemail("3388532526@qq.com",head,body);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     @Test
