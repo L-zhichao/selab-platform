@@ -53,26 +53,36 @@ public class TaskReportServiceImpl implements TaskReportService {
     }
 
     @Override
-    public List queryAllTask(Integer taskId) throws SQLException {
-        List<TaskReportVo> taskReportVos=new ArrayList<>();
-        BaseDao baseDao=new BaseDao();
-        //调用dao层方法 //异常未处理
-         List<TaskReport> taskReports = taskReportDao.selectByTaskIdTaskReports(taskId);
-        //将TaskReport封装成TaskReportVo对象
-        for (TaskReport taskReport:taskReports){
-            TaskReportVo taskReportVo=new TaskReportVo();
+    public List<TaskReportVo> queryAllTask(Integer taskId) {
+        List<TaskReportVo> taskReportVos = new ArrayList<>();
+        BaseDao baseDao = new BaseDao();
+        // 调用dao层方法
+        List<TaskReport> taskReports = null;
+        try {
+            taskReports = taskReportDao.selectByTaskIdTaskReports(taskId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return taskReportVos;  // 如果发生异常，返回空列表
+        }
+        // 将TaskReport封装成TaskReportVo对象
+        for (TaskReport taskReport : taskReports) {
+            TaskReportVo taskReportVo = new TaskReportVo();
             taskReportVo.setTaskId(taskReport.getTaskId());
             taskReportVo.setReportId(taskReport.getReportId());
             taskReportVo.setReportStatus(taskReport.getReportStatus());
             taskReportVo.setDetails(taskReport.getDetails());
             taskReportVo.setReportTime(taskReport.getCreateTime());
-            //如何获取用户的名字 taskReportVo.setUserName(); sys_user内存有用户的名字
+            // 如何获取用户的名字 taskReportVo.setUserName(); sys_user内存有用户的名字
             String sql = """
-                     select user_name userName from sys_user where user_id = ?
-                      """;
-            User UserName = baseDao.baseQueryObject(User.class, sql,taskReport.getUserId());
-            taskReportVo.setUserName(UserName.getUserName()); taskReportVos.add(taskReportVo); }
-         return taskReportVos;
+                select user_name userName from sys_user where user_id = ?
+                """;
+            User userName = baseDao.baseQueryObject(User.class, sql, taskReport.getUserId());
+            if (userName != null) {
+                taskReportVo.setUserName(userName.getUserName());
+            }//user
+            taskReportVos.add(taskReportVo);
+        }
+        return taskReportVos;
     }
 
     /**
@@ -87,6 +97,8 @@ public class TaskReportServiceImpl implements TaskReportService {
 
     @Override
     public List<NeedReportUser> queryAllUserForReport(Integer taskId) {
-        return null;
+        List<NeedReportUser> needReportUsers=new ArrayList<>();
+        taskReportDao.selectByTaskIdForUserId(taskId);
+        return needReportUsers;
     }
 }

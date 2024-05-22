@@ -75,7 +75,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
     /**
      *  通过任务id查询所有汇报用户
      * @param taskId
-     * @return
+     * @return 暂时返回的是用户的id(待更改)
      */
     public List<Integer> selectByTaskIdForUserId(Integer taskId){
         String sql1="select user_id from task_report where task_id=?";
@@ -126,6 +126,7 @@ String sql= """
         DELETE FROM users WHERE report_id = ?;
         """;
         Integer i = baseUpdate(sql, reportId);
+        //成功删除返回1
         return i;
     }
 
