@@ -3,6 +3,7 @@ package tyut.selab.taskservice.dao.impl;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.domain.TaskReport;
+import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.myutils.JDBCUtil;
 
 import java.sql.Connection;
@@ -62,7 +63,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public List<TaskReport> selectByTaskIdTaskReports(Integer taskId)  {
         List<TaskReport> taskReports=new ArrayList<>();
-        String sql1="select * from task_report where id=?";
+        String sql1="select * from task_report where task_id=?";
         taskReports = baseQuery(TaskReport.class, sql1, taskId);
         return taskReports;
     }
@@ -73,7 +74,9 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @return
      */
     public List<Integer> selectByTaskIdForUserId(Integer taskId){
-        return null;
+        String sql1="select user_id from task_report where task_id=?";
+        List<Integer> integers = baseQuery(Integer.class, sql1, taskId);
+        return integers;
     }
 
     /**
@@ -101,7 +104,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public Integer deleteByReportId(Integer reportId){
 String sql= """
-        DELETE FROM users WHERE reportid = ?;
+        DELETE FROM users WHERE report_id = ?;
         """;
         Integer i = baseUpdate(sql, reportId);
         return i;

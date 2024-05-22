@@ -9,6 +9,7 @@ import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
+import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.taskservice.service.TaskInfoService;
@@ -21,6 +22,7 @@ import tyut.selab.utils.Result;
 
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -128,34 +130,63 @@ public class TaskReportController extends HttpServlet {
     private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
        // TaskReportVo taskReportVo = new TaskReportVo();
         List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
-        //1.0读取参数
-        Integer taskid = Integer.parseInt(request.getParameter("taskid"));
-        int cur = Integer.parseInt(request.getParameter("cur"));
-        int size = Integer.parseInt(request.getParameter("size"));
+        Integer taskid = null;
+//        int cur = 0;
+//        int size = 0;
         //权限处理 不会 待细化?????
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
-        //3.0调用service方法
-        if (taskid!=null){
-            //通过id查询任务汇报记录
-            //异常未处理
+        if (roleId==3){
+            return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看汇报记录");
+        }else if (roleId==2){
+            //管理员只能查看自己的
+            //1.0读取参数 cur size 未处理
+            taskid = Integer.parseInt(request.getParameter("taskid"));
+            int cur = Integer.parseInt(request.getParameter("cur"));
+            int size = Integer.parseInt(request.getParameter("size"));
             try {
                 taskReportVos = taskReportService.queryAllTask(taskid);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }else {
-            //无id咋搞?
-        }
-//返回josn数据
-        if (taskReportVos==null){
-            //返回错误 ????
-            return Result.error(HttpStatus.NO_CONTENT,"操作已经执行成功，但是没有返回数据");
+            //返回josn数据
+            if (taskReportVos==null){
+                //返回错误 ????
+                return Result.error(HttpStatus.NO_CONTENT,"操作已经执行成功，但是没有返回数据");
 
-        }else {
-            //成功返回
-            WebUtil.writeJson(response,Result.success(taskReportVos));
-            return Result.success(taskReportVos);
+            }else {
+                //成功返回
+                WebUtil.writeJson(response,Result.success(taskReportVos));
+                return Result.success(taskReportVos);
+            }
+        }else {//超级管理员可以查看所有的
+            taskid = Integer.parseInt(request.getParameter("taskid"));
+          int  cur = Integer.parseInt(request.getParameter("cur"));
+           int size = Integer.parseInt(request.getParameter("size"));
+            if (taskid!=null){
+                //通过id查询任务汇报记录
+                //异常未处理
+                try {
+                    taskReportVos = taskReportService.queryAllTask(taskid);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                //返回josn数据
+                if (taskReportVos==null){
+                    //返回错误 ????
+                    return Result.error(HttpStatus.NO_CONTENT,"操作已经执行成功，但是没有返回数据");
+
+                }else {
+                    //成功返回
+                    WebUtil.writeJson(response,Result.success(taskReportVos));
+                    return Result.success(taskReportVos);
+                }
+            }else {
+                //无id咋搞?
+                //获取所有任务id
+
+                return null;
+            }
         }
     }
 
@@ -200,18 +231,34 @@ public class TaskReportController extends HttpServlet {
      * @return List<TaskReportVo>
      */
     private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response){
-        List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
+        List<NeedReportUser> needReportUsers = new ArrayList<>();
         //权限判断 未完成
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
+        if (roleId == 3 ){
+            return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看所有需要汇报的用户");
+        }else if (roleId==2){
+            //管理员只能查看自己发布的需要汇报的用户信息
+            //读取参数 cur size 未处理
+            Integer taskid = Integer.parseInt(request.getParameter("taskid"));
+            int cur = Integer.parseInt(request.getParameter("cur"));
+            int size = Integer.parseInt(request.getParameter("size"));
+            //读取xml数据
 
-        //读取参数
-        Integer taskid = Integer.parseInt(request.getParameter("taskid"));
-        int cur = Integer.parseInt(request.getParameter("cur"));
-        int size = Integer.parseInt(request.getParameter("size"));
+
+            return Result.success(needReportUsers);
+        }else {
+            //超级管理员能查看所有发布的需要汇报的用户信息
+           //超级管理员也可以输入id
+
+            //获取所有任务id
+
+            return Result.success(needReportUsers);
+        }
 
 
-        return Result.success(taskReportVos);}
+
+       }
     /**
      * 非业务接口方法
      * 进行身份认定，返回用户的身份信息

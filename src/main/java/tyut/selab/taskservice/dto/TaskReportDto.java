@@ -34,5 +34,36 @@ public class TaskReportDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public TaskReportDto() {
+    }
 
+    public TaskReportDto(Integer taskId, Integer reportStatus, String details) {
+        this.taskId = taskId;
+        this.reportStatus = reportStatus;
+        this.details = details;
+    }
+
+    public Integer getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
+    }
+
+    public Integer getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(Integer reportStatus) {
+        this.reportStatus = reportStatus;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
 }

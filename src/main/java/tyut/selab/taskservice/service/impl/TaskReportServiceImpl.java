@@ -15,11 +15,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  *
  */
+
 public class TaskReportServiceImpl implements TaskReportService {
-    //用于调用Dao层TaskReportDaoImpl的方法
+
+
+    /**
+     * 用于调用TaskReport的Dao层相关方法
+     * */
     private TaskReportDao taskReportDao=new TaskReportDaoImpl();
 
     /**
@@ -28,30 +34,30 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @return
      */
     public Integer save(TaskReportDto taskReportDto){
+
+        TaskReport taskReport = new TaskReport();
+
+        taskReport.setTaskId(taskReportDto.getTaskId());
+        taskReport.setReportStatus(taskReportDto.getReportStatus());
+        taskReport.setDetails(taskReportDto.getDetails());
+        taskReport.setReportId(null);
+        taskReport.setCreateTime(null);
+
+        return taskReportDao.insert(taskReport);
+    }
+
+
+    @Override
+    public TaskReportVo queryByUserIdAndTaskId(Integer taskId, Integer userId) {
         return null;
     }
 
-    /**
-     *  通过任务id和用户id查询汇报信息
-     * @param taskId
-     * @param userId
-     * @return
-     */
-    public TaskReportVo queryByUserIdAndTaskId(Integer taskId,Integer userId){
-        return null;
-    }
-
-    /**
-     *  通过id查询任务的所有所有汇报情况
-     * @param taskId
-     * @return
-     */
-    public List<TaskReportVo> queryAllTask(Integer taskId) throws SQLException {
+    @Override
+    public List queryAllTask(Integer taskId) throws SQLException {
         List<TaskReportVo> taskReportVos=new ArrayList<>();
         BaseDao baseDao=new BaseDao();
-        //调用dao层方法
-        //异常未处理
-        List<TaskReport> taskReports = taskReportDao.selectByTaskIdTaskReports(taskId);
+        //调用dao层方法 //异常未处理
+         List<TaskReport> taskReports = taskReportDao.selectByTaskIdTaskReports(taskId);
         //将TaskReport封装成TaskReportVo对象
         for (TaskReport taskReport:taskReports){
             TaskReportVo taskReportVo=new TaskReportVo();
@@ -62,32 +68,20 @@ public class TaskReportServiceImpl implements TaskReportService {
             taskReportVo.setReportTime(taskReport.getCreateTime());
             //如何获取用户的名字 taskReportVo.setUserName(); sys_user内存有用户的名字
             String sql = """
-                    select user_name userName from sys_user where user_id = ?
-                    """;
+                     select user_name userName from sys_user where user_id = ?
+                      """;
             User UserName = baseDao.baseQueryObject(User.class, sql,taskReport.getUserId());
-            taskReportVo.setUserName(UserName.getUserName());
-            taskReportVos.add(taskReportVo);
-        }
-        return taskReportVos;
+            taskReportVo.setUserName(UserName.getUserName()); taskReportVos.add(taskReportVo); }
+         return taskReportVos;
     }
 
-    /**
-     *  通过id查询某一任务汇报数量
-     * @param taskId
-     * @return
-     */
-    public Integer queryTaskReportCount(Integer taskId){
+    @Override
+    public Integer queryTaskReportCount(Integer taskId) {
         return null;
     }
 
-    /**
-     *  通过id查询所有用户
-     * @param taskId
-     * @return
-     */
-    public List<NeedReportUser> queryAllUserForReport(Integer taskId){
+    @Override
+    public List<NeedReportUser> queryAllUserForReport(Integer taskId) {
         return null;
     }
-
-
 }
