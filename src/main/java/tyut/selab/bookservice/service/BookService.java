@@ -45,7 +45,7 @@ public interface BookService {
      *
      * @return
      */
-    public List<BookVo> selectList(Integer cur, Integer size) throws SQLException;
+    public List<BookVo> selectList(Integer cur, Integer size);
 
     /**
      *   通过 bookId 查询书籍信息
@@ -67,8 +67,5 @@ public interface BookService {
      */
     public List<BookVo> selectListByOwnerId(Integer userid,Integer cur,Integer size);
 
-    /**
-     *  通过bookid、userid和bookName多条件查询书籍信息
-     */
-    public BookVo selectByBookIdUserIdBookName(Integer bookId,Integer userId,String bookName);
+    public BookVo bookIofoToBookVo(BookInfo bookInfo);
 }

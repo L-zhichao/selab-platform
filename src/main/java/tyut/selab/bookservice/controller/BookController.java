@@ -3,7 +3,6 @@ package tyut.selab.bookservice.controller;
 import com.alibaba.druid.support.json.JSONParser;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.druid.support.json.JSONWriter;
-import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -41,12 +40,15 @@ import java.util.List;
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
+    static private BookDto bookDto = new BookDto();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         // 设置请求和响应的编码
         resp.setContentType("text/html;charset=utf-8");
         req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
         // 获取url并拆成段
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
@@ -65,17 +67,30 @@ public class BookController extends HttpServlet {
 
         }
 
-//        if (methodName.equals("save")){
-//            save(req, resp);
-//        }else if (methodName.equals("update")) {
-//            update(req, resp);
-//        }else if (methodName.equals("query")){
-//            query(req, resp);
-//        }else if (methodName.equals("list")){
-//            list(req, resp);
-//        }else{
-//            delete(req, resp);
-//        }
+        Result result = null;
+        if (methodName.equals("save")) {
+            save(req, resp);
+        } else if (methodName.equals("update")) {
+            update(req, resp);
+        } else if (methodName.equals("query")) {
+            query(req, resp);
+        } else if (methodName.equals("list")) {
+            result = list(req, resp);
+        } else if (methodName.equals("delete")) {
+            result = delete(req, resp);
+        } else {
+            result.setCode(404);
+            result.setData(null);
+            result.setMsg("路径有误");
+        }
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json");
+        //String jsonString1 = JSONObject.toJSONString(result);
+        String jsonString = JSON.toJSONString(result);
+        PrintWriter writer = resp.getWriter();
+        writer.print(jsonString);
+        writer.flush();
+        writer.close();
     }
 
     @Override
@@ -197,13 +212,12 @@ public class BookController extends HttpServlet {
         //将参数传递给服务层，进行分页查询
         List<BookVo> bookVoList = bookService.selectList(cur, size);
         //将分页查询的结果响应给客户端
-        response.setCharacterEncoding("UTF-8");
-        Result result = new Result(200,bookVoList);
-        result.setMsg("success");
-        PrintWriter writer = response.getWriter();
-        writer.print(result);
-        writer.flush();
-        writer.close();
+        Result result = Result.success(bookVoList);
+        if(bookVoList.isEmpty()) {
+            result.setMsg("信息为空");
+            result.setData(null);
+            result.setCode(507);
+        }
         return result;
     }
 
@@ -229,5 +243,6 @@ public class BookController extends HttpServlet {
             return (Result) method.invoke(400,"删除失败");
         }
     }
+
 
 }

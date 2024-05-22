@@ -1,11 +1,11 @@
 package tyut.selab.bookservice.dao.impl;
 
-import org.junit.experimental.theories.ParameterSignature;
 import tyut.selab.bookservice.dao.BaseDao;
 import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.vo.BookVo;
 
+import java.awt.print.Book;
 import java.lang.reflect.Field;
 import java.sql.Ref;
 import java.sql.SQLException;
@@ -43,10 +43,8 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     }
 
     @Override
-    public BookInfo selectByBookIdBookInfo(Integer bookId) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where bookId = ?";
-        int param = bookId;
-        return baseDao.baseQueryObject(BookInfo.class,sql,param);
+    public List<BookInfo> selectByOwnerBookInfo(Integer userId) {
+        return null;
     }
 
     @Override
