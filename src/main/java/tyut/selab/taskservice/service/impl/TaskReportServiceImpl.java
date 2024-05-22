@@ -85,9 +85,14 @@ public class TaskReportServiceImpl implements TaskReportService {
         return taskReportVos;
     }
 
+    /**
+     *  通过id查询某一任务汇报数量//未控制条件
+     * */
     @Override
     public Integer queryTaskReportCount(Integer taskId) {
-        return null;
+
+
+        return taskReportDao.queryTaskReportCount(taskId);
     }
 
     @Override
