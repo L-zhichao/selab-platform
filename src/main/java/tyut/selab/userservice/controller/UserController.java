@@ -1,5 +1,9 @@
 package tyut.selab.userservice.controller;
 
+import com.alibaba.druid.support.json.JSONParser;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.Dto.UserDto;
 import tyut.selab.userservice.common.Constant;
 import tyut.selab.userservice.domain.User;
@@ -14,9 +18,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
 import static com.alibaba.druid.sql.dialect.oracle.ast.expr.OracleSizeExpr.Unit.T;
 
 /**
@@ -28,37 +37,56 @@ import static com.alibaba.druid.sql.dialect.oracle.ast.expr.OracleSizeExpr.Unit.
  */
 
 
-@WebServlet("/user")
+@WebServlet(name = "UserController",value = "/user/*")
 public class UserController extends HttpServlet {
+
+
+
+    private UserServiceImpl userService = new UserServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getPathInfo();
-
-        if("/query".equals(path)){
+        String pathGet = req.getPathInfo();
+//        System.out.println(pathGet);
+        System.out.println("doGet");
+        //判断是否为queryById
+        String[] split = pathGet.split("/");
+        String modeName = split[1];
+//        System.out.println(modeName);
+        if(pathGet.equals("/query")){
             query(req, resp);
-            resp.getWriter().println("Handling /user/query path");
-        }else if("/save".equals(path)){
-            save(req, resp);
-        }else if("update".equals(path)){
-            update(req, resp);
-        }else if("/queryById".equals(path)){
+
+        }else if(modeName.equals("queryById")){//如何实现对动态url的检测?
+
             queryById(req, resp);
-        }
+       }
+
+
+        PrintWriter out = resp.getWriter();
+        out.write("get");
+        out.flush();
+        out.close();
         super.doGet(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String pathPost = req.getPathInfo();
+
+
+        if(pathPost.equals("/save")){
+            save(req, resp);
+        }else if(pathPost.equals("/update")){
+            update(req, resp);
+        }
+        PrintWriter out = resp.getWriter();
+        out.write("post");
+        out.flush();
+        out.close();
         super.doPost(req, resp);
     }
-    //是否还有用
 
-    private UserService userService;
-
-    private Result queryByUserId(HttpServletRequest request,HttpServletResponse response){
-        return null;
-    }
 
     /**
      *  查询小组所有用户
@@ -74,11 +102,6 @@ public class UserController extends HttpServlet {
         String groupId = request.getParameter("groupId");
         String roleId = request.getParameter("roleId");
         List<UserVo> usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId));
-
-
-
-
-
         return null;
     }
 
@@ -88,13 +111,15 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result queryById(HttpServletRequest request,HttpServletResponse response){
+    private Result queryById(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        System.out.println("doQueryById");
+        String path = request.getPathInfo();
+        String[] split = path.split("/");
+        String userId = split[split.length-1];
+        System.out.println(userId);
+        UserVo userVo = userService.selectByUserId(Long.valueOf(userId));
 
-        String userId = request.getParameter("id");
-        UserVo userVo = userService.selectByUserId(Integer.valueOf(userId));
-
-        Result<UserVo> result = new Result<>(null,null);
-        return result.success(userVo);
+        return Result.success(userVo);
     }
 
     /**
@@ -104,7 +129,21 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result save(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result save(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        System.out.println("doSave");
+        request.setCharacterEncoding("UTF-8");
+        String jsonData = request.getReader().lines().collect(Collectors.joining());
+        UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
+        int insert = userService.save(userVo);
+
+
+
+
+
+
+
+
+        return null;}
 
     /**
      *  修改用户信息

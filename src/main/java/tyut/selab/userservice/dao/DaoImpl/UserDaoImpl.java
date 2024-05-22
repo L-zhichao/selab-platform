@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,46 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Integer insertUser(User user) {
+        System.out.println("doInsertUserDao");
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        String userName =  user.getUserName();
+        Integer groupId = user.getGroupId();
+        Integer roleId = user.getRoleId();
+        String email = user.getEmail();
+        String phone = user.getPhone();
+        Integer sex = user.getSex();
+        Date createTime = (Date) user.getCreateTime();
+        Date updateTime = (Date) user.getUpdateTime();
+        Integer delFlag = user.getDelFlag();
+
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "insert into sys_user (user_name,create_time,update_time,role_id,email,phone,sex,del_flag) "+
+                    "values (?,?,?,?,?,?,?,?)";
+            pstmt.setString(1,userName);
+            pstmt.setDate(2,createTime);
+            pstmt.setDate(3,updateTime);
+            pstmt.setInt(4,roleId);
+            pstmt.setString(5,email);
+            pstmt.setString(6,phone);
+            pstmt.setInt(7,sex);
+            pstmt.setInt(8,delFlag);
+            pstmt.executeQuery();
+
+
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            JDBCUtils.closeResource(conn,pstmt);
+        }
+
+
+
+
         return 0;
     }
 
@@ -39,8 +80,8 @@ public class UserDaoImpl implements UserDao {
         Integer userId = Math.toIntExact(user.getUserId());
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "UPDATE sys_user SET user_name=?,group_id=?," +
-                    "group_name=?,email=?,phone=?,sex=?,where user_id=?";
+//            String sql = "UPDATE sys_user SET user_name=?,group_id=?," +
+//                    "group_name=?,email=?,phone=?,sex=?,where user_id=?";
 
             if (userId.equals(2)) {
                 if (user.getUserName()!=null){
@@ -60,7 +101,7 @@ public class UserDaoImpl implements UserDao {
                 if (user.getSex()!=null){
                     ps.setInt(6,user.getSex());
                 }
-                ps.execute(sql);
+//                ps.execute(sql);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -102,8 +143,9 @@ public class UserDaoImpl implements UserDao {
      */
 
     @Override
-    public User selectByUserIdUser(Integer userId) {
-
+    public User selectByUserIdUser(Long userId) {
+        System.out.println("doSelectByUserIdUserDao");
+        System.out.println(userId);
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet resultSet = null;
@@ -112,10 +154,10 @@ public class UserDaoImpl implements UserDao {
         try {
             conn = JDBCUtils.getConnection();
             String sql = "select * from sys_user where user_id = ?";
-            pstmt.setInt(1,userId);
-            resultSet = pstmt.executeQuery();
+            pstmt.setLong(1,userId);
+            resultSet = pstmt.executeQuery(sql);
             //仅接收user表内容
-
+            System.out.println(resultSet);
             int del_flag = resultSet.getInt("del_flag");
 
             if (del_flag != 0) {
@@ -176,7 +218,7 @@ public class UserDaoImpl implements UserDao {
      * @return
      */
     @Override
-    public User selectByUserName(String userName) {
+    public ArrayList<User> selectByUserName(String userName) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
