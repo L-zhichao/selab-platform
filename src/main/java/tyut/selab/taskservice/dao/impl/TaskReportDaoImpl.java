@@ -107,6 +107,7 @@ String sql= """
         DELETE FROM users WHERE report_id = ?;
         """;
         Integer i = baseUpdate(sql, reportId);
+        //成功删除返回1
         return i;
     }
 
