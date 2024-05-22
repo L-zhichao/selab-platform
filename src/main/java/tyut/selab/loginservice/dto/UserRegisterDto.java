@@ -45,14 +45,14 @@ public class UserRegisterDto implements Serializable {
     public UserRegisterDto() {
     }
 
-    public UserRegisterDto(String userName, Integer groupId, String email, String phone, Integer sex) {
+    public UserRegisterDto(String userName, String password, Integer groupId, String email, String phone, Integer sex) {
         this.userName = userName;
+        this.password = password;
         this.groupId = groupId;
         this.email = email;
         this.phone = phone;
         this.sex = sex;
     }
-
     public String getUserName() {
         return userName;
     }

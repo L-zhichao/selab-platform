@@ -1,7 +1,8 @@
 package tyut.selab.loginservice.dao.impl;
 
 import tyut.selab.loginservice.dao.UserDao;
-import tyut.selab.loginservice.dto.UserDto;
+import tyut.selab.loginservice.dto.UserLoginReq;
+import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.utils.BaseDao;
 
 public class UserDaoImpl extends BaseDao implements UserDao {
@@ -12,8 +13,8 @@ public class UserDaoImpl extends BaseDao implements UserDao {
      */
     @Override
     public Integer findByUsername(String username) {
-        String sql = "select * from sys_user where username = ?";
-        UserDto user = executeQueryOne(UserDto.class, sql, username);
+        String sql = "select user_name as username from sys_user where user_name = ?";
+        UserLoginReq user = executeQueryOne(UserLoginReq.class, sql, username);
         if(null != user){
             return 1;
         }
@@ -26,11 +27,18 @@ public class UserDaoImpl extends BaseDao implements UserDao {
      */
     @Override
     public Integer findByPassword(String password) {
-        String sql = "select * from sys_user where password = ?";
-        UserDto user = executeQueryOne(UserDto.class, sql, password);
-        if(null != user){
+        String sql = "select password from sys_user where password = ?";
+        String word = executeQueryOne(String.class, sql, password);
+        if(null != word){
             return 1;
         }
         return 0;
+    }
+
+    @Override
+    public UserRegisterDto getUserByUsername(String username) {
+        String sql = "select user_name userName,password,email,sex,phone from sys_user where user_name =?";
+        UserRegisterDto userRegistDto = executeQueryOne(UserRegisterDto.class, sql, username);
+        return userRegistDto;
     }
 }

@@ -37,4 +37,11 @@ public class EmailTest {
             throw new RuntimeException(e);
         }
     }
+    @Test
+    public void test2(){
+        String sql = "select user_id userId from sys_email where user_id = 1";
+        EmailDaoImpl emailDao = new EmailDaoImpl();
+        Email email = emailDao.executeQueryOne(Email.class,sql);
+        System.out.println(email);
+    }
 }

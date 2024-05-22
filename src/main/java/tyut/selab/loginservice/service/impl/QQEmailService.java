@@ -15,7 +15,7 @@ public class QQEmailService {
         Properties properties = new Properties();
         properties.put("mail.transport.protocol", "smtp");// 连接协议
         properties.put("mail.smtp.host", "smtp.qq.com");// 主机名
-        properties.put("mail.smtp.port", 465);// 端口号
+        properties.put("mail.smtp.port", 456);// 端口号
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.ssl.enable", "true");// 设置是否使用ssl安全连接 ---一般都使用
         properties.put("mail.debug", "true");// 设置是否显示debug信息 true 会在控制台显示相关信息
@@ -36,7 +36,7 @@ public class QQEmailService {
         // 得到邮差对象
         Transport transport = session.getTransport();
         // 连接自己的邮箱账户
-        transport.connect("2072349810@qq.com", "ynhheyyffniecifa");// 密码为QQ邮箱开通的stmp服务后得到的客户端授权码
+        transport.connect("2072349810@qq.com", "ioejciptntgtdabe");// 密码为QQ邮箱开通的stmp服务后得到的客户端授权码
         // 发送邮件
         int i = 0;
         transport.sendMessage(message, message.getAllRecipients());

@@ -1,6 +1,7 @@
 package tyut.selab.loginservice.service.impl;
 
 import tyut.selab.loginservice.dao.impl.UserDaoImpl;
+import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.UserService;
 
 public class UserServiceImpl implements UserService {
@@ -23,4 +24,10 @@ public class UserServiceImpl implements UserService {
     public Integer findByPassword(String password) {
         return userDao.findByPassword(password);
     }
+
+    @Override
+    public UserRegisterDto getUserByUsername(String username) {
+        return userDao.getUserByUsername(username);
+    }
+
 }
