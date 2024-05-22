@@ -8,6 +8,9 @@
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="javax.activation-api-1.2.0" />
+          <element id="library" level="project" name="druid-1.1.12 (3)" />
+          <element id="library" level="project" name="fastjson-1.2.83" />
+          <element id="library" level="project" name="jakarta.servlet-api-6.0.0 (2)" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="selab-platform/web/Web" />

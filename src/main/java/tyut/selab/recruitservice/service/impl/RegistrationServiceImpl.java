@@ -6,6 +6,9 @@ import tyut.selab.recruitservice.domain.RegistrationForm;
 import tyut.selab.recruitservice.dto.RegistrationDto;
 import tyut.selab.recruitservice.service.RegistrationService;
 import tyut.selab.recruitservice.view.RegistrationVo;
+import tyut.selab.userservice.service.UserService;
+import tyut.selab.userservice.service.impl.UserServiceImpl;
+import tyut.selab.userservice.vo.UserVo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,27 +29,51 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public List<RegistrationVo> selectList(Integer cur, Integer size) {
-        return null;
+        List<RegistrationForm> registrationForms = red.selectAll(cur,size);
+        List<RegistrationVo> registrationVos = new ArrayList<>();
+        UserService userService = new UserServiceImpl();
+        for(RegistrationForm registrationForm : registrationForms){
+            UserVo userVo = userService.selectByUserId(registrationForm.getIntervieweesId());
+            registrationVos.add(registrationForm.getRegistrationVo(userVo));
+        }
+
+
+        List<RegistrationVo> registrationVosNew = new ArrayList<>();
+        for(int i = 0; i < cur ; i++){
+            registrationVosNew.add(registrationVos.get((size - 1) * cur + 1 + i));
+        }
+
+        return registrationVosNew;
     }
 
     @Override
     public RegistrationVo selectRegistrationById(Integer registrationId) {
         RegistrationForm reg = red.selectByRegistrationId(registrationId);
+        if(reg == null){
+            return null;
+        }
+        UserServiceImpl userService = new UserServiceImpl();
+        UserVo userVo = userService.selectByUserId(registrationId);
         return reg.getRegistrationVo(userVo);
     }
 
     @Override
     public List<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size, String intervieweesName) {
-        RegistrationForm reg = red.selectByIntervieweesName(intervieweesName);
-        List<RegistrationVo> regList = new ArrayList<>();
-        if(reg != null){
-            //这俩地方记得转换成RegistrationVo类型
-            regList.add(reg);
-        }else{
-            List<RegistrationForm> registrationForms = red.selectByIntervieweesNameList(intervieweesName);
-            regList.add(registrationForms);
+        List<RegistrationForm> registrationForms = red.selectByIntervieweesName(intervieweesName);
+        List<RegistrationVo> registrationVos = new ArrayList<>();
+        UserService userService = new UserServiceImpl();
+        for(RegistrationForm registrationForm : registrationForms){
+            UserVo userVo = userService.selectByUserId(registrationForm.getIntervieweesId());
+            registrationVos.add(registrationForm.getRegistrationVo(userVo));
         }
-        return regList;
+
+
+        List<RegistrationVo> registrationVosNew = new ArrayList<>();
+        for(int i = 0; i < cur ; i++){
+            registrationVosNew.add(registrationVos.get((size - 1) * cur + 1 + i));
+        }
+
+        return registrationVosNew;
     }
 
 
@@ -55,15 +82,34 @@ public class RegistrationServiceImpl implements RegistrationService {
     public List<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size) {
         List<RegistrationForm> registrationForms = red.selectByIntentDepartment(intentDepartment, cur, size);
         List<RegistrationVo> registrationVos = null;
+        UserService userService = new UserServiceImpl();
         for(RegistrationForm registrationForm : registrationForms){
-            registrationVos.add()
+            UserVo userVo = userService.selectByUserId(registrationForm.getIntervieweesId());
+            registrationVos.add(registrationForm.getRegistrationVo(userVo));
         }
-        return registrationVos;
+        List<RegistrationVo> registrationVosNew = new ArrayList<>();
+        for(int i = 0; i < cur ; i++){
+            registrationVosNew.add(registrationVos.get((size - 1) * cur + 1 + i));
+        }
+
+        return registrationVosNew;
     }
 
     @Override
     public List<RegistrationVo> selectByGradeId(Integer grade, Integer cur, Integer size) {
-        return null;
+        List<RegistrationForm> registrationForms = red.selectByGradeId(grade, cur, size);
+        List<RegistrationVo> registrationVos = null;
+        UserService userService = new UserServiceImpl();
+        for(RegistrationForm registrationForm : registrationForms){
+            UserVo userVo = userService.selectByUserId(registrationForm.getIntervieweesId());
+            registrationVos.add(registrationForm.getRegistrationVo(userVo));
+        }
+        List<RegistrationVo> registrationVosNew = new ArrayList<>();
+        for(int i = 0; i < cur ; i++){
+            registrationVosNew.add(registrationVos.get((size - 1) * cur + 1 + i));
+        }
+
+        return registrationVosNew;
     }
 
     @Override

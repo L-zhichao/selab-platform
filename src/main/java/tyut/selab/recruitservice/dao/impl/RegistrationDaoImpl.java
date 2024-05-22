@@ -5,6 +5,7 @@ import tyut.selab.recruitservice.dao.RegistrationDao;
 import tyut.selab.recruitservice.domain.RegistrationForm;
 import tyut.selab.recruitservice.dto.RegistrationDto;
 import tyut.selab.recruitservice.view.RegistrationVo;
+import tyut.selab.userservice.vo.UserVo;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * @param registrationForm
      * @return
      */
+    @Override
     public Integer insert(RegistrationForm registrationForm){
         return null;
     }
@@ -24,6 +26,7 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * @param registrationForm
      * @return
      */
+    @Override
     public Integer update(RegistrationForm registrationForm){
         return null;
     }
@@ -33,6 +36,7 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * @param registrationId
      * @return
      */
+    @Override
     public RegistrationForm selectByRegistrationId(Integer registrationId){
         String sql = """
                 select id,
@@ -61,7 +65,8 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * @param intervieweesName
      * @return
      */
-    public RegistrationForm selectByIntervieweesName(String intervieweesName){
+    @Override
+    public List<RegistrationForm> selectByIntervieweesName(String intervieweesName){
         String sql = """
                 select id,
                 interview_id userId,
@@ -79,8 +84,8 @@ public class RegistrationDaoImpl implements RegistrationDao {
                 form registration_form
                 where userId = select user_id form sys_user where user_name = ?
                 """;
-        List<RegistrationForm> registrationForm = baseDao.baseQuery(RegistrationForm.class, sql, intervieweesName);
-        return registrationForm != null && registrationForm.size() > 0 ? registrationForm.get(0):null;
+        List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql, intervieweesName);
+        return registrationForms != null && registrationForms.size() > 0 ? registrationForms : null;
     }
 
     /**
@@ -89,7 +94,35 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * @return
      */
     @Override
-    public List<RegistrationForm> selectByIntervieweesNameList(String intervieweesName) {
+    public List<RegistrationForm> selectList(String intervieweesName) {
+//        String sql = """
+//                select id,
+//                interview_id userId,
+//                email,
+//                phone,
+//                intent_department intentDepartment,
+//                grade,
+//                classroom,
+//                interview_time interviewTime,
+//                introduce,
+//                purpose,
+//                remark,
+//                init_time createTime,
+//                update_time updateTime,
+//                form registration_form
+//                where userId = select user_id form sys_user where user_name = ?
+//                """;
+//        List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql, "%" + intervieweesName + "%");
+//        return registrationForms != null && registrationForms.size() > 0 ? registrationForms:null;
+        return null;
+    }
+
+    /**
+     * 查询所有报名表
+     * @return
+     */
+    @Override
+    public List<RegistrationForm> selectAll(Integer cur, Integer size){
         String sql = """
                 select id,
                 interview_id userId,
@@ -105,24 +138,16 @@ public class RegistrationDaoImpl implements RegistrationDao {
                 init_time createTime,
                 update_time updateTime,
                 form registration_form
-                where userId = select user_id form sys_user where user_name = ?
                 """;
-        List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql, "%" + intervieweesName + "%");
+        List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql);
         return registrationForms != null && registrationForms.size() > 0 ? registrationForms:null;
-    }
-
-    /**
-     * 查询所有报名表
-     * @return
-     */
-    public List<RegistrationForm> selectAll(Integer cur, Integer size){
-        return null;
     }
 
     /**
      *  通过意向部门查询报名表
      * @return
      */
+    @Override
     public List<RegistrationForm> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size){
         String sql = """
                 select id,
@@ -150,7 +175,27 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * @param grade
      * @return
      */
+    @Override
     public List<RegistrationForm> selectByGradeId(Integer grade, Integer cur, Integer size){
-        return null;
+        String sql = """
+                select id,
+                interview_id userId,
+                email,
+                phone,
+                intent_department intentDepartment,
+                grade,
+                classroom,
+                interview_time interviewTime,
+                introduce,
+                purpose,
+                remark,
+                init_time createTime,
+                update_time updateTime,
+                form registration_form
+                where grade = ?
+                """;
+        List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql,grade);
+        return registrationForms != null && registrationForms.size() > 0 ? registrationForms:null;
     }
+
 }
