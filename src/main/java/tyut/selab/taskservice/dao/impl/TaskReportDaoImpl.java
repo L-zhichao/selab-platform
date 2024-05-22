@@ -2,6 +2,7 @@ package tyut.selab.taskservice.dao.impl;
 
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
+import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.myutils.JDBCUtil;
@@ -74,8 +75,12 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @return 暂时返回的是用户的id(待更改)
      */
     public List<Integer> selectByTaskIdForUserId(Integer taskId){
-        String sql1="select user_id from task_report where task_id=?";
-        List<Integer> integers = baseQuery(Integer.class, sql1, taskId);
+        TaskGroupDaoImpl taskGroupDao=new TaskGroupDaoImpl();
+        //获取对应任务的小组
+        List<TaskGroup> taskGroups = taskGroupDao.selectAllTaskGroupsByTaskId(taskId);
+        //获取小组的对应成员id
+
+        List<Integer> integers = null;
         return integers;
     }
 
