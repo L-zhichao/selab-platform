@@ -1,5 +1,7 @@
 package tyut.selab.taskservice.service.impl;
 
+import tyut.selab.taskservice.dao.TaskReportDao;
+import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
@@ -14,13 +16,28 @@ import java.util.List;
  */
 public class TaskReportServiceImpl implements TaskReportService {
 
+
+/**
+ * 用于调用TaskReport的Dao层相关方法
+ * */
+    private TaskReportDao taskReportDao=new TaskReportDaoImpl();
+
     /**
      *  新增汇报记录
      * @param taskReportDto
      * @return
      */
     public Integer save(TaskReportDto taskReportDto){
-        return null;
+
+        TaskReport taskReport = new TaskReport();
+
+        taskReport.setTaskId(taskReportDto.getTaskId());
+        taskReport.setReportStatus(taskReportDto.getReportStatus());
+        taskReport.setDetails(taskReportDto.getDetails());
+        taskReport.setReportId(null);
+        taskReport.setCreateTime(null);
+
+        return taskReportDao.insert(taskReport);
     }
 
     /**
