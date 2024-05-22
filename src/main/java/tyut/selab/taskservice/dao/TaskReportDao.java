@@ -49,7 +49,7 @@ public interface TaskReportDao {
      * @param id
      * @return
      */
-    TaskReport selectByReortId(Long id);
+    TaskReport selectByReportId(Long id);
 
     /**
      *

@@ -98,7 +98,17 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result report(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result report(HttpServletRequest request,HttpServletResponse response){
+
+        TaskReportDto taskReportDto =WebUtil.readJson(request,TaskReportDto.class);
+        Integer save = taskReportService.save(taskReportDto);
+        if(save!=null){
+            return Result.success(null);
+        }else{
+            return Result.error(HttpStatus.ERROR,"汇报失败");//?????
+        }
+
+    }
 
     /**
      *  查询当前汇报数量
