@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.List;
 
@@ -28,11 +31,15 @@ import static com.alibaba.druid.sql.dialect.oracle.ast.expr.OracleSizeExpr.Unit.
  */
 
 
-@WebServlet("/user")
+@WebServlet("/user/*")
 public class UserController extends HttpServlet {
 
-    @Override
+ /*   @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("UserController");
+        resp.getWriter().write("Hello World");
+
+
         String path = req.getPathInfo();
 
         if("/query".equals(path)){
@@ -46,12 +53,41 @@ public class UserController extends HttpServlet {
             queryById(req, resp);
         }
         super.doGet(req, resp);
-    }
+    }*/
+
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+    protected void doGet(HttpServletRequest req,HttpServletResponse resp) throws IOException {
+        System.out.println("Hello World");
+        resp.getWriter().write("user");
+
+        String uri = req.getRequestURI();
+        System.out.println("uri:" + uri);
+
+        String methodName = uri.substring(uri.lastIndexOf('/') + 1);
+        System.out.println("methodName:" + methodName);
+
+        try {
+            Method method = this.getClass().getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
+            method.invoke(this, req, resp);
+            resp.getWriter().write("update");
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+
+    @Override
+    protected void doPost(HttpServletRequest req,HttpServletResponse resp) throws UnsupportedEncodingException {
+        req.setCharacterEncoding("utf-8");
+    }
+
+
+
     //是否还有用
 
     private UserService userService;
@@ -106,6 +142,7 @@ public class UserController extends HttpServlet {
      */
     private Result save(HttpServletRequest request,HttpServletResponse response){return null;}
 
+
     /**
      *  修改用户信息
      *  param: UserVo对象
@@ -113,22 +150,16 @@ public class UserController extends HttpServlet {
      * @param response
      * @return post 无返回参数
      */
-    private Result update(HttpServletRequest request, HttpServletResponse response){
-        //请求路径 user/update,无返回数据
-
-        // token 获得目前登录用户roleId，判断是否为管理员
-        Integer roleId = Integer.valueOf(request.getParameter("roleId"));
-
-        if (roleId.equals(2)) {
-            //获取请求参数
+    private Result update(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.getWriter().write("Update");
+        // 获取登录用户roleId
+        Integer loginRoleId = Integer.valueOf(request.getParameter("roleId"));
+        if (loginRoleId.equals(2)) {
             UserVo userVo = new UserVo();
-            userVo.setUserId(Long.valueOf(request.getParameter("userId")));
-            //调用userService方法
             userService.updateUser(userVo);
             return Result.success(null);
-        } else {
-            return Result.error(null, null);
         }
+        return null;
     }
 
     /**

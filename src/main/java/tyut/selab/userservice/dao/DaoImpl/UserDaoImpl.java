@@ -36,13 +36,10 @@ public class UserDaoImpl implements UserDao {
     public Integer updateUser(User user) {
         Connection conn = null;
         PreparedStatement ps = null;
-        Integer userId = Math.toIntExact(user.getUserId());
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "UPDATE sys_user SET user_name=?,group_id=?," +
-                    "group_name=?,email=?,phone=?,sex=?,where user_id=?";
-
-            if (userId.equals(2)) {
+            String sql = "UPDATE sys_user SET user_name=?,role_id=?,email=?,phone=?,sex=?,update_time=? where user_id=?";
+            ps = conn.prepareStatement(sql);
                 if (user.getUserName()!=null){
                     ps.setString(1, user.getUserName());
                 }
@@ -58,17 +55,17 @@ public class UserDaoImpl implements UserDao {
                     ps.setString(5, user.getPhone());
                 }
                 if (user.getSex()!=null){
-                    ps.setInt(6,user.getSex());
+                    ps.setInt(5,user.getSex());
                 }
                 ps.execute(sql);
-            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
             JDBCUtils.closeResource(conn,ps);
         }
 
-        return userId;
+        return null;
     }
     /**
     * Description: 修改用户权限
@@ -83,6 +80,7 @@ public class UserDaoImpl implements UserDao {
         try {
             conn = JDBCUtils.getConnection();
             String sql = "UPDATE sys_user SET role_id=? where user_id=?";
+            ps = conn.prepareStatement(sql);
             ps.setInt(1,user.getRoleId());
             ps.setLong(2,user.getUserId());
             ps.execute(sql);

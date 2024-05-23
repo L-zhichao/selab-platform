@@ -26,10 +26,6 @@ public class UserServiceImpl implements UserService {
     * @param userVo
     * @return Integer
     */
-    //没有IOC
-    //private UserDaoImpl userDao;
-
-
     @Override
     public Integer updateUserRole(UserVo userVo) {
         //转换对象类型 ？？？
@@ -121,17 +117,18 @@ public class UserServiceImpl implements UserService {
 
 
     /**
-    * Description: 修改用户权限
+    * Description: 修改用户
     * @param
     */
     @Override
     public Integer updateUser(UserVo userVo) {
 
-
-
+        User user = new User();
+        user.setUserId(userVo.getUserId());
         //更新修改时间
-        userVo.setUpdateTime(Date.valueOf(LocalDate.now()));
+        user.setUpdateTime(Date.valueOf(LocalDate.now()));
         //调用sql方法
-        return null;
+        Integer rows = userDao.updateUser(user);
+        return rows;
     }
 }

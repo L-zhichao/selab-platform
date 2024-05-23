@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="selabtest@localhost" uuid="f3244b5c-4d82-4644-b57f-075566b42d65">
+    <data-source source="LOCAL" name="@localhost" uuid="f3244b5c-4d82-4644-b57f-075566b42d65">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3306/selabtest</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="@localhost [2]" uuid="779a5987-18d9-4455-8f43-1f58ab76a43b">
+    <data-source source="LOCAL" name="selab_platform@localhost" uuid="779a5987-18d9-4455-8f43-1f58ab76a43b">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>

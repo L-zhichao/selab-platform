@@ -12,6 +12,7 @@ import java.util.List;
 public class GroupDaoImpl implements GroupDao {
 
 
+
     @Override
     public Integer insert(Group group) throws Exception {
         Connection conn = JDBCUtils.getConnection();
