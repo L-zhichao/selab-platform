@@ -66,8 +66,11 @@ public class UserServiceImpl implements UserService {
         String email = userSelectByUserId.getEmail();
         String phone = userSelectByUserId.getPhone();
         Integer sex = userSelectByUserId.getSex();
-        Date createTime = (Date) userSelectByUserId.getCreateTime();
-        Date updateTime = (Date) userSelectByUserId.getUpdateTime();
+
+
+        java.util.Date date = new java.util.Date();
+        Date createTime = new java.sql.Date(date.getTime());
+        Date updateTime = new java.sql.Date(date.getTime());
 
         //对rolename的判断
         if(roleld == 1){
@@ -127,8 +130,10 @@ public class UserServiceImpl implements UserService {
         String email = userVo.getEmail();
         String phone = userVo.getPhone();
         Integer sex = userVo.getSex();
-        Date createTime =  Date.valueOf(String.valueOf(LocalTime.now()));
-        Date updateTime =  Date.valueOf(String.valueOf(LocalTime.now()));
+
+        java.util.Date date = new java.util.Date();
+        Date createTime = new java.sql.Date(date.getTime());
+        Date updateTime = new java.sql.Date(date.getTime());
 
 
         userSave.setUserName(userName);

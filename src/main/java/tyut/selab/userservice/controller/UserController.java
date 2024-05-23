@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.List;
@@ -76,7 +77,11 @@ public class UserController extends HttpServlet {
 
 
         if(pathPost.equals("/save")){
-            save(req, resp);
+            try {
+                save(req, resp);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }else if(pathPost.equals("/update")){
             update(req, resp);
         }
@@ -129,7 +134,7 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result save(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    private Result save(HttpServletRequest request,HttpServletResponse response) throws IOException, SQLException {
         System.out.println("doSave");
         request.setCharacterEncoding("UTF-8");
         String jsonData = request.getReader().lines().collect(Collectors.joining());
