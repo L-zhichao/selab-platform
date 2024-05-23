@@ -3,6 +3,8 @@ package tyut.selab.loginservice.service.impl;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.LoginService;
+import tyut.selab.loginservice.utils.WebUtils;
+import tyut.selab.utils.Result;
 
 /**
  * Classname: LoginServiceImpl
@@ -13,6 +15,8 @@ import tyut.selab.loginservice.service.LoginService;
  * @Version 17
  */
 public class LoginServiceImpl implements LoginService {
+    EmailServiceImpl serviceImpl = new EmailServiceImpl();
+    UserServiceImpl userService = new UserServiceImpl();
 
     @Override
     public String login(UserLoginReq req) {
@@ -42,20 +46,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Integer register(UserRegisterDto userRegisterDto) {
-        // 接收要注册的用户信息
-//        UserRegisterDto registUser = WebUtils.readJson(req, UserRegisterDto.class);
-//        //实现UserServiceImp类
-//        UserServiceImp userService = new UserServiceImp();
-//        // 调用服务层方法,将用户注册进入数据库
-//        int rows =userService.register(registUser);
-//        Result result =new Result(null,null);
-//        if(rows>0){
-//            result=result.success("null");
-//        }else{
-//            result =result.error(501,"fail to register");
-//        }
-//        WebUtils.writeJson(resp,result);
-        return null;
+
+
+
     }
 
 }

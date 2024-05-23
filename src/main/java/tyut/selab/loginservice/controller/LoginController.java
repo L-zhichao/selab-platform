@@ -1,11 +1,12 @@
 package tyut.selab.loginservice.controller;
 
+import jakarta.mail.MessagingException;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.impl.EmailServiceImpl;
 import tyut.selab.loginservice.service.impl.QQEmailService;
 import tyut.selab.loginservice.service.impl.UserServiceImpl;
-import tyut.selab.loginservice.utils.TokenTools;
+import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.loginservice.utils.WebUtils;
 import tyut.selab.utils.Result;
 
@@ -14,7 +15,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 /**
  * @className: LoginController
@@ -71,6 +71,16 @@ public class LoginController extends HttpServlet {
         if(QQEmailService.checkPhone(userRegisterDto.getPhone())){
             if(QQEmailService.checkEmail(userRegisterDto.getEmail())){
                 //检验信息无误后，这时候发送验证码进行验证注册
+                String head = "";
+                String verify = SecurityUtil.getRandom();
+                String body = "登录需要的验证码为:" + verify;
+                try {
+                    QQEmailService.qqemail(userRegisterDto.getEmail(),head,body);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 //注册完成后，将对应的信息存入到数据库中
             }
             msg = "用户邮箱输入格式错误";
@@ -80,26 +90,5 @@ public class LoginController extends HttpServlet {
         msg = "用户电话号码不正确";
         result.error(400,msg);
         return result;
-    }
-
-    @WebServlet("/LoginServlet")
-    public class LoginServlet extends HttpServlet{
-        private static final long serialVersionUID = 1L;
-
-        protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            HttpSession session = request.getSession();
-            TokenTools tokenTools =new TokenTools();
-            String userName = request.getParameter("userName");
-            String token = request.getParameter("token");
-            tokenTools.createToken(request,userName);
-
-
-            if (tokenTools.judgeTokenIsEqual(request,token,userName)) {
-                //main.jsp文件为要跳转的jsp界面.
-                request.getRequestDispatcher("main.jsp").forward(request, response);
-            } else {
-                request.getRequestDispatcher("login.jsp").forward(request,response);
-            }
-        }
     }
 }

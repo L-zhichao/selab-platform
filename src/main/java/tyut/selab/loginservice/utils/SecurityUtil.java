@@ -23,7 +23,7 @@ public class SecurityUtil {
      * 并发安全的方式生成六位数验证码
      * @return
      */
-    private static String getRandom() {
+    public static String getRandom() {
         return String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
     }
 }
