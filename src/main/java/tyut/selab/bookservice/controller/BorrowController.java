@@ -55,7 +55,7 @@ public class BorrowController extends HttpServlet {
             if (methodName2.equals("return")){
                 result = returnBook(req, resp);
             } else if (methodName2.equals("queryById")) {
-                result = qurtyById(req, resp);
+                result = queryById(req, resp);
             } else {
                 result.setCode(404);
                 result.setData(null);
@@ -237,7 +237,11 @@ public class BorrowController extends HttpServlet {
      */
     private Result queryBorrowLog(HttpServletRequest request,HttpServletResponse response){return null;}
 
-    private Result qurtyById(HttpServletRequest request,HttpServletResponse response){
+    private Result queryById(HttpServletRequest request,HttpServletResponse response){
+        String requestURI = request.getRequestURI();
+        String[] split = requestURI.split("/");
+        String borrowId = split[split.length - 1];
+        borrowService.
         return null;
     }
 }

@@ -43,7 +43,7 @@ public class BookController extends HttpServlet {
     static private BookDto bookDto = new BookDto();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         // 设置请求和响应的编码
         resp.setContentType("text/html;charset=utf-8");
         req.setCharacterEncoding("UTF-8");
@@ -67,30 +67,30 @@ public class BookController extends HttpServlet {
 
         }
 
-        Result result = null;
-        if (methodName.equals("save")) {
-            save(req, resp);
-        } else if (methodName.equals("update")) {
-            update(req, resp);
-        } else if (methodName.equals("query")) {
-            query(req, resp);
-        } else if (methodName.equals("list")) {
-            result = list(req, resp);
-        } else if (methodName.equals("delete")) {
-            result = delete(req, resp);
-        } else {
-            result.setCode(404);
-            result.setData(null);
-            result.setMsg("路径有误");
-        }
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("application/json");
-        //String jsonString1 = JSONObject.toJSONString(result);
-        String jsonString = JSON.toJSONString(result);
-        PrintWriter writer = resp.getWriter();
-        writer.print(jsonString);
-        writer.flush();
-        writer.close();
+//        Result result = null;
+//        if (methodName.equals("save")) {
+//            save(req, resp);
+//        } else if (methodName.equals("update")) {
+//            update(req, resp);
+//        } else if (methodName.equals("query")) {
+//            query(req, resp);
+//        } else if (methodName.equals("list")) {
+//            result = list(req, resp);
+//        } else if (methodName.equals("delete")) {
+//            result = delete(req, resp);
+//        } else {
+//            result.setCode(404);
+//            result.setData(null);
+//            result.setMsg("路径有误");
+//        }
+//        resp.setCharacterEncoding("UTF-8");
+//        resp.setContentType("application/json");
+//        //String jsonString1 = JSONObject.toJSONString(result);
+//        String jsonString = JSON.toJSONString(result);
+//        PrintWriter writer = resp.getWriter();
+//        writer.print(jsonString);
+//        writer.flush();
+//        writer.close();
     }
 
     @Override
@@ -157,7 +157,7 @@ public class BookController extends HttpServlet {
         Integer i = bookService.updateBook(bookVo);
         // 通过反射调用Result中的success方法
         Class<Result> resultClass = Result.class;
-        if (i >= 0) {
+        if (i > 0) {
             Method method = resultClass.getDeclaredMethod("success", BookDto.class);
             // 请求转发到查询所有书籍
             request.getRequestDispatcher("book/list").forward(request,response);
@@ -170,28 +170,28 @@ public class BookController extends HttpServlet {
     }
 
     /**
-     *
+     * 通过BookId查询书籍信息
      * @param request
      * @param response
      * @return
      */
     private Result queryOne(HttpServletRequest request, HttpServletResponse response) {
-
+        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
+        BookVo bookVo = bookService.selectBookById(bookId);
         return null;
     }
 
     /**
-     *  通过BookId查询书籍信息
-     *  传入 bookId & bookName & userId(书籍拥有者)[可以都传，也可以传入单个参数 | 调用前先判断参数是都为空(是否有效) | 为空跳过此参数 ]
-     *  param: bookId bookName userId cur[不为空] size[不为空]
+     *  传入 bookName & userId(书籍拥有者)[可以都传，也可以传入单个参数 | 调用前先判断参数是都为空(是否有效) | 为空跳过此参数 ]
+     *  param: bookName userId cur[不为空] size[不为空]
      * @return list<BookVo>
      */
     private Result query(HttpServletRequest request,HttpServletResponse response){
-        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
         String bookName = request.getAttribute("bookName").toString();
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
+        // 先判断传入参数是否为空
         return null;
 
     }
@@ -234,7 +234,7 @@ public class BookController extends HttpServlet {
         Integer i = bookService.deleteBook(bookId);
         response.setCharacterEncoding("UTF-8");
         Class<Result> resultClass = Result.class;
-        if (i >= 0) {
+        if (i > 0) {
             Method method = resultClass.getDeclaredMethod("success", Integer.class);
             return (Result) method.invoke(i);
         }

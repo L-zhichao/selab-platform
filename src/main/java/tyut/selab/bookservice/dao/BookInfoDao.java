@@ -3,6 +3,7 @@ package tyut.selab.bookservice.dao;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.vo.BookVo;
 
+import java.awt.print.Book;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public interface BookInfoDao {
      * @param bookId
      * @return
      */
-    public BookInfo selectByBookIdBookInfo(Integer bookId) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    public BookInfo selectByBookIdBookInfo(Integer bookId) throws SQLException;
 
     /**
      *  通过拥有者id查询本人所有书籍
@@ -62,11 +63,10 @@ public interface BookInfoDao {
     public List<BookInfo> selectAllByBookName(String bookName) throws SQLException;
 
     /**
-     *  通过图书id，拥有者id和书籍名称三者多条件查询书籍信息
+     *  通过书籍名称和拥有者id查询书籍信息
      * @return
      */
-    public BookInfo selectByBookIdUserIdBookName(Integer bookId,Integer userId,String bookName) throws SQLException;
-
+    public List<BookInfo> selectByOwnerBookName(Integer userId, String bookName) throws SQLException;
 }
 
 

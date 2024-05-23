@@ -42,10 +42,6 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
         return baseDao.baseUpdate(sql,param);
     }
 
-    @Override
-    public List<BookInfo> selectByOwnerBookInfo(Integer userId) {
-        return null;
-    }
 
     @Override
     public List<BookInfo> selectByOwnerBookInfo(Integer userId) throws SQLException {
@@ -67,15 +63,22 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     public List<BookInfo> selectAllByBookName(String bookName) throws SQLException {
         // 使用通配符之后的模糊匹配
         String sql = "select * from book_info where book_name like ?";
-        List<Object> bookInfo = baseQuery(BookInfo.class, "%" + bookName + "%");
-
-        return null;
+        List<BookInfo> bookInfos = baseQuery(BookInfo.class, "%" + bookName + "%");
+        return bookInfos;
     }
 
     @Override
-    public BookInfo selectByBookIdUserIdBookName(Integer bookId, Integer userId, String bookName) throws SQLException {
-        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,status create_time createTime,update_time updateTime,book_ref BookRef from book_info where book_id=? and user_id=? and book_name=?";
-        Object[] params = {bookId,userId,bookName};
-        return baseDao.baseQueryObject(BookInfo.class,sql,params);
+    public BookInfo selectByBookIdBookInfo(Integer bookId) throws SQLException{
+        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where userId = ?";
+        int param = bookId;
+        return baseDao.baseQueryObject(BookInfo.class,sql,param);
     }
+
+    @Override
+    public List<BookInfo> selectByOwnerBookName(Integer userId, String bookName) throws SQLException {
+        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where bookName = ? and userId = ?";
+        List<BookInfo> bookInfos = baseQuery(BookInfo.class, "%" + bookName + "%", userId);
+        return bookInfos;
+    }
+
 }

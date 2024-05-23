@@ -72,29 +72,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookVo selectByBookIdUserIdBookName(Integer bookId,Integer userId,String bookName){
-        BookInfo bookInfo = null;
-        try {
-            bookInfo = bookDao.selectByBookIdUserIdBookName(bookId, userId, bookName);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        BookVo bookVo = bookIofoToBookVo(bookInfo);
-        return bookVo;
-    }
-
-    @Override
     public BookVo selectBookById(Integer bookId) {
         BookInfo bookInfo = null;
         try {
             bookInfo = bookDao.selectByBookIdBookInfo(bookId);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         String jsonString = JSONUtils.toJSONString(bookInfo);
@@ -103,7 +85,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookVo selectBookByBookName(String bookName) {
+    public List<BookVo> selectBookByBookName(String bookName) {
         try {
             List<BookInfo> bookInfos = bookDao.selectAllByBookName(bookName);
             for(BookInfo bookInfo:bookInfos){
@@ -119,14 +101,23 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookVo> selectListByOwnerId(Integer userid, Integer cur, Integer size) {
         try {
-            bookDao.selectByOwnerBookInfo(userid)
+            List<BookInfo> bookInfos = bookDao.selectByOwnerBookInfo(userid);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
-    private BookVo bookIofoToBookVo(BookInfo bookInfo) {
+    @Override
+    public List<BookVo> selectByOwnerBookName(Integer userId, String bookName){
+        try {
+            List<BookInfo> bookInfos = bookDao.selectByOwnerBookName(userId,bookName);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public BookVo bookIofoToBookVo(BookInfo bookInfo) {
         BookVo bookVo = new BookVo();
         bookVo.setBookAuthor(bookInfo.getBookAuthor());
         bookVo.setBookDetails(bookInfo.getBookDetails());
