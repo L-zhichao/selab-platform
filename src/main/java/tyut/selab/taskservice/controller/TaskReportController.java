@@ -11,6 +11,7 @@ import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
+import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.WebUtil;
@@ -30,6 +31,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @className: TaskReportController
@@ -119,7 +121,32 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result queryCount(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result queryCount(HttpServletRequest request,HttpServletResponse response) throws SQLException {
+
+        TaskReport taskReport = new TaskReport();
+
+       //判断任务是否存在
+       Integer taskId = Integer.valueOf(request.getParameter("taskId"));
+        List<TaskReportVo> taskReportVos = taskReportService.queryAllTask(taskId);
+        if(taskReportVos==null){
+            return  Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
+        }
+
+        //获取管理员id
+        UserLocal userMessage = getUserMessage(request, response);
+        Integer roleId = userMessage.getRoleId();
+
+
+        //权限不够-->管理员查询非自己发布的任务 && 普通用户
+        if(!(taskReport.getUserId().equals(roleId)) && roleId==3){
+            return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止查询");
+        }else {
+            //查询
+            taskReportService.queryTaskReportCount(taskId);
+            return Result.success(null);
+        }
+
+    }
 
 
 
@@ -130,7 +157,24 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return TaskReportDto
      */
-    private Result queryMyReport(HttpServletRequest request, HttpServletResponse response){return null;}
+    private Result queryMyReport(HttpServletRequest request, HttpServletResponse response){
+        List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
+
+        //获取用户id
+        UserLocal userMessage = getUserMessage(request, response);
+        Integer userId = userMessage.getUserId();
+
+        Integer taskId = Integer.valueOf(request.getParameter("taskId"));
+
+        taskReportVos = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+
+        if(taskReportVos!=null){
+            return Result.success(null);
+        }else {
+            return Result.error(HttpStatus.ERROR,"查询失败");//????
+        }
+
+    }
 
     /**
      *  通过id查询任务的所有汇报记录

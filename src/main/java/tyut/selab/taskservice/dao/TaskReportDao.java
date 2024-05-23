@@ -24,11 +24,12 @@ public interface TaskReportDao {
     Integer insert(TaskReport record);
 
     /**
-     *  通过用户id和taskId查询汇报信息
+     * 通过用户id和taskId查询汇报信息
+     *
      * @param userId
      * @return
      */
-    TaskReport selectByUserId(Integer userId,Integer taskId);
+    List<TaskReport> selectByUserId(Integer userId, Integer taskId);
 
     /**
      *  通过taskId查询所有汇报信息

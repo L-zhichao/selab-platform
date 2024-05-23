@@ -27,7 +27,7 @@ public interface TaskReportService {
      * @param userId
      * @return
      */
-    public TaskReportVo queryByUserIdAndTaskId(Integer taskId,Integer userId);
+    public List<TaskReportVo> queryByUserIdAndTaskId(Integer taskId,Integer userId);
 
     /**
      *  通过id查询任务的所有所有汇报情况

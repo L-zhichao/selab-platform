@@ -1,7 +1,8 @@
 <component name="libraryTable">
-  <library name="druid-1.1.12 (2)">
+  <library name="druid-1.1.12">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/druid-1.1.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/fastjson-1.2.83.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

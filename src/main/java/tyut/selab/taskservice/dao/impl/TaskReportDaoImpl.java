@@ -4,13 +4,7 @@ import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskReport;
-import tyut.selab.taskservice.dto.NeedReportUser;
-import tyut.selab.taskservice.myutils.JDBCUtil;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,12 +43,17 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
     }
 
     /**
-     *  通过用户id和taskId查询汇报信息
+     * 通过用户id和taskId查询汇报信息（查询本人汇报记录) 【userid后端获取】
+     *
      * @param userId
      * @return
      */
-    public TaskReport selectByUserId(Integer userId, Integer taskId){
-        return null;
+    public List<TaskReport> selectByUserId(Integer userId, Integer taskId){
+
+        TaskReport taskReport = new TaskReport();
+        String sql="select from task_report where user_id=? and task_id=?";
+       List<TaskReport> reports =  baseQuery(TaskReport.class, sql, userId, taskId);
+        return reports;
     }
 
     /**

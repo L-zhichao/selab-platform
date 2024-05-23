@@ -1,5 +1,7 @@
 package tyut.selab.taskservice.service.impl;
 
+import org.junit.platform.commons.util.StringUtils;
+import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
@@ -10,9 +12,12 @@ import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.userservice.domain.User;
+import tyut.selab.utils.Result;
 
+import java.awt.print.PrinterAbortException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -33,23 +38,73 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @param taskReportDto
      * @return
      */
-    public Integer save(TaskReportDto taskReportDto){
-
+    public Integer save(TaskReportDto taskReportDto) {
+        // 创建TaskReport对象
         TaskReport taskReport = new TaskReport();
 
         taskReport.setTaskId(taskReportDto.getTaskId());
         taskReport.setReportStatus(taskReportDto.getReportStatus());
         taskReport.setDetails(taskReportDto.getDetails());
-        taskReport.setReportId(null);
-        taskReport.setCreateTime(null);
+        // 自动设置createTime
+        taskReport.setCreateTime(new Date());
 
-        return taskReportDao.insert(taskReport);
+        // 验证输入参数
+        if (taskReportDto == null) {
+            throw new IllegalArgumentException("任务汇报对象不能为空");
+        }
+        if (taskReportDto.getTaskId() == null) {
+            throw new IllegalArgumentException("任务id不能为空");
+        }
+        if (taskReportDto.getReportStatus() == null) {
+            throw new IllegalArgumentException("汇报状态不能为空");
+        }
+        if (StringUtils.isBlank(taskReportDto.getDetails())) {
+            throw new IllegalArgumentException("汇报信息不能为空");
+        }
+
+
+        try {
+            return taskReportDao.insert(taskReport);
+        }catch (Exception e) {
+            //处理Dao层出错
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
 
+    /**
+     * 通过taskId查询本人汇报记录 【userid后端获取】
+     * */
     @Override
-    public TaskReportVo queryByUserIdAndTaskId(Integer taskId, Integer userId) {
-        return null;
+    public List<TaskReportVo> queryByUserIdAndTaskId(Integer taskId, Integer userId) {
+
+        List<TaskReportVo> taskReportVos = new ArrayList<>();
+        List<TaskReport> taskReports = null;
+        if(taskId==null){
+            throw new IllegalArgumentException("任务id不能为空");
+        }
+        try {
+            taskReports=taskReportDao.selectByUserId(userId,taskId);
+        }catch (RuntimeException e){
+            e.printStackTrace();
+        }
+
+
+    //将TaskReport封装成TaskReportVo对象
+        for(TaskReport taskReport : taskReports){
+            TaskReportVo taskReportVo = new TaskReportVo();
+            taskReportVo.setTaskId(taskReport.getTaskId());
+            taskReportVo.setReportId(taskReport.getReportId());
+            taskReportVo.setReportStatus(taskReport.getReportStatus());
+            taskReportVo.setDetails(taskReport.getDetails());
+            taskReportVo.setReportTime(taskReport.getCreateTime());
+
+            taskReportVos.add(taskReportVo);
+        }
+
+        return taskReportVos;
     }
 
     @Override
@@ -86,13 +141,15 @@ public class TaskReportServiceImpl implements TaskReportService {
     }
 
     /**
-     *  通过id查询某一任务汇报数量//未控制条件
+     *  通过id查询某一任务汇报数量
      * */
     @Override
     public Integer queryTaskReportCount(Integer taskId) {
-
-
-        return taskReportDao.queryTaskReportCount(taskId);
+        if (taskId == null) {
+            throw new IllegalArgumentException("任务id不能为空");
+        }
+        Integer count = taskReportDao.queryTaskReportCount(taskId);
+        return count;
     }
 
     @Override
