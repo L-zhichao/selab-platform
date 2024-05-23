@@ -95,29 +95,29 @@ public class UserDaoImpl implements UserDao {
             conn = JDBCUtils.getConnection();
             String sql = "UPDATE sys_user SET user_name=?,role_id=?,email=?,phone=?,sex=?,update_time=? where user_id=?";
             ps = conn.prepareStatement(sql);
-                if (user.getUserName()!=null){
-                    ps.setString(1, user.getUserName());
-                }
-                if (user.getGroupId()!=null){
-                    ps.setLong(2, user.getGroupId());
-                }
-                //updatetime
-                //角色id
-                if (user.getEmail()!=null){
-                    ps.setString(4, user.getEmail());
-                }
-                if (user.getPhone()!=null){
-                    ps.setString(5, user.getPhone());
-                }
-                if (user.getSex()!=null){
-                    ps.setInt(5,user.getSex());
-                }
-                ps.execute(sql);
+            if (user.getUserName() != null) {
+                ps.setString(1, user.getUserName());
+            }
+            if (user.getGroupId() != null) {
+                ps.setLong(2, user.getGroupId());
+            }
+            //updatetime
+            //角色id
+            if (user.getEmail() != null) {
+                ps.setString(4, user.getEmail());
+            }
+            if (user.getPhone() != null) {
+                ps.setString(5, user.getPhone());
+            }
+            if (user.getSex() != null) {
+                ps.setInt(5, user.getSex());
+            }
+            ps.execute(sql);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
-            JDBCUtils.closeResource(conn,ps);
+        } finally {
+            JDBCUtils.closeResource(conn, ps);
         }
 
         return null;

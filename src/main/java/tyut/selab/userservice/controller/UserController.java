@@ -46,7 +46,6 @@ import static jdk.jfr.internal.consumer.EventLog.update;
 public class UserController extends HttpServlet {
 
 
-
     //private UserServiceImpl userService = new UserServiceImpl();
 
     @Override
@@ -58,13 +57,13 @@ public class UserController extends HttpServlet {
         String[] split = pathGet.split("/");
         String modeName = split[1];
 //        System.out.println(modeName);
-        if(pathGet.equals("/query")){
+        if (pathGet.equals("/query")) {
             query(req, resp);
 
-        }else if(modeName.equals("queryById")){//如何实现对动态url的检测?
+        } else if (modeName.equals("queryById")) {//如何实现对动态url的检测?
 
             queryById(req, resp);
-       }
+        }
 
 
         PrintWriter out = resp.getWriter();
@@ -80,13 +79,13 @@ public class UserController extends HttpServlet {
         String pathPost = req.getPathInfo();
 
 
-        if(pathPost.equals("/save")){
+        if (pathPost.equals("/save")) {
             try {
                 save(req, resp);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }else if(pathPost.equals("/update")){
+        } else if (pathPost.equals("/update")) {
             update(req, resp);
         }
         PrintWriter out = resp.getWriter();
@@ -94,9 +93,9 @@ public class UserController extends HttpServlet {
         out.flush();
         out.close();
         super.doPost(req, resp);
-    protected void doGet(HttpServletRequest req,HttpServletResponse resp) throws IOException {
-        System.out.println("Hello World");
-        resp.getWriter().write("user");
+        protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws IOException {
+            System.out.println("Hello World");
+            resp.getWriter().write("user");
 
 
 
@@ -117,137 +116,131 @@ public class UserController extends HttpServlet {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }*/
-    }
-
-
-    /**
-     *  查询小组所有用户
-     *
-     *  param: cur size groupId  roleId 两个中有一个不为空或全为空，全为空则查询全部
-     * @param request
-     * @param response
-     * @return list<User>
-     */
-
-
-    private Result query(HttpServletRequest request,HttpServletResponse response){
-        String groupId = request.getParameter("groupId");
-        String roleId = request.getParameter("roleId");
-        List<UserVo> usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId));
-        return null;
-    }
-
-    /**
-     *  通过id查询用户信息 [id在路径后面]  " queryById/2  (id = 2)
-     * @param request
-     * @param response
-     * @return
-     */
-    private Result queryById(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        System.out.println("doQueryById");
-        String path = request.getPathInfo();
-        String[] split = path.split("/");
-        String userId = split[split.length-1];
-        System.out.println(userId);
-        UserVo userVo = userService.selectByUserId(Long.valueOf(userId));
-
-        return Result.success(userVo);
-    }
-
-    /**
-     *  增加用户
-     *  param: UserDto
-     * @param request
-     * @param response
-     * @return
-     */
-    private Result save(HttpServletRequest request,HttpServletResponse response) throws IOException, SQLException {
-        System.out.println("doSave");
-        request.setCharacterEncoding("UTF-8");
-        String jsonData = request.getReader().lines().collect(Collectors.joining());
-        UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
-        int insert = userService.save(userVo);
-
-
-
-
-
-
-
-
-        return null;}
-
-    /**
-     *  修改用户信息
-     *  param: UserVo对象
-     * @param request
-     * @param response
-     * @return post 无返回参数
-     */
-    private Result update(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.getWriter().write("Update");
-        // 获取登录用户roleId
-        Integer loginRoleId = Integer.valueOf(request.getParameter("roleId"));
-        if (loginRoleId.equals(2)) {
-            UserVo userVo = new UserVo();
-            userService.updateUser(userVo);
-            return Result.success(null);
         }
-        return null;
-    }
 
-    /**
-     *  注销用户
-     *  param: 要删除用户的userId
-     * @param request
-     * @param response
-     * @return
-     */
-    private Result logout(HttpServletRequest request,HttpServletResponse response){
-        //请求路径 user/logout,无返回数据
 
-        // token 获得目前登录用户roleId
-        Integer roleId = Integer.valueOf(request.getParameter("roleId"));
-        //判断是否为管理员
-        if (roleId.equals(2)) {
-            //获取被注销用户userId
-            Integer userId = Integer.valueOf(request.getParameter("userId"));
-            userService.delete(userId);
-            return Result.success(null);
+        /**
+         *  查询小组所有用户
+         *
+         *  param: cur size groupId  roleId 两个中有一个不为空或全为空，全为空则查询全部
+         * @param request
+         * @param response
+         * @return list<User>
+         */
+
+
+        private Result query (HttpServletRequest request, HttpServletResponse response){
+            String groupId = request.getParameter("groupId");
+            String roleId = request.getParameter("roleId");
+            List<UserVo> usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId));
+            return null;
         }
-        else {
-            return Result.error(null, null);
+
+        /**
+         *  通过id查询用户信息 [id在路径后面]  " queryById/2  (id = 2)
+         * @param request
+         * @param response
+         * @return
+         */
+        private Result queryById (HttpServletRequest request, HttpServletResponse response) throws IOException {
+            System.out.println("doQueryById");
+            String path = request.getPathInfo();
+            String[] split = path.split("/");
+            String userId = split[split.length - 1];
+            System.out.println(userId);
+            UserVo userVo = userService.selectByUserId(Long.valueOf(userId));
+
+            return Result.success(userVo);
         }
-    }
 
-    /**
-     *  修改用户权限
-     *  param: UserRoleDto
-     * @param request
-     * @param response
-     * @return
-     */
-    private Result updateRole(HttpServletRequest request, HttpServletResponse response){
-        //请求路径 user/role/update
+        /**
+         *  增加用户
+         *  param: UserDto
+         * @param request
+         * @param response
+         * @return
+         */
+        private Result save (HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException
+        {
+            System.out.println("doSave");
+            request.setCharacterEncoding("UTF-8");
+            String jsonData = request.getReader().lines().collect(Collectors.joining());
+            UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
+            int insert = userService.save(userVo);
 
-        // token 获得目前登录用户roleId ？？？
-       Integer roleId = Integer.valueOf(request.getParameter("roleId"));
 
-        //使用Dto，常量接口  ？？？
-        //判断是否为超级管理员
-        if (roleId.equals(1)) {
-            //调用userService方法，封装被修改用户
-            UserVo userVo = null;
-            userVo.setUserId(Long.valueOf(request.getParameter("id")));
-            Integer userUpdateVo = userService.updateUserRole(userVo);
-            return Result.success(null);
+            return null;
         }
-        else {
-            return Result.error(null, null);
+
+        /**
+         *  修改用户信息
+         *  param: UserVo对象
+         * @param request
+         * @param response
+         * @return post 无返回参数
+         */
+        private Result update (HttpServletRequest request, HttpServletResponse response) throws IOException {
+            response.getWriter().write("Update");
+            // 获取登录用户roleId
+            Integer loginRoleId = Integer.valueOf(request.getParameter("roleId"));
+            if (loginRoleId.equals(2)) {
+                UserVo userVo = new UserVo();
+                userService.updateUser(userVo);
+                return Result.success(null);
+            }
+            return null;
+        }
+
+        /**
+         *  注销用户
+         *  param: 要删除用户的userId
+         * @param request
+         * @param response
+         * @return
+         */
+        private Result logout (HttpServletRequest request, HttpServletResponse response){
+            //请求路径 user/logout,无返回数据
+
+            // token 获得目前登录用户roleId
+            Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+            //判断是否为管理员
+            if (roleId.equals(2)) {
+                //获取被注销用户userId
+                Integer userId = Integer.valueOf(request.getParameter("userId"));
+                userService.delete(userId);
+                return Result.success(null);
+            } else {
+                return Result.error(null, null);
+            }
+        }
+
+        /**
+         *  修改用户权限
+         *  param: UserRoleDto
+         * @param request
+         * @param response
+         * @return
+         */
+        private Result updateRole (HttpServletRequest request, HttpServletResponse response){
+            //请求路径 user/role/update
+
+            // token 获得目前登录用户roleId ？？？
+            Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+
+            //使用Dto，常量接口  ？？？
+            //判断是否为超级管理员
+            if (roleId.equals(1)) {
+                //调用userService方法，封装被修改用户
+                UserVo userVo = null;
+                userVo.setUserId(Long.valueOf(request.getParameter("id")));
+                Integer userUpdateVo = userService.updateUserRole(userVo);
+                return Result.success(null);
+            } else {
+                return Result.error(null, null);
+
+            }
 
         }
 
     }
-
-}
 }
