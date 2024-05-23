@@ -175,10 +175,20 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result queryOne(HttpServletRequest request, HttpServletResponse response) {
+    private Result queryOne(HttpServletRequest request, HttpServletResponse response) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException, NoSuchMethodException, ServletException, IOException, InvocationTargetException {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         BookVo bookVo = bookService.selectBookById(bookId);
-        return null;
+        // 通过反射调用Result中的success方法
+        Class<Result> resultClass = Result.class;
+        if(bookVo != null){
+            Method method = resultClass.getDeclaredMethod("success", BookDto.class);
+            // 请求转发到查询所有书籍
+            request.getRequestDispatcher("book/list").forward(request,response);
+            return (Result) method.invoke(bookDto);
+        }else{
+            Method method = resultClass.getDeclaredMethod("error", Integer.class,String.class);
+            return (Result) method.invoke(400,"删除失败");
+        }
     }
 
     /**
