@@ -49,8 +49,8 @@ public class Result<T> {
     public void setMsg(String msg) {
         this.msg = msg;
     }
-    public static <T> Result<T> success(T data){
-        return new Result(200,data,"");
+    public static <T> Result success(T data){
+        return new Result(200,data,"success");
     }
     public static Result error(Integer code,String msg){
         return new Result<>(code,null,msg);

@@ -22,9 +22,6 @@ public class GroupServiceImpl implements GroupService {
 
         Group group = new Group();
         group.setGroupName(groupDto.getGroupName());
-        group.setCreateTime(new Date());
-        group.setUpdateTime(new Date());
-
         //目前不清楚咋搞
         group.setParentId(1);
         group.setUpdateUser(01);
