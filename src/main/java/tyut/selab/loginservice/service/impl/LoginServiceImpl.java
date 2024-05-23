@@ -3,8 +3,6 @@ package tyut.selab.loginservice.service.impl;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.LoginService;
-import tyut.selab.loginservice.utils.WebUtils;
-import tyut.selab.utils.Result;
 
 /**
  * Classname: LoginServiceImpl
@@ -47,7 +45,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Integer register(UserRegisterDto userRegisterDto) {
 
-
+        return null;
 
     }
 

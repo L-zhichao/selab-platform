@@ -1,9 +1,11 @@
 package tyut.selab.loginservice.controller;
 
+
 import jakarta.mail.MessagingException;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.impl.EmailServiceImpl;
+import tyut.selab.loginservice.service.impl.LoginServiceImpl;
 import tyut.selab.loginservice.service.impl.QQEmailService;
 import tyut.selab.loginservice.service.impl.UserServiceImpl;
 import tyut.selab.loginservice.utils.SecurityUtil;
@@ -27,6 +29,7 @@ import java.io.IOException;
 public class LoginController extends HttpServlet {
     EmailServiceImpl serviceImpl = new EmailServiceImpl();
     UserServiceImpl userService = new UserServiceImpl();
+    LoginServiceImpl loginService = new LoginServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.doPost(req,resp);//因为前端发的关于登录的请求都是post类型，所以我们处理Get也用post的方式
@@ -66,8 +69,23 @@ public class LoginController extends HttpServlet {
         //判断用户输入的QQ邮箱和电话号码正不正确
         UserRegisterDto userRegisterDto = WebUtils.readJson(request, UserRegisterDto.class);
         Integer code = 400;
-        Result result = new Result(400,null);
         String msg = "";
+        Result result = new Result(400,null);
+        //判断用户输入的用户名称和密码是否符合规范
+        if(null == userRegisterDto.getUserName() || "".equals(userRegisterDto.getUserName())){
+            msg = "用户名称不能为空";
+            result.error(400,msg);
+            return result;
+        }else if(null == userRegisterDto.getPassword() || "".equals(userRegisterDto.getPassword())){
+            msg = "用户密码不能为空";
+            result.error(400,msg);
+            return result;
+        }
+        if(1 == userService.findByUsername(userRegisterDto.getUserName())){
+            msg = "该用户名已经被注册";
+            result.error(400,msg);
+            return result;
+        }
         if(QQEmailService.checkPhone(userRegisterDto.getPhone())){
             if(QQEmailService.checkEmail(userRegisterDto.getEmail())){
                 //检验信息无误后，这时候发送验证码进行验证注册
@@ -82,6 +100,7 @@ public class LoginController extends HttpServlet {
                     e.printStackTrace();
                 }
                 //注册完成后，将对应的信息存入到数据库中
+                loginService.register(userRegisterDto);
             }
             msg = "用户邮箱输入格式错误";
             result.error(400,msg);

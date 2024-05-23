@@ -4,6 +4,7 @@ import tyut.selab.loginservice.dao.impl.EmailDaoImpl;
 import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.service.impl.EmailServiceImpl;
 import tyut.selab.loginservice.service.impl.QQEmailService;
+import tyut.selab.loginservice.utils.SecurityUtil;
 
 import java.io.IOException;
 
@@ -63,5 +64,9 @@ public class EmailTest {
         EmailDaoImpl emailDao = new EmailDaoImpl();
         Email email = new Email(4,"2072349810@qq.com");
         emailDao.insert(email);
+    }
+    @Test
+    public void verityTest(){
+        System.out.println(SecurityUtil.getRandom());
     }
 }
