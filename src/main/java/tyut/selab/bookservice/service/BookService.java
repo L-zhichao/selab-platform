@@ -68,4 +68,6 @@ public interface BookService {
     public List<BookVo> selectListByOwnerId(Integer userid,Integer cur,Integer size);
 
     public BookVo bookIofoToBookVo(BookInfo bookInfo);
+
+    public List<BookVo> selectByOwnerBookName(Integer userId, String bookName);
 }

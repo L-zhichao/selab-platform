@@ -115,6 +115,7 @@ public class BookServiceImpl implements BookService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 
     public BookVo bookIofoToBookVo(BookInfo bookInfo) {
