@@ -247,9 +247,11 @@ public class TaskReportController extends HttpServlet {
         //权限判断
         if (roleId == 3 ){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能删除汇报记录");
+        }else if (roleId==2){
+            //判断是否有权限删除
+            //根据reportid查出该任务的发布者
+            Integer userId = userMessage.getUserId();
         }else {
-            //roleid 输入非法： 不是自己发布的任务的id？？？？ 待处理
-
             //直接调用dao方法
             Integer i = taskReportDao.deleteByReportId(reportid);
             //检查执行结果
@@ -262,7 +264,8 @@ public class TaskReportController extends HttpServlet {
                 return Result.error(HttpStatus.NOT_FOUND,"未找到该汇报记录");
             }
         }
-        }
+
+        return null;}
 
     /**
      *  查询所有需要汇报的用户

@@ -101,4 +101,10 @@ public class TaskReportServiceImpl implements TaskReportService {
         taskReportDao.selectByTaskIdForUserId(taskId);
         return needReportUsers;
     }
+    /**
+     *  通过reportid查询该任务发布者的id
+     * @param reportid
+     * @return userid
+     */
+
 }

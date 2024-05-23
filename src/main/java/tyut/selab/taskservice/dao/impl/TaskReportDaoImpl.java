@@ -125,7 +125,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public Integer deleteByReportId(Integer reportId){
 String sql= """
-        DELETE FROM users WHERE report_id = ?;
+        DELETE FROM task_report WHERE report_id = ?;
         """;
         Integer i = baseUpdate(sql, reportId);
         //成功删除返回1
