@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface GroupService {
 
-    public Integer insert(GroupDto groupDto) throws Exception;
+    public Integer insert(GroupDto groupDto);
 
 
-    public Integer delete(GroupDto groupDto) throws Exception;
+    public Integer delete(GroupDto groupDto);
 
     /**
      *  查询所有小组信息

@@ -16,9 +16,9 @@ import java.util.List;
 public interface GroupDao {
 
 
-    public Integer insert(Group group) throws Exception;
+    public Integer insert(Group group);
 
-    public Integer delete(GroupDto groupDto) throws Exception;
+    public Integer delete(GroupDto groupDto);
 
     /**
      *  查询所有小组信息
