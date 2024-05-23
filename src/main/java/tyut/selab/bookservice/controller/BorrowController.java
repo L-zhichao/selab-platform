@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.bookservice.dto.BorrowBookDto;
+import tyut.selab.bookservice.exception.ServiceException;
 import tyut.selab.bookservice.service.BorrowService;
 import tyut.selab.bookservice.service.impl.BorrowServiceImpl;
 import tyut.selab.bookservice.vo.BorrowBookVo;
@@ -17,6 +18,7 @@ import tyut.selab.utils.Result;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,8 +36,12 @@ import java.util.Map;
 public class BorrowController extends HttpServlet {
     private BorrowService borrowService = new BorrowServiceImpl();
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+        try {
+            req.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new ServiceException("编码为UTF—8失败");
+        }
         resp.setCharacterEncoding("UTF-8");
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
@@ -64,27 +70,33 @@ public class BorrowController extends HttpServlet {
         }
         resp.setContentType("application/json");
         String jsonString = JSON.toJSONString(result);
-        PrintWriter writer = resp.getWriter();
+        PrintWriter writer = null;
+        try {
+            writer = resp.getWriter();
+        } catch (IOException e) {
+            throw new ServiceException("获取Writer失败");
+        }
         writer.print(jsonString);
         writer.flush();
         writer.close();
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp){
+        try {
+            req.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new ServiceException("编码为UTF—8失败");
+        }
         resp.setCharacterEncoding("UTF-8");
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName = split[split.length - 1];
-        Result result = null;
+        Result result = new Result(404,null);
         if (methodName.equals("borrow")) {
-            try {
-                result = borrowingBook(req, resp);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-//        } else if (methodName.equals("return")) {
+
+            result = borrowingBook(req, resp);
+            //        } else if (methodName.equals("return")) {
 //            result = returnBook(req, resp);
 //        } else if (methodName.equals("record")) {
 //            result = query(req, resp);
@@ -95,7 +107,12 @@ public class BorrowController extends HttpServlet {
         }
         resp.setContentType("application/json");
         String jsonString = JSON.toJSONString(result);
-        PrintWriter writer = resp.getWriter();
+        PrintWriter writer = null;
+        try {
+            writer = resp.getWriter();
+        } catch (IOException e) {
+            throw new ServiceException("获取Writer失败");
+        }
         writer.print(jsonString);
         writer.flush();
         writer.close();
@@ -107,33 +124,52 @@ public class BorrowController extends HttpServlet {
      * @return
      * 闫焕根
      */
-    private Result borrowingBook(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
+    private Result borrowingBook(HttpServletRequest request, HttpServletResponse response) {
         // HttpServletRequest对象中获取输入流，并读取请求正文。
         StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
+        BufferedReader reader = null;
+        try {
+            reader = request.getReader();
+        } catch (IOException e) {
+            throw new ServiceException("读取失败");
+        }
         String line;
-        while ((line = reader.readLine()) != null) {
+        while (true) {
+            try {
+                if ((line = reader.readLine()) == null) break;
+            } catch (IOException e) {
+                throw new ServiceException("读取失败");
+            }
             buffer.append(line);
         }
         String requestBody = buffer.toString();
         // 使用JSON获取参数名对应的参数值
         JSONObject jsonObject = JSON.parseObject(requestBody);
+        Result result = new Result(404, null);
+        if (jsonObject.get("bookId") == null || jsonObject.get("borrowDuration") == null || jsonObject.get("returnTime") == null) {
+            result.setMsg("信息缺少");
+            return result;
+        }
         Integer bookId = (Integer) jsonObject.get("bookId");
         Integer borrowDuration = (Integer) jsonObject.get("borrowDuration");
         String returnTime = (String) jsonObject.get("returnTime");
 
-        Result result = new Result(404, null);
         result.setMsg("借阅失败");
 
-        if(borrowDuration <=0){
-            result.setMsg("你可能在开玩笑");
-            result.setCode(510);
+        if(borrowDuration <=0 || bookId == 0 ){
+            result.setMsg("无效借阅");
+            result.setCode(512);
             return result;
         }
         //将参数封装为Dto类
         BorrowBookDto borrowBookDto = new BorrowBookDto();
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = ft.parse(returnTime);
+        Date date = null;
+        try {
+            date = ft.parse(returnTime);
+        } catch (ParseException e) {
+            throw new ServiceException("获取异常失败");
+        }
         borrowBookDto.setBookId(bookId);
         borrowBookDto.setBorrowDuration(borrowDuration);
         borrowBookDto.setReturnTime(date);
@@ -142,11 +178,17 @@ public class BorrowController extends HttpServlet {
         if (i > 0 ) {
             result = Result.success(null);
         } else if (i == -2) {
-            result.setMsg("已被借阅");
+            result.setMsg("已被他人借阅");
             result.setCode(508);
         } else if (i == -3) {
             result.setMsg("不可借阅");
             result.setCode(509);
+        } else if (i == -4) {
+            result.setMsg("您已借阅");
+            result.setCode(510);
+        }else if (i == -5) {
+            result.setMsg("没有找到该书");
+            result.setCode(511);
         }
         return result;
     }
@@ -160,13 +202,26 @@ public class BorrowController extends HttpServlet {
     private Result returnBook(HttpServletRequest request,HttpServletResponse response){
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
-        Integer borrowId = Integer.valueOf(split[split.length - 1]);
         Result result = new Result(404,null);
-        result.setMsg("fail");
-        if (borrowId != null){
+        if (split[split.length - 1] == null){
+            result.setMsg("BookId为空");
+            return result;
+        }
+        Integer borrowId = Integer.valueOf(split[split.length - 1]);
+        result.setMsg("借阅失败");
+        if (borrowId != 0){
           Integer i = borrowService.returnBook(borrowId);
             if(i > 0){
                 result = Result.success(null);
+            } else if (i == -1) {
+                result.setCode(512);
+                result.setMsg("没有借阅记录");
+            } else if (i == -2) {
+                result.setCode(513);
+                result.setMsg("此书不是您借的");
+            } else if (i == -3) {
+                result.setCode(514);
+                result.setMsg("您已归还");
             }
         }
         return result;
@@ -182,35 +237,56 @@ public class BorrowController extends HttpServlet {
      * 闫焕根
      */
     private Result query(HttpServletRequest request,HttpServletResponse response){
+        Result result = new Result(404, null);
         //接收请求参数
+        if (request.getParameter("cur") == null || request.getParameter("size") == null){
+            result.setMsg("存在信息为空");
+            return result;
+        }
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
-        String bookId = request.getParameter("bookId");
-        String userId = request.getParameter("userId");
 
+        if (cur <= 0 || size <= 0){
+            result.setCode(514);
+            result.setMsg("信息错误");
+            return result;
+        }
+//        Integer bookId = Integer.valueOf();
+//        Integer userId = Integer.valueOf(request.getParameter("userId"));
         //将参数传递给服务层，进行查询
-        Result result = new Result(404, null);
-        if (bookId == null && userId == null){
+
+        if (request.getParameter("bookId") == null && request.getParameter("userId") == null){
             List<BorrowBookVo> borrowBookVos = borrowService.selectList(cur, size);
-            //将分页查询的结果传入Result对象中
+            //将分页查询的结果传入Result对象中request.getParameter("bookId")
             if (!borrowBookVos.isEmpty()) {
                 result.setCode(200);
                 result.setData(borrowBookVos);
                 result.setMsg("success");
+            }else {
+                result.setCode(513);
+                result.setMsg("查询信息为空");
             }
-        }else if (bookId != null && userId == null){
-            List<BorrowBookVo> borrowBookVos = borrowService.selectListByBookId(Integer.parseInt(bookId), cur, size);
+        }else if (request.getParameter("bookId") != null && request.getParameter("userId") == null){
+            Integer bookId = Integer.valueOf(request.getParameter("bookId"));
+            List<BorrowBookVo> borrowBookVos = borrowService.selectListByBookId(bookId,cur,size);
             if (!borrowBookVos.isEmpty()) {
                 result.setCode(200);
                 result.setData(borrowBookVos);
                 result.setMsg("success");
+            }else {
+                result.setCode(513);
+                result.setMsg("查询信息为空");
             }
-        } else if (userId != null && bookId == null) {
-            List<BorrowBookVo> borrowBookVos = borrowService.selectListByUserid(Integer.parseInt(userId), cur, size);
+        } else if (request.getParameter("userId") != null && request.getParameter("bookId") == null) {
+            Integer userId = Integer.valueOf(request.getParameter("userId"));
+            List<BorrowBookVo> borrowBookVos = borrowService.selectListByUserid(userId, cur, size);
             if (!borrowBookVos.isEmpty()) {
                 result.setCode(200);
                 result.setData(borrowBookVos);
                 result.setMsg("success");
+            }else {
+                result.setCode(513);
+                result.setMsg("查询信息为空");
             }
         }
         return result;
@@ -225,7 +301,33 @@ public class BorrowController extends HttpServlet {
      * @return
      */
     private Result queryAllNoReturnBook(HttpServletRequest request,HttpServletResponse response){
-        return null;
+        Result result = new Result(404, null);
+        //接受请求参数
+        if (request.getParameter("cur") == null || request.getParameter("size") == null){
+            result.setMsg("页码或每页数量为空");
+            return result;
+        }
+
+        int cur = Integer.parseInt(request.getParameter("cur"));
+        int size = Integer.parseInt(request.getParameter("size"));
+
+        if (cur <= 0 || size <= 0){
+            result.setCode(514);
+            result.setMsg("信息错误");
+            return result;
+        }
+
+        List<BorrowBookVo> borrowBookVos = borrowService.selectAllForNoReturn(cur, size);
+
+        if(borrowBookVos.isEmpty()) {
+            result.setMsg("查询信息为空");
+            result.setData(null);
+            result.setCode(513);
+        }
+
+        result = Result.success(borrowBookVos);
+
+        return result;
     }
 
     /**

@@ -14,7 +14,7 @@ import java.util.List;
  * @version: 1.0
  */
 public class BorrowBookDaoImpl implements BorrowBookDao {
-    BaseDao baseDao = new BaseDao();
+    private BaseDao baseDao = new BaseDao();
     @Override
     public Integer insert(BorrowBook borrowBook) {
         String sql = "insert into book_borrow (borrow_id,book_id,borrow_user,borrow_duration,status,borrow_time,return_time) values (default,?,?,?,0,now(),?);";
@@ -24,15 +24,16 @@ public class BorrowBookDaoImpl implements BorrowBookDao {
 
     @Override
     public Integer update(BorrowBook borrowBook) {
-        String sql ="update book_borrow set borrow_duration = ?,borrow_time = ? where book_id = ?;";
-        Object[] params = {borrowBook.getBorrowDuration(),borrowBook.getReturnTime(),borrowBook.getBookId()};
+        String sql ="update book_borrow set borrow_id = ?,book_id = ?,borrow_user = ?,borrow_duration = ?,status = ?,borrow_time = ?,return_time = ? where book_id = ?;";
+        Object[] params = {borrowBook.getBorrowId(),borrowBook.getBookId(),borrowBook.getBorrowUser(),borrowBook.getBorrowDuration(),borrowBook.getStatus(),borrowBook.getBorrowTime(),borrowBook.getReturnTime(),borrowBook.getBookId()};
         return baseDao.baseUpdate(sql,params);
     }
 
     @Override
     public BorrowBook selectByBorrowIdBorrowBook(Integer borrowId) {
-        String sql = "select book_id bookId,borrow_duration borrowDuration,return_time returnTime from book_borrow where borrow_id = ?";
-        return (BorrowBook) baseDao.baseQuery(BorrowBook.class,sql,borrowId);
+        String sql = "select borrow_Id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where borrow_id = ?";
+        List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, borrowId);
+        return borrowBooks.get(0);
     }
 
     @Override
@@ -46,22 +47,34 @@ public class BorrowBookDaoImpl implements BorrowBookDao {
 //        return borrowBooks;
 //    }
 
+    public List<BorrowBook> selectAllForNoReturn(){
+        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where status = 0;";
+        List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql);
+        return borrowBooks;
+    }
+
     @Override
     public List<BorrowBook> selectAllByBookId(Integer bookId,Integer cur,Integer size) {
-        String sql = "select book_id bookId,borrow_duration borrowDuration,return_time returnTime from book_borrow where book_id = ? limit ?,?;";
+        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where book_id = ? limit ?,?;";
         int index = (cur - 1) * size;
-        List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, bookId, index, size);
+        List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, bookId , index ,size);
+        return borrowBooks;
+    }
+
+    public List<BorrowBook> selectAllByBookId(Integer bookId){
+        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where book_id = ?;";
+        List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, bookId);
         return borrowBooks;
     }
     public List<BorrowBook> selectAllByUserId(Integer userId,Integer cur,Integer size) {
-        String sql = "select book_id bookId,borrow_duration borrowDuration,return_time returnTime from book_borrow where borrow_user = ? limit ?,?;";
+        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where user_id = ? limit ?,?;";
         int index = (cur - 1) * size;
         List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, userId, index, size);
         return borrowBooks;
     }
 
     public List<BorrowBook> selectAll(Integer cur,Integer size) {
-        String sql = "select book_id bookId,borrow_duration borrowDuration,return_time returnTime from book_borrow where limit ?,?;";
+        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow limit ?,?;";
         int index = (cur - 1) * size;
         List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, index, size);
         return borrowBooks;
