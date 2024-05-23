@@ -3,6 +3,12 @@
     <output-path>$PROJECT_DIR$/out/artifacts/selab_platform_ear_exploded</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="selab-platform/javaeeApplication/javaEEApplication" />
+      <element id="directory" name="selab.war">
+        <element id="artifact" artifact-name="selab-platform:war exploded" />
+      </element>
+      <element id="directory" name="lib">
+        <element id="file-copy" path="$PROJECT_DIR$/lib/druid-1.1.12.jar" />
+      </element>
     </root>
   </artifact>
 </component>

@@ -3,6 +3,7 @@ package tyut.selab.userservice.dao;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.vo.UserVo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public interface UserDao {
      * @return
      */
     public Integer insertUser(User user);
+
 
     /**
      *  修改用户
@@ -37,7 +39,7 @@ public interface UserDao {
      * @param userId
      * @return
      */
-    public User selectByUserIdUser(Integer userId);
+    public User selectByUserIdUser(Long userId);
 
     /**
      * 通过groupId查询用户信息
@@ -51,7 +53,7 @@ public interface UserDao {
      * @param userName
      * @return
      */
-    public User selectByUserName(String userName);
+    public ArrayList<User> selectByUserName(String userName);
 
     /**
      *  通过用户id删除用户

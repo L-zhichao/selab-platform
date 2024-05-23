@@ -1,6 +1,7 @@
 package tyut.selab.userservice.service.ServiceImpl;
 
 import tyut.selab.userservice.dao.DaoImpl.UserDaoImpl;
+import tyut.selab.userservice.dao.DaoImpl.UserLogoutDaoImpl;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.UserLogoutDao;
 import tyut.selab.userservice.domain.User;
@@ -12,14 +13,16 @@ import tyut.selab.userservice.vo.UserVo;
 
 import java.sql.Date;
 import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
-    private UserDao userDao;
-    private UserLogoutDao userLogoutDao;
+    private UserDao userDao = new UserDaoImpl();
+    private UserLogoutDao userLogoutDao = new UserLogoutDaoImpl();
 
     /**
     * Description: 修改用户角色
@@ -45,22 +48,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVo selectByUserId(Integer userId) {
-
-        User user = userDao.selectByUserIdUser(userId);
+    public UserVo selectByUserId(Long userId) {
+        System.out.println("doSelectByUserIdService");
+        User userSelectByUserId = userDao.selectByUserIdUser(userId);
 
         UserVo userVo = new UserVo();
 
-        Long userid = user.getUserId();
-        String username = user.getUserName();
-        Integer roleld = user.getRoleId();
+        Long userid = (userSelectByUserId.getUserId());
+        String username = userSelectByUserId.getUserName();
+        Integer roleld = userSelectByUserId.getRoleId();
         //rolename在业务层
-        //组id在group表里，组名在业务层加
-        String email = user.getEmail();
-        String phone = user.getPhone();
-        Integer sex = user.getSex();
-        Date createTime = (Date) user.getCreateTime();
-        Date updateTime = (Date) user.getUpdateTime();
+        //组id在user-group表里，组名在业务层加
+        String email = userSelectByUserId.getEmail();
+        String phone = userSelectByUserId.getPhone();
+        Integer sex = userSelectByUserId.getSex();
+
+
+        java.util.Date date = new java.util.Date();
+        Date createTime = new java.sql.Date(date.getTime());
+        Date updateTime = new java.sql.Date(date.getTime());
 
         //对rolename的判断
         if(roleld == 1){
@@ -111,7 +117,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer save(UserVo userVo) {
-        return null;
+        System.out.println("doSaveService");
+        User userSave = new User();
+
+        String userName =  userVo.getUserName();
+        Integer groupId = userVo.getGroupId();
+        Integer roleId = userVo.getRoleId();
+        String email = userVo.getEmail();
+        String phone = userVo.getPhone();
+        Integer sex = userVo.getSex();
+
+        java.util.Date date = new java.util.Date();
+        Date createTime = new java.sql.Date(date.getTime());
+        Date updateTime = new java.sql.Date(date.getTime());
+
+
+        userSave.setUserName(userName);
+        userSave.setGroupId(groupId);
+        userSave.setRoleId(roleId);
+        userSave.setEmail(email);
+        userSave.setPhone(phone);
+        userSave.setSex(sex);
+        userSave.setCreateTime(createTime);
+        userSave.setUpdateTime(updateTime);
+        userSave.setDelFlag(0);
+
+        Integer insert = userDao.insertUser(userSave);
+
+        return insert;
     }
 
 

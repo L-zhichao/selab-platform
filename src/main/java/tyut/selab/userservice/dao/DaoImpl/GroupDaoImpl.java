@@ -22,18 +22,17 @@ public class GroupDaoImpl implements GroupDao {
 //        Date updateTime = group.getUpdateTime();
         java.util.Date date = new java.util.Date();
         Integer updateUser = group.getUpdateUser();
-
-        String sql = "INSERT INTO sys_group (parent_id,group_name, create_time, update_time, update_user, del_flag ) VALUES ( 1,'fufu','2024-05-21 12:03:12','2024-05-21 12:03:12',2,0 )";
+        String sql = "INSERT INTO sys_group (parent_id,group_name,create_time,update_time,update_user) VALUES(?,?,?,?,?);";
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
-//        preparedStatement.setInt(1, parentId);
-//        preparedStatement.setString(2, groupName);
-//        preparedStatement.setDate(3,  new java.sql.Date(date.getTime()));
-//        preparedStatement.setDate(4,  new java.sql.Date(date.getTime()));
-//        preparedStatement.setInt(5, updateUser);
-        preparedStatement.execute(sql);
+        preparedStatement.setInt(1, parentId);
+        preparedStatement.setString(2, groupName);
+        preparedStatement.setDate(3,  new java.sql.Date(date.getTime()));
+        preparedStatement.setDate(4,  new java.sql.Date(date.getTime()));
+        preparedStatement.setInt(5, updateUser);
+        preparedStatement.execute();
         JDBCUtils.closeResource(conn, preparedStatement);
-
-        return null;
+        Integer integer = 0;
+        return integer;
     }
 
     @Override
