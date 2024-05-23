@@ -1,5 +1,6 @@
 package tyut.selab.utils;
 
+
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 
 import javax.sql.DataSource;
@@ -9,52 +10,63 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-/**
- * ClassName: JdbcUtils
- * Package: tyut.selab.utils
- * Description:
- *
- * @Author The_fish
- * @Create 2024/5/12 20:12
- * @Version 1.0
- */
 public class JdbcUtil {
-    private static DataSource dataSource = null;
+    private static ThreadLocal<Connection> threadLocal =new ThreadLocal<>();
 
-    private static ThreadLocal<Connection> tl = new ThreadLocal<Connection>();
-
-    static {
-        Properties properties = new Properties();
-        InputStream ips = JdbcUtil.class.getClassLoader().getResourceAsStream("jdbc.properties");
+    private static DataSource dataSource;
+    // 初始化连接池
+    static{
+        // 可以帮助我们读取.properties配置文件
+        Properties properties =new Properties();
+        InputStream resourceAsStream = JdbcUtil.class.getClassLoader().getResourceAsStream("jdbc.properties");
         try {
-            properties.load(ips);
+            properties.load(resourceAsStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         try {
             dataSource = DruidDataSourceFactory.createDataSource(properties);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+
+    }
+    /*1 向外提供连接池的方法*/
+    public static DataSource getDataSource(){
+        return dataSource;
     }
 
-    public static Connection getConnection() throws SQLException {
-        //线程本地变量中是否存在
-        Connection connection = tl.get();
-        //第一次没有
-        if (connection == null) {
-            //线程本地变量没有，连接池获取
-            connection = dataSource.getConnection();
-            tl.set(connection);
+    /*2 向外提供连接的方法*/
+    public static Connection getConnection(){
+        Connection connection = threadLocal.get();
+        if (null == connection) {
+            try {
+                connection = dataSource.getConnection();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            threadLocal.set(connection);
         }
+
         return connection;
     }
-    public static void freeConnection() throws SQLException {
-        Connection connection = tl.get();
-        if (connection != null) {
-            tl.remove();  //清空线程本地变量
-            connection.setAutoCommit(true);  //事务状态回归
-            connection.close();
+
+
+    /*定义一个归还连接的方法 (解除和ThreadLocal之间的关联关系) */
+    public static void releaseConnection(){
+        Connection connection = threadLocal.get();
+        if (null != connection) {
+            threadLocal.remove();
+            // 把连接设置回自动提交的连接
+            try {
+                connection.setAutoCommit(true);
+                // 自动归还到连接池
+                connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

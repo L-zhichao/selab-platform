@@ -15,10 +15,11 @@ public class BorrowBookVo {
     /**
      * 主键唯一标识
      */
-    private Long borrowId;
+    private Integer borrowId;
 
     /**
      * book_id
+     * 1111
      */
     private Integer bookId;
     /**
@@ -33,10 +34,11 @@ public class BorrowBookVo {
     /**
      * 借阅用户名称
      */
-    private Integer borrowUserName;
+    private String borrowUserName;
 
     /**
      * 借阅时长(已天为单位)
+     * 2222
      */
     private Integer borrowDuration;
 
@@ -52,6 +54,7 @@ public class BorrowBookVo {
 
     /**
      * 归还时间
+     * 3333
      */
     private Date returnTime;
 
@@ -60,14 +63,14 @@ public class BorrowBookVo {
     /**
      * 主键唯一标识
      */
-    public Long getBorrowId() {
+    public Integer getBorrowId() {
         return borrowId;
     }
 
     /**
      * 主键唯一标识
      */
-    public void setBorrowId(Long borrowId) {
+    public void setBorrowId(Integer borrowId) {
         this.borrowId = borrowId;
     }
 
@@ -202,5 +205,21 @@ public class BorrowBookVo {
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
+    }
+
+    public String getBorrowUserName() {
+        return borrowUserName;
+    }
+
+    public void setBorrowUserName(String borrowUserName) {
+        this.borrowUserName = borrowUserName;
+    }
+
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
     }
 }

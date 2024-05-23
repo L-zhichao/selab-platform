@@ -11,7 +11,7 @@ public class User implements Serializable {
     /**
      * 主键id
      */
-    private Long userId;
+    private Integer userId;
 
     /**
      * 用户名称
@@ -68,14 +68,14 @@ public class User implements Serializable {
     /**
      * 主键id
      */
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
     /**
      * 主键id
      */
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
