@@ -51,8 +51,8 @@ public class RegistrationDaoImpl implements RegistrationDao {
                 purpose,
                 remark,
                 init_time createTime,
-                update_time updateTime,
-                form registration_form
+                update_time updateTime
+                from selab_platform.registration_form
                 where userId = ?
                 """;
         List<RegistrationForm> revList = baseDao.baseQuery(RegistrationForm.class, sql, registrationId);
@@ -80,8 +80,8 @@ public class RegistrationDaoImpl implements RegistrationDao {
                 purpose,
                 remark,
                 init_time createTime,
-                update_time updateTime,
-                form registration_form
+                update_time updateTime
+                from selab_platform.registration_form
                 where userId = select user_id form sys_user where user_name = ?
                 """;
         List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql, intervieweesName);
@@ -109,7 +109,7 @@ public class RegistrationDaoImpl implements RegistrationDao {
 //                remark,
 //                init_time createTime,
 //                update_time updateTime,
-//                form registration_form
+//                from registration_form
 //                where userId = select user_id form sys_user where user_name = ?
 //                """;
 //        List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql, "%" + intervieweesName + "%");
@@ -136,8 +136,8 @@ public class RegistrationDaoImpl implements RegistrationDao {
                 purpose,
                 remark,
                 init_time createTime,
-                update_time updateTime,
-                form registration_form
+                update_time updateTime
+                from selab_platform.registration_form
                 """;
         List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql);
         return registrationForms != null && registrationForms.size() > 0 ? registrationForms:null;
@@ -162,9 +162,9 @@ public class RegistrationDaoImpl implements RegistrationDao {
                 purpose,
                 remark,
                 init_time createTime,
-                update_time updateTime,
-                form registration_form
-                where intentDepartment= ?
+                update_time updateTime
+                from selab_platform.registration_form
+                where intentDepartment = ?
                 """;
         List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql,intentDepartment);
         return registrationForms != null && registrationForms.size() > 0 ? registrationForms:null;
@@ -190,8 +190,8 @@ public class RegistrationDaoImpl implements RegistrationDao {
                 purpose,
                 remark,
                 init_time createTime,
-                update_time updateTime,
-                form registration_form
+                update_time updateTime
+                from selab_platform.registration_form
                 where grade = ?
                 """;
         List<RegistrationForm> registrationForms = baseDao.baseQuery(RegistrationForm.class, sql,grade);
