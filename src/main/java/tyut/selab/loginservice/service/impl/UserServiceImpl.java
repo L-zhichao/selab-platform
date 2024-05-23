@@ -36,5 +36,11 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public Integer insertUser(UserRegisterDto user) {
+        Integer i = userDao.insertUser(user);
+        return i;
+    }
+
 
 }

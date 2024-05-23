@@ -8,4 +8,5 @@ public interface UserService {
     public Integer findByPassword(String password);
     public UserRegisterDto getUserByUsername(String username);
     public UserLocal getUserLocal();
+    public Integer insertUser(UserRegisterDto user);
 }

@@ -14,4 +14,10 @@ public class UserServiceTest {
         UserRegisterDto shaobo = userService.getUserByUsername("shaobo");
         System.out.println(shaobo);
     }
+    @Test
+    public void insertUserTest(){
+        UserServiceImpl userService = new UserServiceImpl();
+        UserRegisterDto user = new UserRegisterDto("shaobo","123456",1,"3388532526@qq.com","18811111111",1);
+        userService.insertUser(user);
+    }
 }

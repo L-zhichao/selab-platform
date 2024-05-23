@@ -2,6 +2,8 @@ package tyut.selab.loginservice.utils;
 
 import tyut.selab.loginservice.dto.UserLocal;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * @className: SecurityUtil
  * @author: lizhichao
@@ -11,10 +13,17 @@ import tyut.selab.loginservice.dto.UserLocal;
  */
 public class SecurityUtil {
 
+    ThreadLocal<UserLocal> userLocal = new ThreadLocal<>();
 
-    public static UserLocal getUser(){
+    public static UserLocal getUser() {
         return null;
     }
 
-
+    /**
+     * 并发安全的方式生成六位数验证码
+     * @return
+     */
+    private static String getRandom() {
+        return String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
+    }
 }

@@ -1,10 +1,10 @@
+import jakarta.mail.MessagingException;
 import org.junit.Test;
 import tyut.selab.loginservice.dao.impl.EmailDaoImpl;
 import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.service.impl.EmailServiceImpl;
 import tyut.selab.loginservice.service.impl.QQEmailService;
 
-import javax.mail.MessagingException;
 import java.io.IOException;
 
 public class EmailTest {
@@ -40,8 +40,8 @@ public class EmailTest {
     @Test
     public void falseEmailTest(){
         QQEmailService emailService = new QQEmailService();
-        String head = "qq邮箱发送";
-        String body = "验证码信息";
+        String head = "selab图书管理系统用户注册验证码信息";
+        String body = "验证码:555555";
         try {
             System.out.println(QQEmailService.checkEmail("3388532526@qq.com"));
             emailService.qqemail("3388532526@qq.com",head,body);
