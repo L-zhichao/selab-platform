@@ -71,24 +71,25 @@ public class LoginController extends HttpServlet {
         Integer code = 400;
         String msg = "";
         Result result = new Result(400,null);
+        Result errorResult = null;
         //判断用户输入的用户名称和密码是否符合规范
         if(null == userRegisterDto.getUserName() || "".equals(userRegisterDto.getUserName())){
             msg = "用户名称不能为空";
-            result.error(400,msg);
-            return result;
+            errorResult =  result.error(400,msg);
+            return errorResult;
         }else if(null == userRegisterDto.getPassword() || "".equals(userRegisterDto.getPassword())){
             msg = "用户密码不能为空";
-            result.error(400,msg);
-            return result;
+            errorResult = result.error(400,msg);
+            return errorResult;
         }
         if(1 == userService.findByUsername(userRegisterDto.getUserName())){
             msg = "该用户名已经被注册";
-            result.error(400,msg);
-            return result;
+            errorResult = result.error(400,msg);
+            return errorResult;
         }
         if(QQEmailService.checkPhone(userRegisterDto.getPhone())){
             if(QQEmailService.checkEmail(userRegisterDto.getEmail())){
-                //检验信息无误后，这时候发送验证码进行验证注册
+                //检验信息无误后，这时候发送验证码进行验证注册，发送验证码
                 String head = "";
                 String verify = SecurityUtil.getRandom();
                 String body = "登录需要的验证码为:" + verify;
@@ -99,15 +100,19 @@ public class LoginController extends HttpServlet {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                //验证验证码的相关逻辑，待完善
+
                 //注册完成后，将对应的信息存入到数据库中
                 loginService.register(userRegisterDto);
+                Result success = result.success(null);
+                return success;
             }
             msg = "用户邮箱输入格式错误";
             result.error(400,msg);
             return result;
         }
         msg = "用户电话号码不正确";
-        result.error(400,msg);
-        return result;
+        errorResult = result.error(400,msg);
+        return errorResult;
     }
 }
