@@ -2,6 +2,7 @@ package tyut.selab.taskservice.dao.impl;
 
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
+import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.myutils.JDBCUtil;
@@ -64,6 +65,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
     public List<TaskReport> selectByTaskIdTaskReports(Integer taskId)  {
         List<TaskReport> taskReports=new ArrayList<>();
         String sql1="select * from task_report where task_id=?";
+
         taskReports = baseQuery(TaskReport.class, sql1, taskId);
         return taskReports;
     }
@@ -71,30 +73,49 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
     /**
      *  通过任务id查询所有汇报用户
      * @param taskId
-     * @return
+     * @return 暂时返回的是用户的id(待更改)
      */
     public List<Integer> selectByTaskIdForUserId(Integer taskId){
-        String sql1="select user_id from task_report where task_id=?";
-        List<Integer> integers = baseQuery(Integer.class, sql1, taskId);
+        TaskGroupDaoImpl taskGroupDao=new TaskGroupDaoImpl();
+        //获取对应任务的小组
+        List<TaskGroup> taskGroups = taskGroupDao.selectAllTaskGroupsByTaskId(taskId);
+        //获取小组的对应成员id
+
+        List<Integer> integers = null;
         return integers;
     }
 
     /**
-     *
+     *通过id查询某一任务
      * @param id
      * @return
      */
-    public TaskReport selectByReortId(Long id){
-        return null;
+    public TaskReport selectByReportId(Long id){
+
+        String sql="SELECT * FROM task_report WHERE report_id = ?";
+        TaskReport taskReport = new TaskReport();
+        return baseQueryObject(TaskReport.class,sql,id);
+
     }
 
     /**
-     *
+     * 更新汇报记录
      * @param record
      * @return
      */
     public Integer updateByReportId(TaskReport record){
-        return null;
+
+            String sql = "UPDATE task_report SET task_id = ?, report_status = ? WHERE details = ?";
+
+            Object[] report = new Object[]{
+                    record.getTaskId(),
+                    record.getReportStatus(),
+                    record.getDetails()
+            };
+
+            return baseUpdate(sql, report);
+
+
     }
 
     /**
@@ -104,10 +125,27 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public Integer deleteByReportId(Integer reportId){
 String sql= """
-        DELETE FROM users WHERE report_id = ?;
+        DELETE FROM task_report WHERE report_id = ?;
         """;
         Integer i = baseUpdate(sql, reportId);
+        //成功删除返回1
         return i;
     }
 
+
+    /**
+     * 通过id查询某一任务汇报数量
+     * @param taskId
+     * @return
+     * */
+    @Override
+    public Integer queryTaskReportCount(Integer taskId) {
+       // String sql="SELECT COUNT(*) AS reports_count FROM task_reports where task_id=?";
+
+        String sql="SELECT * FROM task_report WHERE report_id = ?";
+        List<TaskReport> reports = baseQuery(TaskReport.class, sql, taskId);
+        Integer taskReportCount=reports.size();
+        return taskReportCount;
+
+    }
 }

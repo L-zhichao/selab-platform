@@ -49,7 +49,7 @@ public interface TaskReportDao {
      * @param id
      * @return
      */
-    TaskReport selectByReortId(Long id);
+    TaskReport selectByReportId(Long id);
 
     /**
      *
@@ -64,5 +64,11 @@ public interface TaskReportDao {
      * @return
      */
     Integer deleteByReportId(Integer reportId);
+
+
+    /**
+     * 通过id查询某一任务汇报数量
+     * */
+    Integer queryTaskReportCount(Integer taskId);
 
 }

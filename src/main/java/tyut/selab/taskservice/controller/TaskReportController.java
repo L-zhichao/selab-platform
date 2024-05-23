@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
+import tyut.selab.taskservice.dao.BaseDao;
+import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
@@ -98,7 +100,17 @@ public class TaskReportController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result report(HttpServletRequest request,HttpServletResponse response){return null;}
+    private Result report(HttpServletRequest request,HttpServletResponse response){
+
+        TaskReportDto taskReportDto =WebUtil.readJson(request,TaskReportDto.class);
+        Integer save = taskReportService.save(taskReportDto);
+        if(save!=null){
+            return Result.success(null);
+        }else{
+            return Result.error(HttpStatus.ERROR,"汇报失败");//?????
+        }
+
+    }
 
     /**
      *  查询当前汇报数量
@@ -128,7 +140,7 @@ public class TaskReportController extends HttpServlet {
      * @return List<TaskInfoVo>
      */
     private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
-       // TaskReportVo taskReportVo = new TaskReportVo();
+        //TaskReportVo taskReportVo = new TaskReportVo();
         List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
         Integer taskid = null;
 //        int cur = 0;
@@ -142,6 +154,9 @@ public class TaskReportController extends HttpServlet {
             //管理员只能查看自己的
             //1.0读取参数 cur size 未处理
             taskid = Integer.parseInt(request.getParameter("taskid"));
+            //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
+
+
             int cur = Integer.parseInt(request.getParameter("cur"));
             int size = Integer.parseInt(request.getParameter("size"));
             try {
@@ -152,7 +167,7 @@ public class TaskReportController extends HttpServlet {
             //返回josn数据
             if (taskReportVos==null){
                 //返回错误 ????
-                return Result.error(HttpStatus.NO_CONTENT,"操作已经执行成功，但是没有返回数据");
+                return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
 
             }else {
                 //成功返回
@@ -174,7 +189,7 @@ public class TaskReportController extends HttpServlet {
                 //返回josn数据
                 if (taskReportVos==null){
                     //返回错误 ????
-                    return Result.error(HttpStatus.NO_CONTENT,"操作已经执行成功，但是没有返回数据");
+                    return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
 
                 }else {
                     //成功返回
@@ -184,8 +199,32 @@ public class TaskReportController extends HttpServlet {
             }else {
                 //无id咋搞?
                 //获取所有任务id
+                BaseDao baseDao = new BaseDao();
+                String str1 = """
+    select DISTINCT task_id from task_report
+    """;
+                List<Integer>taskids=new ArrayList<>();
+                taskids=baseDao.baseQuery(Integer.class, str1);
+                if (taskids==null){
+                    return Result.error(HttpStatus.NO_CONTENT,"暂无汇报信息");
+                }else {
+                    List<TaskReportVo> SuccessTaskReportVos = new ArrayList<>();
+                    for (Integer id:taskids){
+                        try {
+                            taskReportVos = taskReportService.queryAllTask(id);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                            //成功返回
+                            SuccessTaskReportVos.addAll(taskReportVos);
+//                            WebUtil.writeJson(response,Result.success(taskReportVos));
+//                            return Result.success(taskReportVos);
+                    }
+                    WebUtil.writeJson(response,Result.success(SuccessTaskReportVos));
+                            return Result.success(SuccessTaskReportVos);
+                }
 
-                return null;
+                //return null;
             }
         }
     }
@@ -208,6 +247,10 @@ public class TaskReportController extends HttpServlet {
         //权限判断
         if (roleId == 3 ){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能删除汇报记录");
+        }else if (roleId==2){
+            //判断是否有权限删除
+            //根据reportid查出该任务的发布者
+            Integer userId = userMessage.getUserId();
         }else {
             //直接调用dao方法
             Integer i = taskReportDao.deleteByReportId(reportid);
@@ -221,7 +264,8 @@ public class TaskReportController extends HttpServlet {
                 return Result.error(HttpStatus.NOT_FOUND,"未找到该汇报记录");
             }
         }
-        }
+
+        return null;}
 
     /**
      *  查询所有需要汇报的用户
@@ -241,6 +285,8 @@ public class TaskReportController extends HttpServlet {
             //管理员只能查看自己发布的需要汇报的用户信息
             //读取参数 cur size 未处理
             Integer taskid = Integer.parseInt(request.getParameter("taskid"));
+            //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
+
             int cur = Integer.parseInt(request.getParameter("cur"));
             int size = Integer.parseInt(request.getParameter("size"));
             //读取xml数据
@@ -248,12 +294,47 @@ public class TaskReportController extends HttpServlet {
 
             return Result.success(needReportUsers);
         }else {
+            Integer taskid = Integer.parseInt(request.getParameter("taskid"));
+            int cur = Integer.parseInt(request.getParameter("cur"));
+            int size = Integer.parseInt(request.getParameter("size"));
+
             //超级管理员能查看所有发布的需要汇报的用户信息
            //超级管理员也可以输入id
+            if (taskid!=null){
+                //查询特定任务的汇报用户
+                needReportUsers = taskReportService.queryAllUserForReport(taskid);
 
-            //获取所有任务id
+                return null;
 
-            return Result.success(needReportUsers);
+            }else {
+                //查询所有任务的汇报用户
+                //获取所有taskid
+                BaseDao baseDao = new BaseDao();
+                String str1 = """
+                select DISTINCT id from task_info
+                              """;
+                List<Integer>taskids=new ArrayList<>();
+                taskids=baseDao.baseQuery(Integer.class, str1);
+                if (taskids==null){
+                    return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布,没有可以汇报的用户");
+                }else {
+                    List<NeedReportUser> successNeedReportUsers = new ArrayList<>();
+                    for (Integer id:taskids){
+
+                            needReportUsers = taskReportService.queryAllUserForReport(id);
+
+                        //成功返回
+                       successNeedReportUsers.addAll(needReportUsers);
+//
+                    }
+                    WebUtil.writeJson(response,Result.success(successNeedReportUsers));
+                    return Result.success(successNeedReportUsers);
+                }
+
+            }
+
+
+           // return Result.success(needReportUsers);
         }
 
 
