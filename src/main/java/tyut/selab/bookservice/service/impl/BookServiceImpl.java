@@ -1,6 +1,5 @@
 package tyut.selab.bookservice.service.impl;
 
-import com.alibaba.druid.support.json.JSONParser;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSONObject;
 import tyut.selab.bookservice.dao.BookInfoDao;
@@ -9,13 +8,9 @@ import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.vo.BookVo;
-import tyut.selab.userservice.dao.UserDao;
-import tyut.selab.userservice.dao.impl.UserDaoImpl;
-import tyut.selab.userservice.domain.User;
+// import tyut.selab.userservice.dao.impl.UserDaoImpl;
 
-import java.awt.print.Book;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,27 +22,40 @@ import java.util.List;
  */
 public class BookServiceImpl implements BookService {
     private BookInfoDao bookDao = new BookInfoDaoImpl();
-    private UserDao userDao = new UserDaoImpl();
+    //private UserDao userDao = new UserDaoImpl();
     @Override
-    public Integer insertBook(BookDto bookDto) throws SQLException {
+    public Integer insertBook(BookDto bookDto) {
         String jsonString = JSONUtils.toJSONString(bookDto);
         BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
-        return bookDao.insert(bookInfo);
+        try {
+            return bookDao.insert(bookInfo);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Integer updateBook(BookVo bookVo) throws SQLException {
+    public Integer updateBook(BookVo bookVo)  {
         String jsonString = JSONUtils.toJSONString(bookVo);
         BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
-        return bookDao.update(bookInfo);
+        try {
+            return bookDao.update(bookInfo);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public Integer deleteBook(Integer bookId) throws SQLException {
-        return bookDao.delete(bookId);
+    public Integer deleteBook(Integer bookId) {
+        try {
+            return bookDao.delete(bookId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<BookVo> selectList(Integer cur, Integer size) {
+        /*
         List<BookVo> list = new ArrayList<BookVo>();
         List<BookInfo> bookInfos = bookDao.selectAll(cur, size);
         for (BookInfo bookInfo : bookInfos) {
@@ -59,25 +67,58 @@ public class BookServiceImpl implements BookService {
             list.add(bookVo);
         }
         return list;
+         */
+        return null;
     }
 
     @Override
-    public BookVo selectBookById(Integer bookId) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        BookInfo bookInfo = bookDao.selectByBookIdBookInfo(bookId);
-
+    public BookVo selectBookById(Integer bookId) {
+        BookInfo bookInfo = null;
+        try {
+            bookInfo = bookDao.selectByBookIdBookInfo(bookId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        String jsonString = JSONUtils.toJSONString(bookInfo);
+        BookVo bookVo = JSONObject.parseObject(jsonString, BookVo.class);
+        return bookVo;
     }
 
     @Override
-    public BookVo selectBookByBookName(String bookName) {
+    public List<BookVo> selectBookByBookName(String bookName) {
+        try {
+            List<BookInfo> bookInfos = bookDao.selectAllByBookName(bookName);
+            for(BookInfo bookInfo:bookInfos){
+                String jsonString = JSONUtils.toJSONString(bookInfo);
+                BookVo bookVo = JSONObject.parseObject(jsonString,BookVo.class);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 
     @Override
     public List<BookVo> selectListByOwnerId(Integer userid, Integer cur, Integer size) {
+        try {
+            List<BookInfo> bookInfos = bookDao.selectByOwnerBookInfo(userid);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 
-    private BookVo bookIofoToBookVo(BookInfo bookInfo) {
+    @Override
+    public List<BookVo> selectByOwnerBookName(Integer userId, String bookName){
+        try {
+            List<BookInfo> bookInfos = bookDao.selectByOwnerBookName(userId,bookName);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public BookVo bookIofoToBookVo(BookInfo bookInfo) {
         BookVo bookVo = new BookVo();
         bookVo.setBookAuthor(bookInfo.getBookAuthor());
         bookVo.setBookDetails(bookInfo.getBookDetails());

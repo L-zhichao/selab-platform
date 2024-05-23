@@ -7,10 +7,20 @@
           <element id="module-output" name="selab-platform" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="javax.activation-api-1.2.0" />
+          <element id="library" level="module" name="JUnit4" module-name="selab-platform" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/mail.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/druid-1.1.12.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/fastjson-1.2.83.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/javax.servlet-api-3.0.1.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/jakarta.servlet-api-6.0.0.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/javax.activation-api-1.2.0.jar" />
+          <element id="library" level="project" name="lib" />
+          <element id="library" level="project" name="lib (3)" />
         </element>
       </element>
+      <element id="library" level="module" name="JUnit5.8.1" module-name="selab-platform" />
       <element id="javaee-facet-resources" facet="selab-platform/web/Web" />
+      <element id="javaee-facet-resources" facet="selab-platform/javaeeApplication/javaEEApplication" />
     </root>
   </artifact>
 </component>

@@ -59,7 +59,7 @@ public interface BookService {
      * @param bookName
      * @return
      */
-    public BookVo selectBookByBookName(String bookName);
+    public List<BookVo> selectBookByBookName(String bookName);
 
     /**
      *  通过userid查询用户所拥有的所有书籍
@@ -68,4 +68,6 @@ public interface BookService {
     public List<BookVo> selectListByOwnerId(Integer userid,Integer cur,Integer size);
 
     public BookVo bookIofoToBookVo(BookInfo bookInfo);
+
+    public List<BookVo> selectByOwnerBookName(Integer userId, String bookName);
 }
