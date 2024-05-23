@@ -46,11 +46,14 @@ public class TaskController extends HttpServlet {
         TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
 
         //判断用户身份，不同身份发布任务的范围不一样，权限不够就返回error(其他组接口没有实现，先注释）
-        UserLocal userMessage = getUserMessage(request, response);
+        UserLocal userMessage = getUserMessage();
         Integer roleId = userMessage.getRoleId();
         if (roleId == 3 ){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能发布任务");
         }
+
+        //save 的时候发布者应该就是请求者本身.改成其他发布者没作用
+        taskInfoDto.setPublisherId(userMessage.getUserId());
 
         //相同的用户发布的任务最大个数应该有限制，超级管理员没有此限制
         if (roleId == 2){
@@ -96,7 +99,7 @@ public class TaskController extends HttpServlet {
        //传参数的话，超级管理员看到的是某个人的任务，管理员看到的只是自己的任务
 
        //获取请求用户的相关信息
-       UserLocal userMessage = getUserMessage(request, response);
+       UserLocal userMessage = getUserMessage();
        Integer roleId = userMessage.getRoleId();
        String userName = userMessage.getUserName();
 
@@ -136,15 +139,16 @@ public class TaskController extends HttpServlet {
 
            //判断前端查询的页面是否存在，如果不存在，返回空集合
            int beginIndex = (cur - 1) * size;
-           int endIndex = cur * size;
+           int endIndex = cur * size - 1;
            if (beginIndex > taskInfoVos.size() - 1){
                //该页面没有数据
-           }else if(endIndex > taskInfoVos.size()){
+               taskInfoVoPage = null;
+           }else if(endIndex > taskInfoVos.size() - 1){
                //该页面的数据不够size个
                taskInfoVoPage = taskInfoVos.subList(beginIndex,taskInfoVos.size());
            }else{
                //该页面的数据满足size个
-               taskInfoVoPage = taskInfoVos.subList(beginIndex,endIndex);
+               taskInfoVoPage = taskInfoVos.subList(beginIndex,endIndex+1);
            }
 
        }else{
@@ -152,7 +156,7 @@ public class TaskController extends HttpServlet {
            List<TaskInfoVo> taskInfoVosOrigin = taskInfoService.queryTaskInfoBypublish(publisherName);
 
            //判断管理员的权限。如果是超级管理员就能查别人发布的任务，如果是普通管理员就只能查看自己发布的任务
-           List<TaskInfoVo> taskInfoVos = new ArrayList<>();
+           List<TaskInfoVo> taskInfoVos = null;
            if (roleId == 1 ){
                taskInfoVos = taskInfoVosOrigin;
            }else{
@@ -171,15 +175,16 @@ public class TaskController extends HttpServlet {
 
            //判断前端查询的页面是否存在，如果不存在，返回空集合
            int beginIndex = (cur - 1) * size;
-           int endIndex = cur * size;
+           int endIndex = cur * size - 1;
            if (beginIndex > taskInfoVos.size() - 1){
                //该页面没有数据
-           }else if(endIndex > taskInfoVos.size()){
+               taskInfoVoPage = null;
+           }else if(endIndex > taskInfoVos.size() - 1){
                //该页面的数据不够size个
                taskInfoVoPage = taskInfoVos.subList(beginIndex,taskInfoVos.size());
            }else{
                //该页面的数据满足size个
-               taskInfoVoPage = taskInfoVos.subList(beginIndex,endIndex);
+               taskInfoVoPage = taskInfoVos.subList(beginIndex,endIndex+1);
            }
        }
        //查询后进行分页
@@ -203,12 +208,14 @@ public class TaskController extends HttpServlet {
 
 
       //如果不是任务发布者或者是超级管理员的话，权限不够禁止修改
-      UserLocal loginUser = getUserMessage(request, response);
+      UserLocal loginUser = getUserMessage();
       Integer roleId = loginUser.getRoleId();
       String userName = loginUser.getUserName();
       TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
-      if (!(taskInfoVo.getPublisherName().equals(userName)) && roleId != 1){
-          return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止修改");
+      if (roleId != 1 ){
+          if (!(taskInfoVo.getPublisherName().equals(userName))){
+              return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止修改");
+          }
       }
       //
       //
@@ -217,7 +224,9 @@ public class TaskController extends HttpServlet {
 
 
       TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
-
+      //无论更新者是谁，都设置为当前请求者的id
+      //任务的发布者也不能更改(在dao层实现）
+      taskInfoDto.setUpdaterId(loginUser.getUserId());
       Integer row = taskInfoService.update(taskInfoDto, taskId);
       if(row == 0){
           return Result.error(HttpStatus.NOT_FOUND,"任务不存在");
@@ -238,8 +247,6 @@ public class TaskController extends HttpServlet {
      * @return
      */
     private Result<TaskInfoVo> queryById(HttpServletRequest request, HttpServletResponse response) {
-
-
         int taskId = Integer.parseInt(request.getParameter("taskId"));
         TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
         if (taskInfoVo == null){
@@ -250,15 +257,15 @@ public class TaskController extends HttpServlet {
         //
         boolean flag = false;
         //获取请求用户的相关信息
-        UserLocal userMessage = getUserMessage(request, response);
+        UserLocal userMessage = getUserMessage();
         Integer roleId = userMessage.getRoleId();
         String userName = userMessage.getUserName();
         //判断请求用户是否为超级管理员
         if (roleId == 1 ){
             flag = true;
         }
-        if(!flag) {
-            //判断请求用户的查询任务是否是该用户所接取的任务之一
+        else if(roleId == 3) {
+            //判断请求用户的查询任务是否是该用户所接取的任务之一//用户id是否是任务所包含小组中人员中的一个
             Integer userId = userMessage.getUserId();
             //未实现，等别人写完queryTaskInfoByUserId接口后再写
             //查询用户收到的信息
@@ -266,19 +273,24 @@ public class TaskController extends HttpServlet {
                 //查小组对应的任务id
                 //查询task_info表格返回taskinfo对象
                 //将查询到的taskinfo对象封装成一个taskinfovo对象，放在list集合中返回
+            //返回的是用户所收到的所有任务
             List<TaskInfoVo> taskInfoVos1 = taskInfoService.queryTaskInfoByUserId(userId);
+            //判断用户收到的所有任务中是否有所查询的任务
             for (TaskInfoVo taskInfoVo1 : taskInfoVos1) {
                 if (taskInfoVo1.getId() == taskId) {
                     flag = true;
+                    break;
                 }
             }
         }
-        if (!flag){
+        else if (roleId == 2){
             //判断请求用户是否为任务的发布者
+            //获取用户发布的所有任务
             List<TaskInfoVo> taskInfoVos2 = taskInfoService.queryTaskInfoBypublish(userName);
             for (TaskInfoVo taskInfoVo2 : taskInfoVos2) {
                 if (taskInfoVo2.getId() == taskId) {
                     flag = true;
+                    break;
                 }
             }
         }
@@ -346,13 +358,10 @@ public class TaskController extends HttpServlet {
     /**
      * 非业务接口方法
      * 进行身份认定，返回用户的身份信息
-     *
-     * @param request
-     * @param response
      * @return 返回一个UserLocal对象
      * user 中的 roleId   1 标识超级管理员，返回 2 标识管理员，返回 3 表示普通用户
      */
-    private UserLocal getUserMessage(HttpServletRequest request, HttpServletResponse response) {
+    private UserLocal getUserMessage() {
 //        UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
         user.setUserName("zhangsan");
@@ -386,7 +395,11 @@ public class TaskController extends HttpServlet {
             // 通过反射执行代码
             result = (Result) method.invoke(this,req,resp);
             WebUtil.writeJson(resp,result);
-        } catch (Exception e2) {
+        } catch (NullPointerException e1){
+            e1.printStackTrace();
+            result = Result.error(HttpStatus.NOT_FOUND,"缺少参数");
+        }
+        catch (Exception e2) {
             e2.printStackTrace();
             result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
             WebUtil.writeJson(resp,result);
