@@ -18,7 +18,7 @@ public interface GroupDao {
 
     public Integer insert(Group group) throws Exception;
 
-    public Integer delete(Integer groupId);
+    public Integer delete(GroupDto groupDto) throws Exception;
 
     /**
      *  查询所有小组信息

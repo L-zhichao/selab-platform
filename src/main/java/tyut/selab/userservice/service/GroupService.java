@@ -13,7 +13,7 @@ public interface GroupService {
     public Integer insert(GroupDto groupDto) throws Exception;
 
 
-    public Integer delete(Integer groupId);
+    public Integer delete(GroupDto groupDto) throws Exception;
 
     /**
      *  查询所有小组信息
