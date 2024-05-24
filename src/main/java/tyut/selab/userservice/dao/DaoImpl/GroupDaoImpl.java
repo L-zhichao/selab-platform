@@ -82,9 +82,25 @@ public class GroupDaoImpl implements GroupDao {
     }
 
     @Override
-    public List<Group> selectAllGroup() {
+    public List<Group> selectAllGroup(Integer cur,Integer szie) {
         List<Group> groups = new ArrayList<>();
-
+        try {
+            Connection conn = JDBCUtils.getConnection();
+            String sql = "SELECT * FROM sys_group LIMIT ?,?;";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setInt(1,(cur-1)*szie);
+            preparedStatement.setInt(2,szie);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()){
+                Group group = new Group();
+                group.setGroupId(resultSet.getInt("group_id"));
+                group.setGroupName(resultSet.getString("group_name"));
+                group.setCreateTime(resultSet.getTime("create_time"));
+                groups.add(group);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return groups;
     }
 

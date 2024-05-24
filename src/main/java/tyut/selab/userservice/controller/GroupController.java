@@ -58,6 +58,7 @@ public class GroupController extends HttpServlet {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("code", result.getCode());
                 jsonObject.put("msg", result.getMsg());
+                jsonObject.put("data",result.getData());
                 resp.setCharacterEncoding("UTF-8");
                 resp.setContentType("text/html;charset=UTF-8");
                 resp.getWriter().write(jsonObject.toJSONString());

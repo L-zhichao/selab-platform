@@ -48,17 +48,17 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<GroupVo> selectAllGroup(Integer cur,Integer szie) {
         List<GroupVo> list = new ArrayList<>();
-        List<Group> groups = groupDao.selectAllGroup();
+        List<Group> groups = groupDao.selectAllGroup(cur,szie);
         for (Group group:groups) {
             GroupVo groupVo =new GroupVo();
             Integer groupId = group.getGroupId();
             String groupName = group.getGroupName();
             Date createTime = group.getCreateTime();
-            List<UserVo> userVos = userService.selectByGroupId(groupId);
+            //List<UserVo> userVos = userService.selectByGroupId(groupId);
             groupVo.setGroupId(groupId);
             groupVo.setGroupName(groupName);
             groupVo.setCreateTime(createTime);
-            groupVo.setUserVos(userVos);
+            //groupVo.setUserVos(userVos);
             list.add(groupVo);
         }
         return list;
