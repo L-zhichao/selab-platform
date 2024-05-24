@@ -7,6 +7,7 @@ import tyut.selab.utils.JDBCUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,12 +30,16 @@ public class GroupDaoImpl implements GroupDao {
             //获取当前时间方法用这个
             java.util.Date date = new java.util.Date();
             Integer updateUser = group.getUpdateUser();
+            //查找是否有同名项，如果有，返回错误标记1
             String sql1 = "SELECT group_name FROM sys_group;";
             PreparedStatement preparedStatement1 = conn.prepareStatement(sql1);
-            Map<Integer,String> map = new HashMap<>();
-            preparedStatement1.executeQuery();
-            //未完成唯一性
-
+            ResultSet resultSet = preparedStatement1.executeQuery();
+            while(resultSet.next()){
+                String groupName1 = resultSet.getString("group_name");
+                if(groupName1.equals(groupName)){
+                    return 1;
+                }
+            }
             //sql语句，带占位符
             String sql = "INSERT INTO sys_group (parent_id,group_name,create_time,update_time,update_user) VALUES(?,?,?,?,?);";
             //预编译sql语句，注意括号里要写东西
@@ -49,8 +54,8 @@ public class GroupDaoImpl implements GroupDao {
             preparedStatement.execute();
             //关闭数据库
             JDBCUtils.closeResource(conn, preparedStatement);
-            Integer integer = 0;
-            return integer;
+            //返回正确标记0
+            return 0;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -65,9 +70,15 @@ public class GroupDaoImpl implements GroupDao {
             String sql = "DELETE FROM sys_group WHERE group_name = ?;";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1,groupName);
-            preparedStatement.executeUpdate();
+            int i = preparedStatement.executeUpdate();
+            //判断是否执行
             JDBCUtils.closeResource(conn, preparedStatement);
-            return 0;
+            if(i == 0){
+                return 1;
+            }
+            else {
+                return 0;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

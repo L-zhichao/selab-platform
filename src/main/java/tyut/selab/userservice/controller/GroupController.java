@@ -103,6 +103,9 @@ public class GroupController extends HttpServlet {
         String jsonData = req.getReader().lines().collect(Collectors.joining());
         GroupDto groupDto = JSON.parseObject(jsonData, GroupDto.class);
         int insert = groupService.insert(groupDto);
+        if(insert == 1){
+            return Result.error(400,"添加失败");
+        }
         return Result.success(insert);
     }
 
