@@ -49,6 +49,13 @@ public interface TaskReportService {
      * @return
      */
     public List<NeedReportUser> queryAllUserForReport(Integer taskId);
+    /**
+     *  通过reportid查询该任务发布者的id
+     * @param reportid
+     * @return userid
+     */
+    public Integer queryuseridByreportid(Integer reportid);
+
 
 
 }

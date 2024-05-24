@@ -147,4 +147,14 @@ String sql= """
         return taskReportCount;
 
     }
+    /**
+     * 通过reportid查询某一任务的taskid
+     * @param reportId
+     * @return taskid
+     * */
+    public Integer queryTaskIdByrid(Integer reportId){
+        String sql1="select task_id from task_report where report_id=?";
+        return baseQueryObject(Integer.class, sql1);
+    }
+
 }

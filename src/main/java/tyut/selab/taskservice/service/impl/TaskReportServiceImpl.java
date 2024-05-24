@@ -3,11 +3,15 @@ package tyut.selab.taskservice.service.impl;
 import org.junit.platform.commons.util.StringUtils;
 import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.BaseDao;
+import tyut.selab.taskservice.dao.TaskInfoDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
+import tyut.selab.taskservice.dao.impl.TaskInfoDaoImpl;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
+import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
+import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;
@@ -163,5 +167,11 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @param reportid
      * @return userid
      */
-
+public Integer queryuseridByreportid(Integer reportid){
+    //调用TaskServiceImpl方法
+    TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
+    Integer taskid=taskReportDao.queryTaskIdByrid(reportid);
+    TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
+    return taskInfo.getPublisherId();
+}
 }

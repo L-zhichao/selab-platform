@@ -295,6 +295,23 @@ public class TaskReportController extends HttpServlet {
             //判断是否有权限删除
             //根据reportid查出该任务的发布者
             Integer userId = userMessage.getUserId();
+            Integer publisherId=taskReportService.queryuseridByreportid(reportid);
+            if (userId==publisherId){
+                //执行删除任务
+                //直接调用dao方法
+                Integer i = taskReportDao.deleteByReportId(reportid);
+                //检查执行结果
+                if (i==1){
+                    //成功找到任务，并且完成删除操作
+                    WebUtil.writeJson(response,resultMaker);
+                    return resultMaker;
+                }else {
+                    //未找到
+                    return Result.error(HttpStatus.NOT_FOUND,"未找到该汇报记录");
+                }
+            }else {
+                return Result.error(HttpStatus.UNAUTHORIZED,"没有权限删除他人任务的汇报记录");
+            }
         }else {
             //直接调用dao方法
             Integer i = taskReportDao.deleteByReportId(reportid);
@@ -309,7 +326,7 @@ public class TaskReportController extends HttpServlet {
             }
         }
 
-        return null;}
+        }
 
     /**
      *  查询所有需要汇报的用户

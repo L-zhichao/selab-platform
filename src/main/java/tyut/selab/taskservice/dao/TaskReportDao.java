@@ -72,4 +72,10 @@ public interface TaskReportDao {
      * */
     Integer queryTaskReportCount(Integer taskId);
 
+    /**
+     * 通过reportid查询某一任务的taskid
+     * @param reportId
+     * @return taskid
+     * */
+    public Integer queryTaskIdByrid(Integer reportId);
 }
