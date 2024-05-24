@@ -152,6 +152,7 @@ String sql= """
      * @param reportId
      * @return taskid
      * */
+    @Override
     public Integer queryTaskIdByrid(Integer reportId){
         String sql1="select task_id from task_report where report_id=?";
         return baseQueryObject(Integer.class, sql1,reportId);
