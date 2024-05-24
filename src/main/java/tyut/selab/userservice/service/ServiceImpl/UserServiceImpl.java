@@ -17,6 +17,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
@@ -29,8 +30,7 @@ public class UserServiceImpl implements UserService {
     * @param userVo
     * @return Integer
     */
-    //没有IOC
-    //private UserDaoImpl userDao;
+
 
 
     @Override
@@ -48,6 +48,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserVo> selectByGroupId(Integer groupId) {
+
+        String groupName = userDao.getGroupName(groupId);
+
+        ArrayList<User> userArrayList = new ArrayList<>();
+
+
+
+
+
+
+
+
+
+
+
+
+
         return null;
     }
 
@@ -58,15 +75,16 @@ public class UserServiceImpl implements UserService {
 
         UserVo userVo = new UserVo();
 
+
         Long userid = (userSelectByUserId.getUserId());
         String username = userSelectByUserId.getUserName();
         Integer roleld = userSelectByUserId.getRoleId();
-        //rolename在业务层
-        //组id在user-group表里，组名在业务层加
+        Integer groupId= userSelectByUserId.getGroupId();
+        String groupName = userDao.getGroupName(groupId);
+        //组名在业务层加
         String email = userSelectByUserId.getEmail();
         String phone = userSelectByUserId.getPhone();
         Integer sex = userSelectByUserId.getSex();
-
 
         java.util.Date date = new java.util.Date();
         Date createTime = new java.sql.Date(date.getTime());
@@ -85,8 +103,8 @@ public class UserServiceImpl implements UserService {
 
 
         userVo.setUserName(username);
-//        userVo.setGroupId();
-//        userVo.setGroupName();
+        userVo.setGroupId(groupId);
+        userVo.setGroupName(groupName);
         userVo.setRoleId(roleld);
         userVo.setEmail(email);
         userVo.setPhone(phone);

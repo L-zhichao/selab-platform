@@ -28,7 +28,7 @@ public class UserVo implements Serializable {
     /**
      * 用户所属小组名称
      */
-    private Integer groupName;
+    private String groupName;
 
     /**
      * 添加时间
@@ -73,11 +73,11 @@ public class UserVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Integer getGroupName() {
+    public String getGroupName() {
         return groupName;
     }
 
-    public void setGroupName(Integer groupName) {
+    public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
 

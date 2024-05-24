@@ -48,48 +48,58 @@ public class UserController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pathGet = req.getPathInfo();
-//        System.out.println(pathGet);
+
         System.out.println("doGet");
         //判断是否为queryById
         String[] split = pathGet.split("/");
         String modeName = split[1];
-//        System.out.println(modeName);
+
         if(pathGet.equals("/query")){
-            query(req, resp);
+            Result query = query(req, resp);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", query.getCode());
+            jsonObject.put("msg", query.getMsg());
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
+            resp.getWriter().write(jsonObject.toJSONString());
 
-        }else if(modeName.equals("queryById")){//如何实现对动态url的检测?
-
-            queryById(req, resp);
+        }else if(modeName.equals("queryById")){
+            Result queryById = queryById(req, resp);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", queryById.getCode());
+            jsonObject.put("msg", queryById.getMsg());
+            jsonObject.put("data",queryById.getData());
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
+            resp.getWriter().write(jsonObject.toJSONString());
        }
 
 
-        PrintWriter out = resp.getWriter();
-        out.write("get");
-        out.flush();
-        out.close();
-        super.doGet(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
 
         String pathPost = req.getPathInfo();
 
 
         if(pathPost.equals("/save")){
             try {
-                save(req, resp);
+
+                Result save = save(req, resp);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code", save.getCode());
+                jsonObject.put("msg", save.getMsg());
+                resp.setCharacterEncoding("UTF-8");
+                resp.setContentType("text/html;charset=UTF-8");
+                resp.getWriter().write(jsonObject.toJSONString());
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }else if(pathPost.equals("/update")){
             update(req, resp);
         }
-        PrintWriter out = resp.getWriter();
-        out.write("post");
-        out.flush();
-        out.close();
-        super.doPost(req, resp);
+
     }
 
 
@@ -107,7 +117,8 @@ public class UserController extends HttpServlet {
         String groupId = request.getParameter("groupId");
         String roleId = request.getParameter("roleId");
         List<UserVo> usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId));
-        return null;
+
+        return Result.success(null);
     }
 
     /**
@@ -121,7 +132,7 @@ public class UserController extends HttpServlet {
         String path = request.getPathInfo();
         String[] split = path.split("/");
         String userId = split[split.length-1];
-        System.out.println(userId);
+//        System.out.println(userId);
         UserVo userVo = userService.selectByUserId(Long.valueOf(userId));
 
         return Result.success(userVo);
@@ -140,16 +151,12 @@ public class UserController extends HttpServlet {
         String jsonData = request.getReader().lines().collect(Collectors.joining());
         UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
         int insert = userService.save(userVo);
-
-
-
-
-
-
-
-
-        return null;}
-
+        if (insert == 1) {
+            return Result.error(400, "添加失败");
+        } else {
+            return Result.success(insert);
+        }
+    }
     /**
      *  修改用户信息
      *  param: UserVo对象

@@ -20,6 +20,10 @@ public interface UserDao {
      */
     public Integer insertUser(User user);
 
+    /**
+     *通过groupId
+     */
+    public String getGroupName(Integer groupId);
 
     /**
      *  修改用户
