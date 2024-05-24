@@ -352,13 +352,12 @@ public class TaskController extends HttpServlet {
      * @param request
      * @param response
      * @return List<TaskReportVo>
-     *     是否需要重新创建一个vo类
      */
     private Result queryForUser(HttpServletRequest request,HttpServletResponse response){
         List<TaskInfoVo> taskInfoVos=new ArrayList<>();
-        String username = request.getParameter("username");
+        String userName = request.getParameter("username");//没用使用userName
         TaskGroupDao taskGroupDao=new TaskGroupDaoImpl();
-        List<TaskGroup> taskGroups = taskGroupDao.selectByGroupId(getUserMessage().getGroupId());
+        List<TaskGroup> taskGroups = taskGroupDao.selectByGroupId(getUserMessage().getGroupId());//获取groupId?
         for (TaskGroup taskGroup:taskGroups){
             TaskInfoVo taskInfoVo = taskInfoService.queryById(taskGroup.getTaskId());
             taskInfoVos.add(taskInfoVo);
