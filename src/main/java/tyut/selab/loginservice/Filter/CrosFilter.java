@@ -1,19 +1,13 @@
 package tyut.selab.loginservice.Filter;
-import tyut.selab.loginservice.utils.JwtHelper;
-import tyut.selab.loginservice.utils.WebUtils;
-import tyut.selab.utils.Result;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
-/**
- * Description: 所有请求都走此过滤器来判断用户是否登录
- **/
-public class LoginFilter implements Filter{
+@WebFilter("/*")
+public class CrosFilter implements Filter {
     private String sessionKey;
     private String redirectUrl;
     private String uncheckedUrls;
@@ -29,20 +23,17 @@ public class LoginFilter implements Filter{
         uncheckedUrls = servletContext.getInitParameter("uncheckedUrls");
         //System.out.println("uncheckedUrls=====" + uncheckedUrls);
     }
-
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        String token = request.getHeader("token");
-
-        boolean flag = null != token && (!JwtHelper.isExpiration(token));
-
-        if (flag) {
+        HttpServletRequest request =(HttpServletRequest) servletRequest;
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, HEAD");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With");
+        // 非预检请求,放行即可,预检请求,则到此结束,不需要放行
+        if(!request.getMethod().equalsIgnoreCase("OPTIONS")){
             filterChain.doFilter(servletRequest, servletResponse);
-        } else {
-            WebUtils.writeJson(response, new Result(505, "token不存在或已过期"));
         }
     }
     @Override

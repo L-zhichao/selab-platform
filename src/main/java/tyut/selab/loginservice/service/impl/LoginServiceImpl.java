@@ -18,7 +18,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String login(UserLoginReq req) {
-        //        // 接收用户请求参数
+     /*   //        // 接收用户请求参数
 //        // 获取要登录的用户名密码
 //        UserLoginReq inputUser = WebUtils.readJson(req, UserLoginReq.class);
 //        //实例化UserService
@@ -38,7 +38,7 @@ public class LoginServiceImpl implements LoginService {
 //            // 登录成功
 //            result=result.success(null);
 //        }
-//        WebUtils.writeJson(resp,result);
+//        WebUtils.writeJson(resp,result);*/
         return null;
     }
 

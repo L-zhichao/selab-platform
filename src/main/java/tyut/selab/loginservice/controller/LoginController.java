@@ -1,7 +1,7 @@
 package tyut.selab.loginservice.controller;
 
 
-import jakarta.mail.MessagingException;
+import javax.mail.MessagingException;
 import tyut.selab.loginservice.common.Constant;
 import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.dto.UserLoginReq;
@@ -20,6 +20,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @className: LoginController
  * @author: lizhichao
@@ -58,6 +61,8 @@ public class LoginController extends HttpServlet implements Constant {
         //判断Token是否过期或者有没有Token，生成Token存入UserLocal对象中
         //将UserLocal对象传给前端，根据接口文档来做
         return null;
+
+
     }
 
     /**
@@ -103,12 +108,8 @@ public class LoginController extends HttpServlet implements Constant {
                     try {
                         QQEmailService.qqemail(userRegisterDto.getEmail(), head, body);
                         flag = false;
-                    } catch (MessagingException e) {
-                        e.printStackTrace();
-                        break;
                     } catch (IOException e) {
-                        e.printStackTrace();
-                        break;
+                        throw new RuntimeException(e);
                     }
                 }
                 //在这里可以判断验证码是否已经发送
