@@ -9,7 +9,6 @@ public interface UserDao {
      * @return
      */
     public Integer findByUsername(String username);
-    public Integer findByPassword(String password);
     public UserRegisterDto getUserByUsername(String username);
     public Integer insertUser(UserRegisterDto user);
 }

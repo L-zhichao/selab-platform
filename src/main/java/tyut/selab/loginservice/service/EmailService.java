@@ -24,7 +24,7 @@ public interface EmailService {
      * @return
      */
     public Integer queryNumForSameEmail(String email);
-
+    public Integer getEmailNum();
 
 
 

@@ -19,7 +19,6 @@ public class QQEmailService {
         properties.put("mail.smtp.ssl.enable", "true");// 设置是否使用ssl安全连接 ---一般都使用
         properties.put("mail.debug", "true");// 设置是否显示debug信息 true 会在控制台显示相关信息
         properties.put("mail.smtp.ssl.protocols", "TLSv1.2");
-        properties.put("Content-Type","text/html;charset=UTF-8");
         // 得到回话对象
         Session session = Session.getInstance(properties);
         // 获取邮件对象

@@ -41,11 +41,13 @@ public class EmailTest {
     @Test
     public void falseEmailTest(){
         QQEmailService emailService = new QQEmailService();
-        String head = "selab图书管理系统用户注册验证码信息";
-        String body = "验证码:555555";
+        String head = "verification information";
+        String body = "Dear User, Welcome to register our system!!!<br>" +
+                "Here is your verification code:156478.<br>" +
+                "The validity period is 30 seconds, please complete the verification code within the specified period of time<br>";
         try {
             System.out.println(QQEmailService.checkEmail("3388532526@qq.com"));
-            emailService.qqemail("3388532526@qq.com",head,body);
+            emailService.qqemail("654645@qq.com",head,body);
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -68,5 +70,11 @@ public class EmailTest {
     @Test
     public void verityTest(){
         System.out.println(SecurityUtil.getRandom());
+    }
+    @Test
+    public void getEmailNumTest(){
+        EmailServiceImpl emailService = new EmailServiceImpl();
+        System.out.println(emailService.getEmailNum());
+
     }
 }

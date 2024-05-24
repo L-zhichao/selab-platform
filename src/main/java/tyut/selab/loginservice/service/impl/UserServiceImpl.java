@@ -16,15 +16,6 @@ public class UserServiceImpl implements UserService {
     public Integer findByUsername(String username) {
         return userDao.findByUsername(username);
     }
-    /**
-     * 查找用户信息如果有返回1，没有则返回0
-     * @param password
-     * @return
-     */
-    @Override
-    public Integer findByPassword(String password) {
-        return userDao.findByPassword(password);
-    }
 
     @Override
     public UserRegisterDto getUserByUsername(String username) {

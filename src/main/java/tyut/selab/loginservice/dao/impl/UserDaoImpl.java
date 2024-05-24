@@ -23,21 +23,6 @@ public class UserDaoImpl extends BaseDao implements UserDao {
         }
         return 0;
     }
-    /**
-     * 查找用户信息如果有返回1，没有则返回0
-     * @param password
-     * @return
-     */
-    @Override
-    public Integer findByPassword(String password) {
-        String sql = "select password from sys_user where password = ?";
-        String word = executeQueryOne(String.class, sql, password);
-        if(null != word){
-            return 1;
-        }
-        return 0;
-    }
-
     @Override
     public UserRegisterDto getUserByUsername(String username) {
         String sql = "select user_name userName,password,email,sex,phone from sys_user where user_name =?";

@@ -2,8 +2,6 @@ package tyut.selab.loginservice.dao;
 
 import tyut.selab.loginservice.domain.Email;
 
-import java.nio.channels.InterruptedByTimeoutException;
-
 public interface EmailDao {
     /**
      * 新增书籍
@@ -32,4 +30,10 @@ public interface EmailDao {
      * @return
      */
     public Integer delete(Integer userId);
+
+    /**
+     * 查询邮箱注册总数
+     * @return
+     */
+    public Integer getEmailNum();
 }

@@ -29,4 +29,9 @@ public class EmailServiceImpl implements EmailService {
         return countOfEmail;
     }
 
+    @Override
+    public Integer getEmailNum() {
+        return emailDao.getEmailNum();
+    }
+
 }

@@ -93,4 +93,26 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
         }
         return rows;
     }
+
+    @Override
+    public Integer getEmailNum() {
+        String sql = "select user_id userId,email,create_time createTime from sys_email";
+        List<Email> emails = null;
+        try {
+            emails = executeQuery(Email.class, sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        Object[] array = {};
+        if(null != emails) {
+            array = emails.toArray();
+        }
+        return array.length;
+    }
 }

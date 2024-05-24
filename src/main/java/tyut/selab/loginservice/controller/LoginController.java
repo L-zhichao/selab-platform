@@ -2,6 +2,8 @@ package tyut.selab.loginservice.controller;
 
 
 import jakarta.mail.MessagingException;
+import tyut.selab.loginservice.common.Constant;
+import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.impl.EmailServiceImpl;
@@ -26,8 +28,8 @@ import java.io.IOException;
  * @version: 1.0
  */
 @WebServlet(name="LoginController",urlPatterns = {"/login","/register"})
-public class LoginController extends HttpServlet {
-    EmailServiceImpl serviceImpl = new EmailServiceImpl();
+public class LoginController extends HttpServlet implements Constant {
+    EmailServiceImpl emailService = new EmailServiceImpl();
     UserServiceImpl userService = new UserServiceImpl();
     LoginServiceImpl loginService = new LoginServiceImpl();
     @Override
@@ -71,48 +73,60 @@ public class LoginController extends HttpServlet {
         Integer code = 400;
         String msg = "";
         Result result = new Result(400,null);
-        Result errorResult = null;
         //判断用户输入的用户名称和密码是否符合规范
         if(null == userRegisterDto.getUserName() || "".equals(userRegisterDto.getUserName())){
             msg = "用户名称不能为空";
-            errorResult =  result.error(400,msg);
-            return errorResult;
+            return Result.error(400,msg);
         }else if(null == userRegisterDto.getPassword() || "".equals(userRegisterDto.getPassword())){
             msg = "用户密码不能为空";
-            errorResult = result.error(400,msg);
-            return errorResult;
+            return Result.error(400,msg);
         }
         if(1 == userService.findByUsername(userRegisterDto.getUserName())){
             msg = "该用户名已经被注册";
-            errorResult = result.error(400,msg);
-            return errorResult;
+            return Result.error(400,msg);
         }
         if(QQEmailService.checkPhone(userRegisterDto.getPhone())){
             if(QQEmailService.checkEmail(userRegisterDto.getEmail())){
-                //检验信息无误后，这时候发送验证码进行验证注册，发送验证码
-                String head = "";
-                String verify = SecurityUtil.getRandom();
-                String body = "登录需要的验证码为:" + verify;
-                try {
-                    QQEmailService.qqemail(userRegisterDto.getEmail(),head,body);
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(emailService.queryNumForSameEmail(userRegisterDto.getEmail()) == MAX_SAME_MMAIL_REGISTER_NUM){
+                    msg = "该邮箱已经被多次注册，请换一个新的邮箱再试试吧";
+                    return Result.error(400,msg);
                 }
+                //检验信息无误后，这时候发送验证码进行验证注册，发送验证码
                 //验证验证码的相关逻辑，待完善
+                String head = "verification information";
+                String verify = SecurityUtil.getRandom();
+                String body = "Dear User, Welcome to register our system!!!<br>" +
+                        "Here is your verification code:<h3>" + verify + "<h3>.<br>" +
+                        "The validity period is 30 seconds, please complete the verification code within the specified period of time<br>";
+                boolean flag = true;
+                while(flag) {
+                    try {
+                        QQEmailService.qqemail(userRegisterDto.getEmail(), head, body);
+                        flag = false;
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                        break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                }
+                //在这里可以判断验证码是否已经发送
+                if(true == flag){
+                    msg = "验证码发送失败";
+                    return Result.error(400,msg);
+                }
 
-                //注册完成后，将对应的信息存入到数据库中
+
+                //验证码验证成功后，将对应的信息存入到数据库中，并且将邮箱注册信息存入到Email表中来记录邮箱注册次数
                 loginService.register(userRegisterDto);
-                Result success = result.success(null);
-                return success;
+                emailService.save(new Email(emailService.getEmailNum() + 1, userRegisterDto.getEmail()));
+                return Result.success(null);
             }
             msg = "用户邮箱输入格式错误";
-            result.error(400,msg);
-            return result;
+            return Result.error(400,msg);
         }
         msg = "用户电话号码不正确";
-        errorResult = result.error(400,msg);
-        return errorResult;
+        return Result.error(400,msg);
     }
 }
