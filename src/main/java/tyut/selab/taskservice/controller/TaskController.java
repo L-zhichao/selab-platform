@@ -365,6 +365,7 @@ public class TaskController extends HttpServlet {
         if (taskInfoVos==null){
             return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布");
         }else {
+            WebUtil.writeJson(response,Result.success(taskInfoVos));
             return Result.success(taskInfoVos);
         }
 //        return Result.success(taskInfoVos);
