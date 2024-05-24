@@ -47,9 +47,10 @@ public class BorrowBookDaoImpl implements BorrowBookDao {
 //        return borrowBooks;
 //    }
 
-    public List<BorrowBook> selectAllForNoReturn(){
-        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where status = 0;";
-        List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql);
+    public List<BorrowBook> selectAllForNoReturn(Integer cur,Integer size){
+        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where status = 0 limit ?,?;";
+        int index = (cur - 1) * size;
+        List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql,index,size);
         return borrowBooks;
     }
 
@@ -67,7 +68,7 @@ public class BorrowBookDaoImpl implements BorrowBookDao {
         return borrowBooks;
     }
     public List<BorrowBook> selectAllByUserId(Integer userId,Integer cur,Integer size) {
-        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where user_id = ? limit ?,?;";
+        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where borrow_user = ? limit ?,?;";
         int index = (cur - 1) * size;
         List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, userId, index, size);
         return borrowBooks;
