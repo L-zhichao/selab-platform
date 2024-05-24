@@ -167,6 +167,7 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @param reportid
      * @return userid
      */
+    @Override
 public Integer queryuseridByreportid(Integer reportid){
     //调用TaskServiceImpl方法
     TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
