@@ -9,8 +9,11 @@ import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.BaseDao;
+import tyut.selab.taskservice.dao.TaskInfoDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
+import tyut.selab.taskservice.dao.impl.TaskInfoDaoImpl;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
+import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
@@ -195,29 +198,35 @@ public class TaskReportController extends HttpServlet {
         if (roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看汇报记录");
         }else if (roleId==2){
+            int cur = Integer.parseInt(request.getParameter("cur"));
+            int size = Integer.parseInt(request.getParameter("size"));
             //管理员只能查看自己的
             //1.0读取参数 cur size 未处理
             taskid = Integer.parseInt(request.getParameter("taskid"));
             //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
+            Integer userId = userMessage.getUserId();
+            TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
+            TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
+            if (userId==taskInfo.getPublisherId()){
+                try {
+                    taskReportVos = taskReportService.queryAllTask(taskid);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                //返回josn数据
+                if (taskReportVos==null){
+                    //返回错误 ????
+                    return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
 
-
-            int cur = Integer.parseInt(request.getParameter("cur"));
-            int size = Integer.parseInt(request.getParameter("size"));
-            try {
-                taskReportVos = taskReportService.queryAllTask(taskid);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            //返回josn数据
-            if (taskReportVos==null){
-                //返回错误 ????
-                return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
-
+                }else {
+                    //成功返回
+                    WebUtil.writeJson(response,Result.success(taskReportVos));
+                    return Result.success(taskReportVos);
+                }
             }else {
-                //成功返回
-                WebUtil.writeJson(response,Result.success(taskReportVos));
-                return Result.success(taskReportVos);
+                return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报记录");
             }
+
         }else {//超级管理员可以查看所有的
             taskid = Integer.parseInt(request.getParameter("taskid"));
           int  cur = Integer.parseInt(request.getParameter("cur"));
