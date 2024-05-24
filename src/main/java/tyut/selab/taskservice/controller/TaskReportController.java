@@ -52,6 +52,7 @@ public class TaskReportController extends HttpServlet {
 
     private Result resultMaker = new Result(HttpStatus.SUCCESS,null);
     private TaskReportService taskReportService =new TaskReportServiceImpl();
+    TaskInfoService taskInfoService=new TaskServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // 响应的MIME类型和乱码问题
@@ -198,7 +199,7 @@ public class TaskReportController extends HttpServlet {
         //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
-        TaskInfoService taskInfoService=new TaskServiceImpl();
+//        TaskInfoService taskInfoService=new TaskServiceImpl();
         if (roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看汇报记录");
         }else if (roleId==2){
@@ -434,6 +435,13 @@ select DISTINCT task_id from task_report
 
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
+            }
+            //无id，获取自己发布的所有任务
+            if (taskid==null){
+                //获取自己的所有任务
+                String userName = userMessage.getUserName();
+                List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(userName);
+
             }
             //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
             Integer userId = userMessage.getUserId();
