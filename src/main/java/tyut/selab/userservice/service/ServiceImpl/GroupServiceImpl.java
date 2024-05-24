@@ -7,22 +7,27 @@ import tyut.selab.userservice.dao.DaoImpl.GroupDaoImpl;
 import tyut.selab.userservice.dao.GroupDao;
 import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.service.GroupService;
+import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.GroupVo;
+import tyut.selab.userservice.vo.UserVo;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 
 
 public class GroupServiceImpl implements GroupService {
     private GroupDao groupDao = new GroupDaoImpl();
+    private UserService userService = new UserServiceImpl();
     @Override
     public Integer insert(GroupDto groupDto)  {
 
         Group group = new Group();
         group.setGroupName(groupDto.getGroupName());
-        //等代码实现
+        //等代码实现,别删下面这段
 //        SecurityUtil securityUtil = new SecurityUtil();
 //        UserLocal user = securityUtil.getUser();
 //        Integer userId = user.getUserId();
@@ -36,14 +41,27 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Integer delete(GroupDto groupDto)  {
-        return groupDao.delete(groupDto);
+    public Integer delete(Integer groupId)  {
+        return groupDao.delete(groupId);
     }
 
     @Override
-    public List<GroupVo> selectAllGroup() {
-
-        return null;
+    public List<GroupVo> selectAllGroup(Integer cur,Integer szie) {
+        List<GroupVo> list = new ArrayList<>();
+        List<Group> groups = groupDao.selectAllGroup();
+        for (Group group:groups) {
+            GroupVo groupVo =new GroupVo();
+            Integer groupId = group.getGroupId();
+            String groupName = group.getGroupName();
+            Date createTime = group.getCreateTime();
+            List<UserVo> userVos = userService.selectByGroupId(groupId);
+            groupVo.setGroupId(groupId);
+            groupVo.setGroupName(groupName);
+            groupVo.setCreateTime(createTime);
+            groupVo.setUserVos(userVos);
+            list.add(groupVo);
+        }
+        return list;
     }
 
     @Override

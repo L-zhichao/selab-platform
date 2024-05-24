@@ -3,15 +3,13 @@ package tyut.selab.userservice.dao.DaoImpl;
 import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.dao.GroupDao;
 import tyut.selab.userservice.domain.Group;
+import tyut.selab.userservice.vo.GroupVo;
 import tyut.selab.utils.JDBCUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GroupDaoImpl implements GroupDao {
 
@@ -63,13 +61,12 @@ public class GroupDaoImpl implements GroupDao {
     }
 
     @Override
-    public Integer delete(GroupDto groupDto) {
-        String groupName = groupDto.getGroupName();
+    public Integer delete(Integer groupId) {
         try {
             Connection conn = JDBCUtils.getConnection();
-            String sql = "DELETE FROM sys_group WHERE group_name = ?;";
+            String sql = "DELETE FROM sys_group WHERE group_id = ?;";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1,groupName);
+            preparedStatement.setInt(1,groupId);
             int i = preparedStatement.executeUpdate();
             //判断是否执行
             JDBCUtils.closeResource(conn, preparedStatement);
@@ -86,7 +83,9 @@ public class GroupDaoImpl implements GroupDao {
 
     @Override
     public List<Group> selectAllGroup() {
-        return null;
+        List<Group> groups = new ArrayList<>();
+
+        return groups;
     }
 
     @Override

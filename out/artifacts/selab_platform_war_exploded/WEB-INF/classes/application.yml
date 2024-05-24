@@ -1,11 +1,6 @@
 spring:
-  #?????
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/selab-platform
+    url: jdbc:mysql://localhost:3306/selabtest?useSSL=false
     username: root
     password: abc123
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 100MB
