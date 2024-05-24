@@ -82,7 +82,6 @@ public class GroupDaoImpl implements GroupDao {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override

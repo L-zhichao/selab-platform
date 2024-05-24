@@ -1,9 +1,5 @@
 package tyut.selab.utils;
 
-import com.alibaba.druid.pool.DruidDataSourceFactory;
-
-import javax.sql.DataSource;
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
@@ -13,7 +9,7 @@ import java.util.Properties;
 public class JDBCUtils {
     public static Connection getConnection() throws Exception{
         //读取配置文件基本信息
-        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties");
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.yml");
         Properties pros = new Properties();
         pros.load(is);
 
