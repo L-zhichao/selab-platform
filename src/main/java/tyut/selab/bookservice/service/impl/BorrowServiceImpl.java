@@ -50,6 +50,7 @@ public class BorrowServiceImpl implements BorrowService {
         SecurityUtil securityUtil = new SecurityUtil();
         UserLocal user = securityUtil.getUser();
         Integer userId = user.getUserId();
+
         //判断是否可借阅，并进行相关处理
         if(status == 0){
             BorrowBook borrowBook = borrowBookDtoToBorrowBook(borrowBookDto);
@@ -85,6 +86,9 @@ public class BorrowServiceImpl implements BorrowService {
         SecurityUtil securityUtil = new SecurityUtil();
         UserLocal user = securityUtil.getUser();
         Integer userId = user.getUserId();
+
+//        Integer userId = 1;
+
         if (borrowUser != userId){
             return -2;
         }
@@ -140,7 +144,7 @@ public class BorrowServiceImpl implements BorrowService {
     @Override
     public List<BorrowBookVo> selectAllForNoReturn(Integer cur, Integer size) {
         List<BorrowBookVo> list = new ArrayList<BorrowBookVo>();
-        List<BorrowBook> borrowBooks = borrowBookDao.selectAllForNoReturn();
+        List<BorrowBook> borrowBooks = borrowBookDao.selectAllForNoReturn(cur,size);
         for(BorrowBook book : borrowBooks){
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             list.add(borrowBookVo);
@@ -155,6 +159,7 @@ public class BorrowServiceImpl implements BorrowService {
         SecurityUtil securityUtil = new SecurityUtil();
         UserLocal user = securityUtil.getUser();
         Integer userId = user.getUserId();
+
 
         borrowBook.setBookId(borrowBookDto.getBookId());
         borrowBook.setBorrowDuration(borrowBookDto.getBorrowDuration());
