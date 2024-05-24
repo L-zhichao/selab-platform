@@ -116,6 +116,13 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     @Override
+    public BorrowBookVo selectByBorrowId(Integer borrowId){
+        BorrowBook borrowBook = borrowBookDao.selectByBorrowIdBorrowBook(borrowId);
+        BorrowBookVo borrowBookVo = borrowBookToVo(borrowBook);
+        return borrowBookVo;
+    }
+
+    @Override
     public List<BorrowBookVo> selectListByBookId(Integer bookId,Integer cur,Integer size) {
         List<BorrowBookVo> books = new ArrayList<BorrowBookVo>();
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllByBookId(bookId,cur,size);

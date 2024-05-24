@@ -342,8 +342,18 @@ public class BorrowController extends HttpServlet {
     private Result queryById(HttpServletRequest request,HttpServletResponse response){
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
-        String borrowId = split[split.length - 1];
-        borrowService.
-        return null;
+        Integer borrowId = Integer.valueOf(split[split.length - 1]);
+        BorrowBookVo borrowBookVo = borrowService.selectByBorrowId(borrowId);
+        Result result = new Result(404,null);
+        if(borrowBookVo != null){
+            result.setCode(200);
+            result.setData(borrowBookVo);
+            result.setMsg("信息查询成功");
+        }else{
+            result.setMsg("查询信息为空");
+            result.setData(null);
+            result.setCode(513);
+        }
+        return result;
     }
 }

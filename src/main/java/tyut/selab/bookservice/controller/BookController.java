@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,18 +68,7 @@ public class BookController extends HttpServlet {
 
         }
 
-//        Result result = null;
-//        if (methodName.equals("save")) {
-//            save(req, resp);
-//        } else if (methodName.equals("update")) {
-//            update(req, resp);
-//        } else if (methodName.equals("query")) {
-//            query(req, resp);
-//        } else if (methodName.equals("list")) {
-//            result = list(req, resp);
-//        } else if (methodName.equals("delete")) {
-//            result = delete(req, resp);
-//        } else {
+
 //            result.setCode(404);
 //            result.setData(null);
 //            result.setMsg("路径有误");
@@ -115,34 +105,21 @@ public class BookController extends HttpServlet {
     private Result<Void> save(HttpServletRequest request, HttpServletResponse response) throws Exception{
         BookDto bookDto = tool(request, response);
         Integer i = bookService.insertBook(bookDto);
-        Class<Result> resultClass = Result.class;
+        Result result = new Result(404,null);
         if (i >= 0) {
-            Method method = resultClass.getDeclaredMethod("success", BookDto.class);
-            return (Result) method.invoke(bookDto);
+            request.getRequestDispatcher("book/list").forward(request,response);
+            result.setCode(200);
+            result.setMsg("图书信息添加成功");
         }
         else{
-            Method method = resultClass.getDeclaredMethod("error", Integer.class,String.class);
-            return (Result) method.invoke(400,"删除失败");
+            result.setCode(500);
+            result.setMsg("服务器执行请求时发生了错误");
         }
-    }
-
-    public static BookDto tool (HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // 获取请求消息体(其实对应的就是请求参数)
-        BufferedReader br = request.getReader();
-        StringBuilder sb = new StringBuilder();
-        // 读取数据
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
-        }
-        // 先转换为JSON字符串，再封装为BookDao类
-        String DTO = sb.toString();
-        BookDto bookDto = JSONObject.parseObject(DTO, BookDto.class);
-        return bookDto;
+        return result;
     }
 
     /**
-     *  param: BookVo
+     * param: BookVo
      * @param request
      * @param response
      * @return
@@ -155,18 +132,17 @@ public class BookController extends HttpServlet {
         BookVo bookVo = JSON.parseObject(json, BookVo.class);
         // 执行更新方法，得到改变行数的返回值
         Integer i = bookService.updateBook(bookVo);
-        // 通过反射调用Result中的success方法
-        Class<Result> resultClass = Result.class;
+        Result result = new Result(404,null);
         if (i > 0) {
-            Method method = resultClass.getDeclaredMethod("success", BookDto.class);
-            // 请求转发到查询所有书籍
             request.getRequestDispatcher("book/list").forward(request,response);
-            return (Result) method.invoke(bookDto);
+            result.setCode(200);
+            result.setMsg("图书信息修改成功");
         }
         else{
-            Method method = resultClass.getDeclaredMethod("error", Integer.class,String.class);
-            return (Result) method.invoke(400,"删除失败");
+            result.setCode(500);
+            result.setMsg("图书信息修改失败");
         }
+        return result;
     }
 
     /**
@@ -178,55 +154,54 @@ public class BookController extends HttpServlet {
     private Result queryOne(HttpServletRequest request, HttpServletResponse response) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException, NoSuchMethodException, ServletException, IOException, InvocationTargetException {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         BookVo bookVo = bookService.selectBookById(bookId);
-        // 通过反射调用Result中的success方法
-        Class<Result> resultClass = Result.class;
+        Result result = new Result(404,null);
         if(bookVo != null){
-            Method method = resultClass.getDeclaredMethod("success", BookDto.class);
-            // 请求转发到查询所有书籍
-            request.getRequestDispatcher("book/list").forward(request,response);
-            return (Result) method.invoke(bookDto);
+            result.setCode(200);
+            result.setData(bookVo);
+            result.setMsg("成功查询");
         }else{
-            Method method = resultClass.getDeclaredMethod("error", Integer.class,String.class);
-            return (Result) method.invoke(400,"删除失败");
+            result.setCode(500009);
+            result.setMsg("没有找到该书");
         }
-    }
-
-    /**
-     *  传入 bookName & userId(书籍拥有者)[可以都传，也可以传入单个参数 | 调用前先判断参数是都为空(是否有效) | 为空跳过此参数 ]
-     *  param: bookName userId cur[不为空] size[不为空]
-     * @return list<BookVo>
-     */
-    private Result query(HttpServletRequest request,HttpServletResponse response){
-        Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
-        String bookName = request.getAttribute("bookName").toString();
-        int cur = Integer.parseInt(request.getParameter("cur"));
-        int size = Integer.parseInt(request.getParameter("size"));
-        // 先判断传入参数是否为空
-        return null;
-
+        return result;
     }
 
     /**
      * 查询所有书籍(分页查询)
-     * param: cur[当前页数] size[每页数量]
-     *
-     * @param request
-     * @param response
-     * @return
+     * 传入 bookName & userId(书籍拥有者)[可以都传，也可以传入单个参数 | 调用前先判断参数是都为空(是否有效) | 为空跳过此参数 ]
+     * param: bookName userId cur[不为空] size[不为空]   cur[当前页数] size[每页数量]
+     *  @return list<BookVo>
      */
     private Result list(HttpServletRequest request, HttpServletResponse response) throws Exception{
         request.setCharacterEncoding("UTF-8");
         //接受请求参数
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
+        Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
+        String bookName = request.getAttribute("bookName").toString();
         //将参数传递给服务层，进行分页查询
-        List<BookVo> bookVoList = bookService.selectList(cur, size);
+        List<BookVo> bookVoList = new ArrayList<>();
+        if(cur == 0 || size==0){
+            Result result = new Result(500001,null);
+            result.setMsg("页码或每页数量为空");
+            return result;
+        }else{
+            if(userId!=null && bookName!=null){
+                bookVoList = bookService.selectList(cur,size,userId,bookName);
+            } else if (userId==null && bookName!=null) {
+                bookVoList = bookService.selectBookByBookName(cur,size,bookName);
+            } else if (userId!=null && bookName==null) {
+                bookVoList = bookService.selectListByOwnerId(cur,size,userId);
+            }else{
+                bookVoList = bookService.selectAllList(cur,size);
+            }
+        }
         //将分页查询的结果响应给客户端
         Result result = Result.success(bookVoList);
         if(bookVoList.isEmpty()) {
-            result.setMsg("信息为空");
+            result.setMsg("查询信息为空");
             result.setData(null);
-            result.setCode(507);
+            result.setCode(500003);
         }
         return result;
     }
@@ -243,16 +218,38 @@ public class BookController extends HttpServlet {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         Integer i = bookService.deleteBook(bookId);
         response.setCharacterEncoding("UTF-8");
-        Class<Result> resultClass = Result.class;
+        Result result = new Result(404,bookId);
         if (i > 0) {
-            Method method = resultClass.getDeclaredMethod("success", Integer.class);
-            return (Result) method.invoke(i);
+            result.setCode(200);
+            result.setMsg("图书信息删除成功");
         }
         else{
-            Method method = resultClass.getDeclaredMethod("error", Integer.class,String.class);
-            return (Result) method.invoke(400,"删除失败");
+            result.setCode(500);
+            result.setMsg("图书信息删除失败");
         }
+        return result;
     }
 
+    /**
+     * 这是一个直接从请求体拿数据封装为bookDto的工具类
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    public static BookDto tool (HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 获取请求消息体(其实对应的就是请求参数)
+        BufferedReader br = request.getReader();
+        StringBuilder sb = new StringBuilder();
+        // 读取数据
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        // 先转换为JSON字符串，再封装为BookDao类
+        String DTO = sb.toString();
+        BookDto bookDto = JSONObject.parseObject(DTO, BookDto.class);
+        return bookDto;
+    }
 
 }

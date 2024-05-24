@@ -41,6 +41,11 @@ public interface BorrowService {
 
 
     /**
+     *  通过借阅id查询借阅信息
+     */
+    public BorrowBookVo selectByBorrowId(Integer borrowId);
+
+    /**
      *  查询所有借阅记录(按时间排序)
      * @return
      */
@@ -55,5 +60,4 @@ public interface BorrowService {
     public BorrowBook borrowBookDtoToBorrowBook(BorrowBookDto borrowBookDto);
 
     public BorrowBookVo borrowBookToVo(BorrowBook borrowBook);
-
 }

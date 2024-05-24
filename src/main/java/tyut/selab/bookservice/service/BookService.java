@@ -42,10 +42,10 @@ public interface BookService {
 
     /**
      * 分页查询所有书籍
-     *
+     * 传入userId和bookName
      * @return
      */
-    public List<BookVo> selectList(Integer cur, Integer size);
+    public List<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName);
 
     /**
      *   通过 bookId 查询书籍信息
@@ -59,15 +59,20 @@ public interface BookService {
      * @param bookName
      * @return
      */
-    public List<BookVo> selectBookByBookName(String bookName);
+    public List<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName);
 
     /**
      *  通过userid查询用户所拥有的所有书籍
      * @return
      */
-    public List<BookVo> selectListByOwnerId(Integer userid,Integer cur,Integer size);
+    public List<BookVo> selectListByOwnerId(Integer cur,Integer size,Integer userId);
+
+    /**
+     * 分页查询所有书籍信息
+     * @param
+     * @return
+     */
+    public List<BookVo> selectAllList(Integer cur, Integer size);
 
     public BookVo bookIofoToBookVo(BookInfo bookInfo);
-
-    public List<BookVo> selectByOwnerBookName(Integer userId, String bookName);
 }

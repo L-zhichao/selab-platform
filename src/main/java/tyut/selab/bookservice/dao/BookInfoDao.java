@@ -48,25 +48,24 @@ public interface BookInfoDao {
      * @param userId
      * @return
      */
-    public List<BookInfo> selectByOwnerBookInfo(Integer userId) throws SQLException;
-
-    /**
-     * 查询所有书籍
-     * @return
-     */
-    public List<BookInfo> selectAll(Integer cur, Integer size) throws SQLException;
+    public List<BookInfo> selectByOwnerBookInfo(Integer cur, Integer size, Integer userId) throws SQLException;
 
     /**
      * 通过书籍名称<模糊查询>书籍信息
      * @return
      */
-    public List<BookInfo> selectAllByBookName(String bookName) throws SQLException;
+    public List<BookInfo> selectAllByBookName(Integer cur, Integer size, String bookName) throws SQLException;
+
+    /**
+     * 分页查询所有书籍信息
+     */
+    public List<BookInfo> selectAllList(Integer cur, Integer size) throws SQLException;
 
     /**
      *  通过书籍名称和拥有者id查询书籍信息
      * @return
      */
-    public List<BookInfo> selectByOwnerBookName(Integer userId, String bookName) throws SQLException;
+    public List<BookInfo> selectByOwnerBookName(Integer cur, Integer size, Integer userId, String bookName) throws SQLException;
 }
 
 
