@@ -187,23 +187,29 @@ public class TaskReportController extends HttpServlet {
      * @return List<TaskInfoVo>
      */
     private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
-        //TaskReportVo taskReportVo = new TaskReportVo();
         List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
         Integer taskid = null;
-//        int cur = 0;
-//        int size = 0;
-        //权限处理 不会 待细化?????
+        int cur=0;
+        int size=0;
+        //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
         if (roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看汇报记录");
         }else if (roleId==2){
-            int cur = Integer.parseInt(request.getParameter("cur"));
-            int size = Integer.parseInt(request.getParameter("size"));
-            //管理员只能查看自己的
-            //1.0读取参数 cur size 未处理
-            taskid = Integer.parseInt(request.getParameter("taskid"));
-            //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
+            //判断参数是否为空
+            if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
+                 cur = Integer.parseInt(request.getParameter("cur"));
+                size = Integer.parseInt(request.getParameter("size"));
+            }
+//            int cur = Integer.parseInt(request.getParameter("cur"));
+//            int size = Integer.parseInt(request.getParameter("size"));
+            if (request.getParameter("taskid")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskid"));
+            }
+
+//            taskid = Integer.parseInt(request.getParameter("taskid"));
+            //id是否输入合法
             Integer userId = userMessage.getUserId();
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
@@ -213,49 +219,65 @@ public class TaskReportController extends HttpServlet {
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                //返回josn数据
                 if (taskReportVos==null){
-                    //返回错误 ????
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
-
                 }else {
-                    //成功返回
-                    WebUtil.writeJson(response,Result.success(taskReportVos));
-                    return Result.success(taskReportVos);
+                    int beginIndex = (cur - 1) * size;
+                    int endIndex = cur * size - 1;
+                    List<TaskReportVo> taskInfoVoPage;
+                    if (beginIndex > taskReportVos.size() - 1){
+                        taskInfoVoPage = null;
+                    }else if(endIndex > taskReportVos.size() - 1){
+                        taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
+                    }else{
+                        taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                    }
+                    WebUtil.writeJson(response,Result.success(taskInfoVoPage));
+                    return Result.success(taskInfoVoPage);
                 }
             }else {
                 return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报记录");
             }
+        }else {
+            //判断参数是否为空
+            if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
+                cur = Integer.parseInt(request.getParameter("cur"));
+                size = Integer.parseInt(request.getParameter("size"));
+            }
 
-        }else {//超级管理员可以查看所有的
-            taskid = Integer.parseInt(request.getParameter("taskid"));
-          int  cur = Integer.parseInt(request.getParameter("cur"));
-           int size = Integer.parseInt(request.getParameter("size"));
+            if (request.getParameter("taskid")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskid"));
+            }
+//            taskid = Integer.parseInt(request.getParameter("taskid"));
+//             cur = Integer.parseInt(request.getParameter("cur"));
+//             size = Integer.parseInt(request.getParameter("size"));
             if (taskid!=null){
-                //通过id查询任务汇报记录
-                //异常未处理
                 try {
                     taskReportVos = taskReportService.queryAllTask(taskid);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                //返回josn数据
                 if (taskReportVos==null){
-                    //返回错误 ????
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
-
                 }else {
-                    //成功返回
-                    WebUtil.writeJson(response,Result.success(taskReportVos));
-                    return Result.success(taskReportVos);
+                    int beginIndex = (cur - 1) * size;
+                    int endIndex = cur * size - 1;
+                    List<TaskReportVo> taskInfoVoPage;
+                    if (beginIndex > taskReportVos.size() - 1){
+                        taskInfoVoPage = null;
+                    }else if(endIndex > taskReportVos.size() - 1){
+                        taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
+                    }else{
+                        taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                    }
+                    WebUtil.writeJson(response,Result.success(taskInfoVoPage));
+                    return Result.success(taskInfoVoPage);
                 }
             }else {
-                //无id咋搞?
-                //获取所有任务id
                 BaseDao baseDao = new BaseDao();
                 String str1 = """
-    select DISTINCT task_id from task_report
-    """;
+select DISTINCT task_id from task_report
+""";
                 List<Integer>taskids=new ArrayList<>();
                 taskids=baseDao.baseQuery(Integer.class, str1);
                 if (taskids==null){
@@ -268,16 +290,21 @@ public class TaskReportController extends HttpServlet {
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
-                            //成功返回
-                            SuccessTaskReportVos.addAll(taskReportVos);
-//                            WebUtil.writeJson(response,Result.success(taskReportVos));
-//                            return Result.success(taskReportVos);
+                        SuccessTaskReportVos.addAll(taskReportVos);
                     }
-                    WebUtil.writeJson(response,Result.success(SuccessTaskReportVos));
-                            return Result.success(SuccessTaskReportVos);
+                    int beginIndex = (cur - 1) * size;
+                    int endIndex = cur * size - 1;
+                    List<TaskReportVo> taskInfoVoPage;
+                    if (beginIndex > SuccessTaskReportVos.size() - 1){
+                        taskInfoVoPage = null;
+                    }else if(endIndex > SuccessTaskReportVos.size() - 1){
+                        taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,SuccessTaskReportVos.size());
+                    }else{
+                        taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,endIndex+1);
+                    }
+                    WebUtil.writeJson(response,Result.success(taskInfoVoPage));
+                    return Result.success(taskInfoVoPage);
                 }
-
-                //return null;
             }
         }
     }
