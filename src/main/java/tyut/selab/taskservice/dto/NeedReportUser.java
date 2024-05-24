@@ -10,6 +10,23 @@ package tyut.selab.taskservice.dto;
 public class NeedReportUser {
 
     private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public Integer getIsReport() {
+        return isReport;
+    }
+
+    public void setIsReport(Integer isReport) {
+        this.isReport = isReport;
+    }
+
     /**
      *  是否汇报
      */

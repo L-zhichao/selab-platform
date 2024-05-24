@@ -11,13 +11,16 @@ import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskInfoDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
+import tyut.selab.taskservice.dao.impl.TaskGroupDaoImpl;
 import tyut.selab.taskservice.dao.impl.TaskInfoDaoImpl;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
+import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.WebUtil;
+import tyut.selab.taskservice.myutils.XmlParser;
 import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.service.impl.TaskReportServiceImpl;
@@ -27,6 +30,7 @@ import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.utils.Result;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Method;
@@ -194,6 +198,7 @@ public class TaskReportController extends HttpServlet {
         //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
+        TaskInfoService taskInfoService=new TaskServiceImpl();
         if (roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看汇报记录");
         }else if (roleId==2){
@@ -207,7 +212,43 @@ public class TaskReportController extends HttpServlet {
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
             }
+            if (taskid==null){
+                //获取用户发布的所有任务
+                List<TaskReportVo> successT=new ArrayList<>();
+                String userName = userMessage.getUserName();
+                List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(userName);
+                for (TaskInfoVo taskInfoVo:taskInfoVos){
+                    try {
+                        taskReportVos = taskReportService.queryAllTask(taskInfoVo.getId());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (taskReportVos!=null) {
+                        int beginIndex = (cur - 1) * size;
+                        int endIndex = cur * size - 1;
+                        List<TaskReportVo> taskInfoVoPage;
+                        if (beginIndex > taskReportVos.size() - 1){
+                            taskInfoVoPage = null;
+                            successT.addAll(taskInfoVoPage);
+                        }else if(endIndex > taskReportVos.size() - 1){
+                            taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
+                            successT.addAll(taskInfoVoPage);
+                        }else{
+                            taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                            successT.addAll(taskInfoVoPage);
+                        }
+//                        WebUtil.writeJson(response,Result.success(taskInfoVoPage));
+//                        return Result.success(taskInfoVoPage);
+                    }
+                }
+                if (successT==null){
+                    return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有汇报记录");
+                }else {
+                    WebUtil.writeJson(response,Result.success(successT));
+                    return Result.success(successT);
+                }
 
+            }
 //            taskid = Integer.parseInt(request.getParameter("taskid"));
             //id是否输入合法
             Integer userId = userMessage.getUserId();
@@ -371,30 +412,53 @@ select DISTINCT task_id from task_report
      * @param response
      * @return List<TaskReportVo>
      */
-    private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response){
+    private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response) throws Exception {
         List<NeedReportUser> needReportUsers = new ArrayList<>();
         //权限判断 未完成
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
+        Integer taskid =null;
+        int cur=0;
+        int size=0;
+        BufferedReader reader = request.getReader();
         if (roleId == 3 ){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看所有需要汇报的用户");
         }else if (roleId==2){
             //管理员只能查看自己发布的需要汇报的用户信息
             //读取参数 cur size 未处理
-            Integer taskid = Integer.parseInt(request.getParameter("taskid"));
             //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
+            if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
+                cur = Integer.parseInt(request.getParameter("cur"));
+                size = Integer.parseInt(request.getParameter("size"));
+            }
 
-            int cur = Integer.parseInt(request.getParameter("cur"));
-            int size = Integer.parseInt(request.getParameter("size"));
-            //读取xml数据
+            if (request.getParameter("taskid")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskid"));
+            }
+            //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
+            Integer userId = userMessage.getUserId();
+            TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
+            TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
+            if (userId!=taskInfo.getPublisherId()){
+                return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报用户");
+            }else {
+                //读取xml数据
+                TaskReportVo taskReportVo = XmlParser.parseXml(reader);
+                //taskid->groupid->userid
+                needReportUsers = taskReportService.queryAllUserForReport(taskid);
 
 
-            return Result.success(needReportUsers);
+                return Result.success(needReportUsers);
+            }
         }else {
-            Integer taskid = Integer.parseInt(request.getParameter("taskid"));
-            int cur = Integer.parseInt(request.getParameter("cur"));
-            int size = Integer.parseInt(request.getParameter("size"));
-
+            TaskReportVo taskReportVo = XmlParser.parseXml(reader);
+            if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
+                cur = Integer.parseInt(request.getParameter("cur"));
+                size = Integer.parseInt(request.getParameter("size"));
+            }
+            if (request.getParameter("taskid")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskid"));
+            }
             //超级管理员能查看所有发布的需要汇报的用户信息
            //超级管理员也可以输入id
             if (taskid!=null){
