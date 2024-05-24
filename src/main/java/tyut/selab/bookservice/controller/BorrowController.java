@@ -63,9 +63,9 @@ public class BorrowController extends HttpServlet {
             } else if (methodName2.equals("queryById")) {
                 result = queryById(req, resp);
             } else {
-                result.setCode(404);
+                result.setCode(500004);
                 result.setData(null);
-                result.setMsg("fail");
+                result.setMsg("路径有误");
             }
         }
         resp.setContentType("application/json");
@@ -92,7 +92,7 @@ public class BorrowController extends HttpServlet {
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName = split[split.length - 1];
-        Result result = new Result(404,null);
+        Result result = new Result(500000,null);
         if (methodName.equals("borrow")) {
 
             result = borrowingBook(req, resp);
@@ -101,7 +101,7 @@ public class BorrowController extends HttpServlet {
 //        } else if (methodName.equals("record")) {
 //            result = query(req, resp);
         } else {
-            result.setCode(404);
+            result.setCode(500004);
             result.setData(null);
             result.setMsg("路径有误");
         }
@@ -145,20 +145,20 @@ public class BorrowController extends HttpServlet {
         String requestBody = buffer.toString();
         // 使用JSON获取参数名对应的参数值
         JSONObject jsonObject = JSON.parseObject(requestBody);
-        Result result = new Result(404, null);
+        Result result = new Result(500000, null);
+
         if (jsonObject.get("bookId") == null || jsonObject.get("borrowDuration") == null || jsonObject.get("returnTime") == null) {
             result.setMsg("信息缺少");
+            result.setCode(500005);
             return result;
         }
         Integer bookId = (Integer) jsonObject.get("bookId");
         Integer borrowDuration = (Integer) jsonObject.get("borrowDuration");
         String returnTime = (String) jsonObject.get("returnTime");
 
-        result.setMsg("借阅失败");
-
         if(borrowDuration <=0 || bookId == 0 ){
-            result.setMsg("无效借阅");
-            result.setCode(512);
+            result.setMsg("信息错误");
+            result.setCode(500002);
             return result;
         }
         //将参数封装为Dto类
@@ -168,7 +168,7 @@ public class BorrowController extends HttpServlet {
         try {
             date = ft.parse(returnTime);
         } catch (ParseException e) {
-            throw new ServiceException("获取异常失败");
+            throw new ServiceException("获取日期失败");
         }
         borrowBookDto.setBookId(bookId);
         borrowBookDto.setBorrowDuration(borrowDuration);
@@ -179,16 +179,16 @@ public class BorrowController extends HttpServlet {
             result = Result.success(null);
         } else if (i == -2) {
             result.setMsg("已被他人借阅");
-            result.setCode(508);
+            result.setCode(500006);
         } else if (i == -3) {
             result.setMsg("不可借阅");
-            result.setCode(509);
+            result.setCode(500007);
         } else if (i == -4) {
             result.setMsg("您已借阅");
-            result.setCode(510);
+            result.setCode(500008);
         }else if (i == -5) {
             result.setMsg("没有找到该书");
-            result.setCode(511);
+            result.setCode(500009);
         }
         return result;
     }
@@ -202,25 +202,25 @@ public class BorrowController extends HttpServlet {
     private Result returnBook(HttpServletRequest request,HttpServletResponse response){
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
-        Result result = new Result(404,null);
+        Result result = new Result(500000,null);
         if (split[split.length - 1] == null){
-            result.setMsg("BookId为空");
+            result.setCode(500005);
+            result.setMsg("信息缺少");
             return result;
         }
         Integer borrowId = Integer.valueOf(split[split.length - 1]);
-        result.setMsg("借阅失败");
         if (borrowId != 0){
           Integer i = borrowService.returnBook(borrowId);
             if(i > 0){
                 result = Result.success(null);
             } else if (i == -1) {
-                result.setCode(512);
+                result.setCode(500010);
                 result.setMsg("没有借阅记录");
             } else if (i == -2) {
-                result.setCode(513);
+                result.setCode(500011);
                 result.setMsg("此书不是您借的");
             } else if (i == -3) {
-                result.setCode(514);
+                result.setCode(500012);
                 result.setMsg("您已归还");
             }
         }
@@ -237,17 +237,18 @@ public class BorrowController extends HttpServlet {
      * 闫焕根
      */
     private Result query(HttpServletRequest request,HttpServletResponse response){
-        Result result = new Result(404, null);
+        Result result = new Result(500000, null);
         //接收请求参数
         if (request.getParameter("cur") == null || request.getParameter("size") == null){
-            result.setMsg("存在信息为空");
+            result.setMsg("页码或每页数量为空");
+            result.setCode(500001);
             return result;
         }
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
 
         if (cur <= 0 || size <= 0){
-            result.setCode(514);
+            result.setCode(500002);
             result.setMsg("信息错误");
             return result;
         }
@@ -259,33 +260,27 @@ public class BorrowController extends HttpServlet {
             List<BorrowBookVo> borrowBookVos = borrowService.selectList(cur, size);
             //将分页查询的结果传入Result对象中request.getParameter("bookId")
             if (!borrowBookVos.isEmpty()) {
-                result.setCode(200);
-                result.setData(borrowBookVos);
-                result.setMsg("success");
+               result = Result.success(borrowBookVos);
             }else {
-                result.setCode(513);
+                result.setCode(500003);
                 result.setMsg("查询信息为空");
             }
         }else if (request.getParameter("bookId") != null && request.getParameter("userId") == null){
             Integer bookId = Integer.valueOf(request.getParameter("bookId"));
             List<BorrowBookVo> borrowBookVos = borrowService.selectListByBookId(bookId,cur,size);
             if (!borrowBookVos.isEmpty()) {
-                result.setCode(200);
-                result.setData(borrowBookVos);
-                result.setMsg("success");
+                result = Result.success(borrowBookVos);
             }else {
-                result.setCode(513);
+                result.setCode(500003);
                 result.setMsg("查询信息为空");
             }
         } else if (request.getParameter("userId") != null && request.getParameter("bookId") == null) {
             Integer userId = Integer.valueOf(request.getParameter("userId"));
             List<BorrowBookVo> borrowBookVos = borrowService.selectListByUserid(userId, cur, size);
             if (!borrowBookVos.isEmpty()) {
-                result.setCode(200);
-                result.setData(borrowBookVos);
-                result.setMsg("success");
+                result = Result.success(borrowBookVos);
             }else {
-                result.setCode(513);
+                result.setCode(500003);
                 result.setMsg("查询信息为空");
             }
         }
@@ -301,10 +296,11 @@ public class BorrowController extends HttpServlet {
      * @return
      */
     private Result queryAllNoReturnBook(HttpServletRequest request,HttpServletResponse response){
-        Result result = new Result(404, null);
+        Result result = new Result(500000, null);
         //接受请求参数
         if (request.getParameter("cur") == null || request.getParameter("size") == null){
             result.setMsg("页码或每页数量为空");
+            result.setCode(500001);
             return result;
         }
 
@@ -312,7 +308,7 @@ public class BorrowController extends HttpServlet {
         int size = Integer.parseInt(request.getParameter("size"));
 
         if (cur <= 0 || size <= 0){
-            result.setCode(514);
+            result.setCode(500002);
             result.setMsg("信息错误");
             return result;
         }
@@ -322,7 +318,7 @@ public class BorrowController extends HttpServlet {
         if(borrowBookVos.isEmpty()) {
             result.setMsg("查询信息为空");
             result.setData(null);
-            result.setCode(513);
+            result.setCode(500003);
         }
 
         result = Result.success(borrowBookVos);
@@ -343,7 +339,6 @@ public class BorrowController extends HttpServlet {
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
         String borrowId = split[split.length - 1];
-        borrowService.
         return null;
     }
 }
