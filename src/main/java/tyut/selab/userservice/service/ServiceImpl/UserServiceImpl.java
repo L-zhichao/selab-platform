@@ -50,22 +50,47 @@ public class UserServiceImpl implements UserService {
     public List<UserVo> selectByGroupId(Integer groupId) {
 
         String groupName = userDao.getGroupName(groupId);
-
-        ArrayList<User> userArrayList = new ArrayList<>();
-
-
-
-
+        List<User> userArrayList = new ArrayList<>();
+        List<UserVo> userVoList = new ArrayList<>();
+        UserVo userVo = new UserVo();
+        userArrayList = userDao.selectByGroupIdUsers(groupId);
 
 
+        for (User user : userArrayList){
+            Long userid = user.getUserId();
+            String username = user.getUserName();
+            Integer roleld = user.getRoleId();
+            String email = user.getEmail();
+            String phone = user.getPhone();
+            Integer sex = user.getSex();
+            java.util.Date date = new java.util.Date();
+            Date createTime = new java.sql.Date(date.getTime());
+            Date updateTime = new java.sql.Date(date.getTime());
 
+            //对rolename的判断
+            if(roleld == 1){
+                userVo.setRoleName("超级管理员");
+            } else if (roleld == 2) {
+                userVo.setRoleName("管理员");
+            }else{
+                userVo.setRoleName("用户");
+            }
 
+            userVo.setUserName(username);
+            userVo.setGroupId(groupId);
+            userVo.setGroupName(groupName);
+            userVo.setRoleId(roleld);
+            userVo.setEmail(email);
+            userVo.setPhone(phone);
+            userVo.setSex(sex);
+            userVo.setUserId(userid);
+            userVo.setCreateTime(createTime);
+            userVo.setUpdateTime(updateTime);
 
+            userVoList.add(userVo);
 
-
-
-
-        return null;
+        }
+        return userVoList;
     }
 
     @Override
@@ -76,7 +101,7 @@ public class UserServiceImpl implements UserService {
         UserVo userVo = new UserVo();
 
 
-        Long userid = (userSelectByUserId.getUserId());
+        Long userid = userSelectByUserId.getUserId();
         String username = userSelectByUserId.getUserName();
         Integer roleld = userSelectByUserId.getRoleId();
         Integer groupId= userSelectByUserId.getGroupId();
