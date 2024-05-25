@@ -8,7 +8,6 @@ package tyut.selab.loginservice.dto;
  * @version: 1.0
  */
 public class UserLocal {
-
     private Integer userId;
     private String userName;
     private Integer groupId;

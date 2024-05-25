@@ -3,6 +3,8 @@ package tyut.selab.loginservice.service;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 
+import java.sql.SQLException;
+
 public interface LoginService {
 
     /**
@@ -17,5 +19,5 @@ public interface LoginService {
      * @param userRegisterDto
      * @return
      */
-    public Integer register(UserRegisterDto userRegisterDto);
+    public Integer register(UserRegisterDto userRegisterDto) throws SQLException;
 }

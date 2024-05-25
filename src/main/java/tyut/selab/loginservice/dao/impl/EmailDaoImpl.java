@@ -5,6 +5,7 @@ import tyut.selab.loginservice.dao.EmailDao;
 import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.utils.BaseDao;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -20,15 +21,11 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
      * @return 返回修改作用的行数，如果报错的话返回0
      */
     @Override
-    public Integer insert(Email email) {
+    public Integer insert(Email email) throws SQLException {
         //添加email表中的字段为user_id,email,create_time
         String sql = "insert into sys_email values(?,?,now())";
         int result = 0;
-        try {
-            result = executeUpdate(sql,email.getUserId(),email.getEmail());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        result = executeUpdate(sql,email.getUserId(),email.getEmail());
         return result;
     }
 
@@ -38,38 +35,24 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
      * @return
      */
     @Override
-    public Integer update(Email email) {
+    public Integer update(Email email) throws SQLException {
         String sql = "update sys_email set email = ?,create_time = now() where user_id = ?";
         int result = 0;
-        try {
-            result = executeUpdate(sql,email.getEmail(),email.getUserId());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        result = executeUpdate(sql,email.getEmail(),email.getUserId());
         return result;
     }
 
     /**
      * 获取邮箱注册次数，如果返回0则是邮箱还没有被注册，返回其他值则为注册次数
      * @param email
-     * @return
+     * @return 返回一个邮箱的注册次数
      */
     @Override
-    public Integer selectNumForSameEmail(String email) {
+    public Integer selectNumForSameEmail(String email) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String sql = "select user_id userId,email,create_time createTime from sys_email where email = ?";
         int result = 0;
         List<Email> integer = null;
-        try {
-            integer = executeQuery(Email.class, sql, email);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        integer = executeQuery(Email.class, sql, email);
         Object[] array = {};
         if(null != integer) {
             array = integer.toArray();
@@ -78,37 +61,27 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
     }
 
     /**
-     * 删除指定的email数据，删除成功返回更改行数，删除失败返回-1
+     * 删除指定的email数据，删除成功返回更改行数，删除失败返回0
      * @param userId
-     * @return
+     * @return 删除失败返回0，删除成功返回修改行数
      */
     @Override
-    public Integer delete(Integer userId) {
+    public Integer delete(Integer userId) throws SQLException {
         String sql = "delete from sys_email where user_id = ?";
-        int rows = -1;
-        try {
-            rows = executeUpdate(sql,userId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        int rows = 0;
+        rows = executeUpdate(sql,userId);
         return rows;
     }
 
+    /**
+     * 该方法获取注册邮件的总数
+     * @return 返回已经注册的邮件的总数
+     */
     @Override
-    public Integer getEmailNum() {
+    public Integer getEmailNum() throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String sql = "select user_id userId,email,create_time createTime from sys_email";
         List<Email> emails = null;
-        try {
-            emails = executeQuery(Email.class, sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        emails = executeQuery(Email.class, sql);
         Object[] array = {};
         if(null != emails) {
             array = emails.toArray();

@@ -46,7 +46,6 @@ public class QQEmailService {
         // 发送邮件
         int i = 0;
         transport.sendMessage(message, message.getAllRecipients());
-        System.out.println("成功！");
         transport.close();
     }
 
@@ -58,7 +57,7 @@ public class QQEmailService {
     public static boolean checkEmail(String QQemail){
         String email = QQemail;
         boolean flag = false;
-        if(email.matches("\\w{1,30}@[a-zA-Z0-9]{2,20}(\\.[a-zA-Z0-9]{2,20}){1,2}")){
+        if(email.matches("[1-9]\\d{7,10}@qq\\.com")){
             flag = true;
         }
         return flag;
@@ -68,6 +67,24 @@ public class QQEmailService {
         String pho = phone;
         boolean flag = false;
         if (pho.matches("1[3-9]\\d{9}")){
+            flag = true;
+        }
+        return flag;
+    }
+    public static boolean checkUserName(String userName){
+        String name = userName;
+        boolean flag = false;
+        //用户名6到12个字符，可以包含中文、大小写字母、和数字
+        if(name.matches("^[\u4e00-\u9fa5a-zA-Z0-9]{6,12}$")){
+            flag = true;
+        }
+        return flag;
+    }
+    public static boolean checkPassword(String password){
+        String word = password;
+        boolean flag = false;
+        //至少6个字符，最多12个字符，其中至少1个大写字母，1个小写字母和1个数字,不能包含特殊字符，不可以是中文
+        if(word.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,12}$")){
             flag = true;
         }
         return flag;
