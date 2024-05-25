@@ -91,7 +91,6 @@ public class UserDaoImpl implements UserDao {
         String groupName = null;
 
         try {
-            conn = JDBCUtils.getConnection();
             String sql = "select group_name as groupName from sys_group where group_id = ? ";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1,groupId);
@@ -104,9 +103,7 @@ public class UserDaoImpl implements UserDao {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
+        }finally {
             JDBCUtils.closeResource(conn,pstmt);
         }
 
@@ -122,37 +119,45 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Integer updateUser(User user) {
         Connection conn = null;
-        PreparedStatement ps = null;
+        PreparedStatement ps1 = null;
+        PreparedStatement ps2 = null;
+        int rows1;
+        int rows2;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "UPDATE sys_user SET user_name=?,role_id=?,email=?,phone=?,sex=?,update_time=? where user_id=?";
-            ps = conn.prepareStatement(sql);
+            String sql1 = "UPDATE sys_user SET user_name=?,email=?,phone=?,sex=?,update_time=? where user_id=?";
+            ps1 = conn.prepareStatement(sql1);
+            //是用if判断吗？？
             if (user.getUserName() != null) {
-                ps.setString(1, user.getUserName());
+                ps1.setString(1, user.getUserName());
             }
-            if (user.getGroupId() != null) {
-                ps.setLong(2, user.getGroupId());
-            }
-            //updatetime
-            //角色id
             if (user.getEmail() != null) {
-                ps.setString(4, user.getEmail());
+                ps1.setString(2, user.getEmail());
             }
             if (user.getPhone() != null) {
-                ps.setString(5, user.getPhone());
+                ps1.setString(3, user.getPhone());
             }
             if (user.getSex() != null) {
-                ps.setInt(5, user.getSex());
+                ps1.setInt(4, user.getSex());
             }
-            ps.execute(sql);
+            if (user.getUpdateTime() != null) {
+                ps1.setTimestamp(5, new Timestamp(user.getUpdateTime().getTime()));
+            }
+            ps1.setLong(6, user.getUserId());
+            rows1 = ps1.executeUpdate();
 
+            //修改group信息,是否需要groupName？？
+            String sql2 = "UPDATE user_group SET group_id=? where user_id=?";
+            ps2 = conn.prepareStatement(sql2);
+            ps2.setInt(1,user.getGroupId());
+            rows2 = ps2.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            JDBCUtils.closeResource(conn, ps);
+            //如何释放ps2？？
+            JDBCUtils.closeResource(conn, ps1);
         }
-
-        return null;
+        return rows1;
     }
     /**
     * Description: 修改用户权限
@@ -161,24 +166,24 @@ public class UserDaoImpl implements UserDao {
     */
     @Override
     public Integer updateUserRole(User user) {
+        user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
         Connection conn = null;
         PreparedStatement ps = null;
+        int rows;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "UPDATE sys_user SET role_id=? ,sys_user.update_time = ? where user_id=?";
+            String sql = "UPDATE sys_user SET role_id=? ,update_time = ? where user_id=?";
+            ps = conn.prepareStatement(sql);
             ps.setInt(1,user.getRoleId());
-
-            //Date格式
-            //ps.setDate(2,user.getUpdateTime());
+            ps.setTimestamp(2,new Timestamp(user.getUpdateTime().getTime()));
             ps.setLong(3,user.getUserId());
-            ps.execute(sql);
+            rows = ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
             JDBCUtils.closeResource(conn,ps);
         }
-
-        return null;
+        return rows;
     }
 
     /**
@@ -255,8 +260,6 @@ public class UserDaoImpl implements UserDao {
 
 
 
-
-
     /**
      * 通过groupId查询用户信息
      * @param groupId
@@ -325,20 +328,20 @@ public class UserDaoImpl implements UserDao {
     */
     @Override
     public Integer deleteByUserId(Integer userId) {
+        int rows;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "DELETE FROM sys_user WHERE user_id=?";
+            String sql = "DELETE FROM sys_user WHERE user_id= ? ";
             ps = conn.prepareStatement(sql);
-            ps.setInt(1,userId);
-            ps.execute(sql);
+            ps.setInt(1, userId);
+            rows = ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            JDBCUtils.closeResource(conn,ps);
+            JDBCUtils.closeResource(conn, ps);
         }
-
-        return null;
+        return rows;
     }
 }

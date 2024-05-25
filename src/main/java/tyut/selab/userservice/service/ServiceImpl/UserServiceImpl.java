@@ -6,17 +6,12 @@ import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.UserLogoutDao;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.domain.UserLogout;
-import tyut.selab.userservice.dao.DaoImpl.UserDaoImpl;
-import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.UserVo;
 
 import java.sql.Date;
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,17 +25,14 @@ public class UserServiceImpl implements UserService {
     * @param userVo
     * @return Integer
     */
-
-
-
     @Override
     public Integer updateUserRole(UserVo userVo) {
+        //dto vo??
+
         User user = new User();
         user.setUserId(userVo.getUserId());
-        user.setUserId(userVo.getUserId());
         //user为Date,sql为DateTime
-        user.setUpdateTime(Date.valueOf(String.valueOf(LocalDateTime.now())));
-
+        user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
         //调用sql方法
         return userDao.updateUserRole(user);
 
@@ -143,19 +135,20 @@ public class UserServiceImpl implements UserService {
 
     /**
     * Description: 注销用户
-    * @param userId
+    * @param userId,adminId
     * @return Integer
     */
     @Override
-    public Integer delete(Integer userId) {
+    public Integer delete(Integer userId, Integer adminId) {
         //封装Userlogout数据
         UserLogout userLogout = new UserLogout();
         userLogout.setUserId(userId);
+        userLogout.setAdminId(adminId);
         //增加事务回滚
-        int rows = userDao.deleteByUserId(userId);
+        int rows = userDao.deleteByUserId(userLogout.getUserId());
         //成功，保存注销记录 sys_logout
-        if (rows > 0) {
-            userLogout.setCreateTime(Date.valueOf(String.valueOf(LocalDateTime.now())));
+        if (rows >= 1) {
+            userLogout.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
             userLogoutDao.insert(userLogout);
         }
         return rows;
@@ -201,11 +194,15 @@ public class UserServiceImpl implements UserService {
     */
     @Override
     public Integer updateUser(UserVo userVo) {
-
         User user = new User();
         user.setUserId(userVo.getUserId());
-        //更新修改时间
-        user.setUpdateTime(Date.valueOf(LocalDate.now()));
+        user.setSex(userVo.getSex());
+        user.setUserName(userVo.getUserName());
+        user.setEmail(userVo.getEmail());
+        user.setPhone(userVo.getPhone());
+        user.setGroupId(userVo.getGroupId());
+        user.setRoleId(userVo.getRoleId());
+        user.setUpdateTime(userVo.getUpdateTime());
         //调用sql方法
         Integer rows = userDao.updateUser(user);
         return rows;

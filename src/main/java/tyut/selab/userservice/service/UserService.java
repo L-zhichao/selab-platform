@@ -1,6 +1,7 @@
 package tyut.selab.userservice.service;
 
 import tyut.selab.userservice.domain.User;
+import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.userservice.vo.UserVo;
 
 import java.util.List;
@@ -33,10 +34,10 @@ public interface UserService {
 
     /**
      *  通过id删除用户
-     * @param userId
+     * @param userId,adminId
      * @return
      */
-    public Integer delete(Integer userId);
+    Integer delete(Integer userId, Integer adminId);
 
     /**
      * 新增用户
