@@ -7,29 +7,32 @@ import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.utils.JDBCUtils;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 
 public class UserLogoutDaoImpl implements UserLogoutDao {
 
 
     @Override
     public Integer insert(UserLogout userLogout) {
+
         Connection conn = null;
         PreparedStatement ps = null;
+        int rows;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "INSERT INTO sys_logout VALUES(?,?,?,?)";
+            String sql = "INSERT INTO sys_logout (user_id, create_time, admin_id) VALUES(?,?,?)";
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, userLogout.getUserId());
-            ps.setDate(2, new java.sql.Date(userLogout.getCreateTime().getTime()));
-            ps.setInt(3,userLogout.getAdminId());
+            ps.setLong(1, userLogout.getUserId());
+            ps.setTimestamp(2, new Timestamp(userLogout.getCreateTime().getTime()));
+            ps.setInt(3, userLogout.getAdminId());
+            rows = ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            JDBCUtils.closeResource(conn, ps);
         }
-
-
-        //如何传递amdin_id,从token获取？
-
-        return 0;
+        return rows;
     }
 }

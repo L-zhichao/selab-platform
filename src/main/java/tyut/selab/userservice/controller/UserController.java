@@ -83,7 +83,7 @@ public class UserController extends HttpServlet {
        }
 
 
-//        System.out.println(modeName);
+        System.out.println(modeName);
         if (pathGet.equals("/query")) {
             query(req, resp);
         } else if (modeName.equals("queryById")) {//如何实现对动态url的检测?
@@ -93,7 +93,7 @@ public class UserController extends HttpServlet {
         out.write("get");
         out.flush();
         out.close();
-        super.doGet(req, resp);*/
+        super.doGet(req, resp);
 
 
         //resp.getWriter().write("user");
@@ -221,25 +221,22 @@ public class UserController extends HttpServlet {
      * @return post 无返回参数
      */
     private Result update(HttpServletRequest request, HttpServletResponse response){
-        //请求路径 user/update,无返回数据
-
+        //请求路径 user/update
         // token 获得目前登录用户roleId，判断是否为管理员
-        Integer roleId = Integer.valueOf(request.getParameter("roleId"));
-
+        Integer roleId = null;
         if (roleId.equals(2)) {
-            //获取请求参数
             UserVo userVo = new UserVo();
             userVo.setUserId(Long.valueOf(request.getParameter("userId")));
-            //调用userService方法
-            userService.updateUser(userVo);
-            return Result.success(null);
-        } else {
-            return Result.error(null, null);
+            int rows = userService.updateUser(userVo);
+            if (rows>=1) {
+                return Result.success(null);
+            }
         }
+        return Result.error(null,"操作失败");
     }
 
         /**
-         *  注销用户
+         *  注销用户 Get
          *  param: 要删除用户的userId
          * @param request
          * @param response
@@ -247,29 +244,20 @@ public class UserController extends HttpServlet {
          */
         private Result logout (HttpServletRequest request, HttpServletResponse response){
             //请求路径 user/logout
-
             // 获得目前登录用户roleId
-            Object loginUser = request.getSession().getAttribute("loginUser");
-
-            Integer adminId = Integer.valueOf(request.getParameter("userId"));
-            Integer loginRoleId = Integer.valueOf(request.getParameter("roleId"));
+            //Object loginUser = request.getSession().getAttribute("loginUser");
+            Integer loginRoleId = null;
+            Integer adminId = null;
+            Integer userId = Integer.valueOf(request.getParameter("userId"));
             //判断是否为管理员
             if (loginRoleId.equals(2)) {
-                //获取被注销用户userId
-                Integer userId = Integer.valueOf(request.getParameter("userId"));
-                Integer rows = userService.delete(userId);
-                //获取adminId
-                UserLogout userLogout = new UserLogout();
-                userLogout.setAdminId(adminId);
-                //删除成功则增加记录
-                UserLogoutDaoImpl userLogoutDao = new UserLogoutDaoImpl();
-                userLogoutDao.insert(userLogout);
-                return Result.success(null);
+                Integer rows = userService.delete(userId,adminId);
+                return Result.success(rows);
             } else {
                 return Result.error(null, "操作失败");
             }
         }
-    }
+
 
         /**
          *  修改用户权限
@@ -281,16 +269,14 @@ public class UserController extends HttpServlet {
         private Result updateRole (HttpServletRequest request, HttpServletResponse response){
             //请求路径 user/role/update
 
-            // token 获得目前登录用户roleId ？？？
-            Integer loginRoleId = Integer.valueOf(request.getParameter("roleId"));
-
-            //使用Dto，常量接口  ？？？
-            //判断是否为超级管理员
+            // 获得目前登录用户roleId
+            Integer loginRoleId = null;
+            // 如何使用Dto
             if (loginRoleId.equals(1)) {
                 //调用userService方法，封装被修改用户
                 UserVo userVo = new UserVo();
-                userVo.setUserId(Long.valueOf(request.getParameter("id")));
-                Integer userUpdateVo = userService.updateUserRole(userVo);
+                userVo.setUserId(Long.valueOf(request.getParameter("userId")));
+                //Integer userUpdateVo =
                 return Result.success(null);
             } else {
                 return Result.error(null, "操作失败");
@@ -298,5 +284,6 @@ public class UserController extends HttpServlet {
         }
 
     }
-
 }
+
+
