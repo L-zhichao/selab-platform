@@ -5,6 +5,7 @@ import tyut.selab.userservice.domain.User;
 import tyut.selab.utils.JDBCUtils;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
@@ -127,16 +128,18 @@ public class UserDaoImpl implements UserDao {
     * @param user
     * @return Integer
     */
-
     @Override
     public Integer updateUserRole(User user) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "UPDATE sys_user SET role_id=? where user_id=?";
+            String sql = "UPDATE sys_user SET role_id=? ,sys_user.update_time = ? where user_id=?";
             ps.setInt(1,user.getRoleId());
-            ps.setLong(2,user.getUserId());
+
+            //Date格式
+            //ps.setDate(2,user.getUpdateTime());
+            ps.setLong(3,user.getUserId());
             ps.execute(sql);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -229,7 +232,7 @@ public class UserDaoImpl implements UserDao {
      * @return
      */
     @Override
-    public User selectByUserName(String userName) {
+    public ArrayList<User> selectByUserName(String userName) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {

@@ -31,12 +31,12 @@ public class UserServiceImpl implements UserService {
     */
     @Override
     public Integer updateUserRole(UserVo userVo) {
-        //转换对象类型 ？？？
-        User user = null;
+        User user = new User();
         user.setUserId(userVo.getUserId());
+        user.setUserId(userVo.getUserId());
+        //user为Date,sql为DateTime
+        user.setUpdateTime(Date.valueOf(String.valueOf(LocalDateTime.now())));
 
-        //更新修改时间
-        userVo.setUpdateTime(Date.valueOf(LocalDate.now()));
         //调用sql方法
         return userDao.updateUserRole(user);
 
@@ -104,7 +104,6 @@ public class UserServiceImpl implements UserService {
         //封装Userlogout数据
         UserLogout userLogout = new UserLogout();
         userLogout.setUserId(userId);
-        //注销用户 sys_user
         //增加事务回滚
         int rows = userDao.deleteByUserId(userId);
         //成功，保存注销记录 sys_logout

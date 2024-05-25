@@ -6,12 +6,14 @@ import com.alibaba.fastjson.JSONObject;
 import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.Dto.UserDto;
 import tyut.selab.userservice.common.Constant;
+import tyut.selab.userservice.dao.DaoImpl.UserDaoImpl;
+import tyut.selab.userservice.dao.DaoImpl.UserLogoutDaoImpl;
 import tyut.selab.userservice.domain.User;
+import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.userservice.service.ServiceImpl.UserServiceImpl;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.Result;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -45,12 +47,12 @@ import static jdk.jfr.internal.consumer.EventLog.update;
 @WebServlet(name = "UserController",value = "/user/*")
 public class UserController extends HttpServlet {
 
-
-    //private UserServiceImpl userService = new UserServiceImpl();
+    private UserServiceImpl userService = new UserServiceImpl();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String pathGet = req.getPathInfo();
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws
+            IOException {
+      /*  String pathGet = req.getPathInfo();
 //        System.out.println(pathGet);
         System.out.println("doGet");
         //判断是否为queryById
@@ -59,27 +61,43 @@ public class UserController extends HttpServlet {
 //        System.out.println(modeName);
         if (pathGet.equals("/query")) {
             query(req, resp);
-
         } else if (modeName.equals("queryById")) {//如何实现对动态url的检测?
-
             queryById(req, resp);
         }
-
-
         PrintWriter out = resp.getWriter();
         out.write("get");
         out.flush();
         out.close();
-        super.doGet(req, resp);
+        super.doGet(req, resp);*/
+
+
+        //resp.getWriter().write("user");
+        String uri = req.getRequestURI();
+        System.out.println("uri:" + uri);
+
+        String methodName = uri.substring(uri.lastIndexOf('/') + 1);
+        System.out.println("methodName:" + methodName);
+        //resp.getWriter().write("user");
+
+        try {
+            Method method = this.getClass().getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
+            method.invoke(this, req, resp);
+            resp.getWriter().write("update");
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        //super.doGet(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String pathPost = req.getPathInfo();
-
-
-        if (pathPost.equals("/save")) {
+      //  String pathPost = req.getPathInfo();
+       /* if (pathPost.equals("/save")) {
             try {
                 save(req, resp);
             } catch (SQLException e) {
@@ -95,46 +113,26 @@ public class UserController extends HttpServlet {
         super.doPost(req, resp);
         protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws IOException {
             System.out.println("Hello World");
-            resp.getWriter().write("user");
+            resp.getWriter().write("user");*/
 
-
-
-       /* String uri = req.getRequestURI();
-        System.out.println("uri:" + uri);
-
-        String methodName = uri.substring(uri.lastIndexOf('/') + 1);
-        System.out.println("methodName:" + methodName);
-
-        try {
-            Method method = this.getClass().getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
-            method.invoke(this, req, resp);
-            resp.getWriter().write("update");
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }*/
         }
 
 
         /**
          *  查询小组所有用户
-         *
          *  param: cur size groupId  roleId 两个中有一个不为空或全为空，全为空则查询全部
          * @param request
          * @param response
          * @return list<User>
          */
-
-
-        private Result query (HttpServletRequest request, HttpServletResponse response){
+        private Result query(HttpServletRequest request, HttpServletResponse response){
             String groupId = request.getParameter("groupId");
             String roleId = request.getParameter("roleId");
             List<UserVo> usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId));
             return null;
         }
+
+
 
         /**
          *  通过id查询用户信息 [id在路径后面]  " queryById/2  (id = 2)
@@ -153,6 +151,8 @@ public class UserController extends HttpServlet {
             return Result.success(userVo);
         }
 
+
+
         /**
          *  增加用户
          *  param: UserDto
@@ -160,7 +160,7 @@ public class UserController extends HttpServlet {
          * @param response
          * @return
          */
-        private Result save (HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException
+        private Result save(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException
         {
             System.out.println("doSave");
             request.setCharacterEncoding("UTF-8");
@@ -172,6 +172,7 @@ public class UserController extends HttpServlet {
             return null;
         }
 
+
         /**
          *  修改用户信息
          *  param: UserVo对象
@@ -179,10 +180,10 @@ public class UserController extends HttpServlet {
          * @param response
          * @return post 无返回参数
          */
-        private Result update (HttpServletRequest request, HttpServletResponse response) throws IOException {
-            response.getWriter().write("Update");
+        private Result update (HttpServletRequest req, HttpServletResponse resp) throws IOException {
+            resp.getWriter().write("Update");
             // 获取登录用户roleId
-            Integer loginRoleId = Integer.valueOf(request.getParameter("roleId"));
+            Integer loginRoleId = Integer.valueOf(req.getParameter("roleId"));
             if (loginRoleId.equals(2)) {
                 UserVo userVo = new UserVo();
                 userService.updateUser(userVo);
@@ -190,6 +191,8 @@ public class UserController extends HttpServlet {
             }
             return null;
         }
+
+
 
         /**
          *  注销用户
@@ -199,20 +202,31 @@ public class UserController extends HttpServlet {
          * @return
          */
         private Result logout (HttpServletRequest request, HttpServletResponse response){
-            //请求路径 user/logout,无返回数据
+            //请求路径 user/logout
 
-            // token 获得目前登录用户roleId
-            Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+            // 获得目前登录用户roleId
+            Object loginUser = request.getSession().getAttribute("loginUser");
+
+            Integer adminId = Integer.valueOf(request.getParameter("userId"));
+            Integer loginRoleId = Integer.valueOf(request.getParameter("roleId"));
             //判断是否为管理员
-            if (roleId.equals(2)) {
+            if (loginRoleId.equals(2)) {
                 //获取被注销用户userId
                 Integer userId = Integer.valueOf(request.getParameter("userId"));
-                userService.delete(userId);
+                Integer rows = userService.delete(userId);
+                //获取adminId
+                UserLogout userLogout = new UserLogout();
+                userLogout.setAdminId(adminId);
+                //删除成功则增加记录
+                UserLogoutDaoImpl userLogoutDao = new UserLogoutDaoImpl();
+                userLogoutDao.insert(userLogout);
                 return Result.success(null);
             } else {
-                return Result.error(null, null);
+                return Result.error(null, "操作失败");
             }
         }
+
+
 
         /**
          *  修改用户权限
@@ -225,22 +239,21 @@ public class UserController extends HttpServlet {
             //请求路径 user/role/update
 
             // token 获得目前登录用户roleId ？？？
-            Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+            Integer loginRoleId = Integer.valueOf(request.getParameter("roleId"));
 
             //使用Dto，常量接口  ？？？
             //判断是否为超级管理员
-            if (roleId.equals(1)) {
+            if (loginRoleId.equals(1)) {
                 //调用userService方法，封装被修改用户
-                UserVo userVo = null;
+                UserVo userVo = new UserVo();
                 userVo.setUserId(Long.valueOf(request.getParameter("id")));
                 Integer userUpdateVo = userService.updateUserRole(userVo);
                 return Result.success(null);
             } else {
-                return Result.error(null, null);
+                return Result.error(null, "操作失败");
 
             }
 
         }
 
     }
-}
