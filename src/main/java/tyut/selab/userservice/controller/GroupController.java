@@ -1,8 +1,8 @@
 package tyut.selab.userservice.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,12 +10,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.ServiceImpl.GroupServiceImpl;
+import tyut.selab.userservice.vo.GroupVo;
 import tyut.selab.utils.Result;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.sql.SQLException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -33,33 +35,54 @@ public class GroupController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        //获取接口
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName = split[split.length - 1];
         if (methodName.equals("delete")) {
-            delete(req, resp);
+            //执行接口方法
+            try {
+                Result delete = delete(req, resp);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code", delete.getCode());
+                jsonObject.put("msg", delete.getMsg());
+                resp.setCharacterEncoding("UTF-8");
+                resp.setContentType("text/html;charset=UTF-8");
+                resp.getWriter().write(jsonObject.toJSONString());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         } else if (methodName.equals("queryAllGroup")) {
-            queryAllGroup(req, resp);
+            try {
+                Result result = queryAllGroup(req, resp);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code", result.getCode());
+                jsonObject.put("msg", result.getMsg());
+                jsonObject.put("data",result.getData());
+                resp.setCharacterEncoding("UTF-8");
+                resp.setContentType("text/html;charset=UTF-8");
+                resp.getWriter().write(jsonObject.toJSONString());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
-//        PrintWriter out = resp.getWriter();
-//        out.write("还是牛掰");
-//        out.flush();
-//        out.close();
-//        super.doGet(req, resp);
-
-
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)  {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
         //super.doPost(req, resp);
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName = split[split.length - 1];
         if (methodName.equals("save")) {
             try {
-                save(req, resp);
+                Result save = save(req, resp);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code", save.getCode());
+                jsonObject.put("msg", save.getMsg());
+                resp.setCharacterEncoding("UTF-8");
+                resp.setContentType("text/html;charset=UTF-8");
+                resp.getWriter().write(jsonObject.toJSONString());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -81,12 +104,16 @@ public class GroupController extends HttpServlet {
      * @param resp POST
      * @return
      */
-    public Result save(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public Result save(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         //设置请求体字符集
         req.setCharacterEncoding("UTF-8");
+        //获取json格式对应数据，必须名字相同
         String jsonData = req.getReader().lines().collect(Collectors.joining());
-        GroupDto groupDto = JSON.parseObject(jsonData,GroupDto.class);
+        GroupDto groupDto = JSON.parseObject(jsonData, GroupDto.class);
         int insert = groupService.insert(groupDto);
+        if(insert == 1){
+            return Result.error(400,"添加失败");
+        }
         return Result.success(insert);
     }
 
@@ -111,9 +138,15 @@ public class GroupController extends HttpServlet {
      * @return
      */
     public Result delete(HttpServletRequest req, HttpServletResponse resp) {
-        GroupDto groupDto = null;
-        groupDto.setGroupName(req.getParameter("groupName"));
-        return null;
+        Integer groupId = Integer.valueOf(req.getParameter("groupId"));
+        Integer delete = groupService.delete(groupId);
+        if(delete == 0){
+            return Result.success(delete);
+        }
+        else {
+            return Result.error(400,"删除失败");
+        }
+
     }
 
     /**
@@ -124,24 +157,18 @@ public class GroupController extends HttpServlet {
      * @param response GET
      * @return list<GroupVo>
      */
-    public Result queryAllGroup(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+    public Result queryAllGroup(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.setCharacterEncoding("utf-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        //条件查询
+        Integer cur = Integer.valueOf((request.getParameter("cur")==null)?"1":request.getParameter("cur"));
+        Integer szie = Integer.valueOf((request.getParameter("szie")==null)?"5":request.getParameter("szie"));
+        List<GroupVo> groupVos = groupService.selectAllGroup(cur,szie);
+        return Result.success(groupVos);
     }
 
-    /*public static String getString(HttpServletRequest request) throws IOException {
-        BufferedReader reader = request.getReader();
-        char[] buf = new char[512];
-        int len = 0;
-        StringBuffer contentBuffer = new StringBuffer();
-        while ((len = reader.read(buf)) != -1) {
-            contentBuffer.append(buf, 0, len);
-        }
-        String content = contentBuffer.toString();
-        if (content == null) {
-            content = "";
-        }
-        return content;
-    }*/
+
 
 }
 

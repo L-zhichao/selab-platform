@@ -16,7 +16,7 @@ import java.util.List;
 public interface GroupDao {
 
 
-    public Integer insert(Group group) throws Exception;
+    public Integer insert(Group group);
 
     public Integer delete(Integer groupId);
 
@@ -24,7 +24,7 @@ public interface GroupDao {
      *  查询所有小组信息
      * @return
      */
-    public List<Group> selectAllGroup();
+    public List<Group> selectAllGroup(Integer cur,Integer szie);
 
     /**
      *  修改小组信息

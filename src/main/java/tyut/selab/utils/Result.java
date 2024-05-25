@@ -50,7 +50,7 @@ public class Result<T> {
         this.msg = msg;
     }
     public static <T> Result success(T data){
-        return new Result(200,data,"success");
+        return new Result(200,data,"操作成功");
     }
     public static Result error(Integer code,String msg){
         return new Result<>(code,null,msg);

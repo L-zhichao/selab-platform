@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface GroupService {
 
-    public Integer insert(GroupDto groupDto) throws Exception;
+    public Integer insert(GroupDto groupDto);
 
 
     public Integer delete(Integer groupId);
@@ -19,8 +19,8 @@ public interface GroupService {
      *  查询所有小组信息
      * @return
      */
-    public List<GroupVo> selectAllGroup();
 
+    public List<GroupVo> selectAllGroup(Integer cur,Integer szie);
     /**
      *  修改小组信息
      * @param groupVo
