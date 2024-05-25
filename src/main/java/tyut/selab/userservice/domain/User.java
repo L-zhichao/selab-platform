@@ -142,6 +142,7 @@ public class User implements Serializable {
         return roleId;
     }
 
+
     /**
      * 角色id
      */

@@ -20,6 +20,7 @@ public interface GroupService {
      * @return
      */
 
+
     public List<GroupVo> selectAllGroup(Integer cur,Integer szie);
     /**
      *  修改小组信息

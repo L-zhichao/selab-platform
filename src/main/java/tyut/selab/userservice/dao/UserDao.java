@@ -6,6 +6,7 @@ import tyut.selab.userservice.vo.UserVo;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
 * @author 26580
 * @description 针对表【sys_user(用户信息表)】的数据库操作Mapper
@@ -13,6 +14,7 @@ import java.util.List;
 * @Entity tyut.selab.userservice.domain.User
 */
 public interface UserDao {
+
 
     /**
      * 增加用户

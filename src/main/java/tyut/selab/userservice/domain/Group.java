@@ -3,6 +3,7 @@ package tyut.selab.userservice.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+
 /**
  * 小组信息表
  * @TableName sys_group
