@@ -5,6 +5,9 @@ import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.UserService;
 
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+
 public class UserServiceImpl implements UserService {
     UserDaoImpl userDao = new UserDaoImpl();
     /**
@@ -13,24 +16,29 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public Integer findByUsername(String username) {
+    public Integer findByUsername(String username) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         return userDao.findByUsername(username);
     }
 
     @Override
-    public UserRegisterDto getUserByUsername(String username) {
+    public UserRegisterDto getUserByUsername(String username) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         return userDao.getUserByUsername(username);
     }
 
     @Override
-    public UserLocal getUserLocal() {
-        return null;
+    public UserLocal getUserLocal(String username) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        return userDao.getUserLocal(username);
     }
 
     @Override
-    public Integer insertUser(UserRegisterDto user) {
+    public Integer insertUser(UserRegisterDto user) throws SQLException {
         Integer i = userDao.insertUser(user);
         return i;
+    }
+
+    @Override
+    public Integer findByPassword(String password) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        return userDao.findByPassword(password);
     }
 
 

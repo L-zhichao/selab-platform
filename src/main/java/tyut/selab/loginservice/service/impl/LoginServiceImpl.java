@@ -3,6 +3,9 @@ package tyut.selab.loginservice.service.impl;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.LoginService;
+import tyut.selab.loginservice.utils.JwtHelperUtils;
+
+import java.sql.SQLException;
 
 /**
  * Classname: LoginServiceImpl
@@ -13,40 +16,28 @@ import tyut.selab.loginservice.service.LoginService;
  * @Version 17
  */
 public class LoginServiceImpl implements LoginService {
-    EmailServiceImpl serviceImpl = new EmailServiceImpl();
     UserServiceImpl userService = new UserServiceImpl();
 
+    /**
+     * 该方法封装登录过程中需要对用户输入的账号密码进行判断的操作
+     * @param userLoginReq 用户输入信息存储在该对象中
+     * @return 返回的是根据用户名生成的Token字符串
+     */
     @Override
-    public String login(UserLoginReq req) {
-     /*   //        // 接收用户请求参数
-//        // 获取要登录的用户名密码
-//        UserLoginReq inputUser = WebUtils.readJson(req, UserLoginReq.class);
-//        //实例化UserService
-//        UserServiceImp userService = new UserServiceImp();
-//        // 调用服务层方法,根据用户名查询数据库中是否有一个用户
-//        UserLoginReq loginUser =userService.findByUsername(inputUser.getUsername());
-//
-//        Result result = new Result(null,null);
-//
-//        if(null == loginUser){
-//            // 没有根据用户名找到用户,说明用户名有误
-//            result=result.error(502,"not found user by username");
-//        }else if(! loginUser.getPassword().equals(MD5util.encrypt(inputUser.getPassword()))){
-//            // 用户密码有误,
-//            result=result.error(503,"password failed");
-//        }else{
-//            // 登录成功
-//            result=result.success(null);
-//        }
-//        WebUtils.writeJson(resp,result);*/
-        return null;
+    public String login(UserLoginReq userLoginReq) {
+        String token = JwtHelperUtils.createToken(userLoginReq.getUsername());
+        return token;
     }
 
+    /**
+     * 将注册的用户信息存储到数据库中
+     * @param userRegisterDto 用户填写的注册信息
+     * @return 如果存储成功返回1，存储失败返回0
+     */
     @Override
-    public Integer register(UserRegisterDto userRegisterDto) {
-
-        return null;
-
+    public Integer register(UserRegisterDto userRegisterDto) throws SQLException {
+        int rows = userService.insertUser(userRegisterDto);
+        return rows;
     }
 
 }
