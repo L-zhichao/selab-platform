@@ -11,6 +11,7 @@ public class UserLogout implements Serializable {
     /**
      * 唯一标识
      */
+
     private Integer logoutId;
 
     /**

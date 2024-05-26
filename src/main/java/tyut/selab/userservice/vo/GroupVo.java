@@ -33,6 +33,7 @@ public class GroupVo implements Serializable {
     private List<UserVo> userVos;
 
 
+
     private static final long serialVersionUID = 1L;
 
     public GroupVo() {

@@ -91,6 +91,7 @@ public class UserDaoImpl implements UserDao {
         String groupName = null;
 
         try {
+            conn = JDBCUtils.getConnection();
             String sql = "select group_name as groupName from sys_group where group_id = ? ";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1,groupId);

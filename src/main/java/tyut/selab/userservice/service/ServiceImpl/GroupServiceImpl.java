@@ -19,6 +19,7 @@ import java.util.List;
 
 
 
+
 public class GroupServiceImpl implements GroupService {
     private GroupDao groupDao = new GroupDaoImpl();
     private UserService userService = new UserServiceImpl();
@@ -66,8 +67,11 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Integer update(GroupVo groupVo) {
-
-        return null;
+        Group group = new Group();
+        group.setGroupName(groupVo.getGroupName());
+        group.setCreateTime(groupVo.getCreateTime());
+        group.setGroupId(groupVo.getGroupId());
+        return groupDao.update(group);
     }
 
 
