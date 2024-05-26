@@ -16,7 +16,7 @@ public interface TaskInfoDao {
     /**
      *  删除任务信息
      * @param id
-     * @return
+     * @return 1删除成功 0删除失败
      */
     Integer deleteByPrimaryKey(Integer id);
     //此处的参数主键id就是任务id

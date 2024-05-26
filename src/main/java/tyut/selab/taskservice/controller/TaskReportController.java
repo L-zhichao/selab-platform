@@ -150,8 +150,8 @@ public class TaskReportController extends HttpServlet {
             return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止查询");
         }else {
             //查询
-            taskReportService.queryTaskReportCount(taskId);
-            return Result.success(null);
+            Integer count = taskReportService.queryTaskReportCount(taskId);
+            return Result.success(count);
         }
 
     }
@@ -172,9 +172,12 @@ public class TaskReportController extends HttpServlet {
         UserLocal userMessage = getUserMessage(request, response);
         Integer userId = userMessage.getUserId();
 
+        //获取请求参数
         Integer taskId = Integer.valueOf(request.getParameter("taskId"));
+        Integer cur = Integer.valueOf(request.getParameter("cur"));
+        Integer size = Integer.valueOf(request.getParameter("size"));
 
-        taskReportVos = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+      //  taskReportVos = taskReportService.queryByUserIdAndTaskId(taskId, userId);
 
         if(taskReportVos!=null){
             return Result.success(null);

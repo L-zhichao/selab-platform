@@ -9,7 +9,6 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="javax.activation-api-1.2.0" />
           <element id="library" level="project" name="lib" />
-          <element id="library" level="project" name="druid-1.1.12" />
           <element id="library" level="project" name="jakarta.servlet-api-6.0.0" />
           <element id="library" level="project" name="mysql-connector-j-8.0.32" />
         </element>
