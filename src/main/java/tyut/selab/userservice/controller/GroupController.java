@@ -11,12 +11,10 @@ import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.ServiceImpl.GroupServiceImpl;
 import tyut.selab.userservice.vo.GroupVo;
+import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.Result;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +30,7 @@ import java.util.stream.Collectors;
 @WebServlet("/group/*")
 public class GroupController extends HttpServlet {
     private GroupService groupService = new GroupServiceImpl();
+    private UserVo userVo = new UserVo();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -58,7 +57,7 @@ public class GroupController extends HttpServlet {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("code", result.getCode());
                 jsonObject.put("msg", result.getMsg());
-                jsonObject.put("data",result.getData());
+                jsonObject.put("data", result.getData());
                 resp.setCharacterEncoding("UTF-8");
                 resp.setContentType("text/html;charset=UTF-8");
                 resp.getWriter().write(jsonObject.toJSONString());
@@ -88,12 +87,18 @@ public class GroupController extends HttpServlet {
             }
 
         } else if (methodName.equals("update")) {
-            update(req, resp);
-        } else {
-
+            try {
+                Result update = update(req, resp);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code", update.getCode());
+                jsonObject.put("msg", update.getMsg());
+                resp.setCharacterEncoding("UTF-8");
+                resp.setContentType("text/html;charset=UTF-8");
+                resp.getWriter().write(jsonObject.toJSONString());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
-
-
     }
 
     /**
@@ -111,8 +116,8 @@ public class GroupController extends HttpServlet {
         String jsonData = req.getReader().lines().collect(Collectors.joining());
         GroupDto groupDto = JSON.parseObject(jsonData, GroupDto.class);
         int insert = groupService.insert(groupDto);
-        if(insert == 1){
-            return Result.error(400,"添加失败");
+        if (insert == 1) {
+            return Result.error(400, "添加失败");
         }
         return Result.success(insert);
     }
@@ -125,8 +130,19 @@ public class GroupController extends HttpServlet {
      * @param resp POST
      * @return
      */
-    public Result update(HttpServletRequest req, HttpServletResponse resp) {
-        return null;
+    public Result update(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // 设置字符编码
+        req.setCharacterEncoding("UTF-8");
+        // 获取参数值
+        String jsonData = req.getReader().lines().collect(Collectors.joining());
+        GroupVo groupVo = JSON.parseObject(jsonData, GroupVo.class);
+        int insert = groupService.update(groupVo);
+        if (insert == 0) {
+            return Result.error(400, "添加失败");
+        }
+        return Result.success(insert);
+
+
     }
 
     /**
@@ -140,11 +156,10 @@ public class GroupController extends HttpServlet {
     public Result delete(HttpServletRequest req, HttpServletResponse resp) {
         Integer groupId = Integer.valueOf(req.getParameter("groupId"));
         Integer delete = groupService.delete(groupId);
-        if(delete == 0){
+        if (delete == 0) {
             return Result.success(delete);
-        }
-        else {
-            return Result.error(400,"删除失败");
+        } else {
+            return Result.error(400, "删除失败");
         }
 
     }
@@ -162,12 +177,11 @@ public class GroupController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         //条件查询
-        Integer cur = Integer.valueOf((request.getParameter("cur")==null)?"1":request.getParameter("cur"));
-        Integer szie = Integer.valueOf((request.getParameter("szie")==null)?"5":request.getParameter("szie"));
-        List<GroupVo> groupVos = groupService.selectAllGroup(cur,szie);
+        Integer cur = Integer.valueOf((request.getParameter("cur") == null) ? "1" : request.getParameter("cur"));
+        Integer szie = Integer.valueOf((request.getParameter("szie") == null) ? "5" : request.getParameter("szie"));
+        List<GroupVo> groupVos = groupService.selectAllGroup(cur, szie);
         return Result.success(groupVos);
     }
-
 
 
 }
