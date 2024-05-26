@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.taskservice.common.HttpStatus;
+import tyut.selab.taskservice.dao.TaskGroupDao;
+import tyut.selab.taskservice.dao.impl.TaskGroupDaoImpl;
+import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.myutils.WebUtil;
@@ -363,8 +366,20 @@ public class TaskController extends HttpServlet {
      *     是否需要重新创建一个vo类
      */
     private Result queryForUser(HttpServletRequest request,HttpServletResponse response){
-        //TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
-        return null;
+        List<TaskInfoVo> taskInfoVos=new ArrayList<>();
+        String username = request.getParameter("username");
+        TaskGroupDao taskGroupDao=new TaskGroupDaoImpl();
+        List<TaskGroup> taskGroups = taskGroupDao.selectByGroupId(getUserMessage().getGroupId());
+        for (TaskGroup taskGroup:taskGroups){
+            TaskInfoVo taskInfoVo = taskInfoService.queryById(taskGroup.getTaskId());
+            taskInfoVos.add(taskInfoVo);
+        }
+        if (taskInfoVos==null){
+            return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布");
+        }else {
+            return Result.success(taskInfoVos);
+        }
+//        return Result.success(taskInfoVos);
     }
 
     /**

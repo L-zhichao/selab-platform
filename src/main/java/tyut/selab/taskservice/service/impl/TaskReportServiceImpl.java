@@ -119,6 +119,9 @@ public class TaskReportServiceImpl implements TaskReportService {
             e.printStackTrace();
             return taskReportVos;  // 如果发生异常，返回空列表
         }
+        String sql = """
+                select user_name from sys_user where user_id = ?
+                """;
         // 将TaskReport封装成TaskReportVo对象
         for (TaskReport taskReport : taskReports) {
             TaskReportVo taskReportVo = new TaskReportVo();
@@ -128,9 +131,6 @@ public class TaskReportServiceImpl implements TaskReportService {
             taskReportVo.setDetails(taskReport.getDetails());
             taskReportVo.setReportTime(taskReport.getCreateTime());
             // 如何获取用户的名字 taskReportVo.setUserName(); sys_user内存有用户的名字
-            String sql = """
-                select user_name userName from sys_user where user_id = ?
-                """;
             User userName = baseDao.baseQueryObject(User.class, sql, taskReport.getUserId());
             if (userName != null) {
                 taskReportVo.setUserName(userName.getUserName());
@@ -155,7 +155,29 @@ public class TaskReportServiceImpl implements TaskReportService {
     @Override
     public List<NeedReportUser> queryAllUserForReport(Integer taskId) {
         List<NeedReportUser> needReportUsers=new ArrayList<>();
-        taskReportDao.selectByTaskIdForUserId(taskId);
+        NeedReportUser needReportUser=new NeedReportUser();
+        BaseDao baseDao = new BaseDao();
+        List<Integer> userIds = taskReportDao.selectByTaskIdForUserId(taskId);
+        //userid 变成 username
+        String sql = """
+                select user_name  from sys_user where user_id = ?
+                """;
+        String sql1 = """
+                select report_id  from task_report where user_id = ? and task_id=?
+                """;
+        for (Integer i:userIds){
+            User userName = baseDao.baseQueryObject(User.class, sql,i);
+            Integer i1 = baseDao.baseQueryObject(Integer.class, sql1, i, taskId);
+            if (userName != null) {
+                needReportUser.setUserName(userName.getUserName());
+                if (i1!=null){
+                    needReportUser.setIsReport(1);//在汇报表中存在 代表以及汇报过
+                }else {
+                    needReportUser.setIsReport(0);
+                }
+                needReportUsers.add(needReportUser);
+            }//user
+        }
         return needReportUsers;
     }
     /**

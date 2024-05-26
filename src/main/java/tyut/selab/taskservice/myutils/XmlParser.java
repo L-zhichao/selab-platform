@@ -30,6 +30,7 @@ public class XmlParser {
         Document document = builder.parse(new InputSource(reader));
         // 获取根元素
         Element root = document.getDocumentElement();
+       // String code = root.getElementsByTagName("code").item(0).getTextContent();
         // 获取<data>元素
         NodeList dataList = root.getElementsByTagName("data");
         Element dataElement = (Element) dataList.item(0);

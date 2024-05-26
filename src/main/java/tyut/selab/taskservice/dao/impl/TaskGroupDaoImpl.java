@@ -4,6 +4,8 @@ import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskGroupDao;
 import tyut.selab.taskservice.domain.TaskGroup;
 
+import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,7 +84,10 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
      * @return
      */
     public List<TaskGroup> selectByGroupId(Integer groupId){
-        return null;
+        //查询小组id对应的taskid
+        String sql="select * from task_group where group_id=?";
+        List<TaskGroup> taskGroups = baseQuery(TaskGroup.class, sql, groupId);
+        return taskGroups;
     }
 
 }
