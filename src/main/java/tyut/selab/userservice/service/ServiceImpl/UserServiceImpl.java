@@ -31,10 +31,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer updateUserRole(UserVo userVo) {
         //dto vo??
-
         User user = new User();
         user.setUserId(userVo.getUserId());
-        //user为Date,sql为DateTime
+        user.setRoleId(userVo.getRoleId());
+        //修改时间
         user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
         //调用sql方法
         return userDao.updateUserRole(user);
@@ -209,5 +209,13 @@ public class UserServiceImpl implements UserService {
         //调用sql方法
         Integer rows = userDao.updateUser(user);
         return rows;
+    }
+
+    @Override
+    public Integer updateGroup(UserVo userVo) {
+        User user = new User();
+        user.setUserId(userVo.getUserId());
+        user.setGroupId(userVo.getGroupId());
+        return userDao.updateGroup(user);
     }
 }

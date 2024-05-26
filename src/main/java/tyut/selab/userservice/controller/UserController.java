@@ -214,19 +214,21 @@ public class UserController extends HttpServlet {
         }
     }
     /**
-     *  修改用户信息
+     *  修改用户信息 Post
      *  param: UserVo对象
      * @param request
      * @param response
      * @return post 无返回参数
      */
-    private Result update(HttpServletRequest request, HttpServletResponse response){
+    private Result update(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //请求路径 user/update
         // token 获得目前登录用户roleId，判断是否为管理员
+        request.setCharacterEncoding("UTF-8");
+        String jsonData = request.getReader().lines().collect(Collectors.joining());
+        UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
+
         Integer roleId = null;
         if (roleId.equals(2)) {
-            UserVo userVo = new UserVo();
-            userVo.setUserId(Long.valueOf(request.getParameter("userId")));
             int rows = userService.updateUser(userVo);
             if (rows>=1) {
                 return Result.success(null);
@@ -241,9 +243,9 @@ public class UserController extends HttpServlet {
          * @param request
          * @param response
          * @return
+         * 请求路径 user/logout
          */
         private Result logout (HttpServletRequest request, HttpServletResponse response){
-            //请求路径 user/logout
             // 获得目前登录用户roleId
             //Object loginUser = request.getSession().getAttribute("loginUser");
             Integer loginRoleId = null;
@@ -260,28 +262,46 @@ public class UserController extends HttpServlet {
 
 
         /**
-         *  修改用户权限
+         *  修改用户权限 Get
          *  param: UserRoleDto
          * @param request
          * @param response
          * @return
+         * 请求路径 :user/role/update
          */
         private Result updateRole (HttpServletRequest request, HttpServletResponse response){
-            //请求路径 user/role/update
-
-            // 获得目前登录用户roleId
-            Integer loginRoleId = null;
+            // 如何获得目前登录用户的roleId
             // 如何使用Dto
+            Integer loginRoleId = null;
             if (loginRoleId.equals(1)) {
-                //调用userService方法，封装被修改用户
                 UserVo userVo = new UserVo();
                 userVo.setUserId(Long.valueOf(request.getParameter("userId")));
-                //Integer userUpdateVo =
+                userVo.setRoleId(Integer.valueOf(request.getParameter("roleId")));
+                int rows = userService.updateUserRole(userVo);
                 return Result.success(null);
             } else {
                 return Result.error(null, "操作失败");
 
         }
+
+    }
+
+    /**
+    * Description: 修改用户所属小组
+    * @param
+    */
+
+    private Result updateGroup(HttpServletRequest request, HttpServletResponse response){
+            UserVo userVo = new UserVo();
+            userVo.setUserId(Long.valueOf(request.getParameter("userId")));
+            userVo.setGroupId(Integer.valueOf(request.getParameter("groupId")));
+            Integer loginRoleId = null;
+            if (loginRoleId.equals(2)){
+                int rows = userService.updateGroup(userVo);
+            }
+
+
+            return Result.success(null);
 
     }
 

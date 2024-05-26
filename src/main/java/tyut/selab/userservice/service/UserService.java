@@ -1,7 +1,5 @@
 package tyut.selab.userservice.service;
 
-import tyut.selab.userservice.domain.User;
-import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.userservice.vo.UserVo;
 
 import java.util.List;
@@ -53,4 +51,6 @@ public interface UserService {
     * @return 返回修改条数Integer
     */
     public Integer updateUser(UserVo userVo);
+
+    public Integer updateGroup(UserVo userVo);
 }

@@ -68,6 +68,7 @@ public interface UserDao {
      */
     public Integer deleteByUserId(Integer userId);
 
+    public Integer updateGroup(User user);
 }
 
 

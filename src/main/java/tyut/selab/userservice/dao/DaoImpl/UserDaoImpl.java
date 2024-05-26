@@ -1,5 +1,6 @@
 package tyut.selab.userservice.dao.DaoImpl;
 
+import com.alibaba.fastjson.JSONObject;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.utils.JDBCUtils;
@@ -102,7 +103,7 @@ public class UserDaoImpl implements UserDao {
 
             return groupName;
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
             JDBCUtils.closeResource(conn,pstmt);
@@ -146,16 +147,9 @@ public class UserDaoImpl implements UserDao {
             }
             ps1.setLong(6, user.getUserId());
             rows1 = ps1.executeUpdate();
-
-            //修改group信息,是否需要groupName？？
-            String sql2 = "UPDATE user_group SET group_id=? where user_id=?";
-            ps2 = conn.prepareStatement(sql2);
-            ps2.setInt(1,user.getGroupId());
-            rows2 = ps2.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            //如何释放ps2？？
             JDBCUtils.closeResource(conn, ps1);
         }
         return rows1;
@@ -167,7 +161,6 @@ public class UserDaoImpl implements UserDao {
     */
     @Override
     public Integer updateUserRole(User user) {
-        user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
         Connection conn = null;
         PreparedStatement ps = null;
         int rows;
@@ -331,17 +324,45 @@ public class UserDaoImpl implements UserDao {
     public Integer deleteByUserId(Integer userId) {
         int rows;
         Connection conn = null;
-        PreparedStatement ps = null;
+        PreparedStatement ps1 = null;
+        PreparedStatement ps2 = null;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "DELETE FROM sys_user WHERE user_id= ? ";
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, userId);
-            rows = ps.executeUpdate();
+            //修改唯一标识，1为删除
+            String sql1 = "UPDATE sys_user SET del_flag = 1 where user_id = ?";
+            ps1 = conn.prepareStatement(sql1);
+            ps1.setLong(1,userId);
+            ps1.executeUpdate();
+            //删除用户
+            String sql2 = "DELETE FROM sys_user WHERE user_id= ? ";
+            ps2 = conn.prepareStatement(sql2);
+            ps2.setInt(1, userId);
+            rows = ps2.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            JDBCUtils.closeResource(conn, ps);
+            JDBCUtils.closeResource(conn, ps1);
+            JDBCUtils.closeResource(conn, ps2);
+        }
+        return rows;
+    }
+
+    @Override
+    public Integer updateGroup(User user) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        int rows = 0;
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "UPDATE user_group SET group_id = ? where user_id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1,user.getGroupId());
+            ps.setLong(2,user.getUserId());
+            rows = ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            JDBCUtils.closeResource(conn,ps);
         }
         return rows;
     }
