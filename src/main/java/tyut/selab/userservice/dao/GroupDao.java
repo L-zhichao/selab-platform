@@ -16,6 +16,8 @@ import java.util.List;
 public interface GroupDao {
 
 
+
+
     public Integer insert(Group group);
 
     public Integer delete(Integer groupId);

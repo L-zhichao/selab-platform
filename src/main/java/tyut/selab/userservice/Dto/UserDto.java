@@ -38,6 +38,7 @@ public class UserDto implements Serializable {
 
     /**
      * 邮箱地址
+     *
      */
     private String email;
 

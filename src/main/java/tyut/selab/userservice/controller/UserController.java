@@ -54,11 +54,12 @@ public class UserController extends HttpServlet {
         String[] split = pathGet.split("/");
         String modeName = split[1];
 
-        if(pathGet.equals("/query")){
+        if(modeName.equals("query")){
             Result query = query(req, resp);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", query.getCode());
             jsonObject.put("msg", query.getMsg());
+            jsonObject.put("data",query.getData());
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("text/html;charset=UTF-8");
             resp.getWriter().write(jsonObject.toJSONString());
@@ -81,6 +82,7 @@ public class UserController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
 
         String pathPost = req.getPathInfo();
+
 
 
         if(pathPost.equals("/save")){
@@ -115,10 +117,25 @@ public class UserController extends HttpServlet {
 
     private Result query(HttpServletRequest request,HttpServletResponse response){
         String groupId = request.getParameter("groupId");
-        String roleId = request.getParameter("roleId");
-        List<UserVo> usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId));
+        String userId = request.getParameter("userId");
+        List<UserVo>  usersByGroupId = new ArrayList<>();
+        List<UserVo> ResultList = new ArrayList<>();
+        UserVo userByUserId = null;
+        if (userId != null && groupId != null){
+            userByUserId = userService.selectByUserId(Long.valueOf(userId));
+            ResultList.add(userByUserId);
+        }else {
+            if (groupId != null && userId == null) {
+                usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId));
+                ResultList.addAll(usersByGroupId);
 
-        return Result.success(null);
+            }
+            if (userId != null && groupId == null ) {
+                userByUserId = userService.selectByUserId(Long.valueOf(userId));
+                ResultList.add(userByUserId);
+            }
+        }
+        return Result.success(ResultList);
     }
 
     /**

@@ -7,6 +7,7 @@ import tyut.selab.userservice.domain.UserLogout;
 public class UserLogoutDaoImpl implements UserLogoutDao {
 
 
+
     @Override
     public Integer insert(UserLogout userLogout) {
         String sql = "INSERT INTO user_logout VALUES(?,?,?,?)";
