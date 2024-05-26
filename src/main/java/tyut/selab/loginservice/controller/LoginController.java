@@ -52,7 +52,6 @@ public class LoginController extends HttpServlet  {
             WebUtils.writeJson(resp,register(req,resp));
         }
     }
-
     /**
      *  登录操作
      *  param: UserLoginReq

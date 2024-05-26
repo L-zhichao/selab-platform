@@ -28,20 +28,9 @@ public class SecurityUtil {
      * @param userLocal
      */
     public static void setUser(UserLocal userLocal){
-        if(null == tl.get()){
-            tl.set(userLocal);
-        }
+        tl.remove();
+        tl.set(userLocal);
     }
-
-    /**
-     * 去除线程本地变量中存的用户本地登录信息
-     */
-    public static void remove(){
-        if(null != tl.get()){
-            tl.remove();
-        }
-    }
-
     /**
      * 并发安全的方式生成六位数验证码
      * @return 返回一个六位数的验证码
