@@ -5,6 +5,7 @@ import tyut.selab.taskservice.dao.TaskInfoDao;
 import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskInfo;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -23,13 +24,24 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
      * @param id
      * @return
      */
-    public Integer deleteByPrimaryKey(Integer id){
-        //参数主键id就是任务id
+    public Integer deleteByPrimaryKey(Integer id) {
+        // 参数主键id就是任务id
+        if (id == null) {
+            throw new IllegalArgumentException("id不能为空");
+        }
 
-        String sql="delete from task_info where id=?";
-        Integer row = baseUpdate(sql,new TaskInfo().getId());
-        //返回受影响行数
-        return row;
+        String sql = "delete from task_info where id=?";
+        Integer rowsAffected;
+        try {
+            // 调用baseUpdate方法，传递SQL语句和参数
+            rowsAffected = baseUpdate(sql, id);
+        } catch (RuntimeException e) {
+            // baseUpdate方法内部可能会抛出RuntimeException，这里直接捕获并抛出
+            throw e;
+        }
+
+        // 返回受影响行数
+        return rowsAffected;
     }
 
     /**

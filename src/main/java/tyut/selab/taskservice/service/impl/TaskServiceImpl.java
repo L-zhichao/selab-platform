@@ -63,15 +63,23 @@ public class TaskServiceImpl implements TaskInfoService {
 
 
     @Override
-    public Integer delete(Integer taskId) {
-        //参数taskId就是taskInfo中的主键id
+    public Integer delete(Integer taskId) {//参数taskId就是taskInfo中的主键id
+
         //通过id判断任务是否存在
         TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
-        if(taskInfo!=null){//任务存在
 
-           return taskInfoDao.deleteByPrimaryKey(taskId);
+        if(taskInfo!=null){//任务存在
+            try {
+                taskInfo.setDelFlag(0);
+                //执行删除
+                Integer i = taskInfoDao.deleteByPrimaryKey(taskId);
+                taskInfo.setDelFlag(1);//更改删除状态
+                return i;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return 0;
     }
 
     @Override

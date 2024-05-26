@@ -1,7 +1,6 @@
 package tyut.selab.taskservice.service.impl;
 
 import org.junit.platform.commons.util.StringUtils;
-import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskInfoDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
@@ -11,14 +10,11 @@ import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
-import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
-import tyut.selab.taskservice.view.TaskInfoVo;
+import tyut.selab.taskservice.view.TaskInfoForUser;
 import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.userservice.domain.User;
-import tyut.selab.utils.Result;
 
-import java.awt.print.PrinterAbortException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,8 +75,8 @@ public class TaskReportServiceImpl implements TaskReportService {
 
 
     /**
-     * 通过taskId查询本人汇报记录 【userid后端获取】
-     * */
+     *  通过任务id和用户id查询汇报信息
+     */
     @Override
     public List<TaskReportVo> queryByUserIdAndTaskId(Integer taskId, Integer userId) {
 

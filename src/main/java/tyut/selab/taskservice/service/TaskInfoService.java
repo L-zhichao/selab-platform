@@ -20,7 +20,7 @@ public interface TaskInfoService {
     /**
      *  通过任务id删除任务
      * @param taskId
-     * @return
+     * @return 1删除成功 0任务不存在
      */
     public Integer delete(Integer taskId);
 

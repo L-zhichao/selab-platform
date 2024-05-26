@@ -316,29 +316,40 @@ public class TaskController extends HttpServlet {
      * @param response
      * @return
      */
-    //尚未增加权限控制,判断任务是否存在
-    private Result delete(HttpServletRequest request,HttpServletResponse response){
-        //从请求中获取taskId
-       String taskId= request.getParameter("taskId");
-       Integer id=Integer.valueOf(taskId);
 
-        // 如果 taskId 为空或不存在，返回错误信息
-        if (taskId == null || taskId.isEmpty()) {
-            return Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
+    private Result delete(HttpServletRequest request,HttpServletResponse response){
+
+        //从请求中获取taskId
+        Integer taskId= Integer.valueOf(request.getParameter("taskId"));
+
+        //验证请求参数
+        if (taskId == null ) {
+            return Result.error(HttpStatus.NOT_FOUND, "任务id不能为空");
+        }
+        TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
+
+        //权限验证
+        UserLocal loginUser = getUserMessage();
+        Integer roleId = loginUser.getRoleId();
+        String userName = loginUser.getUserName();
+
+        if(roleId==3){
+            return Result.error(HttpStatus.UNAUTHORIZED,"权限不足，无法删除");
+        } else if (roleId==2) {//管理员不能删除非本人发布的任务
+            if (!(taskInfoVo.getPublisherName().equals(userName))){
+                return Result.error(HttpStatus.UNAUTHORIZED,"权限不足，无法删除");
+            }
         }
 
-        //执行删除任务的逻辑
-        TaskInfo taskInfo = new TaskInfo();
-        taskInfo.setDelFlag(taskInfoService.delete(id));
-        Integer delFlag= taskInfo.getDelFlag();
+        //删除任务
+        Integer delete = taskInfoService.delete(taskId);
 
         //根据操作结果构造Result对象并返回
-        if(delFlag!=null){
+        if(delete!=0){
             return Result.success(null);
-        }else{
-            return Result.error(HttpStatus.NOT_FOUND, "删除任务失败");
+        }else {
+            return Result.error(HttpStatus.ERROR,"删除失败");
         }
-
 
     }
 
