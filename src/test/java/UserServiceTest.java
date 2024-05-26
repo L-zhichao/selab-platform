@@ -52,4 +52,42 @@ public class UserServiceTest {
         UserRegisterDto user = new UserRegisterDto("shaobo","123456",1,"3388532526@qq.com","18811111111",1);
         userService.insertUser(user);
     }
+    @Test
+    public void findByPasswordTest() {
+        UserServiceImpl userService = new UserServiceImpl();
+        try {
+            System.out.println(userService.findByPassword("12345678910"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Test
+    public void getUserLocalTest() {
+        UserServiceImpl userService = new UserServiceImpl();
+        try {
+            System.out.println(userService.getUserLocal("shaobo"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

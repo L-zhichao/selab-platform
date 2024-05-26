@@ -3,6 +3,7 @@ package tyut.selab.loginservice.service.impl;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.LoginService;
+import tyut.selab.loginservice.utils.JwtHelperUtils;
 
 import java.sql.SQLException;
 
@@ -20,12 +21,12 @@ public class LoginServiceImpl implements LoginService {
     /**
      * 该方法封装登录过程中需要对用户输入的账号密码进行判断的操作
      * @param userLoginReq 用户输入信息存储在该对象中
-     * @return 返回的是
+     * @return 返回的是根据用户名生成的Token字符串
      */
     @Override
     public String login(UserLoginReq userLoginReq) {
-
-        return null;
+        String token = JwtHelperUtils.createToken(userLoginReq.getUsername());
+        return token;
     }
 
     /**

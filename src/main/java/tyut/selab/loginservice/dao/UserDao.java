@@ -1,5 +1,6 @@
 package tyut.selab.loginservice.dao;
 
+import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 
 import java.lang.reflect.InvocationTargetException;
@@ -14,4 +15,6 @@ public interface UserDao {
     public Integer findByUsername(String username) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
     public UserRegisterDto getUserByUsername(String username) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
     public Integer insertUser(UserRegisterDto user) throws SQLException;
+    public Integer findByPassword(String password) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
+    UserLocal getUserLocal(String username) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
 }

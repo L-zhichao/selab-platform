@@ -26,14 +26,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserLocal getUserLocal() {
-        return null;
+    public UserLocal getUserLocal(String username) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        return userDao.getUserLocal(username);
     }
 
     @Override
     public Integer insertUser(UserRegisterDto user) throws SQLException {
         Integer i = userDao.insertUser(user);
         return i;
+    }
+
+    @Override
+    public Integer findByPassword(String password) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        return userDao.findByPassword(password);
     }
 
 

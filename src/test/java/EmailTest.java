@@ -142,7 +142,7 @@ public class EmailTest {
     @Test
     public void phoneTest(){
         String phone = "1190851";
-        System.out.println(QQEmailService.checkPhone(phone));
+        System.out.println(QQEmailService.checkPhone(null));
     }
     @Test
     public void userNameTest(){
