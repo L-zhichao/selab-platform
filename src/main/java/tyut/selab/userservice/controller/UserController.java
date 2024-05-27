@@ -52,12 +52,12 @@ public class UserController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String uri = req.getRequestURI();
-        System.out.println("doGet");
-        //判断是否为queryById
-        String[] split = uri.split("/");
-        String modeName = split[split.length-1];
-        if(modeName.equals("query")){
+        String pathGet = req.getPathInfo();
+        System.out.println(pathGet);
+        String methodName = pathGet.substring(pathGet.indexOf("user/")+2);
+        System.out.println("methodName = " + methodName);
+
+        if(methodName.equals("query")){
             Result query = query(req, resp);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", query.getCode());
@@ -67,7 +67,7 @@ public class UserController extends HttpServlet {
             resp.setContentType("text/html;charset=UTF-8");
             resp.getWriter().write(jsonObject.toJSONString());
 
-        }else if(modeName.equals("queryById")){
+        }else if(methodName.equals("queryById")){
             Result queryById = queryById(req, resp);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", queryById.getCode());
@@ -76,7 +76,25 @@ public class UserController extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("text/html;charset=UTF-8");
             resp.getWriter().write(jsonObject.toJSONString());
-       }
+       } else if (methodName.equals("logout")) {
+            Result logout = logout(req, resp);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", logout.getCode());
+            jsonObject.put("msg", logout.getMsg());
+            jsonObject.put("data",logout.getData());
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
+            resp.getWriter().write(jsonObject.toJSONString());
+        } else if (methodName.equals("role/update")) {
+            Result updateRole = updateRole(req, resp);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", updateRole.getCode());
+            jsonObject.put("msg", updateRole.getMsg());
+            jsonObject.put("data",updateRole.getData());
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
+            resp.getWriter().write(jsonObject.toJSONString());
+        }
 
 
     }

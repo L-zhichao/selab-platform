@@ -10,6 +10,7 @@ import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.UserVo;
+import tyut.selab.utils.JudgeRoleId;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -21,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
     private UserDao userDao = new UserDaoImpl();
     private UserLogoutDao userLogoutDao = new UserLogoutDaoImpl();
+
+    //private Integer judgeRoleId = JudgeRoleId.GetJudgeRoleId();
+
 
 
     /**
@@ -44,6 +48,19 @@ public class UserServiceImpl implements UserService {
         } else {
             return 0;
         }
+
+        //工具类判断roleId
+       /* if (judgeRoleId.equals(1)){
+            User user = new User();
+            user.setUserId(userVo.getUserId());
+            user.setRoleId(userVo.getRoleId());
+            //修改时间
+            user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
+            //调用sql方法
+            return userDao.updateUserRole(user);
+        } else {
+            return 0;
+        }*/
     }
 
 
@@ -180,6 +197,24 @@ public class UserServiceImpl implements UserService {
         } else {
             return 0;
         }
+
+        /*SecurityUtil securityUtil = new SecurityUtil();
+        UserLocal userLocal = securityUtil.getUser();
+        if (judgeRoleId.equals(2)){
+            UserLogout userLogout = new UserLogout();
+            userLogout.setUserId(userId);
+            userLogout.setAdminId(userLocal.getRoleId());
+            //增加事务回滚
+            int rows = userDao.deleteByUserId(userLogout.getUserId());
+            //成功，保存注销记录 sys_logout
+            if (rows >= 1) {
+                userLogout.setCreateTime(new Date(System.currentTimeMillis()));
+                userLogoutDao.insert(userLogout);
+            }
+            return rows;
+        } else {
+            return 0;
+        }*/
     }
 
 
@@ -248,6 +283,24 @@ public class UserServiceImpl implements UserService {
         } else {
             return 0;
         }
+
+        /*if (judgeRoleId.equals(2)){
+            User user = new User();
+            user.setUserId(userVo.getUserId());
+            user.setSex(userVo.getSex());
+            user.setUserName(userVo.getUserName());
+            user.setEmail(userVo.getEmail());
+            user.setPhone(userVo.getPhone());
+            user.setGroupId(userVo.getGroupId());
+            user.setRoleId(userVo.getRoleId());
+            user.setUpdateTime(userVo.getUpdateTime());
+            //调用sql方法
+            Integer rows = userDao.updateUser(user);
+            return rows;
+        } else {
+            return 0;
+        }*/
+
     }
 
 
@@ -269,6 +322,15 @@ public class UserServiceImpl implements UserService {
         } else {
             return 0;
         }
+
+        /*if (judgeRoleId.equals(2)){
+            User user = new User();
+            user.setUserId(userVo.getUserId());
+            user.setGroupId(userVo.getGroupId());
+            return userDao.updateGroup(user);
+        } else {
+            return 0;
+        }*/
     }
 
 }
