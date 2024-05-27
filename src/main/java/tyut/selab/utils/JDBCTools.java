@@ -13,7 +13,7 @@ public class JDBCTools {
     static{
         try {
             Properties pro = new Properties();
-            pro.load(new FileInputStream("src\\jdbc.properties"));
+            pro.load(new FileInputStream("C:\\Users\\lenovo\\IdeaProjects\\selab-platform\\src\\jdbc.properties"));
             ds = DruidDataSourceFactory.createDataSource(pro);
         } catch (Exception e) {
             e.printStackTrace();
