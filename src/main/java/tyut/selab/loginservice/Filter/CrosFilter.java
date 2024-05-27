@@ -35,6 +35,7 @@ public class CrosFilter implements Filter {
         if(!request.getMethod().equalsIgnoreCase("OPTIONS")){
             filterChain.doFilter(servletRequest, servletResponse);
         }
+
     }
     @Override
     public void destroy() {

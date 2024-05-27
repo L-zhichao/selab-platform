@@ -1,10 +1,13 @@
 package tyut.selab.loginservice.service.impl;
 
+import tyut.selab.loginservice.dao.impl.UserDaoImpl;
+import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
 import tyut.selab.loginservice.service.LoginService;
 import tyut.selab.loginservice.utils.JwtHelperUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
 /**
@@ -21,11 +24,12 @@ public class LoginServiceImpl implements LoginService {
     /**
      * 该方法封装登录过程中需要对用户输入的账号密码进行判断的操作
      * @param userLoginReq 用户输入信息存储在该对象中
-     * @return 返回的是根据用户名生成的Token字符串
+     * @return 返回的是根据用户相关信息生成的Token字符串
      */
     @Override
-    public String login(UserLoginReq userLoginReq) {
-        String token = JwtHelperUtils.createToken(userLoginReq.getUsername());
+    public String login(UserLoginReq userLoginReq) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        UserLocal userLocal= new UserDaoImpl().getUserLocal(String.valueOf(userLoginReq));
+        String token = JwtHelperUtils.createToken(userLocal.getUserId(),userLocal.getUserName(),userLocal.getGroupId(),userLocal.getRoleId());
         return token;
     }
 

@@ -30,4 +30,13 @@
     <!--过滤站点下所有文件,也可设置成过滤某一类文件如:  "*.jsp" 或是过滤掉某一个文件夹下的所有文件,如: "/目录名/*" -->
     <url-pattern>/*</url-pattern>
 </filter-mapping>
+    <filter>
+    <filter-name>CrosFilter</filter-name>
+    <filter-class>tyut.selab.loginservice.Filter.CrosFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>CrosFilter</filter-name>
+    <!--过滤站点下所有文件,也可设置成过滤某一类文件如:  "*.jsp" 或是过滤掉某一个文件夹下的所有文件,如: "/目录名/*" -->
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
 </web-app>

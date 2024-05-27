@@ -83,12 +83,9 @@ public class LoginController extends HttpServlet  {
         try {
             if(userService.findByUsername(userLoginReq.getUsername()) == 1 && userService.findByPassword(MD5util.encrypt(userLoginReq.getPassword())) == 1){
                 //登录成功后根据username生成Token
-                String token =  loginService.login(userLoginReq);
+                loginService.login(userLoginReq);
                 UserLocal userLocal = userService.getUserLocal(userLoginReq.getUsername());
-                //我们这里获取的UserLocal对象的groupId默认是null值
-                userLocal.setToken(token);
-                //将Token传给实体类对象UserLocal，并存入到ThreadLocal中，把该对象传给前端
-                SecurityUtil.setUser(userLocal);
+
                 return Result.success(userLocal);
             }
         } catch (Exception e) {
