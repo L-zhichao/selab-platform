@@ -162,7 +162,6 @@ public class TaskReportServiceImpl implements TaskReportService {
     @Override
     public List<NeedReportUser> queryAllUserForReport(Integer taskId) {
         List<NeedReportUser> needReportUsers=new ArrayList<>();
-        NeedReportUser needReportUser=new NeedReportUser();
         BaseDao baseDao = new BaseDao();
         List<Integer> userIds = taskReportDao.selectByTaskIdForUserId(taskId);
         //userid 变成 username
@@ -175,6 +174,7 @@ public class TaskReportServiceImpl implements TaskReportService {
         for (Integer i:userIds){
             User userName = baseDao.baseQueryObject(User.class, sql,i);
             Integer i1 = baseDao.baseQueryObject(Integer.class, sql1, i, taskId);
+            NeedReportUser needReportUser=new NeedReportUser();
             if (userName != null) {
                 needReportUser.setUserName(userName.getUserName());
                 if (i1!=null){

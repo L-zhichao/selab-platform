@@ -194,7 +194,6 @@ public class TaskReportController extends HttpServlet {
         //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
-//        TaskInfoService taskInfoService=new TaskServiceImpl();
         //普通用户无法查看
         if (roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看汇报记录");
@@ -204,9 +203,10 @@ public class TaskReportController extends HttpServlet {
             if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
                  cur = Integer.parseInt(request.getParameter("cur"));
                 size = Integer.parseInt(request.getParameter("size"));
+                if (cur<0||size<0){
+                    return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
+                }
             }
-//            int cur = Integer.parseInt(request.getParameter("cur"));
-//            int size = Integer.parseInt(request.getParameter("size"));
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
             }
@@ -223,21 +223,23 @@ public class TaskReportController extends HttpServlet {
                         throw new RuntimeException(e);
                     }
                     if (taskReportVos!=null) {
-                        int beginIndex = (cur - 1) * size;
-                        int endIndex = cur * size - 1;
-                        List<TaskReportVo> taskInfoVoPage;
-                        if (beginIndex > taskReportVos.size() - 1){
-                            taskInfoVoPage = null;
+                        if (cur>0&&size>0){
+                            int beginIndex = (cur - 1) * size;
+                            int endIndex = cur * size - 1;
+                            List<TaskReportVo> taskInfoVoPage;
+                            if (beginIndex > taskReportVos.size() - 1){
+                                taskInfoVoPage = null;
 //                            successT.addAll(taskInfoVoPage);
-                        }else if(endIndex > taskReportVos.size() - 1){
-                            taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
-                            successT.addAll(taskInfoVoPage);
-                        }else{
-                            taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
-                            successT.addAll(taskInfoVoPage);
+                            }else if(endIndex > taskReportVos.size() - 1){
+                                taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
+                                successT.addAll(taskInfoVoPage);
+                            }else{
+                                taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                                successT.addAll(taskInfoVoPage);
+                            }
+                        }else {
+                            successT.addAll(taskReportVos);
                         }
-//                        WebUtil.writeJson(response,Result.success(taskInfoVoPage));
-//                        return Result.success(taskInfoVoPage);
                     }
                 }
                 if (successT==null){
@@ -248,7 +250,6 @@ public class TaskReportController extends HttpServlet {
                 }
 
             }
-//            taskid = Integer.parseInt(request.getParameter("taskid"));
             //id是否输入合法
             Integer userId = userMessage.getUserId();
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
@@ -262,15 +263,19 @@ public class TaskReportController extends HttpServlet {
                 if (taskReportVos==null){
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
                 }else {
-                    int beginIndex = (cur - 1) * size;
-                    int endIndex = cur * size - 1;
                     List<TaskReportVo> taskInfoVoPage;
-                    if (beginIndex > taskReportVos.size() - 1){
-                        taskInfoVoPage = null;
-                    }else if(endIndex > taskReportVos.size() - 1){
-                        taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
-                    }else{
-                        taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                    if (cur>0&&size>0){
+                        int beginIndex = (cur - 1) * size;
+                        int endIndex = cur * size - 1;
+                        if (beginIndex > taskReportVos.size() - 1){
+                            taskInfoVoPage = null;
+                        }else if(endIndex > taskReportVos.size() - 1){
+                            taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
+                        }else{
+                            taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                        }
+                    }else {
+                        taskInfoVoPage=taskReportVos;
                     }
                     WebUtil.writeJson(response,Result.success(taskInfoVoPage));
                     return Result.success(taskInfoVoPage);
@@ -283,14 +288,13 @@ public class TaskReportController extends HttpServlet {
             if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
                 cur = Integer.parseInt(request.getParameter("cur"));
                 size = Integer.parseInt(request.getParameter("size"));
+                if (cur<0||size<0){
+                    return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
+                }
             }
-
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
             }
-//            taskid = Integer.parseInt(request.getParameter("taskid"));
-//             cur = Integer.parseInt(request.getParameter("cur"));
-//             size = Integer.parseInt(request.getParameter("size"));
             if (taskid!=null){
                 try {
                     taskReportVos = taskReportService.queryAllTask(taskid);
@@ -300,15 +304,19 @@ public class TaskReportController extends HttpServlet {
                 if (taskReportVos==null){
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
                 }else {
-                    int beginIndex = (cur - 1) * size;
-                    int endIndex = cur * size - 1;
                     List<TaskReportVo> taskInfoVoPage;
-                    if (beginIndex > taskReportVos.size() - 1){
-                        taskInfoVoPage = null;
-                    }else if(endIndex > taskReportVos.size() - 1){
-                        taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
-                    }else{
-                        taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                    if (cur>0&&size>0){
+                        int beginIndex = (cur - 1) * size;
+                        int endIndex = cur * size - 1;
+                        if (beginIndex > taskReportVos.size() - 1){
+                            taskInfoVoPage = null;
+                        }else if(endIndex > taskReportVos.size() - 1){
+                            taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
+                        }else{
+                            taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                        }
+                    }else {
+                        taskInfoVoPage=taskReportVos;
                     }
                     WebUtil.writeJson(response,Result.success(taskInfoVoPage));
                     return Result.success(taskInfoVoPage);
@@ -332,15 +340,19 @@ select DISTINCT task_id from task_report
                         }
                         SuccessTaskReportVos.addAll(taskReportVos);
                     }
-                    int beginIndex = (cur - 1) * size;
-                    int endIndex = cur * size - 1;
                     List<TaskReportVo> taskInfoVoPage;
-                    if (beginIndex > SuccessTaskReportVos.size() - 1){
-                        taskInfoVoPage = null;
-                    }else if(endIndex > SuccessTaskReportVos.size() - 1){
-                        taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,SuccessTaskReportVos.size());
-                    }else{
-                        taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,endIndex+1);
+                    if (cur>0&&size>0){
+                        int beginIndex = (cur - 1) * size;
+                        int endIndex = cur * size - 1;
+                        if (beginIndex > SuccessTaskReportVos.size() - 1){
+                            taskInfoVoPage = null;
+                        }else if(endIndex > SuccessTaskReportVos.size() - 1){
+                            taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,SuccessTaskReportVos.size());
+                        }else{
+                            taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,endIndex+1);
+                        }
+                    }else {
+                        taskInfoVoPage=SuccessTaskReportVos;
                     }
                     WebUtil.writeJson(response,Result.success(taskInfoVoPage));
                     return Result.success(taskInfoVoPage);
@@ -429,6 +441,9 @@ select DISTINCT task_id from task_report
             if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
                 cur = Integer.parseInt(request.getParameter("cur"));
                 size = Integer.parseInt(request.getParameter("size"));
+                if (cur<0||size<0){
+                    return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
+                }
             }
 
             if (request.getParameter("taskid")!=null){
@@ -443,18 +458,22 @@ select DISTINCT task_id from task_report
                 for (TaskInfoVo taskInfoVo:taskInfoVos){
                      needReportUsers = taskReportService.queryAllUserForReport(taskInfoVo.getId());
                     if (needReportUsers!=null) {
-                        int beginIndex = (cur - 1) * size;
-                        int endIndex = cur * size - 1;
-                        List<NeedReportUser> Page;
-                        if (beginIndex > needReportUsers.size() - 1){
-                            Page = null;
+                        if (cur>0&&size>0){
+                            int beginIndex = (cur - 1) * size;
+                            int endIndex = cur * size - 1;
+                            List<NeedReportUser> Page;
+                            if (beginIndex > needReportUsers.size() - 1){
+                                Page = null;
 //                            successN.addAll(Page);
-                        }else if(endIndex > needReportUsers.size() - 1){
-                            Page = needReportUsers.subList(beginIndex,needReportUsers.size());
-                            successN.addAll(Page);
-                        }else{
-                            Page = needReportUsers.subList(beginIndex,endIndex+1);
-                            successN.addAll(Page);
+                            }else if(endIndex > needReportUsers.size() - 1){
+                                Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                                successN.addAll(Page);
+                            }else{
+                                Page = needReportUsers.subList(beginIndex,endIndex+1);
+                                successN.addAll(Page);
+                            }
+                        }else {
+                            successN.addAll(needReportUsers);
                         }
                     }
                 }
@@ -465,7 +484,7 @@ select DISTINCT task_id from task_report
                     return Result.success(successN);
                 }
             }
-            //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
+            //taksid 输入非法： 不是自己发布的任务的id
             Integer userId = userMessage.getUserId();
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
@@ -474,23 +493,22 @@ select DISTINCT task_id from task_report
             }else {
                 //taskid->groupid->userid
                 needReportUsers = taskReportService.queryAllUserForReport(taskid);
-//                if (needReportUsers==null){
-//                    return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
-//                }else {
-//                    return Result.success(needReportUsers);
-//                }
                 if (needReportUsers==null){
                     return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
                 }else {
-                    int beginIndex = (cur - 1) * size;
-                    int endIndex = cur * size - 1;
-                    List<NeedReportUser> Page;
-                    if (beginIndex > needReportUsers.size() - 1){
-                        Page = null;
-                    }else if(endIndex > needReportUsers.size() - 1){
-                        Page = needReportUsers.subList(beginIndex,needReportUsers.size());
-                    }else{
-                        Page = needReportUsers.subList(beginIndex,endIndex+1);
+                    List<NeedReportUser> Page=new ArrayList<>();
+                    if (cur>0&&size>0){
+                        int beginIndex = (cur - 1) * size;
+                        int endIndex = cur * size - 1;
+                        if (beginIndex > needReportUsers.size() - 1){
+                            Page = null;
+                        }else if(endIndex > needReportUsers.size() - 1){
+                            Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                        }else{
+                            Page = needReportUsers.subList(beginIndex,endIndex+1);
+                        }
+                    }else {
+                        Page.addAll(needReportUsers);
                     }
                     WebUtil.writeJson(response,Result.success(Page));
                     return Result.success(Page);
@@ -501,6 +519,9 @@ select DISTINCT task_id from task_report
             if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
                 cur = Integer.parseInt(request.getParameter("cur"));
                 size = Integer.parseInt(request.getParameter("size"));
+                if (cur<0||size<0){
+                    return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
+                }
             }
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
@@ -513,15 +534,19 @@ select DISTINCT task_id from task_report
                 if (needReportUsers==null){
                     return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
                 }else {
-                    int beginIndex = (cur - 1) * size;
-                    int endIndex = cur * size - 1;
-                    List<NeedReportUser> Page;
-                    if (beginIndex > needReportUsers.size() - 1){
-                        Page = null;
-                    }else if(endIndex > needReportUsers.size() - 1){
-                        Page = needReportUsers.subList(beginIndex,needReportUsers.size());
-                    }else{
-                        Page = needReportUsers.subList(beginIndex,endIndex+1);
+                    List<NeedReportUser> Page=new ArrayList<>();
+                    if (cur>0&&size>0){
+                        int beginIndex = (cur - 1) * size;
+                        int endIndex = cur * size - 1;
+                        if (beginIndex > needReportUsers.size() - 1){
+                            Page = null;
+                        }else if(endIndex > needReportUsers.size() - 1){
+                            Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                        }else{
+                            Page = needReportUsers.subList(beginIndex,endIndex+1);
+                        }
+                    }else {
+                        Page.addAll(needReportUsers);
                     }
                     WebUtil.writeJson(response,Result.success(Page));
                     return Result.success(Page);
@@ -542,18 +567,22 @@ select DISTINCT task_id from task_report
                     for (Integer i:taskids){
                          needReportUsers = taskReportService.queryAllUserForReport(i);
                         if (needReportUsers!=null) {
-                            int beginIndex = (cur - 1) * size;
-                            int endIndex = cur * size - 1;
-                            List<NeedReportUser> Page;
-                            if (beginIndex > needReportUsers.size() - 1){
-                                Page = null;
+                            if (cur>0&&size>0){
+                                int beginIndex = (cur - 1) * size;
+                                int endIndex = cur * size - 1;
+                                List<NeedReportUser> Page;
+                                if (beginIndex > needReportUsers.size() - 1){
+                                    Page = null;
 //                                successN.addAll(Page);
-                            }else if(endIndex > needReportUsers.size() - 1){
-                                Page = needReportUsers.subList(beginIndex,needReportUsers.size());
-                                successN.addAll(Page);
-                            }else{
-                                Page = needReportUsers.subList(beginIndex,endIndex+1);
-                                successN.addAll(Page);
+                                }else if(endIndex > needReportUsers.size() - 1){
+                                    Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                                    successN.addAll(Page);
+                                }else{
+                                    Page = needReportUsers.subList(beginIndex,endIndex+1);
+                                    successN.addAll(Page);
+                                }
+                            }else {
+                                successN.addAll(needReportUsers);
                             }
                         }
                     }

@@ -83,7 +83,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public List<Integer> selectByTaskIdForUserId(Integer taskId){
         TaskGroupDaoImpl taskGroupDao=new TaskGroupDaoImpl();
-        List<Integer> integers = null;
+        List<Integer> integers = new ArrayList<>();
         //获取对应任务的小组
         List<TaskGroup> taskGroups = taskGroupDao.selectAllTaskGroupsByTaskId(taskId);
         //获取小组的对应成员id
