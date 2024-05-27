@@ -228,7 +228,7 @@ public class TaskReportController extends HttpServlet {
                         List<TaskReportVo> taskInfoVoPage;
                         if (beginIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = null;
-                            successT.addAll(taskInfoVoPage);
+//                            successT.addAll(taskInfoVoPage);
                         }else if(endIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
                             successT.addAll(taskInfoVoPage);
@@ -448,7 +448,7 @@ select DISTINCT task_id from task_report
                         List<NeedReportUser> Page;
                         if (beginIndex > needReportUsers.size() - 1){
                             Page = null;
-                            successN.addAll(Page);
+//                            successN.addAll(Page);
                         }else if(endIndex > needReportUsers.size() - 1){
                             Page = needReportUsers.subList(beginIndex,needReportUsers.size());
                             successN.addAll(Page);
@@ -547,7 +547,7 @@ select DISTINCT task_id from task_report
                             List<NeedReportUser> Page;
                             if (beginIndex > needReportUsers.size() - 1){
                                 Page = null;
-                                successN.addAll(Page);
+//                                successN.addAll(Page);
                             }else if(endIndex > needReportUsers.size() - 1){
                                 Page = needReportUsers.subList(beginIndex,needReportUsers.size());
                                 successN.addAll(Page);
