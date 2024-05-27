@@ -14,14 +14,14 @@ public interface RegistrationService {
      * @return
      */
 
-    public Integer insertRegistration(RegistrationDto registrationDto);
+    public Integer insertRegistration(RegistrationDto registrationDto)throws InsertException;
 
     /**
      *   修改报名表信息(管理员操作)
      * @param registrationVo
      * @return
      */
-    public Integer updateRegistration(RegistrationVo registrationVo);
+    public Integer updateRegistration(RegistrationVo registrationVo)throws UpdateException;
 
     /**
      *  分页查询所有报名表
