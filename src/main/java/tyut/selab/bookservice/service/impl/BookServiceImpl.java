@@ -29,41 +29,25 @@ public class BookServiceImpl implements BookService {
     public Integer insertBook(BookDto bookDto) {
         String jsonString = JSONUtils.toJSONString(bookDto);
         BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
-        try {
-            return bookDao.insert(bookInfo);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return bookDao.insert(bookInfo);
     }
 
     @Override
     public Integer updateBook(BookVo bookVo)  {
         String jsonString = JSONUtils.toJSONString(bookVo);
         BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
-        try {
-            return bookDao.update(bookInfo);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return bookDao.update(bookInfo);
     }
 
     public Integer deleteBook(Integer bookId) {
-        try {
-            return bookDao.delete(bookId);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return bookDao.delete(bookId);
     }
 
     @Override
     public List<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName) {
         List<BookVo> list = new ArrayList<BookVo>();
         List<BookInfo> bookInfos = null;
-        try {
-            bookInfos = bookDao.selectByOwnerBookName(cur, size,userId,bookName);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        bookInfos = bookDao.selectByOwnerBookName(cur, size,userId,bookName);
         for (BookInfo bookInfo : bookInfos) {
             Integer owner = bookInfo.getOwner();
             BookVo bookVo = bookIofoToBookVo(bookInfo);
@@ -78,11 +62,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookVo selectBookById(Integer bookId) {
         BookInfo bookInfo = null;
-        try {
-            bookInfo = bookDao.selectByBookIdBookInfo(bookId);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        bookInfo = bookDao.selectByBookIdBookInfo(bookId);
         String jsonString = JSONUtils.toJSONString(bookInfo);
         BookVo bookVo = JSONObject.parseObject(jsonString, BookVo.class);
         return bookVo;
@@ -91,14 +71,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName) {
         List<BookVo> bookVos = new ArrayList<>();
-        try {
-            List<BookInfo> bookInfos = bookDao.selectAllByBookName(cur,size,bookName);
-            for(BookInfo bookInfo:bookInfos){
-                BookVo bookVo = bookIofoToBookVo(bookInfo);
-                bookVos.add(bookVo);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        List<BookInfo> bookInfos = bookDao.selectAllByBookName(cur,size,bookName);
+        for(BookInfo bookInfo:bookInfos){
+            BookVo bookVo = bookIofoToBookVo(bookInfo);
+            bookVos.add(bookVo);
         }
         return bookVos;
     }
@@ -106,33 +82,25 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookVo> selectListByOwnerId(Integer cur, Integer size, Integer userId) {
         List<BookVo> bookVos = new ArrayList<>();
-        try {
-            List<BookInfo> bookInfos = bookDao.selectByOwnerBookInfo(cur,size,userId);
-            for(BookInfo bookInfo:bookInfos){
-                BookVo bookVo = bookIofoToBookVo(bookInfo);
-                bookVos.add(bookVo);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        List<BookInfo> bookInfos = bookDao.selectByOwnerBookInfo(cur, size, userId);
+        for (BookInfo bookInfo : bookInfos) {
+            BookVo bookVo = bookIofoToBookVo(bookInfo);
+            bookVos.add(bookVo);
         }
         return bookVos;
     }
 
-    public List<BookVo> selectAllList(Integer cur, Integer size){
+    public List<BookVo> selectAllList (Integer cur, Integer size){
         List<BookVo> bookVos = new ArrayList<>();
-        try {
-            List<BookInfo> bookInfos = bookDao.selectAllList(cur,size);
-            for(BookInfo bookInfo:bookInfos){
-                BookVo bookVo = bookIofoToBookVo(bookInfo);
-                bookVos.add(bookVo);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        List<BookInfo> bookInfos = bookDao.selectAllList(cur, size);
+        for (BookInfo bookInfo : bookInfos) {
+            BookVo bookVo = bookIofoToBookVo(bookInfo);
+            bookVos.add(bookVo);
         }
         return bookVos;
     }
 
-    public BookVo bookIofoToBookVo(BookInfo bookInfo) {
+    public BookVo bookIofoToBookVo (BookInfo bookInfo){
         BookVo bookVo = new BookVo();
         bookVo.setBookAuthor(bookInfo.getBookAuthor());
         bookVo.setBookDetails(bookInfo.getBookDetails());

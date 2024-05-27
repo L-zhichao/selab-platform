@@ -352,7 +352,7 @@ public class BorrowController extends HttpServlet {
         }else{
             result.setMsg("查询信息为空");
             result.setData(null);
-            result.setCode(513);
+            result.setCode(500003);
         }
         return result;
     }

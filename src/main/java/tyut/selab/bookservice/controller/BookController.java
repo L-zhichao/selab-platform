@@ -44,7 +44,7 @@ public class BookController extends HttpServlet {
     static private BookDto bookDto = new BookDto();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         // 设置请求和响应的编码
         resp.setContentType("text/html;charset=utf-8");
         req.setCharacterEncoding("UTF-8");
@@ -84,7 +84,7 @@ public class BookController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         // 获取请求消息体(其实对应的就是请求参数)
         BufferedReader br = request.getReader();
         StringBuilder sb = new StringBuilder();
@@ -102,18 +102,18 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result<Void> save(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    private Result<Void> save(HttpServletRequest request, HttpServletResponse response) {
         BookDto bookDto = tool(request, response);
         Integer i = bookService.insertBook(bookDto);
-        Result result = new Result(404,null);
+        Result result = new Result(500002,null);
         if (i >= 0) {
             request.getRequestDispatcher("book/list").forward(request,response);
             result.setCode(200);
             result.setMsg("图书信息添加成功");
         }
         else{
-            result.setCode(500);
-            result.setMsg("服务器执行请求时发生了错误");
+            result.setCode(500005);
+            result.setMsg("图书信息添加失败");
         }
         return result;
     }
@@ -124,7 +124,7 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result update(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    private Result update(HttpServletRequest request, HttpServletResponse response) {
         BookDto bookDto = tool(request,response);
         // 把Java对象转换成字符串
         String json = JSON.toJSONString(bookDto);
@@ -132,14 +132,14 @@ public class BookController extends HttpServlet {
         BookVo bookVo = JSON.parseObject(json, BookVo.class);
         // 执行更新方法，得到改变行数的返回值
         Integer i = bookService.updateBook(bookVo);
-        Result result = new Result(404,null);
+        Result result = new Result(500002,null);
         if (i > 0) {
             request.getRequestDispatcher("book/list").forward(request,response);
             result.setCode(200);
             result.setMsg("图书信息修改成功");
         }
         else{
-            result.setCode(500);
+            result.setCode(500005);
             result.setMsg("图书信息修改失败");
         }
         return result;
@@ -151,10 +151,10 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result queryOne(HttpServletRequest request, HttpServletResponse response) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException, NoSuchMethodException, ServletException, IOException, InvocationTargetException {
+    private Result queryOne(HttpServletRequest request, HttpServletResponse response) {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         BookVo bookVo = bookService.selectBookById(bookId);
-        Result result = new Result(404,null);
+        Result result = new Result(500002,null);
         if(bookVo != null){
             result.setCode(200);
             result.setData(bookVo);
@@ -172,7 +172,7 @@ public class BookController extends HttpServlet {
      * param: bookName userId cur[不为空] size[不为空]   cur[当前页数] size[每页数量]
      *  @return list<BookVo>
      */
-    private Result list(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    private Result list(HttpServletRequest request, HttpServletResponse response) {
         request.setCharacterEncoding("UTF-8");
         //接受请求参数
         int cur = Integer.parseInt(request.getParameter("cur"));
@@ -214,7 +214,7 @@ public class BookController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result delete(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private Result delete(HttpServletRequest request, HttpServletResponse response) {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         Integer i = bookService.deleteBook(bookId);
         response.setCharacterEncoding("UTF-8");
@@ -224,7 +224,7 @@ public class BookController extends HttpServlet {
             result.setMsg("图书信息删除成功");
         }
         else{
-            result.setCode(500);
+            result.setCode(500009);
             result.setMsg("图书信息删除失败");
         }
         return result;
@@ -237,7 +237,7 @@ public class BookController extends HttpServlet {
      * @return
      * @throws IOException
      */
-    public static BookDto tool (HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public static BookDto tool (HttpServletRequest request, HttpServletResponse response) {
         // 获取请求消息体(其实对应的就是请求参数)
         BufferedReader br = request.getReader();
         StringBuilder sb = new StringBuilder();

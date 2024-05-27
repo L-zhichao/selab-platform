@@ -24,21 +24,21 @@ public interface BookService {
      * @return
      */
 
-    public Integer insertBook(BookDto bookDto) throws SQLException;
+    public Integer insertBook(BookDto bookDto);
 
     /**
      *   修改书籍信息(管理员操作)
      * @param bookVo
      * @return
      */
-    public Integer updateBook(BookVo bookVo) throws SQLException;
+    public Integer updateBook(BookVo bookVo);
 
     /**
      *  删除书籍
      * @param bookId
      * @return
      */
-    public Integer deleteBook(Integer bookId) throws SQLException;
+    public Integer deleteBook(Integer bookId);
 
     /**
      * 分页查询所有书籍
@@ -52,7 +52,7 @@ public interface BookService {
      * @param bookId 书籍id
      * @return
      */
-    public BookVo selectBookById(Integer bookId) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    public BookVo selectBookById(Integer bookId);
 
     /**
      *   通过书籍名称查询书籍信息(支持模糊查询)
