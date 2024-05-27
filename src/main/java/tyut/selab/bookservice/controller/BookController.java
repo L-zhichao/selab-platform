@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
+import tyut.selab.bookservice.exception.ServiceException;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.service.impl.BookServiceImpl;
 import tyut.selab.bookservice.vo.BookVo;
@@ -41,13 +42,16 @@ import java.util.List;
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
-    static private BookDto bookDto = new BookDto();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         // 设置请求和响应的编码
         resp.setContentType("text/html;charset=utf-8");
-        req.setCharacterEncoding("UTF-8");
+        try {
+            req.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new ServiceException(e);
+        }
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html;charset=UTF-8");
         // 获取url并拆成段
@@ -86,11 +90,21 @@ public class BookController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         // 获取请求消息体(其实对应的就是请求参数)
-        BufferedReader br = request.getReader();
+        BufferedReader br = null;
+        try {
+            br = request.getReader();
+        } catch (IOException e) {
+            throw new ServiceException("获取请求体字符流失败");
+        }
         StringBuilder sb = new StringBuilder();
         // 读取数据
         String line = null;
-        while ((line = br.readLine()) != null) {
+        while (true) {
+            try {
+                if (!((line = br.readLine()) != null)) break;
+            } catch (IOException e) {
+                throw new ServiceException("读取文本信息失败");
+            }
             sb.append(line);
         }
         System.out.println(sb.toString());
@@ -107,7 +121,13 @@ public class BookController extends HttpServlet {
         Integer i = bookService.insertBook(bookDto);
         Result result = new Result(500002,null);
         if (i >= 0) {
-            request.getRequestDispatcher("book/list").forward(request,response);
+            try {
+                request.getRequestDispatcher("book/list").forward(request,response);
+            } catch (ServletException e) {
+                throw new ServiceException("页面跳转失败");
+            } catch (IOException e) {
+                throw new ServiceException("获取信息失败");
+            }
             result.setCode(200);
             result.setMsg("图书信息添加成功");
         }
@@ -134,7 +154,13 @@ public class BookController extends HttpServlet {
         Integer i = bookService.updateBook(bookVo);
         Result result = new Result(500002,null);
         if (i > 0) {
-            request.getRequestDispatcher("book/list").forward(request,response);
+            try {
+                request.getRequestDispatcher("book/list").forward(request,response);
+            } catch (ServletException e) {
+                throw new ServiceException("页面跳转失败");
+            } catch (IOException e) {
+                throw new ServiceException("获取信息失败");
+            }
             result.setCode(200);
             result.setMsg("图书信息修改成功");
         }
@@ -173,7 +199,11 @@ public class BookController extends HttpServlet {
      *  @return list<BookVo>
      */
     private Result list(HttpServletRequest request, HttpServletResponse response) {
-        request.setCharacterEncoding("UTF-8");
+        try {
+            request.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new ServiceException("编码为UTF—8失败");
+        }
         //接受请求参数
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
@@ -239,11 +269,21 @@ public class BookController extends HttpServlet {
      */
     public static BookDto tool (HttpServletRequest request, HttpServletResponse response) {
         // 获取请求消息体(其实对应的就是请求参数)
-        BufferedReader br = request.getReader();
+        BufferedReader br = null;
+        try {
+            br = request.getReader();
+        } catch (IOException e) {
+            throw new ServiceException("获取请求体的字符流失败");
+        }
         StringBuilder sb = new StringBuilder();
         // 读取数据
         String line = null;
-        while ((line = br.readLine()) != null) {
+        while (true) {
+            try {
+                if (!((line = br.readLine()) != null)) break;
+            } catch (IOException e) {
+                throw new ServiceException("读取文本信息失败");
+            }
             sb.append(line);
         }
         // 先转换为JSON字符串，再封装为BookDao类

@@ -8,8 +8,9 @@ import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.vo.BookVo;
-import tyut.selab.userservice.domain.User;
+import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.impl.UserDaoImpl;
+import tyut.selab.userservice.domain.User;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class BookServiceImpl implements BookService {
     private BookInfoDao bookDao = new BookInfoDaoImpl();
-    //private UserDao userDao = new UserDaoImpl();
+    private UserDao userDao = new UserDaoImpl();
     @Override
     public Integer insertBook(BookDto bookDto) {
         String jsonString = JSONUtils.toJSONString(bookDto);
@@ -73,7 +74,13 @@ public class BookServiceImpl implements BookService {
         List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectAllByBookName(cur,size,bookName);
         for(BookInfo bookInfo:bookInfos){
+            // 拿到书籍拥有者的编号
+            Integer owner = bookInfo.getOwner();
             BookVo bookVo = bookIofoToBookVo(bookInfo);
+            // 找到owner对应的ownerName
+            User user = userDao.selectByUserIdUser(owner);
+            String ownerName = user.getUserName();
+            bookVo.setOwnerName(ownerName);
             bookVos.add(bookVo);
         }
         return bookVos;
@@ -84,7 +91,11 @@ public class BookServiceImpl implements BookService {
         List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectByOwnerBookInfo(cur, size, userId);
         for (BookInfo bookInfo : bookInfos) {
+            Integer owner = bookInfo.getOwner();
             BookVo bookVo = bookIofoToBookVo(bookInfo);
+            User user = userDao.selectByUserIdUser(owner);
+            String ownerName = user.getUserName();
+            bookVo.setOwnerName(ownerName);
             bookVos.add(bookVo);
         }
         return bookVos;
@@ -94,7 +105,11 @@ public class BookServiceImpl implements BookService {
         List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectAllList(cur, size);
         for (BookInfo bookInfo : bookInfos) {
+            Integer owner = bookInfo.getOwner();
             BookVo bookVo = bookIofoToBookVo(bookInfo);
+            User user = userDao.selectByUserIdUser(owner);
+            String ownerName = user.getUserName();
+            bookVo.setOwnerName(ownerName);
             bookVos.add(bookVo);
         }
         return bookVos;
