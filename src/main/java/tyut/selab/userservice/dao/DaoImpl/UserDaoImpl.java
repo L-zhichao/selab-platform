@@ -33,11 +33,12 @@ public class UserDaoImpl implements UserDao {
         Date createTime = (Date) user.getCreateTime();
         Date updateTime = (Date) user.getUpdateTime();
         Integer delFlag = user.getDelFlag();
+        String password = user.getPassword();
 
         try {
             conn = JDBCUtils.getConnection();
-            String sql1 = "insert into sys_user (user_name,create_time,update_time,role_id,email,phone,sex,del_flag) "+
-                    "values (?,?,?,?,?,?,?,?)";
+            String sql1 = "insert into sys_user (user_name,create_time,update_time,role_id,email,phone,sex,del_flag,password) "+
+                    "values (?,?,?,?,?,?,?,?,?)";
             pstmtInsert = conn.prepareStatement(sql1);
             pstmtInsert .setString(1,userName);
             pstmtInsert .setDate(2,createTime);
@@ -47,6 +48,7 @@ public class UserDaoImpl implements UserDao {
             pstmtInsert .setString(6,phone);
             pstmtInsert .setInt(7,sex);
             pstmtInsert .setInt(8,delFlag);
+            pstmtInsert.setString(9,password);
             pstmtInsert .executeUpdate();
 
             String sql2 = "select LAST_INSERT_ID() as user_id from sys_user; ";

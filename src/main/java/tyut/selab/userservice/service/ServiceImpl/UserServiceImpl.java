@@ -221,6 +221,7 @@ public class UserServiceImpl implements UserService {
         String email = userVo.getEmail();
         String phone = userVo.getPhone();
         Integer sex = userVo.getSex();
+        String password = userVo.getPassword();
 
         java.util.Date date = new java.util.Date();
         Date createTime = new java.sql.Date(date.getTime());
@@ -236,6 +237,7 @@ public class UserServiceImpl implements UserService {
         userSave.setCreateTime(createTime);
         userSave.setUpdateTime(updateTime);
         userSave.setDelFlag(0);
+        userSave.setPassword(password);
 
         Integer insert = userDao.insertUser(userSave);
 
