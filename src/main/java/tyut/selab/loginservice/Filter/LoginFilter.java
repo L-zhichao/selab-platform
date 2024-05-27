@@ -53,11 +53,12 @@ public class LoginFilter implements Filter{
             userLocal.setUserName(JwtHelperUtils.getUsername(token));
             userLocal.setGroupId(JwtHelperUtils.getGroupId(token));
             userLocal.setRoleId(JwtHelperUtils.getRoleId(token));
+            userLocal.setToken(token);
             //将Token传给实体类对象UserLocal，并存入到ThreadLocal中，把该对象传给前端
             SecurityUtil.setUser(userLocal);
             filterChain.doFilter(servletRequest, servletResponse);
             //将token写到响应头里
-            //response.addHeader("Authorization", "Bearer " + token);
+            response.addHeader("Authorization", "Bearer " + token);
         } else {
             WebUtils.writeJson(response, Result.error(STATUS_CODE_NON_TOKEN, ""));
         }

@@ -30,6 +30,7 @@ public class LoginServiceImpl implements LoginService {
     public String login(UserLoginReq userLoginReq) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         UserLocal userLocal= new UserDaoImpl().getUserLocal(String.valueOf(userLoginReq));
         String token = JwtHelperUtils.createToken(userLocal.getUserId(),userLocal.getUserName(),userLocal.getGroupId(),userLocal.getRoleId());
+
         return token;
     }
 
