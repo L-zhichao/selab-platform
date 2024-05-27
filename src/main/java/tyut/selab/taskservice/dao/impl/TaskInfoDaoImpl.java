@@ -40,7 +40,6 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
             throw e;
         }
 
-        // 返回受影响行数
         return rowsAffected;
     }
 

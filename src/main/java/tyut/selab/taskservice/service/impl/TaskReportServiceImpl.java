@@ -38,15 +38,9 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @param taskReportDto
      * @return
      */
+    //1.尚未增加查重，更新（updateByReportId），删除（deleteByReportId）功能
+    //2.如何获取用户id
     public Integer save(TaskReportDto taskReportDto) {
-        // 创建TaskReport对象
-        TaskReport taskReport = new TaskReport();
-
-        taskReport.setTaskId(taskReportDto.getTaskId());
-        taskReport.setReportStatus(taskReportDto.getReportStatus());
-        taskReport.setDetails(taskReportDto.getDetails());
-        // 自动设置createTime
-        taskReport.setCreateTime(new Date());
 
         // 验证输入参数
         if (taskReportDto == null) {
@@ -58,15 +52,28 @@ public class TaskReportServiceImpl implements TaskReportService {
         if (taskReportDto.getReportStatus() == null) {
             throw new IllegalArgumentException("汇报状态不能为空");
         }
-        if (StringUtils.isBlank(taskReportDto.getDetails())) {
+        if (taskReportDto.getDetails()==null) {
             throw new IllegalArgumentException("汇报信息不能为空");
         }
+        //查重
+
+
+
+        // 创建TaskReport对象
+        TaskReport taskReport = new TaskReport();
+
+        taskReport.setTaskId(taskReportDto.getTaskId());
+        taskReport.setReportStatus(taskReportDto.getReportStatus());
+        taskReport.setDetails(taskReportDto.getDetails());
+       //如何获取汇报人id？
+
+        // 自动设置createTime
+        taskReport.setCreateTime(new Date());
 
 
         try {
             return taskReportDao.insert(taskReport);
         }catch (Exception e) {
-            //处理Dao层出错
             e.printStackTrace();
             return null;
         }
