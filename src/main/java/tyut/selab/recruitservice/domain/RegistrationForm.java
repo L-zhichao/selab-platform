@@ -14,6 +14,7 @@ public class RegistrationForm {
     /**
      * 主键id
      */
+
     private Integer id;
     /**
      *面试者id
@@ -89,13 +90,14 @@ public class RegistrationForm {
     public static RegistrationForm fromDto(RegistrationDto registrationDto){
         RegistrationForm registrationForm = new RegistrationForm();
         registrationForm.setEmail(registrationDto.getEmail());
-        registrationForm.setPhone(Integer.toString(registrationDto.getPhone()));
+        registrationForm.setPhone(registrationDto.getPhone().toString());
         registrationForm.setIntentDepartment(registrationDto.getIntentDepartment());
         registrationForm.setGrade(registrationDto.getGrade());
         registrationForm.setClassroom(registrationDto.getClassroom());
         registrationForm.setIntroduce(registrationDto.getIntroduce());
         registrationForm.setPurpose(registrationDto.getPurpose());
         registrationForm.setInterviewTime(registrationDto.getInterviewTime());
+        registrationForm.setRemark(registrationDto.getRemark());
         return registrationForm;
     }
     public static RegistrationForm fromVo(RegistrationVo registrationVo){
