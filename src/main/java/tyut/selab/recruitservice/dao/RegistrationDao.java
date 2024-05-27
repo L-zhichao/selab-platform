@@ -1,8 +1,6 @@
 package tyut.selab.recruitservice.dao;
 
 import tyut.selab.recruitservice.domain.RegistrationForm;
-import tyut.selab.recruitservice.dto.RegistrationDto;
-import tyut.selab.recruitservice.view.RegistrationVo;
 
 import java.util.List;
 
@@ -34,7 +32,13 @@ public interface RegistrationDao {
      * @param intervieweesName
      * @return
      */
-    RegistrationForm selectByIntervieweesName(String intervieweesName);
+    List<RegistrationForm> selectByIntervieweesName(String intervieweesName);
+
+    /**
+     *  通过面试者姓名查询报名表
+     * @param intervieweesName
+     */
+    List<RegistrationForm> selectList(String intervieweesName);
 
     /**
      * 查询所有报名表
