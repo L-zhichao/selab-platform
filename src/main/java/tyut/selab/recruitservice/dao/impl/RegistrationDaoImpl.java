@@ -4,11 +4,11 @@ import tyut.selab.recruitservice.dao.RegistrationDao;
 import tyut.selab.recruitservice.domain.RegistrationForm;
 import tyut.selab.utils.JDBCTools;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -21,35 +21,37 @@ public class RegistrationDaoImpl implements RegistrationDao {
      */
     public Integer insert (RegistrationForm registrationForm) {
         try {Connection connection = JDBCTools.getConnection() ;
-            String sql = "INSERT INTO registration_form(id,interview_id,email,phone,intent_department,grade,classroom,interview_time,introduce,purpose,remark,init_time,update_time)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            registrationForm.setIntervieweesId(123456);
+            String sql = "INSERT INTO registration_form(email,phone,intent_department,grade,classroom,interview_time,introduce,purpose,remark,init_time,update_time,interview_id)VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, registrationForm.getId());
-            preparedStatement.setInt(2, registrationForm.getIntervieweesId());
-            preparedStatement.setString(3, registrationForm.getEmail());
-            preparedStatement.setString(4, registrationForm.getPhone());
-            preparedStatement.setInt(5, registrationForm.getId());
-            preparedStatement.setInt(6, registrationForm.getId());
-            preparedStatement.setString(7, registrationForm.getClassroom());
+            preparedStatement.setString(1, registrationForm.getEmail());
+            preparedStatement.setString(2, registrationForm.getPhone());
+            preparedStatement.setInt(3, registrationForm.getIntentDepartment());
+            preparedStatement.setInt(4, registrationForm.getGrade());
+            preparedStatement.setString(5, registrationForm.getClassroom());
             SimpleDateFormat s1 = new SimpleDateFormat("hh:mm:ss");
             String date1 = s1.format(registrationForm.getInterviewTime());
-            preparedStatement.setString(8, date1);
-            preparedStatement.setString(9, registrationForm.getIntroduce());
-            preparedStatement.setString(10, registrationForm.getPurpose());
-            preparedStatement.setString(11, registrationForm.getRemark());
+            preparedStatement.setString(6, date1);
+            preparedStatement.setString(7, registrationForm.getIntroduce());
+            preparedStatement.setString(8, registrationForm.getPurpose());
+            preparedStatement.setString(9, registrationForm.getRemark());
             DateTimeFormatter s2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             registrationForm.setInitTime(LocalDateTime.now());
             String date2 = s2.format(registrationForm.getInitTime());
-            preparedStatement.setString(12, date2);
+            preparedStatement.setString(10, date2);
             SimpleDateFormat s3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             registrationForm.setUpdateTime(new Date());String date3 = s3.format(registrationForm.getUpdateTime());
-            preparedStatement.setString(13, date3);
+            preparedStatement.setString(11, date3);
+            preparedStatement.setInt(12,registrationForm.getIntervieweesId());
             int rows = preparedStatement.executeUpdate();
+            System.out.println(registrationForm);
             System.out.println(rows);
             JDBCTools.free(connection);
+            return rows;
         } catch (SQLException e) {
-            System.out.println("sb");
+            e.printStackTrace();
+            return null;
         }
-        return null;
     }
     /**
      *  修改报名表信息
@@ -82,10 +84,13 @@ public class RegistrationDaoImpl implements RegistrationDao {
         preparedStatement.setInt(13,registrationForm.getId());
         int rows = preparedStatement.executeUpdate();
         System.out.println(rows);
-        JDBCTools.free(connection);}catch (SQLException e) {
-            System.out.println("sb");
+        JDBCTools.free(connection);
+        return rows;
+        }catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
-        return null;
+
     }
 
     /**
@@ -94,7 +99,34 @@ public class RegistrationDaoImpl implements RegistrationDao {
      * @return
      */
     public RegistrationForm selectByRegistrationId(Integer registrationId){
-        return null;
+        try {Connection connection = JDBCTools.getConnection() ;
+            String sql = "SELECT";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            RegistrationForm registrationForm = new RegistrationForm();
+            while (resultSet.next()){
+                registrationForm.setId(resultSet.getInt("id"));
+                registrationForm.setIntervieweesId(resultSet.getInt("interview_id"));
+                registrationForm.setEmail(resultSet.getString("email"));
+                registrationForm.setPhone(resultSet.getString("phone"));
+                registrationForm.setClassroom(resultSet.getString("classroom"));
+                registrationForm.setInterviewTime(resultSet.getDate("interview_time"));
+                registrationForm.setIntroduce(resultSet.getString("introduce"));
+                registrationForm.setPurpose(resultSet.getString("purpose"));
+                registrationForm.setRemark(resultSet.getString("remark"));
+                Instant instant = resultSet.getDate("intent_department").toInstant();
+                registrationForm.setInitTime(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()));
+                registrationForm.setIntentDepartment(resultSet.getInt("intent_department"));
+                registrationForm.setGrade(resultSet.getInt("grade"));
+                registrationForm.setUpdateTime(resultSet.getDate("update_time"));
+            } JDBCTools.free(connection);
+            return registrationForm;
+        }catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+
+
     }
 
     /**
