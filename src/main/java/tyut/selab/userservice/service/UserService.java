@@ -36,7 +36,7 @@ public interface UserService {
      * @param userId,adminId
      * @return
      */
-    Integer delete(Integer userId, Integer adminId);
+    Integer delete(Integer userId);
 
     /**
      * 新增用户

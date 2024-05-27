@@ -121,38 +121,36 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Integer updateUser(User user) {
         Connection conn = null;
-        PreparedStatement ps1 = null;
-        PreparedStatement ps2 = null;
-        int rows1;
-        int rows2;
+        PreparedStatement ps = null;
+        int rows;
         try {
             conn = JDBCUtils.getConnection();
-            String sql1 = "UPDATE sys_user SET user_name=?,email=?,phone=?,sex=?,update_time=? where user_id=?";
-            ps1 = conn.prepareStatement(sql1);
+            String sql = "UPDATE sys_user SET user_name=?,email=?,phone=?,sex=?,update_time=? where user_id=?";
+            ps = conn.prepareStatement(sql);
             //是用if判断吗？？
             if (user.getUserName() != null) {
-                ps1.setString(1, user.getUserName());
+                ps.setString(1, user.getUserName());
             }
             if (user.getEmail() != null) {
-                ps1.setString(2, user.getEmail());
+                ps.setString(2, user.getEmail());
             }
             if (user.getPhone() != null) {
-                ps1.setString(3, user.getPhone());
+                ps.setString(3, user.getPhone());
             }
             if (user.getSex() != null) {
-                ps1.setInt(4, user.getSex());
+                ps.setInt(4, user.getSex());
             }
             if (user.getUpdateTime() != null) {
-                ps1.setTimestamp(5, new Timestamp(user.getUpdateTime().getTime()));
+                ps.setTimestamp(5, new Timestamp(user.getUpdateTime().getTime()));
             }
-            ps1.setLong(6, user.getUserId());
-            rows1 = ps1.executeUpdate();
+            ps.setLong(6, user.getUserId());
+            rows = ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            JDBCUtils.closeResource(conn, ps1);
+            JDBCUtils.closeResource(conn, ps);
         }
-        return rows1;
+        return rows;
     }
     /**
     * Description: 修改用户权限

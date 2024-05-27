@@ -1,5 +1,7 @@
 package tyut.selab.userservice.service.ServiceImpl;
 
+import tyut.selab.loginservice.dto.UserLocal;
+import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.userservice.dao.DaoImpl.UserDaoImpl;
 import tyut.selab.userservice.dao.DaoImpl.UserLogoutDaoImpl;
 import tyut.selab.userservice.dao.UserDao;
@@ -20,27 +22,37 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao = new UserDaoImpl();
     private UserLogoutDao userLogoutDao = new UserLogoutDaoImpl();
 
+
     /**
     * Description: 修改用户角色
     * @param userVo
     * @return Integer
     */
-
-
-
     @Override
     public Integer updateUserRole(UserVo userVo) {
-        //dto vo??
-        User user = new User();
-        user.setUserId(userVo.getUserId());
-        user.setRoleId(userVo.getRoleId());
-        //修改时间
-        user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
-        //调用sql方法
-        return userDao.updateUserRole(user);
-
+        SecurityUtil securityUtil = new SecurityUtil();
+        UserLocal userLocal = securityUtil.getUser();
+        //判断是否为超级管理员
+        if (userLocal.getRoleId().equals(1)) {
+            User user = new User();
+            user.setUserId(userVo.getUserId());
+            user.setRoleId(userVo.getRoleId());
+            //修改时间
+            user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
+            //调用sql方法
+            return userDao.updateUserRole(user);
+        } else {
+            return 0;
+        }
     }
 
+
+
+    /**
+    * Description: 根据小组id查询用户
+    * @param groupId
+    * @return List<UserVo>
+    */
     @Override
     public List<UserVo> selectByGroupId(Integer groupId) {
 
@@ -88,6 +100,12 @@ public class UserServiceImpl implements UserService {
         return userVoList;
     }
 
+
+   /**
+   * Description: 根据用户id查询用户
+   * @param userId
+   * @return UserVo
+   */
     @Override
     public UserVo selectByUserId(Long userId) {
         System.out.println("doSelectByUserIdService");
@@ -136,27 +154,40 @@ public class UserServiceImpl implements UserService {
         return userVo;
     }
 
+
     /**
     * Description: 注销用户
     * @param userId,adminId
     * @return Integer
     */
     @Override
-    public Integer delete(Integer userId, Integer adminId) {
+    public Integer delete(Integer userId) {
         //封装Userlogout数据
-        UserLogout userLogout = new UserLogout();
-        userLogout.setUserId(userId);
-        userLogout.setAdminId(adminId);
-        //增加事务回滚
-        int rows = userDao.deleteByUserId(userLogout.getUserId());
-        //成功，保存注销记录 sys_logout
-        if (rows >= 1) {
-            userLogout.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
-            userLogoutDao.insert(userLogout);
+        SecurityUtil securityUtil = new SecurityUtil();
+        UserLocal userLocal = securityUtil.getUser();
+        if (userLocal.getRoleId().equals(2)) {
+            UserLogout userLogout = new UserLogout();
+            userLogout.setUserId(userId);
+            userLogout.setAdminId(userLocal.getRoleId());
+            //增加事务回滚
+            int rows = userDao.deleteByUserId(userLogout.getUserId());
+            //成功，保存注销记录 sys_logout
+            if (rows >= 1) {
+                userLogout.setCreateTime(new Date(System.currentTimeMillis()));
+                userLogoutDao.insert(userLogout);
+            }
+            return rows;
+        } else {
+            return 0;
         }
-        return rows;
     }
 
+
+    /**
+    * Description: 新增用户信息
+    * @param userVo
+    * @return Integer
+    */
     @Override
     public Integer save(UserVo userVo) {
         System.out.println("doSaveService");
@@ -191,31 +222,53 @@ public class UserServiceImpl implements UserService {
 
 
 
-    /**
-    * Description: 修改用户
-    * @param
-    */
+   /**
+   * Description: 修改用户信息
+   * @param userVo
+   * @return Integer
+   */
     @Override
     public Integer updateUser(UserVo userVo) {
-        User user = new User();
-        user.setUserId(userVo.getUserId());
-        user.setSex(userVo.getSex());
-        user.setUserName(userVo.getUserName());
-        user.setEmail(userVo.getEmail());
-        user.setPhone(userVo.getPhone());
-        user.setGroupId(userVo.getGroupId());
-        user.setRoleId(userVo.getRoleId());
-        user.setUpdateTime(userVo.getUpdateTime());
-        //调用sql方法
-        Integer rows = userDao.updateUser(user);
-        return rows;
+        SecurityUtil securityUtil = new SecurityUtil();
+        UserLocal userLocal = securityUtil.getUser();
+
+        if (userLocal.getRoleId().equals(2)) {
+            User user = new User();
+            user.setUserId(userVo.getUserId());
+            user.setSex(userVo.getSex());
+            user.setUserName(userVo.getUserName());
+            user.setEmail(userVo.getEmail());
+            user.setPhone(userVo.getPhone());
+            user.setGroupId(userVo.getGroupId());
+            user.setRoleId(userVo.getRoleId());
+            user.setUpdateTime(userVo.getUpdateTime());
+            //调用sql方法
+            Integer rows = userDao.updateUser(user);
+            return rows;
+        } else {
+            return 0;
+        }
     }
 
+
+    /**
+    * Description: 修改用户所属小组
+    * @param userVo
+    * @return Integer
+    */
     @Override
     public Integer updateGroup(UserVo userVo) {
-        User user = new User();
-        user.setUserId(userVo.getUserId());
-        user.setGroupId(userVo.getGroupId());
-        return userDao.updateGroup(user);
+        SecurityUtil securityUtil = new SecurityUtil();
+        UserLocal userLocal = securityUtil.getUser();
+
+        if (userLocal.getRoleId().equals(2)) {
+            User user = new User();
+            user.setUserId(userVo.getUserId());
+            user.setGroupId(userVo.getGroupId());
+            return userDao.updateGroup(user);
+        } else {
+            return 0;
+        }
     }
+
 }
