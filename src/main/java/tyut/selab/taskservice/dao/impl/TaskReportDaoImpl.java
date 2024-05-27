@@ -82,8 +82,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
         //获取小组的对应成员id
         String str="select user_id from user_group where group_id=?";
         for (TaskGroup group :taskGroups){
-            Integer groupId = group.getGroupId();
-            List<Integer> integerss = baseQuery(Integer.class, str, groupId);
+            List<Integer> integerss = baseQuery(Integer.class, str, group.getGroupId());
             integers.addAll(integerss);
         }
         return integers;

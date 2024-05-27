@@ -10,17 +10,13 @@ import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskInfoDao;
-import tyut.selab.taskservice.dao.TaskReportDao;
-import tyut.selab.taskservice.dao.impl.TaskGroupDaoImpl;
 import tyut.selab.taskservice.dao.impl.TaskInfoDaoImpl;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
-import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.WebUtil;
-import tyut.selab.taskservice.myutils.XmlParser;
 import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.service.impl.TaskReportServiceImpl;
@@ -30,15 +26,11 @@ import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.utils.Result;
 
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @className: TaskReportController
@@ -203,9 +195,11 @@ public class TaskReportController extends HttpServlet {
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
 //        TaskInfoService taskInfoService=new TaskServiceImpl();
+        //普通用户无法查看
         if (roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看汇报记录");
         }else if (roleId==2){
+            //普通管理员
             //判断参数是否为空
             if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
                  cur = Integer.parseInt(request.getParameter("cur"));
@@ -216,6 +210,7 @@ public class TaskReportController extends HttpServlet {
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
             }
+            //不输入id情况
             if (taskid==null){
                 //获取用户发布的所有任务
                 List<TaskReportVo> successT=new ArrayList<>();
@@ -418,18 +413,18 @@ select DISTINCT task_id from task_report
      */
     private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response) throws Exception {
         List<NeedReportUser> needReportUsers = new ArrayList<>();
-        //权限判断 未完成
+        //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
         Integer taskid =null;
         int cur=0;
         int size=0;
-        BufferedReader reader = request.getReader();
+
         if (roleId == 3 ){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看所有需要汇报的用户");
         }else if (roleId==2){
             //管理员只能查看自己发布的需要汇报的用户信息
-            //读取参数 cur size 未处理
+            //读取参数 cur size
             //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
             if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
                 cur = Integer.parseInt(request.getParameter("cur"));
@@ -444,7 +439,31 @@ select DISTINCT task_id from task_report
                 //获取自己的所有任务
                 String userName = userMessage.getUserName();
                 List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(userName);
-
+                List<NeedReportUser> successN=new ArrayList<>();
+                for (TaskInfoVo taskInfoVo:taskInfoVos){
+                     needReportUsers = taskReportService.queryAllUserForReport(taskInfoVo.getId());
+                    if (needReportUsers!=null) {
+                        int beginIndex = (cur - 1) * size;
+                        int endIndex = cur * size - 1;
+                        List<NeedReportUser> Page;
+                        if (beginIndex > needReportUsers.size() - 1){
+                            Page = null;
+                            successN.addAll(Page);
+                        }else if(endIndex > needReportUsers.size() - 1){
+                            Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                            successN.addAll(Page);
+                        }else{
+                            Page = needReportUsers.subList(beginIndex,endIndex+1);
+                            successN.addAll(Page);
+                        }
+                    }
+                }
+                if (successN==null){
+                    return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有需要汇报的用户");
+                }else {
+                    WebUtil.writeJson(response,Result.success(successN));
+                    return Result.success(successN);
+                }
             }
             //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
             Integer userId = userMessage.getUserId();
@@ -453,16 +472,32 @@ select DISTINCT task_id from task_report
             if (userId!=taskInfo.getPublisherId()){
                 return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报用户");
             }else {
-                //读取xml数据
-                TaskReportVo taskReportVo = XmlParser.parseXml(reader);
                 //taskid->groupid->userid
                 needReportUsers = taskReportService.queryAllUserForReport(taskid);
-
-
-                return Result.success(needReportUsers);
+//                if (needReportUsers==null){
+//                    return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
+//                }else {
+//                    return Result.success(needReportUsers);
+//                }
+                if (needReportUsers==null){
+                    return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
+                }else {
+                    int beginIndex = (cur - 1) * size;
+                    int endIndex = cur * size - 1;
+                    List<NeedReportUser> Page;
+                    if (beginIndex > needReportUsers.size() - 1){
+                        Page = null;
+                    }else if(endIndex > needReportUsers.size() - 1){
+                        Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                    }else{
+                        Page = needReportUsers.subList(beginIndex,endIndex+1);
+                    }
+                    WebUtil.writeJson(response,Result.success(Page));
+                    return Result.success(Page);
+                }
             }
         }else {
-            TaskReportVo taskReportVo = XmlParser.parseXml(reader);
+            //超级管理员
             if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
                 cur = Integer.parseInt(request.getParameter("cur"));
                 size = Integer.parseInt(request.getParameter("size"));
@@ -475,9 +510,22 @@ select DISTINCT task_id from task_report
             if (taskid!=null){
                 //查询特定任务的汇报用户
                 needReportUsers = taskReportService.queryAllUserForReport(taskid);
-
-                return null;
-
+                if (needReportUsers==null){
+                    return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
+                }else {
+                    int beginIndex = (cur - 1) * size;
+                    int endIndex = cur * size - 1;
+                    List<NeedReportUser> Page;
+                    if (beginIndex > needReportUsers.size() - 1){
+                        Page = null;
+                    }else if(endIndex > needReportUsers.size() - 1){
+                        Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                    }else{
+                        Page = needReportUsers.subList(beginIndex,endIndex+1);
+                    }
+                    WebUtil.writeJson(response,Result.success(Page));
+                    return Result.success(Page);
+                }
             }else {
                 //查询所有任务的汇报用户
                 //获取所有taskid
@@ -490,27 +538,34 @@ select DISTINCT task_id from task_report
                 if (taskids==null){
                     return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布,没有可以汇报的用户");
                 }else {
-                    List<NeedReportUser> successNeedReportUsers = new ArrayList<>();
-                    for (Integer id:taskids){
-
-                            needReportUsers = taskReportService.queryAllUserForReport(id);
-
-                        //成功返回
-                       successNeedReportUsers.addAll(needReportUsers);
-//
+                    List<NeedReportUser> successN=new ArrayList<>();
+                    for (Integer i:taskids){
+                         needReportUsers = taskReportService.queryAllUserForReport(i);
+                        if (needReportUsers!=null) {
+                            int beginIndex = (cur - 1) * size;
+                            int endIndex = cur * size - 1;
+                            List<NeedReportUser> Page;
+                            if (beginIndex > needReportUsers.size() - 1){
+                                Page = null;
+                                successN.addAll(Page);
+                            }else if(endIndex > needReportUsers.size() - 1){
+                                Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                                successN.addAll(Page);
+                            }else{
+                                Page = needReportUsers.subList(beginIndex,endIndex+1);
+                                successN.addAll(Page);
+                            }
+                        }
                     }
-                    WebUtil.writeJson(response,Result.success(successNeedReportUsers));
-                    return Result.success(successNeedReportUsers);
+                    if (successN==null){
+                        return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有需要汇报的用户");
+                    }else {
+                        WebUtil.writeJson(response,Result.success(successN));
+                        return Result.success(successN);
+                    }
                 }
-
             }
-
-
-           // return Result.success(needReportUsers);
         }
-
-
-
        }
     /**
      * 非业务接口方法
