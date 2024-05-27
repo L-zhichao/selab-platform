@@ -27,8 +27,10 @@ public interface UserService {
      */
     public UserVo selectByUserId(Long userId);
 
-
-
+    /**
+     * 用于获取全部user信息
+     */
+    public List<UserVo> queryAll();
 
 
     /**

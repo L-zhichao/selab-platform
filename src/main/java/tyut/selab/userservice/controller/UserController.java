@@ -55,7 +55,7 @@ public class UserController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pathGet = req.getPathInfo();
-
+        System.out.println(pathGet);
         System.out.println("doGet");
         //判断是否为queryById
         String[] split = pathGet.split("/");
@@ -81,41 +81,8 @@ public class UserController extends HttpServlet {
             resp.setContentType("text/html;charset=UTF-8");
             resp.getWriter().write(jsonObject.toJSONString());
        }
+//        super.doGet(req, resp);
 
-
-        System.out.println(modeName);
-        if (pathGet.equals("/query")) {
-            query(req, resp);
-        } else if (modeName.equals("queryById")) {//如何实现对动态url的检测?
-            queryById(req, resp);
-        }
-        PrintWriter out = resp.getWriter();
-        out.write("get");
-        out.flush();
-        out.close();
-        super.doGet(req, resp);
-
-
-        //resp.getWriter().write("user");
-        String uri = req.getRequestURI();
-        System.out.println("uri:" + uri);
-
-        String methodName = uri.substring(uri.lastIndexOf('/') + 1);
-        System.out.println("methodName:" + methodName);
-        //resp.getWriter().write("user");
-
-        try {
-            Method method = this.getClass().getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
-            method.invoke(this, req, resp);
-            resp.getWriter().write("update");
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        //super.doGet(req, resp);
     }
 
     @Override
@@ -138,7 +105,13 @@ public class UserController extends HttpServlet {
                 throw new RuntimeException(e);
             }
         }else if(pathPost.equals("/update")){
-            update(req, resp);
+            Result update = update(req, resp);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", update.getCode());
+            jsonObject.put("msg", update.getMsg());
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
+            resp.getWriter().write(jsonObject.toJSONString());
         }
 
     }
@@ -158,6 +131,7 @@ public class UserController extends HttpServlet {
         String groupId = request.getParameter("groupId");
         String userId = request.getParameter("userId");
         List<UserVo>  usersByGroupId = new ArrayList<>();
+        List<UserVo> Alluser = new ArrayList<>();
         List<UserVo> ResultList = new ArrayList<>();
         UserVo userByUserId = null;
         if (userId != null && groupId != null){
@@ -172,6 +146,10 @@ public class UserController extends HttpServlet {
             if (userId != null && groupId == null ) {
                 userByUserId = userService.selectByUserId(Long.valueOf(userId));
                 ResultList.add(userByUserId);
+            }
+            if (userId == null && groupId == null){
+                Alluser = userService.queryAll();
+                ResultList.addAll(Alluser);
             }
         }
         return Result.success(ResultList);

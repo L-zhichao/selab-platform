@@ -40,6 +40,59 @@ public class UserServiceImpl implements UserService {
         return userDao.updateUserRole(user);
 
     }
+    /**
+     * 查询所有用户
+     */
+
+    @Override
+    public List<UserVo> queryAll(){
+        List<User> users = userDao.selectAll();
+        List<UserVo> resultList = new ArrayList<>();
+
+        for(User user:users) {
+            UserVo userVo = new UserVo();
+
+            Long userid = user.getUserId();
+            String username = user.getUserName();
+            Integer roleld = user.getRoleId();
+            Integer groupId = user.getGroupId();
+            String groupName = userDao.getGroupName(groupId);
+            String email = user.getEmail();
+            String phone = user.getPhone();
+            Integer sex = user.getSex();
+
+            Date createTime = (Date) user.getCreateTime();
+            Date updateTime = (Date) user.getUpdateTime();
+
+            //对rolename的判断
+            if (roleld == 1) {
+
+                userVo.setRoleName("超级管理员");
+            } else if (roleld == 2) {
+                userVo.setRoleName("管理员");
+
+            } else {
+                userVo.setRoleName("用户");
+            }
+            userVo.setUserName(username);
+            userVo.setGroupId(groupId);
+            userVo.setGroupName(groupName);
+            userVo.setRoleId(roleld);
+            userVo.setEmail(email);
+            userVo.setPhone(phone);
+            userVo.setSex(sex);
+            userVo.setUserId(userid);
+            userVo.setCreateTime(createTime);
+            userVo.setUpdateTime(updateTime);
+
+            resultList.add(userVo);
+        }
+
+
+
+        return resultList;
+    }
+
 
     @Override
     public List<UserVo> selectByGroupId(Integer groupId) {
@@ -58,9 +111,9 @@ public class UserServiceImpl implements UserService {
             String email = user.getEmail();
             String phone = user.getPhone();
             Integer sex = user.getSex();
-            java.util.Date date = new java.util.Date();
-            Date createTime = new java.sql.Date(date.getTime());
-            Date updateTime = new java.sql.Date(date.getTime());
+
+            Date createTime = (Date) user.getCreateTime();
+            Date updateTime = (Date) user.getUpdateTime();
 
             //对rolename的判断
             if(roleld == 1){
@@ -90,7 +143,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVo selectByUserId(Long userId) {
-        System.out.println("doSelectByUserIdService");
+
         User userSelectByUserId = userDao.selectByUserIdUser(userId);
 
         UserVo userVo = new UserVo();
@@ -107,8 +160,8 @@ public class UserServiceImpl implements UserService {
         Integer sex = userSelectByUserId.getSex();
 
         java.util.Date date = new java.util.Date();
-        Date createTime = new java.sql.Date(date.getTime());
-        Date updateTime = new java.sql.Date(date.getTime());
+        Date createTime = (Date) userSelectByUserId.getCreateTime();
+        Date updateTime = (Date) userSelectByUserId.getUpdateTime();
 
         //对rolename的判断
         if(roleld == 1){
@@ -159,7 +212,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer save(UserVo userVo) {
-        System.out.println("doSaveService");
+
         User userSave = new User();
 
         String userName =  userVo.getUserName();

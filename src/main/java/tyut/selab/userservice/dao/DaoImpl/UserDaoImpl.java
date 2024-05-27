@@ -84,7 +84,9 @@ public class UserDaoImpl implements UserDao {
 
 
 
-    //用于获取groupName
+    /**
+     通过grouoId查询小组的名字
+     */
     @Override
     public String getGroupName(Integer groupId) {
         Connection conn = null;
@@ -108,8 +110,6 @@ public class UserDaoImpl implements UserDao {
         }finally {
             JDBCUtils.closeResource(conn,pstmt);
         }
-
-
 
     }
 
@@ -248,13 +248,79 @@ public class UserDaoImpl implements UserDao {
         }
         return user;
     }
+
     /**
-        通过grouoId查询小组的名字
+     * 查询所有用户
+     * @return
      */
+    @Override
+    public List<User> selectAll(){
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        Long userId = null;
+        ArrayList<User> userArray = new ArrayList<>();
 
 
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ," +
+                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user ";
+            pstmt = conn.prepareStatement(sql);
+            ResultSet resultSet = pstmt.executeQuery();
+            while (resultSet.next()) {
+                User user = new User();
+                int del_flag = resultSet.getInt("delFlag");
 
-    /**
+                if (del_flag == 0) {
+                    userId = resultSet.getLong("userId");
+                    String username = resultSet.getString("userName");
+                    Integer roleld = resultSet.getInt("roleId");
+                    //rolename在业务层
+                    //组名在业务层加
+                    String email = resultSet.getString("email");
+                    String phone = resultSet.getString("phone");
+                    Integer sex = resultSet.getInt("sex");
+                    Date createTime = resultSet.getDate("createTime");
+                    Date updateTime = resultSet.getDate("updateTime");
+
+
+                    user.setUserId(userId);
+                    user.setUserName(username);
+                    user.setRoleId(roleld);
+                    user.setCreateTime(createTime);
+                    user.setUpdateTime(updateTime);
+                    user.setEmail(email);
+                    user.setPhone(phone);
+                    user.setSex(sex);
+                }
+
+                //接收groupId
+                String sql2 = "select group_id as groupId from user_group where user_id = ?";
+                pstmt = conn.prepareStatement(sql2);
+                pstmt.setLong(1, userId);
+                ResultSet Group = pstmt.executeQuery();
+                while (Group.next()) {
+                    Integer groupId = Group.getInt("groupId");
+                    user.setGroupId(groupId);
+                }
+                Group.close();
+                userArray.add(user);
+            }
+            resultSet.close();
+            return userArray;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            JDBCUtils.closeResource(conn,pstmt);
+
+        }
+
+    }
+
+
+        /**
      * 通过groupId查询用户信息
      * @param groupId
      * @return
@@ -285,6 +351,8 @@ public class UserDaoImpl implements UserDao {
             return userArray;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }finally {
+            JDBCUtils.closeResource(conn,pstmt);
         }
 
     }
@@ -297,22 +365,63 @@ public class UserDaoImpl implements UserDao {
     public ArrayList<User> selectByUserName(String userName) {
         Connection conn = null;
         PreparedStatement pstmt = null;
+        Long userId = null;
+        ArrayList<User> userArray = new ArrayList<>();
+
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "select * from sys_user where user_name = ?";
-            pstmt.setString(1,userName);
-            int count = pstmt.executeUpdate();
+            String sql = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ," +
+                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user where user_name like ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,"%"+userName+"%");
+            ResultSet resultSet = pstmt.executeQuery();
+            while (resultSet.next()){
+                User user = new User();
+                int del_flag = resultSet.getInt("delFlag");
+
+                if (del_flag == 0) {
+                    userId = resultSet.getLong("userId");
+                    String username = resultSet.getString("userName");
+                    Integer roleld = resultSet.getInt("roleId");
+                    //rolename在业务层
+                    //组名在业务层加
+                    String email = resultSet.getString("email");
+                    String phone = resultSet.getString("phone");
+                    Integer sex = resultSet.getInt("sex");
+                    Date createTime = resultSet.getDate("createTime");
+                    Date updateTime = resultSet.getDate("updateTime");
+
+
+                    user.setUserId(userId);
+                    user.setUserName(username);
+                    user.setRoleId(roleld);
+                    user.setCreateTime(createTime);
+                    user.setUpdateTime(updateTime);
+                    user.setEmail(email);
+                    user.setPhone(phone);
+                    user.setSex(sex);
+                }
+                resultSet.close();
+                //接收groupId
+                String sql2 = "select group_id as groupId from user_group where user_id = ?";
+                pstmt = conn.prepareStatement(sql2);
+                pstmt.setLong(1,userId);
+                ResultSet Group = pstmt.executeQuery();
+                while (Group.next()){
+                    Integer groupId = Group.getInt("groupId");
+                    user.setGroupId(groupId);
+                }
+                Group.close();
+
+                userArray.add(user);
+
+            }
+            return userArray;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
             JDBCUtils.closeResource(conn,pstmt);
         }
-
-
-
-
-
-        return null;
     }
 
     /**
