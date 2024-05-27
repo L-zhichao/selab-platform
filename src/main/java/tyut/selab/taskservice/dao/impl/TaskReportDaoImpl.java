@@ -28,8 +28,6 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @return
      */
     public Integer insert(TaskReport record){
-        String sql1="select report_id from task_report where task_id=? and user_id=? and report_status=? and details=? and create_time=?";
-        String sql="INSERT INTO task_reports (task_id, user_id, report_status, details, create_time) VALUES (?, ?, ?, ?, ?)";
 
         Object[] report =new Object[]{
                 record.getTaskId(),
@@ -39,7 +37,16 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
                 record.getCreateTime()
         };
 
-        return baseUpdate(sql,report);
+        String sql1="select report_id from task_report where task_id=? and user_id=? and report_status=? and details=? and create_time=?";
+        String sql="INSERT INTO task_reports (task_id, user_id, report_status, details, create_time) VALUES (?, ?, ?, ?, ?)";
+
+        Integer rowsAffected;
+        try {
+            rowsAffected = baseUpdate(sql, report);
+        }catch (RuntimeException e){
+            throw e;
+        }
+        return rowsAffected;
     }
 
     /**
