@@ -22,7 +22,7 @@ public class daoTest {
         registrationForm.setClassroom("1");
         registrationForm.setInterviewTime(new Date());
         registrationForm.setIntroduce("1");
-        registrationForm.setPurpose("1");
+        registrationForm.setPurpose("2");
         registrationForm.setRemark("1");
         registrationForm.setIntentDepartment(0);
         registrationForm.setGrade(0);
