@@ -1,6 +1,11 @@
 package tyut.selab.loginservice.controller;
 
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.dto.UserLoginReq;
@@ -14,11 +19,6 @@ import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.loginservice.utils.WebUtils;
 import tyut.selab.utils.Result;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 

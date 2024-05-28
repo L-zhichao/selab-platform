@@ -1,8 +1,6 @@
 package tyut.selab.recruitservice.dao;
 
 import tyut.selab.recruitservice.domain.RegistrationForm;
-import tyut.selab.recruitservice.dto.RegistrationDto;
-import tyut.selab.recruitservice.view.RegistrationVo;
 
 import java.util.List;
 

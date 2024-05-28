@@ -1,7 +1,6 @@
 package tyut.selab.taskservice.service;
 
 import tyut.selab.taskservice.dto.NeedReportUser;
-import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;

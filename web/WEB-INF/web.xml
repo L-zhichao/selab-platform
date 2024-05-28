@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
-         version="4.0">
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
 <!--检测用户是否登录的过滤器配置-->
 <!--用户信息存放到session中的键的名字-->
 <context-param>
@@ -17,26 +17,9 @@
 <!--不需要拦截的URL列表;注意配置时不要拦截后台对用户和密码判断的页面,否则可能登录登录不进主界面-->
 <context-param>
     <param-name>uncheckedUrls</param-name>
-    <!--这里不对，要改-->
-    <param-value>/index.jsp,/LoginServlet</param-value>
+    <!--这里不对?-->
+    <param-value>/loginservice/*</param-value>
 </context-param>
 
-<filter>
-    <filter-name>LoginFilter</filter-name>
-    <filter-class>tyut.selab.loginservice.Filter.LoginFilter</filter-class>
-</filter>
-<filter-mapping>
-    <filter-name>LoginFilter</filter-name>
-    <!--过滤站点下所有文件,也可设置成过滤某一类文件如:  "*.jsp" 或是过滤掉某一个文件夹下的所有文件,如: "/目录名/*" -->
-    <url-pattern>/*</url-pattern>
-</filter-mapping>
-    <filter>
-    <filter-name>CrosFilter</filter-name>
-    <filter-class>tyut.selab.loginservice.Filter.CrosFilter</filter-class>
-</filter>
-<filter-mapping>
-    <filter-name>CrosFilter</filter-name>
-    <!--过滤站点下所有文件,也可设置成过滤某一类文件如:  "*.jsp" 或是过滤掉某一个文件夹下的所有文件,如: "/目录名/*" -->
-    <url-pattern>/*</url-pattern>
-</filter-mapping>
+
 </web-app>

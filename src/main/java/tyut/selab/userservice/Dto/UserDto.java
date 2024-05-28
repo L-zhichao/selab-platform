@@ -1,7 +1,6 @@
 package tyut.selab.userservice.Dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @className: UserDto

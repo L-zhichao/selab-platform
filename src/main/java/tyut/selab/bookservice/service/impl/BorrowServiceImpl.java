@@ -1,6 +1,5 @@
 package tyut.selab.bookservice.service.impl;
 
-import tyut.selab.bookservice.domain.BorrowBook;
 import tyut.selab.bookservice.service.BorrowService;
 import tyut.selab.bookservice.vo.BorrowBookVo;
 

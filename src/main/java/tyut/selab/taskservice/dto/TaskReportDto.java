@@ -1,7 +1,6 @@
 package tyut.selab.taskservice.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @className: TaskReportDto

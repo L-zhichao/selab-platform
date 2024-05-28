@@ -1,18 +1,15 @@
 package tyut.selab.recruitservice.controller;
 
-import tyut.selab.recruitservice.dto.RegistrationDto;
-import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.recruitservice.service.RegistrationService;
-import tyut.selab.recruitservice.view.RegistrationVo;
+import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
 import tyut.selab.utils.Result;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet(name = "RegistrationController",urlPatterns = {})
 public class RegistrationController extends HttpServlet {

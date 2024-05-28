@@ -1,8 +1,8 @@
 package tyut.selab.loginservice.utils;
+
 import com.alibaba.druid.util.StringUtils;
 import io.jsonwebtoken.*;
 
-import javax.mail.internet.HeaderTokenizer;
 import java.util.Date;
 
 /**
