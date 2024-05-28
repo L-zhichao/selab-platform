@@ -31,7 +31,7 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
             throw new IllegalArgumentException("id不能为空");
         }
 
-        String sql = "delete from task_info where id=?";
+        String sql = "update task_info set del_flag = 1 where id=?";
         Integer rowsAffected;
         try {
             // 调用baseUpdate方法，传递SQL语句和参数
@@ -92,7 +92,7 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
     public Integer updateBytaskId(TaskInfo record){
         String sql =
                 """
-                update task_info set updater_id = ?,name = ?,content=?,deal_time = ?,update_time = now() where id = ?
+                update task_info set updater_id = ?,name = ?,content=?,deal_time = ?,update_time = now() where id = ? and del_flag = 0
                 """;
         return baseUpdate(sql,record.getUpdaterId(), record.getName(),record.getContent(),record.getDealTime(),record.getId());
     }

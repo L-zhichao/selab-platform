@@ -36,6 +36,7 @@ public class TaskServiceImpl implements TaskInfoService {
         //将数据封装进TaskInfo对象
         TaskInfo tInfo = taskInfoDtoConvert(taskInfoDto);
         Integer taskId = taskInfoDao.insert(tInfo);
+
         //将数据封装进TaskGroup对象列表(自增id，任务id，小组id）
             //先获取任务的id
         //遍历数组，将数据封装进集合
@@ -63,15 +64,23 @@ public class TaskServiceImpl implements TaskInfoService {
         TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
 
         if(taskInfo!=null){//任务存在
-            try {
-                taskInfo.setDelFlag(0);
-                //执行删除
-                Integer i = taskInfoDao.deleteByPrimaryKey(taskId);
-                taskInfo.setDelFlag(1);//更改删除状态
-                return i;
-            } catch (Exception e) {
-                e.printStackTrace();
+//            try {
+//                taskInfo.setDelFlag(0);
+//                //执行删除
+//                Integer i = taskInfoDao.deleteByPrimaryKey(taskId);
+//                taskInfo.setDelFlag(1);//更改删除状态
+//                return i;
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+            //将taskInfo表中的del——flag改为1
+            taskInfoDao.deleteByPrimaryKey(taskId);
+            //删除taskGroup中的任务和小组的对应关系
+            List<TaskGroup> list = taskGroupDao.selectAllTaskGroupsByTaskId(taskId);
+            for (TaskGroup taskGroup : list){
+                taskGroupDao.deleteByPrimaryKey(taskGroup.getId());
             }
+            return 1;
         }
         return 0;
     }
@@ -90,7 +99,7 @@ public class TaskServiceImpl implements TaskInfoService {
             if (taskInfo != null) {//标识存在任务对象
                 //将数据封装进入 TaskInfo 对象
                 TaskInfo tInfo = taskInfoDtoConvert(taskInfoDto);
-
+                tInfo.setId(taskId);
 
                 //删除上次保存的任务和小组对应关系
                 List<TaskGroup> pastList = taskGroupDao.selectAllTaskGroupsByTaskId(taskId);
@@ -124,6 +133,9 @@ public class TaskServiceImpl implements TaskInfoService {
             taskInfoVo = taskInfoConvert(taskInfo);
             //将所有的数据封装成taskinfovo返回
         }
+        if (taskInfoVo == null){
+            return null;
+        }
         return taskInfoVo;
     }
 
@@ -137,6 +149,9 @@ public class TaskServiceImpl implements TaskInfoService {
             //有任务的话就封装，没有任务的话返回空集合
             for (TaskInfo taskInfo : taskInfos) {
                 TaskInfoVo taskInfoVo = taskInfoConvert(taskInfo);
+                if (taskInfoVo == null){
+                    continue;
+                }
                 taskInfoVos.add(taskInfoVo);
             }
         }
@@ -166,11 +181,15 @@ public class TaskServiceImpl implements TaskInfoService {
         //查询groupTask表格，查询groupId对应的所有任务id
         List<TaskGroup> list = taskGroupDao.selectByGroupId(groupId);
         //查询TaskInfo表格，将所有的任务id相对的任务进行返回
+            //在taskgroup表格中，有很多的关系已经被废弃，需要删除
         //将所有的任务封装返回
         List<TaskInfoVo> taskInfoVos = new ArrayList<>();
         for (TaskGroup taskGroup : list) {
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskGroup.getTaskId());
             TaskInfoVo taskInfoVo = taskInfoConvert(taskInfo);
+            if (taskInfoVo == null){
+                continue;
+            }
             taskInfoVos.add(taskInfoVo);
         }
         return taskInfoVos;
@@ -180,7 +199,7 @@ public class TaskServiceImpl implements TaskInfoService {
     /**
      * 实现类内部的方法，将数据库中查询到的TaskInfo对象封装为TaskInfoVo传给前端
      * @param taskInfo
-     * @return
+     * @return 正常返回taskinfovo对象，如果返回null标识异常
      */
     private TaskInfoVo taskInfoConvert(TaskInfo taskInfo) {
 
@@ -199,6 +218,10 @@ public class TaskServiceImpl implements TaskInfoService {
 
             //将查到的数据和sys_user进行查询，找到publisher名字
             String publisherName = taskGroupDao.findPublisherNameById(taskInfo.getPublisherId());
+            if (publisherName == null){
+                delete(taskInfo.getId());
+                return null;
+            }
             taskInfoVo.setPublisherName(publisherName);
 
         //将任务截至时间和当前时间进行比对，判断是否结束
@@ -226,6 +249,6 @@ public class TaskServiceImpl implements TaskInfoService {
         tInfo.setName(taskInfoDto.getName());
         tInfo.setContent(taskInfoDto.getContent());
         tInfo.setDealTime(taskInfoDto.getDealTime());
-        return null;
+        return tInfo ;
     }
 }
