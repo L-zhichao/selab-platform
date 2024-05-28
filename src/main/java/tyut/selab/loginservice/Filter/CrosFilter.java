@@ -6,14 +6,24 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @WebFilter(filterName = "CrosFilter", urlPatterns = {"/*"})
 public class CrosFilter implements Filter {
-
+    public List<String> ignoreUrl
+            = Arrays.asList(
+            "/LoginController","login","/register");
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpServletRequest request =(HttpServletRequest) servletRequest;
+        String requestURI =request.getRequestURI();
+        if (ignoreUrl.contains(requestURI)) {
+            //放行
+            filterChain.doFilter(request, response);
+        }
+
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, HEAD");
         response.setHeader("Access-Control-Max-Age", "3600");
