@@ -83,7 +83,7 @@ public class TaskController extends HttpServlet {
         if (i == 0 ){
             return Result.error(HttpStatus.CONFLICT,"任务已存在");
         }else{
-            return Result.success(null);
+            return Result.success(null,"添加成功");
         }
     }
 
@@ -191,7 +191,7 @@ public class TaskController extends HttpServlet {
            }
        }
        //查询后进行分页
-       return Result.success(taskInfoVoPage);
+       return Result.success(taskInfoVoPage,"请求成功");
    }
 
     /**
@@ -238,7 +238,7 @@ public class TaskController extends HttpServlet {
           return Result.error(HttpStatus.CONFLICT,"修改的任务和现有的任务冲突");
       }
       else{
-          return Result.success(null);
+          return Result.success(null,"操作成功");
       }
   }
 
@@ -296,7 +296,7 @@ public class TaskController extends HttpServlet {
 
 
         if (flag){
-            return Result.success(taskInfoVo);
+            return Result.success(taskInfoVo,"请求成功");
         }else{
             return Result.error(HttpStatus.UNAUTHORIZED,"权限不允许查询");
         }
@@ -421,6 +421,7 @@ public class TaskController extends HttpServlet {
         } catch (NullPointerException e1){
             e1.printStackTrace();
             result = Result.error(HttpStatus.NOT_FOUND,"缺少参数");
+            WebUtil.writeJson(resp,result);
         }
         catch (Exception e2) {
             e2.printStackTrace();

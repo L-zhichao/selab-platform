@@ -52,6 +52,12 @@ public class Result<T> {
     public static <T> Result<T> success(T data){
         return new Result(200,data,"");
     }
+
+    //请求成功返回对应信息
+    public static <T> Result<T> success(T data,String msg){
+        return new Result(200,data,msg);
+    }
+
     public static <T> Result<T> error(Integer code,String msg){
         return new Result<>(code,null,msg);
     }
