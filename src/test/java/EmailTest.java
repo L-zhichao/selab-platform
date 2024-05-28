@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
+import static tyut.selab.loginservice.common.Constant.VERIFICATION_HTML_TEXT;
+
 public class EmailTest {
     @Test
     public void test(){
@@ -153,5 +155,14 @@ public class EmailTest {
     public void passwordTest(){
         String password = "wW15博567897";
         System.out.println(QQEmailService.checkPassword(password));
+    }
+    @Test
+    public void qqEmailTest2(){
+        String verify = SecurityUtil.getRandom();
+        String head = "平台注册验证码信息";
+        String type = "QQ邮箱注册平台";
+        String body = String.format(VERIFICATION_HTML_TEXT,head,"李少博",type,verify,"注册");
+        String flag = VERIFICATION_HTML_TEXT;
+        System.out.println(body);
     }
 }

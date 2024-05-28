@@ -149,14 +149,12 @@ public class LoginController extends HttpServlet {
                 //将验证码存入到Session中Session的有效期是60秒
                 HttpSession session = request.getSession();
                 String head = "平台注册验证码信息";
+                String type = "QQ邮箱注册平台";
                 //如果我们的session是新创建的那么就重新执行一遍发验证码的逻辑
                 if(session.isNew()) {
                     session.setMaxInactiveInterval(60);
                     String verify = SecurityUtil.getRandom();
-                    String body = "欢迎您来注册我们的系统！！！<br>" +
-                            "这是您的验证码信息：<h3>" + verify + "<h3>。<br>" +
-                            "验证码的有效期是60秒, 请在指定时间内填写验证信息<br>" +
-                            "注意不要将自己的验证信息透露给别人";
+                    String body = String.format(VERIFICATION_HTML_TEXT,head,userRegisterDto.getUserName(),type,verify,"注册");
                     boolean flag = true;
                     try {
                         QQEmailService.qqemail(userRegisterDto.getEmail(), head, body);
