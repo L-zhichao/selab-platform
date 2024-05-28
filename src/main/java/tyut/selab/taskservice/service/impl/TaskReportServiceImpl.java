@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -38,10 +39,11 @@ public class TaskReportServiceImpl implements TaskReportService {
      * @param taskReportDto
      * @return
      */
-    //1.尚未增加查重，更新（updateByReportId），删除（deleteByReportId）功能
-    //2.如何获取用户id
+
+    //如何获取用户id
     public Integer save(TaskReportDto taskReportDto) {
 
+        //新增
         // 验证输入参数
         if (taskReportDto == null) {
             throw new IllegalArgumentException("任务汇报对象不能为空");
@@ -55,9 +57,12 @@ public class TaskReportServiceImpl implements TaskReportService {
         if (taskReportDto.getDetails()==null) {
             throw new IllegalArgumentException("汇报信息不能为空");
         }
+
         //查重
-
-
+        int isConflict = taskReportDao.conflict(taskReportDto);
+        if(isConflict==1){
+            throw new RuntimeException("存在相同汇报信息");
+        }
 
         // 创建TaskReport对象
         TaskReport taskReport = new TaskReport();

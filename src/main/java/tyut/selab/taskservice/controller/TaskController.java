@@ -332,24 +332,19 @@ public class TaskController extends HttpServlet {
         Integer roleId = loginUser.getRoleId();
         String userName = loginUser.getUserName();
 
-        if(roleId==3){
+        if (!(taskInfoVo.getPublisherName().equals(userName))||roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"权限不足，无法删除");
-        } else if (roleId==2) {//管理员不能删除非本人发布的任务
-            if (!(taskInfoVo.getPublisherName().equals(userName))){
-                return Result.error(HttpStatus.UNAUTHORIZED,"权限不足，无法删除");
+        }else {
+            //删除任务
+            Integer delete = taskInfoService.delete(taskId);
+
+            //根据操作结果构造Result对象并返回
+            if(delete!=0){
+                return Result.success(null);
+            }else {
+                return Result.error(HttpStatus.ERROR,"删除失败");
             }
         }
-
-        //删除任务
-        Integer delete = taskInfoService.delete(taskId);
-
-        //根据操作结果构造Result对象并返回
-        if(delete!=0){
-            return Result.success(null);
-        }else {
-            return Result.error(HttpStatus.ERROR,"删除失败");
-        }
-
     }
 
 

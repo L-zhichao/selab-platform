@@ -1,6 +1,8 @@
 package tyut.selab.taskservice.dao;
 
 import tyut.selab.taskservice.domain.TaskReport;
+import tyut.selab.taskservice.dto.TaskInfoDto;
+import tyut.selab.taskservice.dto.TaskReportDto;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -78,4 +80,12 @@ public interface TaskReportDao {
      * @return taskid
      * */
     public Integer queryTaskIdByrid(Integer reportId);
+
+    /**
+     * 根据传入的taskReportDto对象判断在数据库中是否冲突
+     * @param taskReportDto
+     * @return 返回1 标识任务和现有的任务冲突，返回0 标识不冲突
+     */
+    Integer conflict (TaskReportDto taskReportDto);
+
 }

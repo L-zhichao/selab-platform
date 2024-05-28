@@ -40,7 +40,7 @@ import java.util.List;
  * @version: 1.0
  */
 @WebServlet("/task/report/*")
-public class TaskReportController extends HttpServlet {
+    public class TaskReportController extends HttpServlet {
 
     private Result resultMaker = new Result(HttpStatus.SUCCESS,null);
     private TaskReportService taskReportService =new TaskReportServiceImpl();
@@ -107,7 +107,7 @@ public class TaskReportController extends HttpServlet {
         TaskReportDto taskReportDto =WebUtil.readJson(request,TaskReportDto.class);
         Integer save = taskReportService.save(taskReportDto);
         if(save!=null){
-            return Result.success(null);
+            return Result.success(null);//待修改
         }else{
             return Result.error(HttpStatus.ERROR,"汇报失败");//?????
         }
@@ -132,10 +132,9 @@ public class TaskReportController extends HttpServlet {
             return  Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
         }
 
-        //获取管理员id
+        //获取用户id
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
-
 
         //权限不够-->管理员查询非自己发布的任务 && 普通用户
         if(!(taskReport.getUserId().equals(roleId)) && roleId==3){
@@ -172,7 +171,7 @@ public class TaskReportController extends HttpServlet {
       //  taskReportVos = taskReportService.queryByUserIdAndTaskId(taskId, userId);
 
         if(taskReportVos!=null){
-            return Result.success(null);
+            return Result.success(null);//嗲修改
         }else {
             return Result.error(HttpStatus.ERROR,"查询失败");//????
         }

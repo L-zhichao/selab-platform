@@ -3,7 +3,10 @@ package tyut.selab.taskservice.dao.impl;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.domain.TaskGroup;
+import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
+import tyut.selab.taskservice.dto.TaskInfoDto;
+import tyut.selab.taskservice.dto.TaskReportDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +118,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public Integer updateByReportId(TaskReport record){
 
+            String sql1="SELECT * FROM task_report WHERE report_id = ?";
             String sql = "UPDATE task_report SET task_id = ?, report_status = ? WHERE details = ?";
 
             Object[] report = new Object[]{
@@ -167,6 +171,17 @@ String sql= """
     public Integer queryTaskIdByrid(Integer reportId){
         String sql1="select task_id from task_report where report_id=?";
         return baseQueryObject(Integer.class, sql1,reportId);
+    }
+
+    @Override
+    public Integer conflict(TaskReportDto taskReportDto) {
+        String sql="select count(*) from task_report where task_id =? and report_status=? and details=?";
+        TaskInfo taskInfo = baseQueryObject(TaskInfo.class, sql, taskReportDto.getTaskId(), taskReportDto.getReportStatus(), taskReportDto.getDetails());
+        if(taskInfo!=null){
+            return 1;
+        }else {
+            return 0;
+        }
     }
 
 }
