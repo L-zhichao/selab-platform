@@ -17,7 +17,7 @@ import static tyut.selab.loginservice.common.Constant.STATUS_CODE_NON_TOKEN;
 /**
  * Description: 所有请求都走此过滤器来判断用户是否登录
  **/
-@WebFilter(filterName = "LoginFilter", urlPatterns = {"/*"})
+@WebFilter(filterName = "LoginFilter", urlPatterns = {"/loginservice"})
 public class LoginFilter implements Filter{
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
