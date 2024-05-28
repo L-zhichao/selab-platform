@@ -23,6 +23,11 @@ public interface UserDao {
     public Integer insertUser(User user);
 
     /**
+     * 查询所有用户
+     */
+    public List<User> selectAll();
+
+    /**
      *通过groupId
      */
     public String getGroupName(Integer groupId);

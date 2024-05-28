@@ -48,16 +48,20 @@ import static jdk.jfr.internal.consumer.EventLog.update;
 @WebServlet(name = "UserController",value = "/user/*")
 public class UserController extends HttpServlet {
 
+
+
     private UserServiceImpl userService = new UserServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pathGet = req.getPathInfo();
         System.out.println(pathGet);
-        String methodName = pathGet.substring(pathGet.indexOf("user/")+2);
-        System.out.println("methodName = " + methodName);
+        System.out.println("doGet");
+        //判断是否为queryById
+        String[] split = pathGet.split("/");
+        String modeName = split[1];
 
-        if(methodName.equals("query")){
+        if(modeName.equals("query")){
             Result query = query(req, resp);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", query.getCode());
@@ -67,7 +71,7 @@ public class UserController extends HttpServlet {
             resp.setContentType("text/html;charset=UTF-8");
             resp.getWriter().write(jsonObject.toJSONString());
 
-        }else if(methodName.equals("queryById")){
+        }else if(modeName.equals("queryById")){
             Result queryById = queryById(req, resp);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", queryById.getCode());
@@ -76,7 +80,7 @@ public class UserController extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("text/html;charset=UTF-8");
             resp.getWriter().write(jsonObject.toJSONString());
-       } else if (methodName.equals("logout")) {
+       } else if (modeName.equals("logout")) {
             Result logout = logout(req, resp);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", logout.getCode());
@@ -85,7 +89,7 @@ public class UserController extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("text/html;charset=UTF-8");
             resp.getWriter().write(jsonObject.toJSONString());
-        } else if (methodName.equals("role/update")) {
+        } else if (modeName.equals("role/update")) {
             Result updateRole = updateRole(req, resp);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", updateRole.getCode());
@@ -103,7 +107,6 @@ public class UserController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
 
         String pathPost = req.getPathInfo();
-        System.out.println("pathPost:"+pathPost);
 
 
         if(pathPost.equals("/save")){
@@ -120,7 +123,13 @@ public class UserController extends HttpServlet {
                 throw new RuntimeException(e);
             }
         }else if(pathPost.equals("/update")){
-            update(req, resp);
+            Result update = update(req, resp);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", update.getCode());
+            jsonObject.put("msg", update.getMsg());
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
+            resp.getWriter().write(jsonObject.toJSONString());
         }
 
     }
@@ -138,6 +147,7 @@ public class UserController extends HttpServlet {
         String groupId = request.getParameter("groupId");
         String userId = request.getParameter("userId");
         List<UserVo>  usersByGroupId = new ArrayList<>();
+        List<UserVo> Alluser = new ArrayList<>();
         List<UserVo> ResultList = new ArrayList<>();
         UserVo userByUserId = null;
         if (userId != null && groupId != null){
@@ -152,6 +162,10 @@ public class UserController extends HttpServlet {
             if (userId != null && groupId == null ) {
                 userByUserId = userService.selectByUserId(Long.valueOf(userId));
                 ResultList.add(userByUserId);
+            }
+            if (userId == null && groupId == null){
+                Alluser = userService.queryAll();
+                ResultList.addAll(Alluser);
             }
         }
         return Result.success(ResultList);
