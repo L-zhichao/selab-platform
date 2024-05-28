@@ -1,6 +1,7 @@
 package tyut.selab.taskservice.dao;
 
 import tyut.selab.taskservice.domain.TaskInfo;
+import tyut.selab.taskservice.dto.TaskInfoDto;
 
 import java.util.List;
 
@@ -54,4 +55,11 @@ public interface TaskInfoDao {
      */
     List<TaskInfo> selectByDealTimeTaskInfos();
 
+
+    /**
+     * 根据传入的taskinfodto对象判断在数据库中是否冲突
+     * @param taskInfoDto
+     * @return 返回1 标识任务和现有的任务冲突，返回0 标识不冲突
+     */
+    int conflict(TaskInfoDto taskInfoDto,Integer taskId);
 }

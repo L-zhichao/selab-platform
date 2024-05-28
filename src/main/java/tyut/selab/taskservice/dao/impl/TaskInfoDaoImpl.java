@@ -4,6 +4,7 @@ import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskInfoDao;
 import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskInfo;
+import tyut.selab.taskservice.dto.TaskInfoDto;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -116,6 +117,17 @@ public class TaskInfoDaoImpl  extends BaseDao implements TaskInfoDao {
      */
     public List<TaskInfo> selectByDealTimeTaskInfos(){
         return null;
+    }
+
+    @Override
+    public int conflict(TaskInfoDto taskInfoDto,Integer taskId) {
+        String sql = "select id from task_info where name = ? and content = ?  and del_flag = 0 and id != ?";
+        TaskInfo taskInfo1 = baseQueryObject(TaskInfo.class, sql, taskInfoDto.getName(), taskInfoDto.getContent(),taskId);
+        if (taskInfo1 != null){
+            return 1;
+        }else{
+            return 0;
+        }
     }
 
 }

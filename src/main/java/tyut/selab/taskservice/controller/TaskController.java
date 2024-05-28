@@ -268,21 +268,17 @@ public class TaskController extends HttpServlet {
             flag = true;
         }
         else if(roleId == 3) {
-            //判断请求用户的查询任务是否是该用户所接取的任务之一//用户id是否是任务所包含小组中人员中的一个
-            Integer userId = userMessage.getUserId();
-            //未实现，等别人写完queryTaskInfoByUserId接口后再写
-            //查询用户收到的信息
-                //查询用户所在的小组
-                //查小组对应的任务id
-                //查询task_info表格返回taskinfo对象
-                //将查询到的taskinfo对象封装成一个taskinfovo对象，放在list集合中返回
-            //返回的是用户所收到的所有任务
-            List<TaskInfoVo> taskInfoVos1 = taskInfoService.queryTaskInfoByUserId(userId);
-            //判断用户收到的所有任务中是否有所查询的任务
-            for (TaskInfoVo taskInfoVo1 : taskInfoVos1) {
-                if (taskInfoVo1.getId() == taskId) {
-                    flag = true;
-                    break;
+            //判断请求用户的查询任务是否是该用户所接取的任务之一
+
+            //获取用户的小组id
+            Integer groupId = userMessage.getGroupId();
+            List<TaskInfoVo> taskInfoVos1 = taskInfoService.queryTaskInfoByGroupId(groupId);
+            if (taskInfoVos1 != null) {
+                for (TaskInfoVo taskInfoVo1 : taskInfoVos1) {
+                    if (taskInfoVo1.getId() == taskId) {
+                        flag = true;
+                        break;
+                    }
                 }
             }
         }

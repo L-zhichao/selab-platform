@@ -3,8 +3,9 @@ package tyut.selab.taskservice.dao.impl;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskGroupDao;
 import tyut.selab.taskservice.domain.TaskGroup;
+import tyut.selab.userservice.domain.Group;
+import tyut.selab.userservice.domain.User;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,9 +86,41 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
      */
     public List<TaskGroup> selectByGroupId(Integer groupId){
         //查询小组id对应的taskid
-        String sql="select * from task_group where group_id=?";
+//        String sql="select * from task_group where group_id=?";
+        String sql="select id,task_id taskId,group_id groupId from task_group where group_id=?";
         List<TaskGroup> taskGroups = baseQuery(TaskGroup.class, sql, groupId);
         return taskGroups;
+    }
+
+    @Override
+    public List<String> findTaskGroupNamesByTaskId(Integer taskId) {
+
+        //找到转换任务所对应的小组id
+        List<TaskGroup> taskGroups = selectAllTaskGroupsByTaskId(taskId);
+        List<String> groupNames = new ArrayList<>();
+
+        //通过TaskGroup的list集合找到对应的小组名称集合
+        if (taskGroups == null) {
+            return groupNames;
+        } else {
+            String sql = """
+                        select group_name groupName from sys_group where group_id = ?
+                        """;
+            for (TaskGroup taskGroup : taskGroups) {
+                Group group = baseQueryObject(Group.class, sql, taskGroup.getGroupId());
+                groupNames.add(group.getGroupName());
+            }
+            return groupNames;
+        }
+    }
+
+    @Override
+    public String findPublisherNameById(Integer publisherId) {
+        String sql2 = """
+                    select user_name userName from sys_user where user_id = ?
+                    """;
+        User user = baseQueryObject(User.class, sql2,publisherId);
+        return user.getUserName();
     }
 
 }

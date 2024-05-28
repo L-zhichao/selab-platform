@@ -57,4 +57,17 @@ public interface TaskGroupDao {
      */
     List<TaskGroup> selectByGroupId(Integer groupId);
 
+    /**
+     * 根据任务和小组对应的关系找到任务ID所对应的所有小组名称
+     * @param taskId
+     * @return 返回小组名称的list集合,如果没有小组，则返回空集合
+     */
+    List<String> findTaskGroupNamesByTaskId(Integer taskId);
+
+    /**
+     *  根据发布者名称查询发布者的名称
+     * @param publisherId
+     * @return 返回发布者的名称
+     */
+    String findPublisherNameById(Integer publisherId);
 }

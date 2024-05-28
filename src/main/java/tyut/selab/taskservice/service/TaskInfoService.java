@@ -40,7 +40,7 @@ public interface TaskInfoService {
 
     /**
      *  查询所有任务
-     * @return 返回null 标识当前没有任务
+     * @return 返回list的size为0的话标识没有任务
      */
     public List<TaskInfoVo> queryAllTask();
 
@@ -57,5 +57,12 @@ public interface TaskInfoService {
      */
     public List<TaskInfoVo> queryTaskInfoBypublish(String userName);
 
+
+    /**
+     *  通过小组id查询小组对应的所有任务
+     * @param groupId
+     * @return
+     */
+    public List<TaskInfoVo> queryTaskInfoByGroupId(Integer groupId);
 
 }

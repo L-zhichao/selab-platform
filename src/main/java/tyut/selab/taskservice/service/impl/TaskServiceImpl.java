@@ -34,13 +34,7 @@ public class TaskServiceImpl implements TaskInfoService {
     @Override
     public Integer save(TaskInfoDto taskInfoDto) {
         //将数据封装进TaskInfo对象
-        TaskInfo tInfo = new TaskInfo();
-        tInfo.setId(null);
-        tInfo.setPublisherId(taskInfoDto.getPublisherId());
-        tInfo.setUpdaterId(taskInfoDto.getUpdaterId());
-        tInfo.setName(taskInfoDto.getName());
-        tInfo.setContent(taskInfoDto.getContent());
-        tInfo.setDealTime(taskInfoDto.getDealTime());
+        TaskInfo tInfo = taskInfoDtoConvert(taskInfoDto);
         Integer taskId = taskInfoDao.insert(tInfo);
         //将数据封装进TaskGroup对象列表(自增id，任务id，小组id）
             //先获取任务的id
@@ -85,10 +79,9 @@ public class TaskServiceImpl implements TaskInfoService {
     @Override
     public Integer update(TaskInfoDto taskInfoDto,Integer taskId) {
         //判断修改后的任务在数据库中是否和其他的任务信息冲突
-        String sql = "select id from task_info where name = ? and content = ?  and del_flag = 0 and id != ?";
-        BaseDao baseDao = new BaseDao();
-        TaskInfo taskInfo1 = baseDao.baseQueryObject(TaskInfo.class, sql, taskInfoDto.getName(), taskInfoDto.getContent(),taskId);
-        if (taskInfo1 != null) {
+        int isConflict = taskInfoDao.conflict(taskInfoDto, taskId);
+
+        if (isConflict == 1) {
             return 1;
         }else {
             //判断任务是否存在
@@ -96,13 +89,7 @@ public class TaskServiceImpl implements TaskInfoService {
 
             if (taskInfo != null) {//标识存在任务对象
                 //将数据封装进入 TaskInfo 对象
-                TaskInfo tInfo = new TaskInfo();
-                tInfo.setId(taskId);
-                tInfo.setPublisherId(taskInfoDto.getPublisherId());
-                tInfo.setUpdaterId(taskInfoDto.getUpdaterId());
-                tInfo.setName(taskInfoDto.getName());
-                tInfo.setContent(taskInfoDto.getContent());
-                tInfo.setDealTime(taskInfoDto.getDealTime());
+                TaskInfo tInfo = taskInfoDtoConvert(taskInfoDto);
 
 
                 //删除上次保存的任务和小组对应关系
@@ -134,43 +121,7 @@ public class TaskServiceImpl implements TaskInfoService {
         TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
         //如果查询到任务，那么就封装成taskinfovo对象
         if (taskInfo != null) {
-            taskInfoVo = new TaskInfoVo();
-            taskInfoVo.setId(taskInfo.getId());
-            taskInfoVo.setName(taskInfo.getName());
-            taskInfoVo.setContent(taskInfo.getContent());
-            taskInfoVo.setDealTime(taskInfo.getDealTime());
-            taskInfoVo.setPublishTime(taskInfo.getPublishTime());
-            //将查到的数据和task_group，sys_group进行查询，找到任务所包含的小组名称
-            List<TaskGroup> taskGroups = taskGroupDao.selectAllTaskGroupsByTaskId(taskInfo.getId());
-            BaseDao baseDao = new BaseDao();
-            if ( taskGroups == null){
-                taskInfoVo.setGroupNames(null);
-            }else{
-                String sql1 = """
-                        select group_name groupName from sys_group where group_id = ?
-                        """;
-                List<String> groupNames = new ArrayList<>();
-                for (TaskGroup taskGroup : taskGroups) {
-                    Group group = baseDao.baseQueryObject(Group.class, sql1, taskGroup.getGroupId());
-                    groupNames.add(group.getGroupName());
-                }
-                taskInfoVo.setGroupNames(groupNames);
-            }
-            //将查到的数据和sys_user进行查询，找到publisher和updater名字
-            String sql2 = """
-                    select user_name userName from sys_user where user_id = ?
-                    """;
-            User Publisher = baseDao.baseQueryObject(User.class, sql2, taskInfo.getPublisherId());
-            taskInfoVo.setPublisherName(Publisher.getUserName());
-
-            //将任务截至时间和当前时间进行比对，判断是否结束
-            Date date = new Date();
-            boolean flag = date.getTime() > taskInfoVo.getDealTime().getTime();
-            if (flag){
-                taskInfoVo.setStatus(1);
-            }else{
-                taskInfoVo.setStatus(0);
-            }
+            taskInfoVo = taskInfoConvert(taskInfo);
             //将所有的数据封装成taskinfovo返回
         }
         return taskInfoVo;
@@ -182,46 +133,12 @@ public class TaskServiceImpl implements TaskInfoService {
         List<TaskInfo> taskInfos = taskInfoDao.selectAllTaskInfo();
         List<TaskInfoVo> taskInfoVos = new ArrayList<>();
 
-        //有任务的话就封装，没有任务的话就返回null
-        for (TaskInfo taskInfo : taskInfos) {
-            TaskInfoVo taskInfoVo = new TaskInfoVo();
-            taskInfoVo.setId(taskInfo.getId());
-            taskInfoVo.setName(taskInfo.getName());
-            taskInfoVo.setContent(taskInfo.getContent());
-            taskInfoVo.setDealTime(taskInfo.getDealTime());
-            taskInfoVo.setPublishTime(taskInfo.getPublishTime());
-            //将查到的数据和task_group，sys_group进行查询，找到任务所包含的小组名称
-            List<TaskGroup> taskGroups = taskGroupDao.selectAllTaskGroupsByTaskId(taskInfo.getId());
-            BaseDao baseDao = new BaseDao();
-            if ( taskGroups == null){
-                taskInfoVo.setGroupNames(null);
-            }else{
-                String sql1 = """
-                        select group_name groupName from sys_group where group_id = ?
-                        """;
-                List<String> groupNames = new ArrayList<>();
-                for (TaskGroup taskGroup : taskGroups) {
-                    Group group = baseDao.baseQueryObject(Group.class, sql1, taskGroup.getGroupId());
-                    groupNames.add(group.getGroupName());
-                }
-                taskInfoVo.setGroupNames(groupNames);
+        if(taskInfos != null) {
+            //有任务的话就封装，没有任务的话返回空集合
+            for (TaskInfo taskInfo : taskInfos) {
+                TaskInfoVo taskInfoVo = taskInfoConvert(taskInfo);
+                taskInfoVos.add(taskInfoVo);
             }
-            //将查到的数据和sys_user进行查询，找到publisher名字
-            String sql2 = """
-                    select user_name userName from sys_user where user_id = ?
-                    """;
-            User Publisher = baseDao.baseQueryObject(User.class, sql2, taskInfo.getPublisherId());
-            taskInfoVo.setPublisherName(Publisher.getUserName());
-
-            //将任务截至时间和当前时间进行比对，判断是否结束
-            Date date = new Date();
-            boolean flag = date.getTime() > taskInfoVo.getDealTime().getTime();
-            if (flag){
-                taskInfoVo.setStatus(1);
-            }else{
-                taskInfoVo.setStatus(0);
-            }
-            taskInfoVos.add(taskInfoVo);
         }
         //将每一个任务尽心封装成taskinfovo类型的对象，添加进list集合中
         return taskInfoVos;
@@ -242,5 +159,73 @@ public class TaskServiceImpl implements TaskInfoService {
             }
         }
         return taskInfoVosOfPublisher;
+    }
+
+    @Override
+    public List<TaskInfoVo> queryTaskInfoByGroupId(Integer groupId) {
+        //查询groupTask表格，查询groupId对应的所有任务id
+        List<TaskGroup> list = taskGroupDao.selectByGroupId(groupId);
+        //查询TaskInfo表格，将所有的任务id相对的任务进行返回
+        //将所有的任务封装返回
+        List<TaskInfoVo> taskInfoVos = new ArrayList<>();
+        for (TaskGroup taskGroup : list) {
+            TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskGroup.getTaskId());
+            TaskInfoVo taskInfoVo = taskInfoConvert(taskInfo);
+            taskInfoVos.add(taskInfoVo);
+        }
+        return taskInfoVos;
+    }
+
+
+    /**
+     * 实现类内部的方法，将数据库中查询到的TaskInfo对象封装为TaskInfoVo传给前端
+     * @param taskInfo
+     * @return
+     */
+    private TaskInfoVo taskInfoConvert(TaskInfo taskInfo) {
+
+            TaskInfoVo taskInfoVo = new TaskInfoVo();
+
+            taskInfoVo.setId(taskInfo.getId());
+            taskInfoVo.setName(taskInfo.getName());
+            taskInfoVo.setContent(taskInfo.getContent());
+            taskInfoVo.setDealTime(taskInfo.getDealTime());
+            taskInfoVo.setPublishTime(taskInfo.getPublishTime());
+
+            //将查到的数据和task_group，sys_group进行查询，找到任务所包含的小组名称
+            List<String> GroupNames = taskGroupDao.findTaskGroupNamesByTaskId(taskInfoVo.getId());
+            taskInfoVo.setGroupNames(GroupNames);
+
+
+            //将查到的数据和sys_user进行查询，找到publisher名字
+            String publisherName = taskGroupDao.findPublisherNameById(taskInfo.getPublisherId());
+            taskInfoVo.setPublisherName(publisherName);
+
+        //将任务截至时间和当前时间进行比对，判断是否结束
+            Date date = new Date();
+            boolean flag = date.getTime() > taskInfoVo.getDealTime().getTime();
+            if (flag) {
+                taskInfoVo.setStatus(1);
+            } else {
+                taskInfoVo.setStatus(0);
+            }
+        return taskInfoVo;
+    }
+
+    /**
+     *  接收前端传来的TaskInfoDto对象，并且转换位后端数据库中的taskInfo对象
+     * @param taskInfoDto
+     * @return
+     */
+    private TaskInfo taskInfoDtoConvert(TaskInfoDto taskInfoDto) {
+        //将数据封装进TaskInfo对象
+        TaskInfo tInfo = new TaskInfo();
+        tInfo.setId(null);
+        tInfo.setPublisherId(taskInfoDto.getPublisherId());
+        tInfo.setUpdaterId(taskInfoDto.getUpdaterId());
+        tInfo.setName(taskInfoDto.getName());
+        tInfo.setContent(taskInfoDto.getContent());
+        tInfo.setDealTime(taskInfoDto.getDealTime());
+        return null;
     }
 }
