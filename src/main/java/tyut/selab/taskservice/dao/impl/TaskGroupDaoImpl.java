@@ -117,10 +117,14 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
     @Override
     public String findPublisherNameById(Integer publisherId) {
         String sql2 = """
-                    select user_name userName from sys_user where user_id = ?
+                    select user_name userName from sys_user where user_id = ? and del_flag = 0
                     """;
         User user = baseQueryObject(User.class, sql2,publisherId);
-        return user.getUserName();
+        if (user != null){
+            return user.getUserName();
+        }else{
+            return null;
+        }
     }
 
 }

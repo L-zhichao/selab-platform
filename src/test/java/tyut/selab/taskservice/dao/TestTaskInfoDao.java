@@ -26,57 +26,52 @@ public class TestTaskInfoDao {
     TaskInfoDao taskInfoDao = new TaskInfoDaoImpl();
 
     @Test
-    public void test1() {
-        TaskInfo taskInfo = new TaskInfo(1, 1, "test1", "test1 content", new Date());
-        taskInfoDao.insert(taskInfo);
-    }
-
-    @Test
-    public void test2() {
+    public void testInsert() {
         TaskInfo taskInfo = new TaskInfo(1, 1, "test2", "test2 content", new Date());
-        int taskid = taskInfoDao.insert(taskInfo);
+//        TaskInfo taskInfo = new TaskInfo(1, 1, "test1", "test1 content", new Date());
+        Integer insert = taskInfoDao.insert(taskInfo);
+        System.out.println(insert);
+    }
+
+    @Test
+    public void testDeleteByPrimaryKey() {
+        int taskid = taskInfoDao.deleteByPrimaryKey(13);
         System.out.println(taskid);
     }
 
     @Test
-    public void test3() {
-        TaskInfo taskInfo = new TaskInfo(1, 1, "test3", "test3 content", new Date());
-        int taskid = taskInfoDao.insert(taskInfo);
-        System.out.println(taskid);
+    public void testSelectByTaskId() {
+        TaskInfo taskInfo = taskInfoDao.selectByTaskId(14);
+        System.out.println(taskInfo.getName());
+        System.out.println(taskInfo.getContent());
     }
 
     @Test
-    public void test4(){
-//        String json = """
-//                {
-//                "name": "zhangsan",
-//                }
-//                """;
-//        person person = new person();
-//        person.name = "lisi";
-//
-//        System.out.println(JSON.parseObject(json, person.class));
-//        System.out.println(JSON.toJSONString(person));
-        List<Integer> groupIds = new ArrayList<Integer>();
-        groupIds.add(1);
-        groupIds.add(2);
-        groupIds.add(3);
-        groupIds.add(4);
-        Date date =new Date();
-        TaskInfoDto taskInfoDto = new TaskInfoDto(1,1,"test1","test1",groupIds,date);
-        TaskInfoDto taskInfoDto1 = JSON.parseObject(JSON.toJSONString(taskInfoDto), TaskInfoDto.class);
-        System.out.println(taskInfoDto1);
-        System.out.println(JSON.toJSONString(taskInfoDto));
+    public void testUpdateBytaskId(){
+        TaskInfo taskInfo = new TaskInfo(1, 1, "update 1", "update 1 content", new Date());
+        taskInfo.setId(15);
+        Integer i = taskInfoDao.updateBytaskId(taskInfo);
+        System.out.println(i);
     }
 
     @Test
-    public void test5(){
-        //日期类型转换为json后是时间戳
-        Date date = new Date();
-        System.out.println(JSONObject.toJSONString(date));
-        System.out.println(date.getTime());
-        System.out.println(date);
+    public void testSelectAllTaskInfo(){
+        List<TaskInfo> taskInfos = taskInfoDao.selectAllTaskInfo();
+        for (TaskInfo taskInfo : taskInfos){
+            System.out.println(taskInfo.getContent());
+        }
     }
+
+    @Test
+    public void testConflict() {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        TaskInfoDto taskInfoDto = new TaskInfoDto(1, 1, "test1", "test1 content",list,new Date());
+        int conflict = taskInfoDao.conflict(taskInfoDto, 15);
+        System.out.println(conflict);
+    }
+
+
 
 }
 

@@ -117,4 +117,18 @@ public class TaskInfoVo implements Serializable {
     public void setPublisherName(String publisherName) {
         this.publisherName = publisherName;
     }
+
+    @Override
+    public String toString() {
+        return "TaskInfoVo{" +
+                "id=" + id +
+                ", publisherName='" + publisherName + '\'' +
+                ", name='" + name + '\'' +
+                ", content='" + content + '\'' +
+                ", groupNames=" + groupNames +
+                ", dealTime=" + dealTime +
+                ", publishTime=" + publishTime +
+                ", status=" + status +
+                '}';
+    }
 }
