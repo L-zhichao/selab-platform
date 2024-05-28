@@ -10,6 +10,38 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class QQEmailService {
+    private static String text = "\"<div style=\\\"font-family: serif;line-height: 22px;padding: 30px\\\">\\n\" +\n" +
+            "                \"    <div style=\\\"display: flex;flex-direction: column;align-items: center\\\">\\n\" +\n" +
+            "                \"        <div style=\\\"margin: 10px auto 20px;text-align: center\\\">\\n\" +\n" +
+            "                \"            <div style=\\\"line-height: 32px;font-size: 26px;font-weight: bold;color: #000000\\\">\\n\" +\n" +
+            "                \"                嘿！你在 %s 中收到一条新消息。\\n\" +\n" +
+            "                \"            </div>\\n\" +\n" +
+            "                \"            <div style=\\\"font-size: 16px;font-weight: bold;color: rgba(0, 0, 0, 0.19);margin-top: 21px\\\">\\n\" +\n" +
+            "                \"                %s\\n\" +\n" +
+            "                \"            </div>\\n\" +\n" +
+            "                \"        </div>\\n\" +\n" +
+            "                \"        <div style=\\\"min-width: 250px;max-width: 800px;min-height: 128px;background: #F7F7F7;border-radius: 10px;padding: 32px\\\">\\n\" +\n" +
+            "                \"            <div>\\n\" +\n" +
+            "                \"                <div style=\\\"font-size: 18px;font-weight: bold;color: #C5343E\\\">\\n\" +\n" +
+            "                \"                    %s\\n\" +\n" +
+            "                \"                </div>\\n\" +\n" +
+            "                \"                <div style=\\\"margin-top: 6px;font-size: 16px;color: #000000\\\">\\n\" +\n" +
+            "                \"                    <p>\\n\" +\n" +
+            "                \"                        %s\\n\" +\n" +
+            "                \"                    </p>\\n\" +\n" +
+            "                \"                </div>\\n\" +\n" +
+            "                \"            </div>\\n\" +\n" +
+            "                \"            %s\\n\" +\n" +
+            "                \"            <a style=\\\"width: 150px;height: 38px;background: #ef859d38;border-radius: 32px;display: flex;align-items: center;justify-content: center;text-decoration: none;margin: 40px auto 0\\\"\\n\" +\n" +
+            "                \"               href=\\\"https://poetize.cn\\\" target=\\\"_blank\\\">\\n\" +\n" +
+            "                \"                <span style=\\\"color: #DB214B\\\">有朋自远方来</span>\\n\" +\n" +
+            "                \"            </a>\\n\" +\n" +
+            "                \"        </div>\\n\" +\n" +
+            "                \"        <div style=\\\"margin-top: 20px;font-size: 12px;color: #00000045\\\">\\n\" +\n" +
+            "                \"            此邮件由 %s 自动发出，直接回复无效（一天最多发送 \" + CommonConst.COMMENT_IM_MAIL_COUNT + \" 条通知邮件和 \" + CommonConst.CODE_MAIL_COUNT + \" 条验证码邮件），退订请联系管理员。\\n\" +\n" +
+            "                \"        </div>\\n\" +\n" +
+            "                \"    </div>\\n\" +\n" +
+            "                \"</div>\";";
     public static void qqemail(String QQmail, String head, String body) throws AddressException, MessagingException, IOException {
         Properties properties = new Properties();
         properties.put("mail.transport.protocol", "smtp");// 连接协议

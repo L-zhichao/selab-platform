@@ -1,5 +1,11 @@
 package tyut.selab.recruitservice.controller;
 
+import tyut.selab.recruitservice.dto.RegistrationDto;
+import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
+import tyut.selab.recruitservice.service.RegistrationService;
+import tyut.selab.recruitservice.view.RegistrationVo;
+import tyut.selab.utils.Result;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,6 +16,7 @@ import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
 import tyut.selab.utils.Result;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(name = "RegistrationController",urlPatterns = {})
 public class RegistrationController extends HttpServlet {

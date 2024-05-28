@@ -5,12 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.utils.Result;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 
 public class WebUtils {
-
     // 从请求中获取JSON串并转换为Object
     public static <T> T readJson(HttpServletRequest request, Class<T> clazz){
         T t =null;

@@ -19,7 +19,7 @@ import java.io.IOException;
  * @version: 1.0
  */
 
-@WebServlet(name = "BookController",urlPatterns = {"/book/save","book/update","/book/query","book/list"})
+@WebServlet(name = "BookController",urlPatterns = {"/book/save","/book/update","/book/query","/book/list"})
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();

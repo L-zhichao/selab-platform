@@ -39,7 +39,7 @@ public class UserDaoImpl extends BaseDao implements UserDao {
      */
     @Override
     public Integer insertUser(UserRegisterDto user) throws SQLException {
-        String sql = "insert into sys_user (user_id user_name,password,create_time,update_time,role_id,email,phone,sex) " + "values(1,?,?,now(),now(),3,?,?,?)";
+        String sql = "insert into sys_user (user_id,user_name,password,create_time,update_time,role_id,email,phone,sex,del_flag) values(null,?,?,now(),now(),3,?,?,?,0)";
         int result = 0;
         result = executeUpdate(sql,user.getUserName(), MD5util.encrypt((user.getPassword())),user.getEmail(),user.getPhone(),user.getSex());
         return result;

@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.dto.UserLoginReq;
@@ -32,7 +33,7 @@ import static tyut.selab.loginservice.common.Constant.*;
  * @version: 1.0
  */
 @WebServlet(name="LoginController",urlPatterns = {"/login","/register"})
-public class LoginController extends HttpServlet  {
+public class LoginController extends HttpServlet {
     EmailServiceImpl emailService = new EmailServiceImpl();
     UserServiceImpl userService = new UserServiceImpl();
     LoginServiceImpl loginService = new LoginServiceImpl();
@@ -81,11 +82,11 @@ public class LoginController extends HttpServlet  {
         }
         //在数据库中查找是否有该账号的注册记录，如果有则登录成功，并生成对应的Token传给前端
         try {
-            if(userService.findByUsername(userLoginReq.getUsername()) == 1 && userService.findByPassword(MD5util.encrypt(userLoginReq.getPassword())) == 1){
+            if(1 == userService.findByUsername(userLoginReq.getUsername()) && 1 == userService.findByPassword(MD5util.encrypt(userLoginReq.getPassword()))){
                 //登录成功后根据username生成Token
-                loginService.login(userLoginReq);
+                String token = loginService.login(userLoginReq);
                 UserLocal userLocal = userService.getUserLocal(userLoginReq.getUsername());
-
+                userLocal.setToken(token);
                 return Result.success(userLocal);
             }
         } catch (Exception e) {
@@ -145,45 +146,56 @@ public class LoginController extends HttpServlet  {
                     msg = "服务器内部问题";
                     return Result.error(STATUS_CODE_INNSER_ERROR,msg);
                 }
-                //检验信息无误后，这时候发送验证码进行验证注册，发送验证码
-                //验证验证码的相关逻辑，待完善
-                String head = "实验室平台注册验证码信息";
-                String verify = SecurityUtil.getRandom();
-                String body = "亲爱的用户朋友，欢迎您来注册我们的系统！！！<br>" +
-                        "这是您的验证码信息：<h3>" + verify + "<h3>。<br>" +
-                        "验证码的有效期是30秒, 请在指定时间内填写验证信息<br>" +
-                        "注意不要将自己的验证信息透露给别人";
-                boolean flag = true;
-                while(flag) {
+                //将验证码存入到Session中Session的有效期是60秒
+                HttpSession session = request.getSession();
+                String head = "平台注册验证码信息";
+                //如果我们的session是新创建的那么就重新执行一遍发验证码的逻辑
+                if(session.isNew()) {
+                    session.setMaxInactiveInterval(60);
+                    String verify = SecurityUtil.getRandom();
+                    String body = "欢迎您来注册我们的系统！！！<br>" +
+                            "这是您的验证码信息：<h3>" + verify + "<h3>。<br>" +
+                            "验证码的有效期是60秒, 请在指定时间内填写验证信息<br>" +
+                            "注意不要将自己的验证信息透露给别人";
+                    boolean flag = true;
                     try {
                         QQEmailService.qqemail(userRegisterDto.getEmail(), head, body);
                         flag = false;
                     } catch (Exception e) {
                         e.printStackTrace();
-                        break;
                     }
+                    //在这里可以判断验证码是否已经发送
+                    if(flag){
+                        msg = "验证码发送失败";
+                        return Result.error(STATUS_CODE_INNSER_ERROR,msg);
+                    }
+                    session.setAttribute("verify", verify);
+                }else{
+                    if (null != session.getAttribute("verify") && null != request.getParameter("verify") && !"".equals(request.getParameter("verify"))) {
+                        if(!session.getAttribute("verify").equals(request.getParameter("verify"))){
+                            msg = "验证码不正确，请重新输入";
+                            return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
+                        }
+                        //验证码验证成功后，将对应的信息存入到数据库中，并且将邮箱注册信息存入到Email表中来记录邮箱注册次数
+                        try {
+                            loginService.register(userRegisterDto);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                            msg = "服务器内部问题";
+                            return Result.error(STATUS_CODE_INNSER_ERROR,msg);
+                        }
+                        try {
+                            emailService.save(new Email(emailService.getEmailNum() + 1, userRegisterDto.getEmail()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            msg = "服务器内部问题";
+                            return Result.error(STATUS_CODE_INNSER_ERROR,msg);
+                        }
+                        return Result.success(null);
+                    }
+                    msg = "请输入正确的验证码";
+                    return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
                 }
-                //在这里可以判断验证码是否已经发送
-                if(true == flag){
-                    msg = "验证码发送失败";
-                    return Result.error(STATUS_CODE_INNSER_ERROR,msg);
-                }
-                //验证码验证成功后，将对应的信息存入到数据库中，并且将邮箱注册信息存入到Email表中来记录邮箱注册次数
-                try {
-                    loginService.register(userRegisterDto);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    msg = "服务器内部问题";
-                    return Result.error(STATUS_CODE_INNSER_ERROR,msg);
-                }
-                try {
-                    emailService.save(new Email(emailService.getEmailNum() + 1, userRegisterDto.getEmail()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    msg = "服务器内部问题";
-                    return Result.error(STATUS_CODE_INNSER_ERROR,msg);
-                }
-                return Result.success(null);
             }
             msg = "用户邮箱输入格式错误，邮箱格式应满足qq邮箱的默认格式";
             return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);

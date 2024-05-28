@@ -1,6 +1,5 @@
 package tyut.selab.loginservice.service.impl;
 
-import tyut.selab.loginservice.dao.impl.UserDaoImpl;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.dto.UserLoginReq;
 import tyut.selab.loginservice.dto.UserRegisterDto;
@@ -28,9 +27,8 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     public String login(UserLoginReq userLoginReq) throws SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        UserLocal userLocal= new UserDaoImpl().getUserLocal(String.valueOf(userLoginReq));
+        UserLocal userLocal= userService.getUserLocal(userLoginReq.getUsername());
         String token = JwtHelperUtils.createToken(userLocal.getUserId(),userLocal.getUserName(),userLocal.getGroupId(),userLocal.getRoleId());
-
         return token;
     }
 
