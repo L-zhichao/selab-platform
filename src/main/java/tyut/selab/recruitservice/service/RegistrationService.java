@@ -60,6 +60,6 @@ public interface RegistrationService {
      *  查询本人提交报名表
      * @return
      */
-    RegistrationVo queryMyRecruit(Integer userId);
+    RegistrationVo queryMyRecruit(Integer userId)throws QueryMyException;
 
 }
