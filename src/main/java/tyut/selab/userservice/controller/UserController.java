@@ -53,22 +53,68 @@ public class UserController extends HttpServlet {
     private UserServiceImpl userService = new UserServiceImpl();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
-        String uri = req.getRequestURI();
-        String [] uriArr = uri.split("/");
-        String MethodName = uriArr[uriArr.length - 1];
-        System.out.println("MethodName = " + MethodName);
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String pathGet = req.getPathInfo();
+        System.out.println(pathGet);
+        //判断是否为queryById
+        String[] split = pathGet.split("/");
+        String modeName = split[1];
+        System.out.println("modeName:" + modeName);
 
-        if (MethodName.equals("query")){
-            query(req, resp);
-        } else if (MethodName.equals("queryById")) {
-           // queryById(req,resp);
-        } else if (MethodName.equals("logout")) {
-            logout(req, resp);
-        } else if (MethodName.equals("role/update")) {
-            updateRole(req,resp);
-        } else if (MethodName.equals("group/update")) {
-            updateGroup(req,resp);
+        if(modeName.equals("query")){
+            Result query = query(req, resp);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", query.getCode());
+            jsonObject.put("msg", query.getMsg());
+            jsonObject.put("data",query.getData());
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
+            resp.getWriter().write(jsonObject.toJSONString());
+
+        }else if(modeName.equals("queryById")){
+            Result queryById = queryById(req, resp);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", queryById.getCode());
+            jsonObject.put("msg", queryById.getMsg());
+            jsonObject.put("data",queryById.getData());
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
+            resp.getWriter().write(jsonObject.toJSONString());
+        } else if (modeName.equals("logout")) {
+            Result logout = logout(req, resp);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", logout.getCode());
+            jsonObject.put("msg", logout.getMsg());
+            jsonObject.put("data",logout.getData());
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
+            resp.getWriter().write(jsonObject.toJSONString());
+        } else if (modeName.equals("role")) {
+            String method = pathGet.substring(pathGet.lastIndexOf("/")+1);
+            System.out.println("method:" + method);
+            if (method.equals("update")) {
+                Result updateRole = updateRole(req, resp);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code", updateRole.getCode());
+                jsonObject.put("msg", updateRole.getMsg());
+                jsonObject.put("data",updateRole.getData());
+                resp.setCharacterEncoding("UTF-8");
+                resp.setContentType("text/html;charset=UTF-8");
+                resp.getWriter().write(jsonObject.toJSONString());
+            }
+        }else if (modeName.equals("group")) {
+            String method = pathGet.substring(pathGet.lastIndexOf("/")+1);
+            System.out.println("method:" + method);
+            if (method.equals("update")) {
+                Result updateGroup = updateGroup(req, resp);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code", updateGroup.getCode());
+                jsonObject.put("msg", updateGroup.getMsg());
+                jsonObject.put("data",updateGroup.getData());
+                resp.setCharacterEncoding("UTF-8");
+                resp.setContentType("text/html;charset=UTF-8");
+                resp.getWriter().write(jsonObject.toJSONString());
+            }
         }
 
 
@@ -78,7 +124,13 @@ public class UserController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
 
         String pathPost = req.getPathInfo();
-        if(pathPost.equals("/save")){
+        System.out.println(pathPost);
+        //判断是否为queryById
+        String[] split = pathPost.split("/");
+        String modeName = split[1];
+        System.out.println("modeName:" + modeName);
+
+        if(pathPost.equals("save")){
             try {
 
                 Result save = save(req, resp);
@@ -91,7 +143,7 @@ public class UserController extends HttpServlet {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }else if(pathPost.equals("/update")){
+        }else if(pathPost.equals("update")){
             Result update = update(req, resp);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", update.getCode());
@@ -137,6 +189,7 @@ public class UserController extends HttpServlet {
                 ResultList.addAll(Alluser);
             }
         }
+
         return Result.success(ResultList);
     }
 
@@ -177,6 +230,7 @@ public class UserController extends HttpServlet {
         if (insert == 1) {
             return Result.error(400, "添加失败");
         } else {
+
             return Result.success(insert);
         }
     }
@@ -197,10 +251,10 @@ public class UserController extends HttpServlet {
         String jsonData = request.getReader().lines().collect(Collectors.joining());
         UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
         int rows = userService.updateUser(userVo);
-        if (rows >= 1) {
-            return Result.success(rows);
+        if (rows < 1) {
+            return Result.error(400,"操作失败");
         }
-        return Result.error(400,"操作失败");
+        return Result.success(rows);
     }
 
         /**
@@ -213,13 +267,12 @@ public class UserController extends HttpServlet {
          */
         private Result logout (HttpServletRequest request, HttpServletResponse response){
             System.out.println("logout");
-            Integer userId = Integer.valueOf((request.getParameter("userId")==null)?"1":request.getParameter("userId"));
-            userId = 1;
+            Integer userId = Integer.valueOf((request.getParameter("userId")));
             Integer rows = userService.delete(userId);
-            if (rows>=1) {
-                return Result.success(rows);
+            if (rows<1) {
+                Result.error(400, "操作失败");;
             }
-            return Result.error(400, "操作失败");
+            return Result.success(rows);
         }
 
 
@@ -237,10 +290,10 @@ public class UserController extends HttpServlet {
             userVo.setUserId(Long.valueOf(request.getParameter("userId")));
             userVo.setRoleId(Integer.valueOf(request.getParameter("roleId")));
             int rows = userService.updateUserRole(userVo);
-            if (rows>=1) {
-                return Result.success(rows);
+            if (rows<1) {
+                return Result.error(400, "操作失败");
             }
-            return Result.error(400, "操作失败");
+            return Result.success(rows);
         }
 
 
@@ -253,14 +306,17 @@ public class UserController extends HttpServlet {
         */
         private Result updateGroup(HttpServletRequest request, HttpServletResponse response){
             System.out.println("updateGroup");
+            Result result = new Result(33,11);
+
             UserVo userVo = new UserVo();
             userVo.setUserId(Long.valueOf(request.getParameter("userId")));
             userVo.setGroupId(Integer.valueOf(request.getParameter("groupId")));
             int rows = userService.updateGroup(userVo);
-            if (rows >= 1) {
-                return Result.success(rows);
-            }
+            if (rows < 1) {
                 return Result.error(400,"操作失败");
+            }
+                return Result.success(rows);
+
         }
 
 }

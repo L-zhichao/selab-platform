@@ -34,8 +34,10 @@ public class UserServiceImpl implements UserService {
     */
     @Override
     public Integer updateUserRole(UserVo userVo) {
-        SecurityUtil securityUtil = new SecurityUtil();
-        UserLocal userLocal = securityUtil.getUser();
+       /* SecurityUtil securityUtil = new SecurityUtil();
+        UserLocal userLocal = securityUtil.getUser();*/
+        User userLocal = new User();
+        userLocal.setRoleId(2);
         //判断是否为超级管理员
         if (userLocal.getRoleId().equals(1)) {
             User user = new User();
@@ -44,7 +46,8 @@ public class UserServiceImpl implements UserService {
             //修改时间
             user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
             //调用sql方法
-            return userDao.updateUserRole(user);
+            int rows =  userDao.updateUserRole(user);
+            return rows;
         } else {
             return 0;
         }
@@ -235,8 +238,9 @@ public class UserServiceImpl implements UserService {
         //封装Userlogout数据
         SecurityUtil securityUtil = new SecurityUtil();
         //UserLocal userLocal = securityUtil.getUser();
+        //以下为测试
         User userLocal = new User();
-        userLocal.setRoleId(1);
+        userLocal.setRoleId(2);
         if (userLocal.getRoleId().equals(2)) {
             UserLogout userLogout = new UserLogout();
             userLogout.setUserId(userId);
@@ -321,8 +325,10 @@ public class UserServiceImpl implements UserService {
    */
     @Override
     public Integer updateUser(UserVo userVo) {
-        SecurityUtil securityUtil = new SecurityUtil();
-        UserLocal userLocal = securityUtil.getUser();
+        /*SecurityUtil securityUtil = new SecurityUtil();
+        UserLocal userLocal = securityUtil.getUser();*/
+        User userLocal = new User();
+        userLocal.setRoleId(2);
 
         if (userLocal.getRoleId().equals(2)) {
             User user = new User();
@@ -368,14 +374,16 @@ public class UserServiceImpl implements UserService {
     */
     @Override
     public Integer updateGroup(UserVo userVo) {
-        SecurityUtil securityUtil = new SecurityUtil();
-        UserLocal userLocal = securityUtil.getUser();
-
+        /*SecurityUtil securityUtil = new SecurityUtil();
+        UserLocal userLocal = securityUtil.getUser();*/
+        User userLocal = new User();
+        userLocal.setRoleId(2);
         if (userLocal.getRoleId().equals(2)) {
             User user = new User();
             user.setUserId(userVo.getUserId());
             user.setGroupId(userVo.getGroupId());
-            return userDao.updateGroup(user);
+            int rows = userDao.updateGroup(user);
+            return rows;
         } else {
             return 0;
         }
