@@ -3,11 +3,7 @@ package tyut.selab.bookservice.dao.impl;
 import tyut.selab.bookservice.dao.BaseDao;
 import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.domain.BookInfo;
-import tyut.selab.bookservice.vo.BookVo;
 
-import java.lang.reflect.Field;
-import java.sql.Ref;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -32,6 +28,11 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
         String sql = "update book_info set book_author=?,book_details=?,price=?,owner=?,status=? where book_name=?";
         Object[] params = {bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getStatus(),bookInfo.getBookName()};
         return baseDao.baseUpdate(sql,params);
+    }
+
+    @Override
+    public Integer delete(Integer bookId) {
+        return null;
     }
 
     @Override
@@ -64,5 +65,11 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     @Override
     public List<BookInfo> selectByOwnerBookName(Integer userId, String bookName) {
         return null;
+    }
+
+    @Override
+    public Integer selectAllCount() {
+        String sql = "select count(*) from book_info";
+        return Integer.parseInt(String.valueOf(baseQueryObject(Long.class,sql)));
     }
 }
