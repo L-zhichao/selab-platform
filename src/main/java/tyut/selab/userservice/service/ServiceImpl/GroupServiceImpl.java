@@ -55,11 +55,11 @@ public class GroupServiceImpl implements GroupService {
             Integer groupId = group.getGroupId();
             String groupName = group.getGroupName();
             Date createTime = group.getCreateTime();
-            //List<UserVo> userVos = userService.selectByGroupId(groupId);
+            List<UserVo> userVos = userService.selectByGroupId(groupId);
             groupVo.setGroupId(groupId);
             groupVo.setGroupName(groupName);
             groupVo.setCreateTime(createTime);
-            //groupVo.setUserVos(userVos);
+            groupVo.setUserVos(userVos);
             list.add(groupVo);
         }
         return list;
