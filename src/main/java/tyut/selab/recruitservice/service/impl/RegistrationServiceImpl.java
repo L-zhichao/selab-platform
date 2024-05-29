@@ -9,12 +9,13 @@ import tyut.selab.recruitservice.view.RegistrationVo;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.service.impl.UserServiceImpl;
 import tyut.selab.userservice.vo.UserVo;
+import tyut.selab.utils.PageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RegistrationServiceImpl implements RegistrationService {
-    RegistrationDao red = new RegistrationDaoImpl();
+    RegistrationDao registrationDao = new RegistrationDaoImpl();
 
     @Override
     public Integer insertRegistration(RegistrationDto registrationDto) {
@@ -27,93 +28,87 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
 
-    @Override
-    public List<RegistrationVo> selectList(Integer cur, Integer size) {
-        List<RegistrationForm> registrationForms = red.selectAll(cur,size);
+    private PageUtil<RegistrationVo> toPageUtilOfRegistrationVos(PageUtil<RegistrationForm> pageUtil){
         List<RegistrationVo> registrationVos = new ArrayList<>();
         UserService userService = new UserServiceImpl();
-        for(RegistrationForm registrationForm : registrationForms){
+        for(RegistrationForm registrationForm : pageUtil.getData()){
             UserVo userVo = userService.selectByUserId(registrationForm.getIntervieweesId());
-            registrationVos.add(registrationForm.getRegistrationVo(userVo));
+            registrationVos.add(getRegistrationVo(userVo,registrationForm));
+        }
+        PageUtil<RegistrationVo> registrationVoPageUtil = new PageUtil<>();
+        registrationVoPageUtil.setSize(pageUtil.getSize());
+        registrationVoPageUtil.setTotal(pageUtil.getTotal());
+        registrationVoPageUtil.setCur(pageUtil.getCur());
+        registrationVoPageUtil.setData(registrationVos);
+        return registrationVoPageUtil;
+    }
+    @Override
+    public PageUtil<RegistrationVo> selectList(Integer cur, Integer size) {
+        PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectAll(cur,size);
+        if(registrationFormPageUtil == null){
+            return new PageUtil<>();
         }
 
-
-        List<RegistrationVo> registrationVosNew = new ArrayList<>();
-        for(int i = 0; i < cur ; i++){
-            registrationVosNew.add(registrationVos.get((size - 1) * cur + 1 + i));
-        }
-
-        return registrationVosNew;
+        return toPageUtilOfRegistrationVos(registrationFormPageUtil);
     }
 
     @Override
     public RegistrationVo selectRegistrationById(Integer registrationId) {
-        RegistrationForm reg = red.selectByRegistrationId(registrationId);
-        if(reg == null){
-            return null;
+        RegistrationForm registrationForm = registrationDao.selectByRegistrationId(registrationId);
+        if(registrationForm == null){
+            return new RegistrationVo();
         }
         UserServiceImpl userService = new UserServiceImpl();
         UserVo userVo = userService.selectByUserId(registrationId);
-        return reg.getRegistrationVo(userVo);
+        return getRegistrationVo(userVo,registrationForm);
     }
 
     @Override
-    public List<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size, String intervieweesName) {
-        List<RegistrationForm> registrationForms = red.selectByIntervieweesName(intervieweesName);
-        List<RegistrationVo> registrationVos = new ArrayList<>();
-        UserService userService = new UserServiceImpl();
-        for(RegistrationForm registrationForm : registrationForms){
-            UserVo userVo = userService.selectByUserId(registrationForm.getIntervieweesId());
-            registrationVos.add(registrationForm.getRegistrationVo(userVo));
+    public PageUtil<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size, String intervieweesName) {
+        PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectByIntervieweesName(intervieweesName,cur,size);
+        if(registrationFormPageUtil == null){
+            return new PageUtil<>();
         }
-
-
-        List<RegistrationVo> registrationVosNew = new ArrayList<>();
-        for(int i = 0; i < cur ; i++){
-            registrationVosNew.add(registrationVos.get((size - 1) * cur + 1 + i));
-        }
-
-        return registrationVosNew;
+        return toPageUtilOfRegistrationVos(registrationFormPageUtil);
     }
 
 
 
     @Override
-    public List<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size) {
-        List<RegistrationForm> registrationForms = red.selectByIntentDepartment(intentDepartment, cur, size);
-        List<RegistrationVo> registrationVos = null;
-        UserService userService = new UserServiceImpl();
-        for(RegistrationForm registrationForm : registrationForms){
-            UserVo userVo = userService.selectByUserId(registrationForm.getIntervieweesId());
-            registrationVos.add(registrationForm.getRegistrationVo(userVo));
+    public PageUtil<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size) {
+        PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectByIntentDepartment(intentDepartment, cur, size);
+        if(registrationFormPageUtil == null){
+            return new PageUtil<>();
         }
-        List<RegistrationVo> registrationVosNew = new ArrayList<>();
-        for(int i = 0; i < cur ; i++){
-            registrationVosNew.add(registrationVos.get((size - 1) * cur + 1 + i));
-        }
-
-        return registrationVosNew;
+        return toPageUtilOfRegistrationVos(registrationFormPageUtil);
     }
 
     @Override
-    public List<RegistrationVo> selectByGradeId(Integer grade, Integer cur, Integer size) {
-        List<RegistrationForm> registrationForms = red.selectByGradeId(grade, cur, size);
-        List<RegistrationVo> registrationVos = null;
-        UserService userService = new UserServiceImpl();
-        for(RegistrationForm registrationForm : registrationForms){
-            UserVo userVo = userService.selectByUserId(registrationForm.getIntervieweesId());
-            registrationVos.add(registrationForm.getRegistrationVo(userVo));
+    public PageUtil<RegistrationVo> selectByGradeId(Integer grade, Integer cur, Integer size) {
+        PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectByGradeId(grade, cur, size);
+        if(registrationFormPageUtil == null){
+            return new PageUtil<>();
         }
-        List<RegistrationVo> registrationVosNew = new ArrayList<>();
-        for(int i = 0; i < cur ; i++){
-            registrationVosNew.add(registrationVos.get((size - 1) * cur + 1 + i));
-        }
-
-        return registrationVosNew;
+        return toPageUtilOfRegistrationVos(registrationFormPageUtil);
     }
 
     @Override
     public RegistrationVo queryMyRecruit(Integer userId) {
         return null;
+    }
+
+    public RegistrationVo getRegistrationVo(UserVo userVo,RegistrationForm registrationForm){
+        return new RegistrationVo(
+                registrationForm.getId(),
+                userVo,
+                registrationForm.getEmail(),
+                registrationForm.getPhone(),
+                registrationForm.getIntentDepartment(),
+                registrationForm.getClassroom(),
+                registrationForm.getInterviewTime(),
+                registrationForm.getIntroduce(),
+                registrationForm.getPurpose(),
+                registrationForm.getRemark()
+        );
     }
 }
