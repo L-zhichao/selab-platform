@@ -52,6 +52,7 @@ public class UserController extends HttpServlet {
 
     private UserServiceImpl userService = new UserServiceImpl();
 
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String pathGet = req.getPathInfo();
@@ -128,9 +129,7 @@ public class UserController extends HttpServlet {
         //判断是否为queryById
         String[] split = pathPost.split("/");
         String modeName = split[1];
-        System.out.println("modeName:" + modeName);
-
-        if(pathPost.equals("save")){
+        if(modeName.equals("save")){
             try {
 
                 Result save = save(req, resp);
@@ -143,8 +142,10 @@ public class UserController extends HttpServlet {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }else if(pathPost.equals("update")){
+        }
+        else if(modeName.equals("update")){
             Result update = update(req, resp);
+            System.out.println("111");
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", update.getCode());
             jsonObject.put("msg", update.getMsg());
@@ -245,11 +246,11 @@ public class UserController extends HttpServlet {
      * @return post 无返回参数
      */
     private Result update(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        UserVo userVo = new UserVo();
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
-        response.getWriter().write("update");
         String jsonData = request.getReader().lines().collect(Collectors.joining());
-        UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
+        userVo = JSON.parseObject(jsonData, UserVo.class);
         int rows = userService.updateUser(userVo);
         if (rows < 1) {
             return Result.error(400,"操作失败");
@@ -307,7 +308,6 @@ public class UserController extends HttpServlet {
         private Result updateGroup(HttpServletRequest request, HttpServletResponse response){
             System.out.println("updateGroup");
             Result result = new Result(33,11);
-
             UserVo userVo = new UserVo();
             userVo.setUserId(Long.valueOf(request.getParameter("userId")));
             userVo.setGroupId(Integer.valueOf(request.getParameter("groupId")));

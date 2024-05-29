@@ -49,7 +49,7 @@ public class UserDaoImpl implements UserDao {
             pstmtInsert .setInt(7,sex);
             pstmtInsert .setInt(8,delFlag);
             pstmtInsert.setString(9,password);
-            pstmtInsert .executeUpdate();
+            pstmtInsert .execute();
 
             String sql2 = "select LAST_INSERT_ID() as user_id from sys_user; ";
             pstmtSelect = conn.prepareStatement(sql2);
