@@ -148,8 +148,8 @@ import java.util.List;
     private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
         List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
         Integer taskid = null;
-        int cur=0;
-        int size=0;
+        int cur = request.getParameter("cur") != null ? Integer.parseInt(request.getParameter("cur")) : 1;
+        int size = request.getParameter("size") != null ? Integer.parseInt(request.getParameter("size")) : Integer.MAX_VALUE;
         //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
@@ -159,14 +159,10 @@ import java.util.List;
         }else if (roleId==2){
             //普通管理员
             //判断参数是否为空
-            if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
-                 cur = Integer.parseInt(request.getParameter("cur"));
-                size = Integer.parseInt(request.getParameter("size"));
                 if (cur<0||size<0){
                     return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
-
                 }
-            }
+
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
             }
@@ -183,7 +179,7 @@ import java.util.List;
                         throw new RuntimeException(e);
                     }
                     if (taskReportVos!=null) {
-                        if (cur>0&&size>0){
+                       if (cur!=1&&size!=Integer.MAX_VALUE){
                             int beginIndex = (cur - 1) * size;
                             int endIndex = cur * size - 1;
                             List<TaskReportVo> taskInfoVoPage;
@@ -197,8 +193,8 @@ import java.util.List;
                                 taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
                                 successT.addAll(taskInfoVoPage);
                             }
-                        }else {
-                            successT.addAll(taskReportVos);
+                       }else {
+                          successT.addAll(taskReportVos);
                         }
                     }
                 }
@@ -224,7 +220,7 @@ import java.util.List;
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
                 }else {
                     List<TaskReportVo> taskInfoVoPage;
-                    if (cur>0&&size>0){
+                    if (cur!=1&&size!=Integer.MAX_VALUE){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > taskReportVos.size() - 1){
@@ -245,13 +241,10 @@ import java.util.List;
             }
         }else {
             //判断参数是否为空
-            if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
-                cur = Integer.parseInt(request.getParameter("cur"));
-                size = Integer.parseInt(request.getParameter("size"));
                 if (cur<0||size<0){
                     return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
                 }
-            }
+
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
             }
@@ -265,7 +258,7 @@ import java.util.List;
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
                 }else {
                     List<TaskReportVo> taskInfoVoPage;
-                    if (cur>0&&size>0){
+                    if (cur!=1&&size!=Integer.MAX_VALUE){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > taskReportVos.size() - 1){
@@ -301,7 +294,7 @@ select DISTINCT task_id from task_report
                         SuccessTaskReportVos.addAll(taskReportVos);
                     }
                     List<TaskReportVo> taskInfoVoPage;
-                    if (cur>0&&size>0){
+                    if (cur!=1&&size!=Integer.MAX_VALUE){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > SuccessTaskReportVos.size() - 1){
@@ -391,8 +384,8 @@ select DISTINCT task_id from task_report
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
         Integer taskid =null;
-        int cur=0;
-        int size=0;
+        int cur = request.getParameter("cur") != null ? Integer.parseInt(request.getParameter("cur")) : 1;
+        int size = request.getParameter("size") != null ? Integer.parseInt(request.getParameter("size")) : Integer.MAX_VALUE;
 
         if (roleId == 3 ){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看所有需要汇报的用户");
@@ -400,13 +393,10 @@ select DISTINCT task_id from task_report
             //管理员只能查看自己发布的需要汇报的用户信息
             //读取参数 cur size
             //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
-            if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
-                cur = Integer.parseInt(request.getParameter("cur"));
-                size = Integer.parseInt(request.getParameter("size"));
                 if (cur<0||size<0){
                     return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
                 }
-            }
+
 
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
@@ -420,7 +410,7 @@ select DISTINCT task_id from task_report
                 for (TaskInfoVo taskInfoVo:taskInfoVos){
                      needReportUsers = taskReportService.queryAllUserForReport(taskInfoVo.getId());
                     if (needReportUsers!=null) {
-                        if (cur>0&&size>0){
+                        if (cur!=1&&size!=Integer.MAX_VALUE){
                             int beginIndex = (cur - 1) * size;
                             int endIndex = cur * size - 1;
                             List<NeedReportUser> Page;
@@ -459,7 +449,7 @@ select DISTINCT task_id from task_report
                     return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
                 }else {
                     List<NeedReportUser> Page=new ArrayList<>();
-                    if (cur>0&&size>0){
+                    if (cur!=1&&size!=Integer.MAX_VALUE){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > needReportUsers.size() - 1){
@@ -478,13 +468,10 @@ select DISTINCT task_id from task_report
             }
         }else {
             //超级管理员
-            if (request.getParameter("cur")!=null&&request.getParameter("size")!=null){
-                cur = Integer.parseInt(request.getParameter("cur"));
-                size = Integer.parseInt(request.getParameter("size"));
                 if (cur<0||size<0){
                     return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
                 }
-            }
+
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
             }
@@ -497,7 +484,7 @@ select DISTINCT task_id from task_report
                     return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
                 }else {
                     List<NeedReportUser> Page=new ArrayList<>();
-                    if (cur>0&&size>0){
+                    if (cur!=1&&size!=Integer.MAX_VALUE){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > needReportUsers.size() - 1){
@@ -529,7 +516,7 @@ select DISTINCT task_id from task_report
                     for (Integer i:taskids){
                          needReportUsers = taskReportService.queryAllUserForReport(i);
                         if (needReportUsers!=null) {
-                            if (cur>0&&size>0){
+                            if (cur!=1&&size!=Integer.MAX_VALUE){
                                 int beginIndex = (cur - 1) * size;
                                 int endIndex = cur * size - 1;
                                 List<NeedReportUser> Page;
@@ -567,7 +554,11 @@ select DISTINCT task_id from task_report
      *  user 中的 roleId   1 标识超级管理员，返回 2 标识管理员，返回 3 表示普通用户
      */
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
-        UserLocal user = SecurityUtil.getUser();
+       // UserLocal user = SecurityUtil.getUser();
+        UserLocal user = new UserLocal();
+        user.setUserName("zhangsan");
+        user.setRoleId(1);
+        user.setUserId(1);
         return user;
     }
     protected void findMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -585,36 +576,25 @@ select DISTINCT task_id from task_report
             methodName =split[split.length - 1];
         }
         // 通过反射获取要执行的方法
-        Class[] classes = {TaskController.class, TaskReportController.class};
+        Class clazz = this.getClass();
         Result result = null;
-        for (Class clazz : classes) {
-            try {
-                Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
-                // 设置方法可以访问
-                method.setAccessible(true);
-                // 通过反射执行代码
-                result = (Result) method.invoke(this,req,resp);
-                WebUtil.writeJson(resp,result);
-                return;
-            } catch (NoSuchMethodException e) {
-                // 如果在这个类中找不到方法，就在下一个类中查找
-                continue;
-            } catch (NullPointerException e1){
-                e1.printStackTrace();
-                result = Result.error(HttpStatus.NOT_FOUND,"缺少参数");
-                WebUtil.writeJson(resp,result);
-                return;
-            }
-            catch (Exception e2) {
-                e2.printStackTrace();
-                result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
-                WebUtil.writeJson(resp,result);
-                return;
-            }
+        try {
+            Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
+            // 设置方法可以访问
+            method.setAccessible(true);
+            // 通过反射执行代码
+            result = (Result) method.invoke(this,req,resp);
+            WebUtil.writeJson(resp,result);
+        } catch (NullPointerException e1){
+            e1.printStackTrace();
+            result = Result.error(HttpStatus.NOT_FOUND,"缺少参数");
+            WebUtil.writeJson(resp,result);
         }
-        // 如果在所有类中都找不到方法，就返回一个错误
-        result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
-        WebUtil.writeJson(resp,result);
+        catch (Exception e2) {
+            e2.printStackTrace();
+            result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
+            WebUtil.writeJson(resp,result);
+        }
     }
 }
 
