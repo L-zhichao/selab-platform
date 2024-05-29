@@ -6,22 +6,22 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
 import tyut.selab.recruitservice.service.RegistrationService;
 import tyut.selab.recruitservice.view.RegistrationVo;
 import tyut.selab.utils.Result;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import tyut.selab.utils.PageUtil;
 
 @WebServlet("/registration/*")
 public class RegistrationController extends HttpServlet {
     private RegistrationService RegistrationService = new RegistrationServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json;charset=UTF-8");
+//        resp.setContentType("application/json;charset=UTF-8");
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName =split[split.length-1];
@@ -55,38 +55,12 @@ public class RegistrationController extends HttpServlet {
     }
 
     /**
-     * 将service层传入的用户信息转换成map类型
-     * @param rev
-     * @return
-     */
-    private Map<String,Object> toData(RegistrationVo rev){
-        Map<String,Object> data = new HashMap<>();
-        data.put("id",rev.getId());
-        data.put("interviewees",rev.getInterviewees());
-        data.put("email",rev.getEmail());
-        data.put("phone",rev.getPhone());
-        data.put("intentDepartment",rev.getIntentDepartment());
-        data.put("classroom",rev.getClassroom());
-        data.put("interviewTime",rev.getInterviewTime());
-        data.put("introduce",rev.getIntroduce());
-        data.put("purpose",rev.getPurpose());
-        data.put("remark",rev.getRemark());
-        data.put("grade",rev.getGrade());
-        Map<String,Object> user = new HashMap<>();
-        user.put("code",200);
-        user.put("data",data);
-        user.put("msg","string");
-        return data;
-    }
-
-    /**
      * 将数据转换成json格式并响应
      * @param response
      * @param obj
      */
     public static void  writeJson(HttpServletResponse response, Object obj) {
         response.setContentType("application/json;charset=UTF-8");
-
         try {
             String json = JSON.toJSONString(obj);
             PrintWriter writer = response.getWriter();
@@ -123,14 +97,18 @@ public class RegistrationController extends HttpServlet {
      *  param: cur size
      * @return
      */
-    private Result selectList(HttpServletRequest request,HttpServletResponse response){
+    private Result<List<RegistrationVo>> selectList(HttpServletRequest request,HttpServletResponse response){
+        //权限方法
+//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+//            Result<List<RegistrationVo>> objectResult = new Result<>(500001, null);
+//            objectResult.setMsg("权限不足");
+//            return objectResult;
+//        }
         Integer cur = Integer.valueOf(request.getParameter("cur"));
         Integer size = Integer.valueOf(request.getParameter("size"));
-        List<RegistrationVo> registrationVos = RegistrationService.selectList(cur, size);
-        if(null == registrationVos){
-            return new Result<List<RegistrationVo>>(404,null);
-        }
-        return new Result<List<RegistrationVo>>(200,registrationVos);
+        // 在第一次查询的时候返回total数据说明数据量大小
+        PageUtil<RegistrationVo> registrationVos = RegistrationService.selectList(cur, size);
+        return getListResult(registrationVos.getData());
     }
 
     /**
@@ -138,12 +116,27 @@ public class RegistrationController extends HttpServlet {
      * param registrationId 报名表id
      */
     private Result<RegistrationVo> selectRegistrationById(HttpServletRequest request,HttpServletResponse response){
-        int registrationId = Integer.parseInt(request.getParameter("registrationId"));
-        RegistrationVo rev = RegistrationService.selectRegistrationById(registrationId);
-        if(null != rev){
-            return new Result<RegistrationVo>(200,rev);
+//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+//            Result<RegistrationVo> objectResult = new Result<>(500001, null);
+//            objectResult.setMsg("权限不足");
+//            return objectResult;
+//        }
+        Integer registrationId = Integer.parseInt(request.getParameter("registrationId"));
+        // id为非自然数 或不是数字
+        if(registrationId < 1||!isNumer(String.valueOf(registrationId))){
+            Result<RegistrationVo> objectResult = new Result<>(502, null);
+            objectResult.setMsg("输入数据有误");
+            return objectResult;
         }
-        return new Result<RegistrationVo>(404,null);
+        RegistrationVo rev = RegistrationService.selectRegistrationById(registrationId);
+        if(rev.getId() == 0){
+            Result<RegistrationVo> objectResult = new Result<>(501, null);
+            objectResult.setMsg("未找到对应对象");
+            return objectResult;
+        }
+        Result<RegistrationVo> objectResult = new Result<>(200, rev);
+        objectResult.setMsg("string");
+        return objectResult;
     }
 
     /**
@@ -152,16 +145,22 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result<List<RegistrationVo>> selectRegistrationByUserName(HttpServletRequest request,HttpServletResponse response){
+//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+//            Result<List<RegistrationVo>> objectResult = new Result<>(500001, null);
+//            objectResult.setMsg("权限不足");
+//            return objectResult;
+//        }
         String intervieweesName = request.getParameter("intervieweesName");
+        if(!isChineseString(intervieweesName)){
+            Result<List<RegistrationVo>> objectResult = new Result<>(502, null);
+            objectResult.setMsg("输入数据有误");
+            return objectResult;
+        }
         Integer cur = Integer.valueOf(request.getParameter("cur"));
         Integer size = Integer.valueOf(request.getParameter("size"));
-        List<RegistrationVo> registrationVos = RegistrationService.selectByIntervieweesName(cur, size, intervieweesName);
-        if(null == registrationVos){
-            return new Result<List<RegistrationVo>>(404,null);
-        }
-        return new Result<List<RegistrationVo>>(200,registrationVos);
+        PageUtil<RegistrationVo> registrationVos = RegistrationService.selectByIntervieweesName(cur, size, intervieweesName);
+        return getListResult(registrationVos.getData());
     }
-
 
     /**
      *  通过意向部门查询报名表
@@ -169,14 +168,21 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result<List<RegistrationVo>> intentDepartment(HttpServletRequest request,HttpServletResponse response){
+//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+//            Result<List<RegistrationVo>> objectResult = new Result<>(500001, null);
+//            objectResult.setMsg("权限不足");
+//            return objectResult;
+//        }
         String intentDepartment = request.getParameter("intentDepartment");
+        if(Integer.parseInt(intentDepartment) != 1 && Integer.parseInt(intentDepartment) != 2 && Integer.parseInt(intentDepartment) != 3 && Integer.parseInt(intentDepartment) != 4){
+            Result<List<RegistrationVo>> objectResult = new Result<>(502, null);
+            objectResult.setMsg("输入数据有误");
+            return objectResult;
+        }
         Integer cur = Integer.valueOf(request.getParameter("cur"));
         Integer size = Integer.valueOf(request.getParameter("size"));
-        List<RegistrationVo> registrationVos = RegistrationService.selectByIntentDepartment(cur, size, Integer.valueOf(intentDepartment));
-        if(null == registrationVos){
-            return new Result<List<RegistrationVo>>(404,null);
-        }
-        return new Result<List<RegistrationVo>>(200,registrationVos);
+        PageUtil<RegistrationVo> registrationVos = RegistrationService.selectByIntentDepartment(Integer.valueOf(intentDepartment),cur, size);
+        return getListResult(registrationVos.getData());
     }
 
     /**
@@ -185,14 +191,22 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result<List<RegistrationVo>> selectByGradeId(HttpServletRequest request,HttpServletResponse response){
-        String intentDepartment = request.getParameter("intentDepartment");
+//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+//            Result<List<RegistrationVo>> objectResult = new Result<>(500001, null);
+//            objectResult.setMsg("权限不足");
+//            return objectResult;
+//        }
+        String grade = request.getParameter("grade");
+        //输入的数据必须等于1，2，3，4
+        if(Integer.parseInt(grade) != 1 && Integer.parseInt(grade) != 2 && Integer.parseInt(grade) != 3 && Integer.parseInt(grade) != 4){
+            Result<List<RegistrationVo>> objectResult = new Result<>(502, null);
+            objectResult.setMsg("输入数据有误");
+            return objectResult;
+        }
         Integer cur = Integer.valueOf(request.getParameter("cur"));
         Integer size = Integer.valueOf(request.getParameter("size"));
-        List<RegistrationVo> registrationVos = RegistrationService.selectByGradeId(cur, size, Integer.valueOf(intentDepartment));
-        if(null == registrationVos){
-            return new Result<List<RegistrationVo>>(404,null);
-        }
-        return new Result<List<RegistrationVo>>(200,registrationVos);
+        PageUtil<RegistrationVo> registrationVos = RegistrationService.selectByGradeId(Integer.valueOf(grade),cur, size);
+        return getListResult(registrationVos.getData());
     }
 
     /**
@@ -203,5 +217,29 @@ public class RegistrationController extends HttpServlet {
        return null;
     }
 
+    private Result<List<RegistrationVo>> getListResult(List<RegistrationVo> registrationVos) {
+        if(registrationVos.isEmpty()){
+            Result<List<RegistrationVo>> objectResult = new Result<>(501, null);
+            objectResult.setMsg("未找到对应对象");
+            return objectResult;
+        }
+        Result<List<RegistrationVo>> objectResult = new Result<>(200, registrationVos);
+        objectResult.setMsg("string");
+        return objectResult;
+    }
+    public static boolean isNumer(String str) {
+
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public static boolean isChineseString(String str) {
+        String regex = "^[\\u4e00-\\u9fa5]+$";
+        String newStr = str.replaceAll("[\\pP\\p{Punct}\\s]+", "");
+        return newStr.matches(regex);
+    }
 
 }
