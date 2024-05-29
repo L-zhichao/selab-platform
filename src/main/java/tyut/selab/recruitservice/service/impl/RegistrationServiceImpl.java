@@ -5,11 +5,14 @@ import tyut.selab.recruitservice.dao.impl.RegistrationDaoImpl;
 import tyut.selab.recruitservice.domain.RegistrationForm;
 import tyut.selab.recruitservice.dto.RegistrationDto;
 import tyut.selab.recruitservice.service.InsertException;
+import tyut.selab.recruitservice.service.QueryMyException;
 import tyut.selab.recruitservice.service.RegistrationService;
 import tyut.selab.recruitservice.service.UpdateException;
 import tyut.selab.recruitservice.view.RegistrationVo;
 
 import java.util.List;
+
+import static tyut.selab.recruitservice.domain.RegistrationForm.toVo;
 
 public class RegistrationServiceImpl implements RegistrationService {
     private RegistrationDao registrationDao = new RegistrationDaoImpl();
@@ -69,8 +72,12 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public RegistrationVo queryMyRecruit(Integer userId) {
-
-        return null;
+    public RegistrationVo queryMyRecruit(Integer userId) throws QueryMyException {
+        if (registrationDao.selectByUserId(userId).getIntervieweesId() == null) {
+            throw new QueryMyException();
+        } else {
+                RegistrationVo registrationVo = toVo(registrationDao.selectByUserId(userId));
+                return registrationVo;
+            }
+        }
     }
-}
