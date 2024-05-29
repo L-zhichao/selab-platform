@@ -1,16 +1,17 @@
 package tyut.selab.bookservice.service.impl;
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.alibaba.fastjson.JSONObject;
 import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.dao.impl.BookInfoDaoImpl;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.vo.BookVo;
-// import tyut.selab.userservice.dao.impl.UserDaoImpl;
+import tyut.selab.userservice.dao.UserDao;
+import tyut.selab.userservice.dao.impl.UserDaoImpl;
+import tyut.selab.userservice.domain.User;
+import tyut.selab.utils.PageUtil;
 
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,104 +23,57 @@ import java.util.List;
  */
 public class BookServiceImpl implements BookService {
     private BookInfoDao bookDao = new BookInfoDaoImpl();
-    //private UserDao userDao = new UserDaoImpl();
+    private UserDao userDao = new UserDaoImpl();
     @Override
     public Integer insertBook(BookDto bookDto) {
-        String jsonString = JSONUtils.toJSONString(bookDto);
-        BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
-        try {
-            return bookDao.insert(bookInfo);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Integer updateBook(BookVo bookVo)  {
-        String jsonString = JSONUtils.toJSONString(bookVo);
-        BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
-        try {
-            return bookDao.update(bookInfo);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Integer deleteBook(Integer bookId) {
-        try {
-            return bookDao.delete(bookId);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<BookVo> selectList(Integer cur, Integer size) {
-        /*
-        List<BookVo> list = new ArrayList<BookVo>();
-        List<BookInfo> bookInfos = bookDao.selectAll(cur, size);
-        for (BookInfo bookInfo : bookInfos) {
-            Integer owner = bookInfo.getOwner();
-            BookVo bookVo = bookIofoToBookVo(bookInfo);
-            User user = userDao.selectByUserIdUser(owner);
-            String ownerName = user.getUserName();
-            bookVo.setOwnerName(ownerName);
-            list.add(bookVo);
-        }
-        return list;
-         */
         return null;
     }
 
     @Override
-    public BookVo selectBookById(Integer bookId) {
-        BookInfo bookInfo = null;
-        try {
-            bookInfo = bookDao.selectByBookIdBookInfo(bookId);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        String jsonString = JSONUtils.toJSONString(bookInfo);
-        BookVo bookVo = JSONObject.parseObject(jsonString, BookVo.class);
-        return bookVo;
+    public Integer updateBook(BookVo bookVo) {
+        return null;
     }
 
     @Override
-    public List<BookVo> selectBookByBookName(String bookName) {
-        try {
-            List<BookInfo> bookInfos = bookDao.selectAllByBookName(bookName);
-            for(BookInfo bookInfo:bookInfos){
-                String jsonString = JSONUtils.toJSONString(bookInfo);
-                BookVo bookVo = JSONObject.parseObject(jsonString,BookVo.class);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    public PageUtil<BookVo> selectList(Integer cur, Integer size) {
+        PageUtil<BookVo> pageUtil = new PageUtil<BookVo>();
+        pageUtil.setCur(cur);
+        pageUtil.setSize(size);
+        List<BookVo> list = new ArrayList<BookVo>();
+        List<BookInfo> bookInfos = bookDao.selectAll(cur, size);
+        if(cur == 1){
+            Integer count = bookDao.selectAllCount();
+            pageUtil.setTotal(count);
         }
+
+        for (BookInfo bookInfo : bookInfos) {
+            BookVo bookVo = bookIofoToBookVo(bookInfo);
+            list.add(bookVo);
+        }
+
+        pageUtil.setData(list);
+
+        return pageUtil;
+    }
+
+    @Override
+    public BookVo selectBookById(Integer bookId) {
+        return null;
+    }
+
+    @Override
+    public BookVo selectBookByBookName(String bookName) {
         return null;
     }
 
     @Override
     public List<BookVo> selectListByOwnerId(Integer userid, Integer cur, Integer size) {
-        try {
-            List<BookInfo> bookInfos = bookDao.selectByOwnerBookInfo(userid);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
         return null;
     }
-
     @Override
-    public List<BookVo> selectByOwnerBookName(Integer userId, String bookName){
-        try {
-            List<BookInfo> bookInfos = bookDao.selectByOwnerBookName(userId,bookName);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
     public BookVo bookIofoToBookVo(BookInfo bookInfo) {
         BookVo bookVo = new BookVo();
+        Integer owner = bookInfo.getOwner();
         bookVo.setBookAuthor(bookInfo.getBookAuthor());
         bookVo.setBookDetails(bookInfo.getBookDetails());
         bookVo.setBookId(bookInfo.getBookId());
@@ -129,6 +83,14 @@ public class BookServiceImpl implements BookService {
         bookVo.setStatus(bookInfo.getStatus());
         bookVo.setUpdateTime(bookInfo.getUpdateTime());
         bookVo.setBookRef(bookInfo.getBookRef());
+        User user = userDao.selectByUserIdUser(owner);
+        String ownerName = user.getUserName();
+        bookVo.setOwnerName(ownerName);
         return bookVo;
+    }
+
+    @Override
+    public List<BookVo> selectByOwnerBookName(Integer userId, String bookName) {
+        return null;
     }
 }
