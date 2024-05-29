@@ -129,7 +129,6 @@ public class TaskReportServiceImpl implements TaskReportService {
         try {
             taskReports = taskReportDao.selectByTaskIdTaskReports(taskId);
         } catch (SQLException e) {
-            e.printStackTrace();
             return taskReportVos;  // 如果发生异常，返回空列表
         }
         String sql = """
