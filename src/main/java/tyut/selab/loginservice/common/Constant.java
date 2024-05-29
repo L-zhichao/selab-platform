@@ -137,15 +137,15 @@ public interface Constant {
             "            }   " +
             "        </style>   " +
             "        <div class=\"contaner\">   " +
-            "            <div class=\"title\">{0}</div>   " +
+            "            <div class=\"title\">%s</div>   " +
             "            <div class=\"content\">   " +
             "                <p class=\"biaoti\"><b>亲爱的用户，你好！</b></p>   " +
             "                <b class=\"xtop\"><b class=\"xb1\"></b><b class=\"xb2\"></b><b class=\"xb3\"></b><b class=\"xb4\"></b></b>   " +
             "                <div class=\"xboxcontent\">   " +
             "                    <div class=\"neirong\">   " +
-            "                        <p><b>请核对你的用户名：</b><span id=\"userName\" class=\"font_darkblue\">{1}</span></p>   " +
-            "                        <p><b>{2}的验证码：</b><span class=\"font_lightblue\"><span id=\"yzm\" data=\"$(captcha)\" onclick=\"return false;\" t=\"7\" style=\"border-bottom: 1px dashed rgb(204, 204, 204); z-index: 1; position: static;\">{3}</span></span><br><span class=\"font_gray\">(请输入该验证码完成{4}，验证码60秒内有效！)</span></p>   " +
-            "                        <div class=\"line\">如果你未申请{2}服务，请忽略该邮件。</div>   " +
+            "                        <p><b>请核对你的用户名：</b><span id=\"userName\" class=\"font_darkblue\">%s</span></p>   " +
+            "                        <p><b>%s的验证码：</b><span class=\"font_lightblue\"><span id=\"yzm\" data=\"$(captcha)\" onclick=\"return false;\" t=\"7\" style=\"border-bottom: 1px dashed rgb(204, 204, 204); z-index: 1; position: static;\">%s</span></span><br><span class=\"font_gray\">(请输入该验证码完成注册，验证码60秒内有效！)</span></p>   " +
+            "                        <div class=\"line\">如果你未申请%s服务，请忽略该邮件。</div>   " +
             "                    </div>   " +
             "                </div>   " +
             "                <b class=\"xbottom\"><b class=\"xb4\"></b><b class=\"xb3\"></b><b class=\"xb2\"></b><b class=\"xb1\"></b></b>   " +

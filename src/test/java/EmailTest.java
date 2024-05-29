@@ -162,7 +162,13 @@ public class EmailTest {
         String head = "平台注册验证码信息";
         String type = "QQ邮箱注册平台";
         String body = String.format(VERIFICATION_HTML_TEXT,head,"李少博",type,verify,"注册");
-        String flag = VERIFICATION_HTML_TEXT;
-        System.out.println(body);
+        try {
+            QQEmailService.qqemail("3388532526@qq.com",head,body);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
