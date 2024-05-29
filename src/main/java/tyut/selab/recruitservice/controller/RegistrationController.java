@@ -2,6 +2,7 @@ package tyut.selab.recruitservice.controller;
 import com.alibaba.druid.support.json.JSONParser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.net.httpserver.Authenticator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.recruitservice.dto.RegistrationDto;
 import tyut.selab.recruitservice.service.InsertException;
+import tyut.selab.recruitservice.service.QueryMyException;
 import tyut.selab.recruitservice.service.UpdateException;
 import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
 import tyut.selab.recruitservice.service.RegistrationService;
@@ -27,16 +29,24 @@ public class RegistrationController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Integer userId = Integer.valueOf(req.getParameter("userId"));
+        System.out.println(userId);
         String requestURI = req.getRequestURI();
         String []split =requestURI.split("/");
         String methodName =split[split.length-1];
         if(methodName.equals("queryMyRecruit")){
-
+            Result<RegistrationVo> result = queryMy(req,resp,userId);
+            Map res = new HashMap<>();
+            res.put("code",result.getCode());
+            res.put("data",result.getData());
+            result.setMsg("");
+            res.put("msg",result.getMsg().toString());
+            resp.getWriter().write(JSON.toJSONString(res));
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         BufferedReader reader = req.getReader();
         StringBuilder jsonRequest = new StringBuilder();
         String line;
@@ -53,15 +63,17 @@ public class RegistrationController extends HttpServlet {
             System.out.println(registrationDto);
             Result<RegistrationDto> result = save(req,resp,registrationDto);
             Map res = new HashMap<>();
-            res.put("code",result.getCode().toString());
-            result.setMsg("6666666");
+            res.put("code",result.getCode());
+            result.setMsg("Success");
             res.put("msg",result.getMsg().toString());
             resp.getWriter().write(JSON.toJSONString(res));
         } else if (methodName.equals("updateRegistration")) {
+            System.out.println(JSON.parseObject(requestBody,RegistrationVo.class));
             RegistrationVo registrationVo = JSON.parseObject(requestBody,RegistrationVo.class);
             Result<RegistrationVo> result = update(req,resp,registrationVo);
             Map res = new HashMap<>();
-            res.put("code",result.getCode().toString());
+            res.put("code",result.getCode());
+            result.setMsg("Success");
             res.put("msg",result.getMsg().toString());
             resp.getWriter().write(JSON.toJSONString(res));
         }
@@ -151,10 +163,13 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result queryMy(HttpServletRequest request,HttpServletResponse response,Integer userId){
-        registrationService.queryMyRecruit(userId);
-        return null;
-
+        try{RegistrationVo registrationVo =registrationService.queryMyRecruit(userId);
+            RegistrationVo [] data = {registrationVo};
+            Result<RegistrationVo[]> result = new Result<>(200,data);
+            return result;
+        }catch (QueryMyException e){
+            Result<RegistrationVo[]> result = new Result<>(204,new RegistrationVo[]{});
+            return result;
+        }
     }
-
-
 }
