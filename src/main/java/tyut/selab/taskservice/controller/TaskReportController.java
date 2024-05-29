@@ -118,7 +118,6 @@ import java.util.List;
      *  查询当前汇报数量
      *  param: taskId
      * @param request
-     * @param response
      * @return
      */
     private Result queryCount(HttpServletRequest request,HttpServletResponse response) throws SQLException {
@@ -142,7 +141,7 @@ import java.util.List;
         }else {
             //查询
             Integer count = taskReportService.queryTaskReportCount(taskId);
-            return Result.success(count);
+            return Result.success(count,"操作成功");
         }
 
     }

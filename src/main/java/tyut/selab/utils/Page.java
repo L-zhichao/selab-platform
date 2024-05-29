@@ -6,7 +6,7 @@ import java.util.List;
  *   分页查询包装类
  * @param <T>
  */
-public class Page<T>{
+public class Page<T> {
     // 分页返回list数据
     private List<T> data;
     // 数据数量 （仅第一次返回即可）

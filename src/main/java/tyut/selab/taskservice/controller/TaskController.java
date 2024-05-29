@@ -340,7 +340,7 @@ public class TaskController extends HttpServlet {
 
             //根据操作结果构造Result对象并返回
             if(delete!=0){
-                return Result.success(null);
+                return Result.success(null,"删除成功");
             }else {
                 return Result.error(HttpStatus.ERROR,"删除失败");
             }
