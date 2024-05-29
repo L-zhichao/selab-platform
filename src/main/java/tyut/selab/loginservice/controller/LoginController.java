@@ -168,9 +168,10 @@ public class LoginController extends HttpServlet {
                         return Result.error(STATUS_CODE_INNSER_ERROR,msg);
                     }
                     session.setAttribute("verify", verify);
+                    return Result.success(null);
                 }else{
-                    if (null != session.getAttribute("verify") && null != request.getParameter("verify") && !"".equals(request.getParameter("verify"))) {
-                        if(!session.getAttribute("verify").equals(request.getParameter("verify"))){
+                    if (null != session.getAttribute("verify") && null != request.getHeader("verify") && !"".equals(request.getHeader("verify"))) {
+                        if(!session.getAttribute("verify").equals(request.getHeader("verify"))){
                             msg = "验证码不正确，请重新输入";
                             return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
                         }
@@ -202,3 +203,4 @@ public class LoginController extends HttpServlet {
         return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
     }
 }
+//guigushaobo  Ws858585 3388532526@qq.com 13111190851 0
