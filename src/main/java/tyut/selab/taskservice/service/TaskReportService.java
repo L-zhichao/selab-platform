@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface TaskReportService {
 
+
+
     /**
      *  新增汇报记录
      * @param taskReportDto
@@ -56,6 +58,9 @@ public interface TaskReportService {
      */
     public Integer queryuseridByreportid(Integer reportid);
 
-
+    /**
+     * 设置userId
+     * */
+  public void setUserId(Integer userId);
 
 }

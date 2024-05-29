@@ -8,6 +8,7 @@ import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.Task;
+import tyut.selab.taskservice.view.TaskReportVo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,11 +94,8 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
         //获取小组的对应成员id
         String str="select user_id from user_group where group_id=?";
         for (TaskGroup group :taskGroups){
-            List<Task> integerss = baseQuery(Task.class, str, group.getGroupId());
-            for (Task t:integerss){
-                integers.add(t.getTaskid());
-            }
-//            integers.addAll(integerss);
+            List<Integer> integerss = baseQuery(Integer.class, str, group.getGroupId());
+            integers.addAll(integerss);
         }
         return integers;
     }
@@ -174,8 +172,7 @@ String sql= """
     @Override
     public Integer queryTaskIdByrid(Integer reportId){
         String sql1="select task_id from task_report where report_id=?";
-        Task task = baseQueryObject(Task.class, sql1, reportId);
-        return task.getTaskid();
+        return baseQueryObject(Integer.class, sql1,reportId);
     }
 
     @Override

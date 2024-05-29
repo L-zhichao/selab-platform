@@ -34,7 +34,7 @@ public class TaskReportServiceImpl implements TaskReportService {
      * 用于调用TaskReport的Dao层相关方法
      * */
     private TaskReportDao taskReportDao=new TaskReportDaoImpl();
-
+    private Integer userId;
     /**
      *  新增汇报记录
      * @param taskReportDto
@@ -44,7 +44,6 @@ public class TaskReportServiceImpl implements TaskReportService {
     //如何获取用户id
     public Integer save(TaskReportDto taskReportDto) {
 
-        //新增
         // 验证输入参数
         if (taskReportDto == null) {
             throw new IllegalArgumentException("任务汇报对象不能为空");
@@ -71,19 +70,21 @@ public class TaskReportServiceImpl implements TaskReportService {
         taskReport.setTaskId(taskReportDto.getTaskId());
         taskReport.setReportStatus(taskReportDto.getReportStatus());
         taskReport.setDetails(taskReportDto.getDetails());
-       //如何获取汇报人id？
+       //获取汇报人id
+        if(userId!=null){
+            taskReport.setUserId(userId);
+        }else {
+            throw new RuntimeException("用户id为空，无法执行操作");
+        }
 
         // 自动设置createTime
         taskReport.setCreateTime(new Date());
 
-
         try {
             return taskReportDao.insert(taskReport);
         }catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException();
         }
-
     }
 
 
@@ -100,8 +101,8 @@ public class TaskReportServiceImpl implements TaskReportService {
         }
         try {
             taskReports=taskReportDao.selectByUserId(userId,taskId);
-        }catch (RuntimeException e){
-            e.printStackTrace();
+        }catch (Exception e){
+            throw new RuntimeException();
         }
 
 
@@ -205,4 +206,8 @@ public Integer queryuseridByreportid(Integer reportid){
     TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
     return taskInfo.getPublisherId();
 }
+
+    public void setUserId(Integer userId){
+        this.userId=userId;
+    }
 }
