@@ -1,6 +1,7 @@
 package tyut.selab.recruitservice.dao;
 
 import tyut.selab.recruitservice.domain.RegistrationForm;
+import tyut.selab.recruitservice.service.QueryMyException;
 
 import java.util.List;
 
@@ -58,6 +59,5 @@ public interface RegistrationDao {
      * @return
      */
     List<RegistrationForm> selectByGradeId(Integer grade,Integer cur,Integer size);
-
-
+    RegistrationForm selectByUserId (Integer userId);
 }
