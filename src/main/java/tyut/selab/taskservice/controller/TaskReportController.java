@@ -23,6 +23,7 @@ import tyut.selab.taskservice.service.impl.TaskReportServiceImpl;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;
+import tyut.selab.utils.Page;
 import tyut.selab.utils.Result;
 
 
@@ -244,7 +245,7 @@ import java.util.List;
                     return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有汇报记录");
                 }else {
                     WebUtil.writeJson(response,Result.success(successT));
-                    return Result.success(successT);
+                    return Result.success(successT,"请求成功");
                 }
 
             }
@@ -276,7 +277,7 @@ import java.util.List;
                         taskInfoVoPage=taskReportVos;
                     }
                     WebUtil.writeJson(response,Result.success(taskInfoVoPage));
-                    return Result.success(taskInfoVoPage);
+                    return Result.success(taskInfoVoPage,"请求成功");
                 }
             }else {
                 return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报记录");
@@ -317,7 +318,7 @@ import java.util.List;
                         taskInfoVoPage=taskReportVos;
                     }
                     WebUtil.writeJson(response,Result.success(taskInfoVoPage));
-                    return Result.success(taskInfoVoPage);
+                    return Result.success(taskInfoVoPage,"请求成功");
                 }
             }else {
                 BaseDao baseDao = new BaseDao();
@@ -353,7 +354,7 @@ select DISTINCT task_id from task_report
                         taskInfoVoPage=SuccessTaskReportVos;
                     }
                     WebUtil.writeJson(response,Result.success(taskInfoVoPage));
-                    return Result.success(taskInfoVoPage);
+                    return Result.success(taskInfoVoPage,"请求成功");
                 }
             }
         }
@@ -365,7 +366,7 @@ select DISTINCT task_id from task_report
      * @param request
      * @param response
      * @return
-     * 直接将汇报记录删除了，并不是逻辑删除(表中没用状态列,所以直接删了)
+     * 直接将汇报记录删除了
      */
     private Result delete(HttpServletRequest request,HttpServletResponse response){
         TaskReportDaoImpl taskReportDao=new TaskReportDaoImpl();
@@ -389,6 +390,7 @@ select DISTINCT task_id from task_report
                 //检查执行结果
                 if (i==1){
                     //成功找到任务，并且完成删除操作
+                    resultMaker.setMsg("删除成功");
                     WebUtil.writeJson(response,resultMaker);
                     return resultMaker;
                 }else {
@@ -404,6 +406,7 @@ select DISTINCT task_id from task_report
             //检查执行结果
             if (i==1){
                 //成功找到任务，并且完成删除操作
+                resultMaker.setMsg("删除成功");
                 WebUtil.writeJson(response,resultMaker);
                 return resultMaker;
             }else {
@@ -479,7 +482,7 @@ select DISTINCT task_id from task_report
                     return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有需要汇报的用户");
                 }else {
                     WebUtil.writeJson(response,Result.success(successN));
-                    return Result.success(successN);
+                    return Result.success(successN,"请求成功");
                 }
             }
             //taksid 输入非法： 不是自己发布的任务的id
@@ -509,7 +512,7 @@ select DISTINCT task_id from task_report
                         Page.addAll(needReportUsers);
                     }
                     WebUtil.writeJson(response,Result.success(Page));
-                    return Result.success(Page);
+                    return Result.success(Page,"请求成功");
                 }
             }
         }else {
@@ -547,7 +550,7 @@ select DISTINCT task_id from task_report
                         Page.addAll(needReportUsers);
                     }
                     WebUtil.writeJson(response,Result.success(Page));
-                    return Result.success(Page);
+                    return Result.success(Page,"请求成功");
                 }
             }else {
                 //查询所有任务的汇报用户
