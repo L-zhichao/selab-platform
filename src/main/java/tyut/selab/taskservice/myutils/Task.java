@@ -10,13 +10,13 @@ package tyut.selab.taskservice.myutils;
  * @Version 1.0
  */
 public class Task {
-    private Integer taskid;
+    private Integer taskId;
 
     public Integer getTaskid() {
-        return taskid;
+        return taskId;
     }
 
     public void setTaskid(int taskid) {
-        this.taskid = taskid;
+        this.taskId = taskid;
     }
 }
