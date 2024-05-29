@@ -1,9 +1,5 @@
 package tyut.selab.recruitservice.domain;
 
-import tyut.selab.recruitservice.view.RegistrationVo;
-import tyut.selab.userservice.vo.UserVo;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 /**
@@ -26,7 +22,7 @@ public class RegistrationForm {
     /**
      *联系方式
      */
-    private String phone;
+    private Integer phone;
     /**
      *意向部门  1开发 2网安 3人工智能 4虚拟现实
      */
@@ -58,7 +54,7 @@ public class RegistrationForm {
     /**
      *创建时间
      */
-    private LocalDateTime initTime;
+    private Date initTime;
     /**
      *更新时间
      */
@@ -69,11 +65,11 @@ public class RegistrationForm {
     }
     public RegistrationForm(){}
 
-    public RegistrationForm(Integer id, Integer intervieweesId, String email, String phone, Integer intentDepartment, String classroom, Date interviewTime, String introduce, String purpose, String remark, LocalDateTime initTime, Date updateTime) {
+    public RegistrationForm(Integer id, Integer intervieweesId, String email, Integer phone, Integer intentDepartment, String classroom, Date interviewTime, String introduce, String purpose, String remark, Date initTime, Date updateTime) {
         this.id = id;
         IntervieweesId = intervieweesId;
         this.email = email;
-        this.phone = phone;
+        this.phone = Integer.valueOf(phone);
         this.intentDepartment = intentDepartment;
         this.classroom = classroom;
         this.interviewTime = interviewTime;
@@ -118,20 +114,7 @@ public class RegistrationForm {
      * 将RegistrationForm转换为RegistrationVo
      * @return
      */
-    public RegistrationVo getRegistrationVo(UserVo userVo){
-        return new RegistrationVo(
-                getId(),
-                userVo,
-                getEmail(),
-                Integer.parseInt(getPhone()),
-                getIntentDepartment(),
-                getClassroom(),
-                getInterviewTime(),
-                getIntroduce(),
-                getPurpose(),
-                getRemark()
-                );
-    }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -152,12 +135,12 @@ public class RegistrationForm {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
+    public Integer getPhone() {
+        return (phone);
     }
 
     public void setPhone(String phone) {
-        this.phone = phone;
+        this.phone = Integer.valueOf(phone);
     }
 
 
@@ -202,11 +185,11 @@ public class RegistrationForm {
         this.remark = remark;
     }
 
-    public LocalDateTime getInitTime() {
+    public Date getInitTime() {
         return initTime;
     }
 
-    public void setInitTime(LocalDateTime initTime) {
+    public void setInitTime(Date initTime) {
         this.initTime = initTime;
     }
 
