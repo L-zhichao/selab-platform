@@ -48,52 +48,12 @@ import java.util.List;
     TaskInfoService taskInfoService=new TaskServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 响应的MIME类型和乱码问题
-        resp.setContentType("application/json;charset=UTF-8");
-
-        String requestURI = req.getRequestURI();
-        String[] split = requestURI.split("/");
-        String methodName =split[split.length-1];
-        // 通过反射获取要执行的方法
-        Class clazz = this.getClass();
-        Result result = null;
-        try {
-            Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
-            // 设置方法可以访问
-            method.setAccessible(true);
-            // 通过反射执行代码
-            result = (Result) method.invoke(this,req,resp);
-            WebUtil.writeJson(resp,result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = resultMaker.error(HttpStatus.NOT_FOUND,"未找到该接口");
-            WebUtil.writeJson(resp,result);
-        }
+        findMethod(req,resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 响应的MIME类型和乱码问题
-        resp.setContentType("application/json;charset=UTF-8");
-
-        String requestURI = req.getRequestURI();
-        String[] split = requestURI.split("/");
-        String methodName =split[split.length-1];
-        // 通过反射获取要执行的方法
-        Class clazz = this.getClass();
-        Result result = null;
-        try {
-            Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
-            // 设置方法可以访问
-            method.setAccessible(true);
-            // 通过反射执行代码
-            result = (Result) method.invoke(this,req,resp);
-            WebUtil.writeJson(resp,result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = resultMaker.error(HttpStatus.NOT_FOUND,"未找到该接口");
-            WebUtil.writeJson(resp,result);
-        }
+        findMethod(req,resp);
     }
 
     /**
@@ -204,6 +164,7 @@ import java.util.List;
                 size = Integer.parseInt(request.getParameter("size"));
                 if (cur<0||size<0){
                     return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
+
                 }
             }
             if (request.getParameter("taskid")!=null){
@@ -608,6 +569,52 @@ select DISTINCT task_id from task_report
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
         UserLocal user = SecurityUtil.getUser();
         return user;
+    }
+    protected void findMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 响应的MIME类型和乱码问题
+        resp.setContentType("application/json;charset=UTF-8");
+
+        String requestURI = req.getRequestURI();
+        String[] split = requestURI.split("/");
+        String methodName = null;
+        try{
+            //如果没有报错，就说明最后的一个参数是数字。
+            Integer.parseInt(split[split.length - 1]);
+            methodName = split[split.length - 2];
+        }catch (NumberFormatException e){
+            methodName =split[split.length - 1];
+        }
+        // 通过反射获取要执行的方法
+        Class[] classes = {TaskController.class, TaskReportController.class};
+        Result result = null;
+        for (Class clazz : classes) {
+            try {
+                Method method=clazz.getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
+                // 设置方法可以访问
+                method.setAccessible(true);
+                // 通过反射执行代码
+                result = (Result) method.invoke(this,req,resp);
+                WebUtil.writeJson(resp,result);
+                return;
+            } catch (NoSuchMethodException e) {
+                // 如果在这个类中找不到方法，就在下一个类中查找
+                continue;
+            } catch (NullPointerException e1){
+                e1.printStackTrace();
+                result = Result.error(HttpStatus.NOT_FOUND,"缺少参数");
+                WebUtil.writeJson(resp,result);
+                return;
+            }
+            catch (Exception e2) {
+                e2.printStackTrace();
+                result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
+                WebUtil.writeJson(resp,result);
+                return;
+            }
+        }
+        // 如果在所有类中都找不到方法，就返回一个错误
+        result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
+        WebUtil.writeJson(resp,result);
     }
 }
 
