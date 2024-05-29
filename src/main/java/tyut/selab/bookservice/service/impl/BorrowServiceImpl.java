@@ -1,6 +1,5 @@
 package tyut.selab.bookservice.service.impl;
 
-import org.junit.platform.commons.function.Try;
 import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.dao.BorrowBookDao;
 import tyut.selab.bookservice.dao.impl.BookInfoDaoImpl;
@@ -9,16 +8,14 @@ import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.domain.BorrowBook;
 import tyut.selab.bookservice.dto.BorrowBookDto;
 import tyut.selab.bookservice.service.BorrowService;
-import tyut.selab.bookservice.vo.BookVo;
 import tyut.selab.bookservice.vo.BorrowBookVo;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.impl.UserDaoImpl;
 import tyut.selab.userservice.domain.User;
+import tyut.selab.utils.PageUtil;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,9 +44,9 @@ public class BorrowServiceImpl implements BorrowService {
             return -5;
         }
         Integer status = bookInfo.getStatus();
-        SecurityUtil securityUtil = new SecurityUtil();
-        UserLocal user = securityUtil.getUser();
+        UserLocal user = SecurityUtil.getUser();
         Integer userId = user.getUserId();
+//        Integer userId = 1;
 
         //判断是否可借阅，并进行相关处理
         if(status == 0){
@@ -61,7 +58,7 @@ public class BorrowServiceImpl implements BorrowService {
             }
         }else if (status == 1){
             List<BorrowBook> borrowBooks = borrowBookDao.selectAllByBookId(borrowBookDto.getBookId());
-            if(userId == borrowBooks.get(borrowBooks.size()-1).getBorrowUser()){
+            if(userId.equals(borrowBooks.get(borrowBooks.size() - 1).getBorrowUser())){
                 i = -4;
             }else {
                 i = -2;
@@ -83,13 +80,10 @@ public class BorrowServiceImpl implements BorrowService {
         Integer status = borrowBook.getStatus();
         Integer bookId = borrowBook.getBookId();
         //查询当前用户id
-        SecurityUtil securityUtil = new SecurityUtil();
-        UserLocal user = securityUtil.getUser();
+        UserLocal user = SecurityUtil.getUser();
         Integer userId = user.getUserId();
 
-//        Integer userId = 1;
-
-        if (borrowUser != userId){
+        if (!borrowUser.equals(userId)){
             return -2;
         }
         if (status == 1){
@@ -97,7 +91,7 @@ public class BorrowServiceImpl implements BorrowService {
         }
         status = 1;
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date(System.currentTimeMillis());
+        Date date = new Date(ft.format(System.currentTimeMillis()));
         borrowBook.setReturnTime(date);
         Integer i = borrowBookDao.update(borrowBook);
         if (i > 0){
@@ -109,55 +103,108 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     @Override
-    public List<BorrowBookVo> selectListByUserid(Integer userId, Integer cur, Integer size) {
+    public PageUtil<BorrowBookVo> selectListByUserId(Integer userId, Integer cur, Integer size) {
+        PageUtil<BorrowBookVo> borrowBookVoPageUtil = new PageUtil<>();
         List<BorrowBookVo> books = new ArrayList<BorrowBookVo>();
+
+        borrowBookVoPageUtil.setCur(cur);
+        borrowBookVoPageUtil.setSize(size);
+
+        //第一页，返回一共有多少条记录
+        if(cur == 1){
+            Integer i = borrowBookDao.selectAllCountByUserId(userId);
+            borrowBookVoPageUtil.setTotal(i);
+        }
+
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllByUserId(userId, cur, size);
         for(BorrowBook book : borrowBooks){
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             books.add(borrowBookVo);
         }
-        return books;
+
+        borrowBookVoPageUtil.setData(books);
+
+        return borrowBookVoPageUtil;
     }
 
     @Override
-    public List<BorrowBookVo> selectListByBookId(Integer bookId,Integer cur,Integer size) {
+    public PageUtil<BorrowBookVo> selectListByBookId(Integer bookId,Integer cur,Integer size) {
+        PageUtil<BorrowBookVo> borrowBookVoPageUtil = new PageUtil<>();
         List<BorrowBookVo> books = new ArrayList<BorrowBookVo>();
+
+        borrowBookVoPageUtil.setCur(cur);
+        borrowBookVoPageUtil.setSize(size);
+
+        //第一页，返回一共有多少条记录
+        if(cur == 1){
+            Integer i = borrowBookDao.selectAllCountByBookId(bookId);
+            borrowBookVoPageUtil.setTotal(i);
+        }
+
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllByBookId(bookId,cur,size);
         for(BorrowBook book : borrowBooks){
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             books.add(borrowBookVo);
         }
-        return books;
+        borrowBookVoPageUtil.setData(books);
+
+        return borrowBookVoPageUtil;
     }
 
     @Override
-    public List<BorrowBookVo> selectList(Integer cur, Integer size) {
+    public PageUtil<BorrowBookVo> selectList(Integer cur, Integer size) {
+        PageUtil<BorrowBookVo> borrowBookVoPageUtil = new PageUtil<>();
         List<BorrowBookVo> books = new ArrayList<BorrowBookVo>();
+
+        borrowBookVoPageUtil.setCur(cur);
+        borrowBookVoPageUtil.setSize(size);
+
+        //第一页，返回一共有多少条记录
+        if(cur == 1){
+            Integer i = borrowBookDao.selectAllCount();
+            borrowBookVoPageUtil.setTotal(i);
+        }
+
+
         List<BorrowBook> borrowBooks = borrowBookDao.selectAll(cur, size);
         for(BorrowBook book : borrowBooks){
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             books.add(borrowBookVo);
         }
-        return books;
+        borrowBookVoPageUtil.setData(books);
+
+        return borrowBookVoPageUtil;
     }
 
     @Override
-    public List<BorrowBookVo> selectAllForNoReturn(Integer cur, Integer size) {
+    public PageUtil<BorrowBookVo> selectAllForNoReturn(Integer cur, Integer size) {
+        PageUtil<BorrowBookVo> borrowBookVoPageUtil = new PageUtil<>();
         List<BorrowBookVo> list = new ArrayList<BorrowBookVo>();
+
+        borrowBookVoPageUtil.setCur(cur);
+        borrowBookVoPageUtil.setSize(size);
+
+        //第一页，返回一共有多少条记录
+        if(cur == 1){
+            Integer i = borrowBookDao.selectAllCount();
+            borrowBookVoPageUtil.setTotal(i);
+        }
+
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllForNoReturn(cur,size);
         for(BorrowBook book : borrowBooks){
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             list.add(borrowBookVo);
         }
-        return list;
+
+        borrowBookVoPageUtil.setData(list);
+        return borrowBookVoPageUtil;
     }
 
     @Override
     public BorrowBook borrowBookDtoToBorrowBook(BorrowBookDto borrowBookDto) {
         BorrowBook borrowBook = new BorrowBook();
 
-        SecurityUtil securityUtil = new SecurityUtil();
-        UserLocal user = securityUtil.getUser();
+        UserLocal user = SecurityUtil.getUser();
         Integer userId = user.getUserId();
 
 
@@ -167,6 +214,8 @@ public class BorrowServiceImpl implements BorrowService {
         borrowBook.setBorrowUser(userId);
         return borrowBook;
     }
+
+    @Override
     public BorrowBookVo borrowBookToVo(BorrowBook borrowBook){
         BorrowBookVo borrowBookVo = new BorrowBookVo();
 
