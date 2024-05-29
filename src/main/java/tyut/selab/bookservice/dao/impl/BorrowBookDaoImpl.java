@@ -46,7 +46,7 @@ public class BorrowBookDaoImpl implements BorrowBookDao {
 //        List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, bookId);
 //        return borrowBooks;
 //    }
-
+    @Override
     public List<BorrowBook> selectAllForNoReturn(Integer cur,Integer size){
         String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where status = 0 limit ?,?;";
         int index = (cur - 1) * size;
@@ -61,23 +61,48 @@ public class BorrowBookDaoImpl implements BorrowBookDao {
         List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, bookId , index ,size);
         return borrowBooks;
     }
-
+    @Override
     public List<BorrowBook> selectAllByBookId(Integer bookId){
         String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where book_id = ?;";
         List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, bookId);
         return borrowBooks;
     }
+    @Override
     public List<BorrowBook> selectAllByUserId(Integer userId,Integer cur,Integer size) {
         String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where borrow_user = ? limit ?,?;";
         int index = (cur - 1) * size;
         List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, userId, index, size);
         return borrowBooks;
     }
-
+    @Override
     public List<BorrowBook> selectAll(Integer cur,Integer size) {
         String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow limit ?,?;";
         int index = (cur - 1) * size;
         List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, index, size);
         return borrowBooks;
+    }
+
+    @Override
+    public Integer selectAllCountByUserId(Integer userId) {
+        String sql = "select count(*) from book_borrow where borrow_user = ?;";
+        return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class, sql, userId)));
+    }
+
+    @Override
+    public Integer selectAllCountByBookId(Integer bookId) {
+        String sql = "select count(*) from book_borrow where book_id = ?;";
+        return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class, sql, bookId)));
+    }
+
+    @Override
+    public Integer selectAllCount() {
+        String sql = "select count(*) from book_borrow;";
+        return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class, sql)));
+    }
+
+    @Override
+    public Integer selectAllCountForNoReturn() {
+        String sql = "select count(*) from book_borrow where status = 0;";
+        return Integer.parseInt(String.valueOf((baseDao.baseQueryObject(Long.class,sql))));
     }
 }
