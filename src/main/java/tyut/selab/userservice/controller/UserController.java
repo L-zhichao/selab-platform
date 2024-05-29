@@ -53,51 +53,22 @@ public class UserController extends HttpServlet {
     private UserServiceImpl userService = new UserServiceImpl();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String pathGet = req.getPathInfo();
-        System.out.println(pathGet);
-        System.out.println("doGet");
-        //判断是否为queryById
-        String[] split = pathGet.split("/");
-        String modeName = split[1];
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
+        String uri = req.getRequestURI();
+        String [] uriArr = uri.split("/");
+        String MethodName = uriArr[uriArr.length - 1];
+        System.out.println("MethodName = " + MethodName);
 
-        if(modeName.equals("query")){
-            Result query = query(req, resp);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("code", query.getCode());
-            jsonObject.put("msg", query.getMsg());
-            jsonObject.put("data",query.getData());
-            resp.setCharacterEncoding("UTF-8");
-            resp.setContentType("text/html;charset=UTF-8");
-            resp.getWriter().write(jsonObject.toJSONString());
-
-        }else if(modeName.equals("queryById")){
-            Result queryById = queryById(req, resp);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("code", queryById.getCode());
-            jsonObject.put("msg", queryById.getMsg());
-            jsonObject.put("data",queryById.getData());
-            resp.setCharacterEncoding("UTF-8");
-            resp.setContentType("text/html;charset=UTF-8");
-            resp.getWriter().write(jsonObject.toJSONString());
-       } else if (modeName.equals("logout")) {
-            Result logout = logout(req, resp);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("code", logout.getCode());
-            jsonObject.put("msg", logout.getMsg());
-            jsonObject.put("data",logout.getData());
-            resp.setCharacterEncoding("UTF-8");
-            resp.setContentType("text/html;charset=UTF-8");
-            resp.getWriter().write(jsonObject.toJSONString());
-        } else if (modeName.equals("role/update")) {
-            Result updateRole = updateRole(req, resp);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("code", updateRole.getCode());
-            jsonObject.put("msg", updateRole.getMsg());
-            jsonObject.put("data",updateRole.getData());
-            resp.setCharacterEncoding("UTF-8");
-            resp.setContentType("text/html;charset=UTF-8");
-            resp.getWriter().write(jsonObject.toJSONString());
+        if (MethodName.equals("query")){
+            query(req, resp);
+        } else if (MethodName.equals("queryById")) {
+           // queryById(req,resp);
+        } else if (MethodName.equals("logout")) {
+            logout(req, resp);
+        } else if (MethodName.equals("role/update")) {
+            updateRole(req,resp);
+        } else if (MethodName.equals("group/update")) {
+            updateGroup(req,resp);
         }
 
 
@@ -107,8 +78,6 @@ public class UserController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
 
         String pathPost = req.getPathInfo();
-
-
         if(pathPost.equals("/save")){
             try {
 
@@ -243,13 +212,14 @@ public class UserController extends HttpServlet {
          * 请求路径 user/logout
          */
         private Result logout (HttpServletRequest request, HttpServletResponse response){
-
-            Integer userId = Integer.valueOf(request.getParameter("userId"));
+            System.out.println("logout");
+            Integer userId = Integer.valueOf((request.getParameter("userId")==null)?"1":request.getParameter("userId"));
+            userId = 1;
             Integer rows = userService.delete(userId);
             if (rows>=1) {
                 return Result.success(rows);
             }
-            return Result.error(null, "操作失败");
+            return Result.error(400, "操作失败");
         }
 
 
@@ -262,7 +232,7 @@ public class UserController extends HttpServlet {
          * 请求路径 :user/role/update
          */
         private Result updateRole (HttpServletRequest request, HttpServletResponse response){
-
+            System.out.println("updateRole");
             UserVo userVo = new UserVo();
             userVo.setUserId(Long.valueOf(request.getParameter("userId")));
             userVo.setRoleId(Integer.valueOf(request.getParameter("roleId")));
@@ -282,6 +252,7 @@ public class UserController extends HttpServlet {
         * @return Result
         */
         private Result updateGroup(HttpServletRequest request, HttpServletResponse response){
+            System.out.println("updateGroup");
             UserVo userVo = new UserVo();
             userVo.setUserId(Long.valueOf(request.getParameter("userId")));
             userVo.setGroupId(Integer.valueOf(request.getParameter("groupId")));

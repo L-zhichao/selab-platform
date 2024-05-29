@@ -234,7 +234,9 @@ public class UserServiceImpl implements UserService {
     public Integer delete(Integer userId) {
         //封装Userlogout数据
         SecurityUtil securityUtil = new SecurityUtil();
-        UserLocal userLocal = securityUtil.getUser();
+        //UserLocal userLocal = securityUtil.getUser();
+        User userLocal = new User();
+        userLocal.setRoleId(1);
         if (userLocal.getRoleId().equals(2)) {
             UserLogout userLogout = new UserLogout();
             userLogout.setUserId(userId);
