@@ -7,6 +7,7 @@ import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.dto.TaskReportDto;
+import tyut.selab.taskservice.view.TaskReportVo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,9 +176,9 @@ String sql= """
 
     @Override
     public Integer conflict(TaskReportDto taskReportDto) {
-        String sql="select count(*) from task_report where task_id =? and report_status=? and details=?";
-        TaskInfo taskInfo = baseQueryObject(TaskInfo.class, sql, taskReportDto.getTaskId(), taskReportDto.getReportStatus(), taskReportDto.getDetails());
-        if(taskInfo!=null){
+        String sql="select from task_report where task_id =? and report_status=? and details=?";
+        TaskReportDto taskReportDto1 = baseQueryObject(TaskReportDto.class, sql, taskReportDto.getTaskId(), taskReportDto.getReportStatus(), taskReportDto.getDetails());
+        if(taskReportDto1!=null){
             return 1;
         }else {
             return 0;

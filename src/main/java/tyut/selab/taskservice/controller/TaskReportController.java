@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
@@ -104,12 +105,25 @@ import java.util.List;
      */
     private Result report(HttpServletRequest request,HttpServletResponse response){
 
+        //从请求参数中获取userId
+        HttpSession session = request.getSession(false); // false 表示如果会话不存在，不要创建新的会话
+        if (session != null) {
+            Object userIdStr = session.getAttribute("userId");
+            if(userIdStr instanceof Integer){
+                Integer  userId=(Integer) userIdStr;
+                //将userId传入service层
+                taskReportService.setUserId(userId);
+            }
+        }
+
+        //将请求体中的JSON数据转换为TaskReportDto对象
         TaskReportDto taskReportDto =WebUtil.readJson(request,TaskReportDto.class);
+
         Integer save = taskReportService.save(taskReportDto);
         if(save!=null){
-            return Result.success(null);//待修改
+            return Result.success(null,"汇报成功");
         }else{
-            return Result.error(HttpStatus.ERROR,"汇报失败");//?????
+            return Result.error(HttpStatus.ERROR,"汇报失败");
         }
 
     }
@@ -158,14 +172,19 @@ import java.util.List;
     private Result queryMyReport(HttpServletRequest request, HttpServletResponse response){
         List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
 
-        //获取用户id
-        UserLocal userMessage = getUserMessage(request, response);
-        Integer userId = userMessage.getUserId();
+//        //获取用户id
+//        HttpSession session = request.getSession(false);
+//        if (session != null) {
+//            Object userIdStr = session.getAttribute("userId");
+//            if(userIdStr instanceof Integer){
+//                Integer  userId=(Integer) userIdStr;
+//            }
+//        }
 
         //获取请求参数
         Integer taskId = Integer.valueOf(request.getParameter("taskId"));
-        Integer cur = Integer.valueOf(request.getParameter("cur"));
-        Integer size = Integer.valueOf(request.getParameter("size"));
+//        Integer cur = Integer.valueOf(request.getParameter("cur"));
+//        Integer size = Integer.valueOf(request.getParameter("size"));
 
       //  taskReportVos = taskReportService.queryByUserIdAndTaskId(taskId, userId);
 
