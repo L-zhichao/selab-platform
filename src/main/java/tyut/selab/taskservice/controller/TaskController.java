@@ -364,7 +364,7 @@ public class TaskController extends HttpServlet {
             TaskInfoVo taskInfoVo = taskInfoService.queryById(taskGroup.getTaskId());
             taskInfoVos.add(taskInfoVo);
         }
-        if (taskInfoVos==null){
+        if (taskInfoVos.isEmpty()){
             return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布");
         }else {
             WebUtil.writeJson(response,Result.success(taskInfoVos));

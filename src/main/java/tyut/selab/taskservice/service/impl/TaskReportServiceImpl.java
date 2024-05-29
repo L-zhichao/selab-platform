@@ -10,6 +10,7 @@ import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
+import tyut.selab.taskservice.myutils.Task;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.view.TaskInfoForUser;
 import tyut.selab.taskservice.view.TaskReportVo;
@@ -177,11 +178,11 @@ public class TaskReportServiceImpl implements TaskReportService {
                 """;
         for (Integer i:userIds){
             User userName = baseDao.baseQueryObject(User.class, sql,i);
-            Integer i1 = baseDao.baseQueryObject(Integer.class, sql1, i, taskId);
+            Task i1 = baseDao.baseQueryObject(Task.class, sql1, i, taskId);
             NeedReportUser needReportUser=new NeedReportUser();
             if (userName != null) {
                 needReportUser.setUserName(userName.getUserName());
-                if (i1!=null){
+                if (i1.getTaskid()!=null){
                     needReportUser.setIsReport(1);//在汇报表中存在 代表以及汇报过
                 }else {
                     needReportUser.setIsReport(0);
