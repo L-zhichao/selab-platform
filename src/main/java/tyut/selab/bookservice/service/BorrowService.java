@@ -28,7 +28,7 @@ public interface BorrowService {
      * @param userId
      * @return
      */
-    public PageUtil<BorrowBookVo> selectListByUserid(Integer userId, Integer cur, Integer size);
+    public PageUtil<BorrowBookVo> selectListByUserId(Integer userId, Integer cur, Integer size);
 
     /**
      * 通过书籍id查询借阅记录
