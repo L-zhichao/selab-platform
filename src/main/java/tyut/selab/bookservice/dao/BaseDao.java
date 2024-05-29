@@ -3,6 +3,7 @@ package tyut.selab.bookservice.dao;
 import tyut.selab.utils.JdbcUtil;
 import tyut.selab.utils.JdbcUtil;
 
+import javax.mail.event.MessageCountAdapter;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -24,7 +25,6 @@ public class BaseDao {
             for (int i = 0; i < args.length; i++) {
                 preparedStatement.setObject(i + 1, args[i]);
             }
-
             // 执行 查询
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -60,7 +60,6 @@ public class BaseDao {
         Connection connection = JdbcUtil.getConnection();
         PreparedStatement preparedStatement=null;
         ResultSet resultSet =null;
-        int rows = 0;
         try {
             // 准备语句对象
             preparedStatement = connection.prepareStatement(sql);
@@ -91,7 +90,6 @@ public class BaseDao {
                     field.setAccessible(true);
                     field.set(obj,value);
                 }
-
                 list.add((T)obj);
             }
 

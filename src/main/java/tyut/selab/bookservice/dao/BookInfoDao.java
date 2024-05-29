@@ -66,6 +66,11 @@ public interface BookInfoDao {
      * @return
      */
     public List<BookInfo> selectByOwnerBookName(Integer cur, Integer size, Integer userId, String bookName);
+
+    /**
+     *  查询书籍信息总条数
+     */
+    public Integer selectCount(String bookName,Integer userId);
 }
 
 

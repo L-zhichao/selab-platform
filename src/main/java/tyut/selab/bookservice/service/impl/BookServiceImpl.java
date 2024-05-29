@@ -11,8 +11,8 @@ import tyut.selab.bookservice.vo.BookVo;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.impl.UserDaoImpl;
 import tyut.selab.userservice.domain.User;
+import tyut.selab.utils.Page;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +26,7 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
     private BookInfoDao bookDao = new BookInfoDaoImpl();
     private UserDao userDao = new UserDaoImpl();
+
     @Override
     public Integer insertBook(BookDto bookDto) {
         String jsonString = JSONUtils.toJSONString(bookDto);
@@ -45,7 +46,23 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName) {
+    public BookVo selectBookById(Integer bookId) {
+        BookInfo bookInfo = null;
+        bookInfo = bookDao.selectByBookIdBookInfo(bookId);
+        String jsonString = JSONUtils.toJSONString(bookInfo);
+        BookVo bookVo = JSONObject.parseObject(jsonString, BookVo.class);
+        return bookVo;
+    }
+
+    @Override
+    public Page<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName) {
+        Page<BookVo> page = new Page<BookVo>();
+        page.setCur(cur);
+        page.setSize(size);
+        if(cur==1){
+            Integer count = bookDao.selectCount(bookName,userId);
+            page.setTotal(count);
+        }
         List<BookVo> list = new ArrayList<BookVo>();
         List<BookInfo> bookInfos = null;
         bookInfos = bookDao.selectByOwnerBookName(cur, size,userId,bookName);
@@ -57,20 +74,19 @@ public class BookServiceImpl implements BookService {
             bookVo.setOwnerName(ownerName);
             list.add(bookVo);
         }
-        return list;
+        page.setData(list);
+        return page;
     }
 
     @Override
-    public BookVo selectBookById(Integer bookId) {
-        BookInfo bookInfo = null;
-        bookInfo = bookDao.selectByBookIdBookInfo(bookId);
-        String jsonString = JSONUtils.toJSONString(bookInfo);
-        BookVo bookVo = JSONObject.parseObject(jsonString, BookVo.class);
-        return bookVo;
-    }
-
-    @Override
-    public List<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName) {
+    public Page<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName) {
+        Page<BookVo> page = new Page<BookVo>();
+        page.setSize(size);
+        page.setCur(cur);
+        if(cur==1){
+            Integer count = bookDao.selectCount(bookName,null);
+            page.setTotal(count);
+        }
         List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectAllByBookName(cur,size,bookName);
         for(BookInfo bookInfo:bookInfos){
@@ -83,11 +99,19 @@ public class BookServiceImpl implements BookService {
             bookVo.setOwnerName(ownerName);
             bookVos.add(bookVo);
         }
-        return bookVos;
+        page.setData(bookVos);
+        return page;
     }
 
     @Override
-    public List<BookVo> selectListByOwnerId(Integer cur, Integer size, Integer userId) {
+    public Page<BookVo> selectListByOwnerId(Integer cur, Integer size, Integer userId) {
+        Page<BookVo> page = new Page<BookVo>();
+        page.setSize(size);
+        page.setCur(cur);
+        if(cur == 1){
+            Integer count = bookDao.selectCount(null,userId);
+            page.setTotal(count);
+        }
         List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectByOwnerBookInfo(cur, size, userId);
         for (BookInfo bookInfo : bookInfos) {
@@ -98,10 +122,18 @@ public class BookServiceImpl implements BookService {
             bookVo.setOwnerName(ownerName);
             bookVos.add(bookVo);
         }
-        return bookVos;
+        page.setData(bookVos);
+        return page;
     }
 
-    public List<BookVo> selectAllList (Integer cur, Integer size){
+    public Page<BookVo> selectAllList (Integer cur, Integer size){
+        Page<BookVo> page = new Page<BookVo>();
+        page.setSize(size);
+        page.setCur(cur);
+        if(cur==1){
+            Integer count = bookDao.selectCount(null,null);
+            page.setTotal(count);
+        }
         List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectAllList(cur, size);
         for (BookInfo bookInfo : bookInfos) {
@@ -112,7 +144,8 @@ public class BookServiceImpl implements BookService {
             bookVo.setOwnerName(ownerName);
             bookVos.add(bookVo);
         }
-        return bookVos;
+        page.setData(bookVos);
+        return page;
     }
 
     public BookVo bookIofoToBookVo (BookInfo bookInfo){

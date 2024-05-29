@@ -42,11 +42,38 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     }
 
     @Override
+    public BookInfo selectByBookIdBookInfo(Integer bookId) {
+        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where userId = ?";
+        List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class,sql,bookId);
+        return bookInfos.get(0);
+    }
+
+    @Override
     public List<BookInfo> selectByOwnerBookName(Integer cur, Integer size, Integer userId, String bookName) {
-        String sql ="select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from Book_info where book_name like ? and user_id =? limit ?,?";
+        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where book_name like ? and user_id =? limit ?,?";
         int index = (cur - 1) * size;
         List<BookInfo> bookInfos = baseQuery(BookInfo.class, sql,"%" + bookName + "%", userId,index,size);
         return bookInfos;
+    }
+
+    @Override
+    public Integer selectCount(String bookName,Integer userId) {
+        String sql = "select count(*) from book_info";
+        if (bookName!=null && userId!=null){
+            sql+="where book_name like ? and user_id =?";
+            return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class,sql,"%" + bookName + "%",userId)));
+        }
+        else if(bookName!=null && userId==null){
+            sql+="where book_name like ?";
+            return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class,sql,"%"+bookName+"%")));
+        }
+        else if(bookName==null && userId!=null){
+            sql+="where userId =?";
+            return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class,sql,userId)));
+        }
+        else{
+            return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class,sql)));
+        }
     }
 
     @Override
@@ -63,13 +90,6 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
         int index = (cur - 1) * size;
         List<BookInfo> bookInfos = baseQuery(BookInfo.class, sql,"%" + bookName + "%",index,size);
         return bookInfos;
-    }
-
-    @Override
-    public BookInfo selectByBookIdBookInfo(Integer bookId) {
-        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where userId = ?";
-        List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class,sql,bookId);
-        return bookInfos.get(0);
     }
 
     @Override

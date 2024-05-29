@@ -17,6 +17,7 @@ import tyut.selab.bookservice.exception.ServiceException;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.service.impl.BookServiceImpl;
 import tyut.selab.bookservice.vo.BookVo;
+import tyut.selab.utils.Page;
 import tyut.selab.utils.Result;
 
 import javax.xml.crypto.Data;
@@ -65,26 +66,12 @@ public class BookController extends HttpServlet {
             // 设置 暴力破解 方法的访问修饰符的限制
             declaredMethod.setAccessible(true);
             // 执行方法
-            declaredMethod.invoke(this,req,resp);
+            declaredMethod.invoke(this, req, resp);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("异常处理");
 
         }
-
-
-//            result.setCode(404);
-//            result.setData(null);
-//            result.setMsg("路径有误");
-//        }
-//        resp.setCharacterEncoding("UTF-8");
-//        resp.setContentType("application/json");
-//        //String jsonString1 = JSONObject.toJSONString(result);
-//        String jsonString = JSON.toJSONString(result);
-//        PrintWriter writer = resp.getWriter();
-//        writer.print(jsonString);
-//        writer.flush();
-//        writer.close();
     }
 
     @Override
@@ -210,7 +197,7 @@ public class BookController extends HttpServlet {
         Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
         String bookName = request.getAttribute("bookName").toString();
         //将参数传递给服务层，进行分页查询
-        List<BookVo> bookVoList = new ArrayList<>();
+        Page<BookVo> bookVoList = new Page<BookVo>();
         if(cur == 0 || size==0){
             Result result = new Result(500001,null);
             result.setMsg("页码或每页数量为空");
@@ -228,11 +215,13 @@ public class BookController extends HttpServlet {
         }
         //将分页查询的结果响应给客户端
         Result result = Result.success(bookVoList);
-        if(bookVoList.isEmpty()) {
+        if(bookVoList.getTotal()==0) {
             result.setMsg("查询信息为空");
             result.setData(null);
             result.setCode(500003);
+            return result;
         }
+        result.setMsg("图书信息查询成功");
         return result;
     }
 
@@ -248,7 +237,7 @@ public class BookController extends HttpServlet {
         Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
         Integer i = bookService.deleteBook(bookId);
         response.setCharacterEncoding("UTF-8");
-        Result result = new Result(404,bookId);
+        Result result = new Result(500004,bookId);
         if (i > 0) {
             result.setCode(200);
             result.setMsg("图书信息删除成功");

@@ -3,10 +3,7 @@ package tyut.selab.bookservice.service;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.vo.BookVo;
-
-import java.awt.print.Book;
-import java.sql.SQLException;
-import java.util.List;
+import tyut.selab.utils.Page;
 
 /**
  * @className: BookService
@@ -43,9 +40,10 @@ public interface BookService {
     /**
      * 分页查询所有书籍
      * 传入userId和bookName
+     *
      * @return
      */
-    public List<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName);
+    public Page<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName);
 
     /**
      *   通过 bookId 查询书籍信息
@@ -55,24 +53,27 @@ public interface BookService {
     public BookVo selectBookById(Integer bookId);
 
     /**
-     *   通过书籍名称查询书籍信息(支持模糊查询)
+     * 通过书籍名称查询书籍信息(支持模糊查询)
+     *
      * @param bookName
      * @return
      */
-    public List<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName);
+    public Page<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName);
 
     /**
-     *  通过userid查询用户所拥有的所有书籍
+     * 通过userid查询用户所拥有的所有书籍
+     *
      * @return
      */
-    public List<BookVo> selectListByOwnerId(Integer cur,Integer size,Integer userId);
+    public Page<BookVo> selectListByOwnerId(Integer cur, Integer size, Integer userId);
 
     /**
      * 分页查询所有书籍信息
+     *
      * @param
      * @return
      */
-    public List<BookVo> selectAllList(Integer cur, Integer size);
+    public Page<BookVo> selectAllList(Integer cur, Integer size);
 
     public BookVo bookIofoToBookVo(BookInfo bookInfo);
 }
