@@ -12,20 +12,8 @@ import java.util.Date;
 
 public class daoTest {
     public static void main(String[] args) throws Exception {
-
-        RegistrationDaoImpl a = new RegistrationDaoImpl();
-        RegistrationForm registrationForm = new RegistrationForm();
-        registrationForm.setId(99);
-        registrationForm.setIntervieweesId(250);
-        registrationForm.setEmail("1");
-        registrationForm.setPhone("1");
-        registrationForm.setClassroom("1");
-        registrationForm.setInterviewTime(new Date());
-        registrationForm.setIntroduce("1");
-        registrationForm.setPurpose("2");
-        registrationForm.setRemark("1");
-        registrationForm.setIntentDepartment(0);
-        registrationForm.setGrade(0);
-       a.update(registrationForm);
+        Integer userId = 12356;
+        RegistrationDao registrationDao = new RegistrationDaoImpl();
+        System.out.println(registrationDao.selectByUserId(userId));
     }
 }
