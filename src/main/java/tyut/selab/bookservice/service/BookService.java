@@ -5,8 +5,6 @@ import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.vo.BookVo;
 import tyut.selab.utils.PageUtil;
 
-import java.util.List;
-
 /**
  * @className: BookService
  * @author: lizhichao
@@ -37,7 +35,7 @@ public interface BookService {
      *
      * @return
      */
-    public PageUtil<BookVo> selectList(Integer curx, Integer size);
+    public PageUtil<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName);
 
     /**
      *   通过 bookId 查询书籍信息
@@ -51,15 +49,17 @@ public interface BookService {
      * @param bookName
      * @return
      */
-    public BookVo selectBookByBookName(String bookName);
+    public PageUtil<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName);
 
     /**
      *  通过userid查询用户所拥有的所有书籍
      * @return
      */
-    public List<BookVo> selectListByOwnerId(Integer userid,Integer cur,Integer size);
+    public PageUtil<BookVo> selectListByOwnerId(Integer userid,Integer cur,Integer size);
 
     public BookVo bookIofoToBookVo(BookInfo bookInfo);
 
-    public List<BookVo> selectByOwnerBookName(Integer userId, String bookName);
+    public Integer deleteBook(Integer bookId);
+
+    public PageUtil<BookVo> selectAllList(Integer cur,Integer size);
 }
