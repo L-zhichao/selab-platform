@@ -26,24 +26,24 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String requestURI =request.getRequestURI();
-        if (ignoreUrl.contains(requestURI)) {
+        if (!ignoreUrl.contains(requestURI)) {
+            UserLocal userLocal = new UserLocal();
+            String token = request.getHeader("Authorization");
+
+            boolean flag = null != token && (!JwtHelperUtils.isExpiration(token));
+
+            if (flag) {
+                userLocal.setUserId(JwtHelperUtils.getUserId(token));
+                userLocal.setUserName(JwtHelperUtils.getUsername(token));
+                userLocal.setGroupId(JwtHelperUtils.getGroupId(token));
+                userLocal.setRoleId(JwtHelperUtils.getRoleId(token));
+                userLocal.setToken(token);
+                //将Token传给实体类对象UserLocal，并存入到ThreadLocal中，把该对象传给前端
+                SecurityUtil.setUser(userLocal);
+                filterChain.doFilter(servletRequest, servletResponse);
+            }
             //放行
             filterChain.doFilter(request, response);
-        }
-        UserLocal userLocal =new UserLocal();
-        String token = request.getHeader("Authorization");
-
-        boolean flag = null != token && (!JwtHelperUtils.isExpiration(token));
-
-        if (flag) {
-            userLocal.setUserId(JwtHelperUtils.getUserId(token));
-            userLocal.setUserName(JwtHelperUtils.getUsername(token));
-            userLocal.setGroupId(JwtHelperUtils.getGroupId(token));
-            userLocal.setRoleId(JwtHelperUtils.getRoleId(token));
-            userLocal.setToken(token);
-            //将Token传给实体类对象UserLocal，并存入到ThreadLocal中，把该对象传给前端
-            SecurityUtil.setUser(userLocal);
-            filterChain.doFilter(servletRequest, servletResponse);
         }
     }
 

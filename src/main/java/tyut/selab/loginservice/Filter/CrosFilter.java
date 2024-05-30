@@ -19,20 +19,21 @@ public class CrosFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpServletRequest request =(HttpServletRequest) servletRequest;
         String requestURI =request.getRequestURI();
-        if (ignoreUrl.contains(requestURI)) {
-            //放行
-            filterChain.doFilter(request, response);
-        }
+        if (!ignoreUrl.contains(requestURI)) {
 
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, HEAD");
-        response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With");
-        // 非预检请求,放行即可,预检请求,则到此结束,不需要放行
-        if(!request.getMethod().equalsIgnoreCase("OPTIONS")){
-            filterChain.doFilter(servletRequest, servletResponse);
-        }
 
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, HEAD");
+            response.setHeader("Access-Control-Max-Age", "3600");
+            response.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With");
+            // 非预检请求,放行即可,预检请求,则到此结束,不需要放行
+            if(!request.getMethod().equalsIgnoreCase("OPTIONS")){
+                filterChain.doFilter(servletRequest, servletResponse);
+            }
+
+        }
+        //放行
+        filterChain.doFilter(request, response);
     }
 
 }
