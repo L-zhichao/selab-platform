@@ -8,10 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.JwtHelperUtils;
 import tyut.selab.loginservice.utils.SecurityUtil;
+import tyut.selab.utils.Result;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import static tyut.selab.loginservice.common.Constant.STATUS_CODE_NON_TOKEN;
 
 /**
  * Description: 所有请求都走此过滤器来判断用户是否登录
@@ -41,10 +44,12 @@ public class LoginFilter implements Filter {
                 //将Token传给实体类对象UserLocal，并存入到ThreadLocal中，把该对象传给前端
                 SecurityUtil.setUser(userLocal);
                 filterChain.doFilter(servletRequest, servletResponse);
+
             }
-            //放行
-            filterChain.doFilter(request, response);
+            new Result(STATUS_CODE_NON_TOKEN,"Token不存在或已过期");
         }
+        //放行
+        filterChain.doFilter(request, response);
     }
 
 }
