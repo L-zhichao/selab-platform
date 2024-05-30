@@ -11,7 +11,6 @@ import tyut.selab.bookservice.vo.BookVo;
 import tyut.selab.utils.PageUtil;
 import tyut.selab.utils.Result;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -23,7 +22,7 @@ import java.io.PrintWriter;
  * @version: 1.0
  */
 
-@WebServlet(name = "BookController",urlPatterns = {"/book/save","/book/update","/book/query","/book/list","/book/delete"})
+@WebServlet(name = "BookController",urlPatterns = {"/book/save","/book/update","/book/queryOne","/book/list","/book/delete"})
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
@@ -33,39 +32,20 @@ public class BookController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         // 设置请求和响应的编码
         req.setCharacterEncoding("UTF-8");
-//        resp.setCharacterEncoding("UTF-8");
-//        resp.setContentType("application/json");
         resp.setContentType("application/json;charset=utf-8");
         // 获取url并拆成段
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         // 获取此次请求是save? update? query? list? 还是 delete? [要操作的方法名]
         String methodName = split[split.length - 1];
-//        Class aClass = this.getClass();
-//        try {
-//            Method declaredMethod = aClass.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
-//            declaredMethod.setAccessible(true);
-//            declaredMethod.invoke(this,req, resp);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-
         Result result = null;
-        if (methodName.equals("save")) {
-            result = save(req, resp);
-        } else if (methodName.equals("update")) {
-            update(req, resp);
-        } else if (methodName.equals("query")) {
+        if (methodName.equals("queryOne")) {
             query(req, resp);
         } else if (methodName.equals("list")) {
             result = list(req, resp);
         } else if (methodName.equals("delete")) {
             result = delete(req, resp);
         } else {
-//            result.setCode(500004);
-//            result.setData(null);
-//            result.setMsg("路径有误");
             result = Result.error(500004,"路径有误");
         }
 
@@ -77,18 +57,29 @@ public class BookController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // 获取请求消息体(其实对应的就是请求参数)
-        BufferedReader br = request.getReader();
-        StringBuilder sb= new StringBuilder();
-        // 读取数据
-        String line = null;
-        while((line = br.readLine())!=null){
-            sb.append(line);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // 设置请求和响应的编码
+        req.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json;charset=utf-8");
+        // 获取url并拆成段
+        String requestURI = req.getRequestURI();
+        String[] split = requestURI.split("/");
+        // 获取此次请求是save? update? query? list? 还是 delete? [要操作的方法名]
+        String methodName = split[split.length - 1];
+        Result result = null;
+        if (methodName.equals("save")) {
+            query(req, resp);
+        } else if (methodName.equals("update")) {
+            result = list(req, resp);
+        } else {
+            result = Result.error(500004,"路径有误");
         }
-        // 先转换为JSON字符串，再封装为BookDao类
-        String DTO = sb.toString();
-        //bookDto = JSONObject.parseObject(DTO,BookDto.class);
+
+        String jsonString = JSON.toJSONString(result);
+        PrintWriter writer = resp.getWriter();
+        writer.print(jsonString);
+        writer.flush();
+        writer.close();
     }
 
     /**
