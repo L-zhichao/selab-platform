@@ -1,9 +1,5 @@
 package tyut.selab.bookservice.controller;
 
-import com.alibaba.druid.support.json.JSONParser;
-import com.alibaba.druid.support.json.JSONUtils;
-import com.alibaba.druid.support.json.JSONWriter;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import jakarta.servlet.ServletException;
@@ -11,25 +7,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.exception.ServiceException;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.service.impl.BookServiceImpl;
 import tyut.selab.bookservice.vo.BookVo;
-import tyut.selab.utils.Page;
+import tyut.selab.utils.PageUtil;
 import tyut.selab.utils.Result;
 
-import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @className: BookController
@@ -60,17 +49,17 @@ public class BookController extends HttpServlet {
         String[] split = requestURI.split("/");
         // 获取此次请求是save? update? query? list? 还是 delete? [要操作的方法名]
         String methodName = split[split.length - 1];
-        Class aClass = this.getClass();
-        try {
-            Method declaredMethod = aClass.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
-            // 设置 暴力破解 方法的访问修饰符的限制
-            declaredMethod.setAccessible(true);
-            // 执行方法
-            declaredMethod.invoke(this, req, resp);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("异常处理");
-
+        Result result = new Result(404,null);
+        if(methodName.equals("save")){
+            result = save(req,resp);
+        } else if(methodName.equals("update")){
+            result = update(req,resp);
+        } else if(methodName.equals("queryOne")){
+            result = queryOne(req,resp);
+        } else if(methodName.equals("list")){
+            result = list(req,resp);
+        } else if(methodName.equals("delete")){
+            result = delete(req,resp);
         }
     }
 
@@ -194,35 +183,31 @@ public class BookController extends HttpServlet {
         //接受请求参数
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
-        Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
-        String bookName = request.getAttribute("bookName").toString();
         //将参数传递给服务层，进行分页查询
-        Page<BookVo> bookVoList = new Page<BookVo>();
-        if(cur == 0 || size==0){
+        PageUtil<BookVo> bookVoPageUtil = new PageUtil<BookVo>();
+        if (cur == 0 || size==0) {
             Result result = new Result(500001,null);
             result.setMsg("页码或每页数量为空");
             return result;
         }else{
-            if(userId!=null && bookName!=null){
-                bookVoList = bookService.selectList(cur,size,userId,bookName);
-            } else if (userId==null && bookName!=null) {
-                bookVoList = bookService.selectBookByBookName(cur,size,bookName);
-            } else if (userId!=null && bookName==null) {
-                bookVoList = bookService.selectListByOwnerId(cur,size,userId);
-            }else{
-                bookVoList = bookService.selectAllList(cur,size);
+            if(request.getAttribute("userId")==null &&request.getAttribute("bookName")==null){
+                bookVoPageUtil = bookService.selectAllList(cur,size);
+                return Result.success(bookVoPageUtil);
+            } else if (request.getAttribute("userId")==null &&request.getAttribute("bookName")!=null) {
+                String bookName = request.getAttribute("bookName").toString();
+                bookVoPageUtil = bookService.selectBookByBookName(cur,size,bookName);
+                return Result.success(bookVoPageUtil);
+            } else if (request.getAttribute("userId")!=null &&request.getAttribute("bookName")==null) {
+                Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
+                bookVoPageUtil = bookService.selectListByOwnerId(cur,size,userId);
+                return Result.success(bookVoPageUtil);
+            } else{
+                Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
+                String bookName = request.getAttribute("bookName").toString();
+                bookVoPageUtil = bookService.selectList(cur,size,userId,bookName);
+                return Result.success(bookVoPageUtil);
             }
         }
-        //将分页查询的结果响应给客户端
-        Result result = Result.success(bookVoList);
-        if(bookVoList.getTotal()==0) {
-            result.setMsg("查询信息为空");
-            result.setData(null);
-            result.setCode(500003);
-            return result;
-        }
-        result.setMsg("图书信息查询成功");
-        return result;
     }
 
     /**

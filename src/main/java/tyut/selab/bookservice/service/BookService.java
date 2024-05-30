@@ -3,7 +3,7 @@ package tyut.selab.bookservice.service;
 import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.vo.BookVo;
-import tyut.selab.utils.Page;
+import tyut.selab.utils.PageUtil;
 
 /**
  * @className: BookService
@@ -43,7 +43,7 @@ public interface BookService {
      *
      * @return
      */
-    public Page<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName);
+    public PageUtil<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName);
 
     /**
      *   通过 bookId 查询书籍信息
@@ -58,14 +58,14 @@ public interface BookService {
      * @param bookName
      * @return
      */
-    public Page<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName);
+    public PageUtil<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName);
 
     /**
      * 通过userid查询用户所拥有的所有书籍
      *
      * @return
      */
-    public Page<BookVo> selectListByOwnerId(Integer cur, Integer size, Integer userId);
+    public PageUtil<BookVo> selectListByOwnerId(Integer cur, Integer size, Integer userId);
 
     /**
      * 分页查询所有书籍信息
@@ -73,7 +73,8 @@ public interface BookService {
      * @param
      * @return
      */
-    public Page<BookVo> selectAllList(Integer cur, Integer size);
+    public PageUtil<BookVo> selectAllList(Integer cur, Integer size);
 
     public BookVo bookIofoToBookVo(BookInfo bookInfo);
+
 }

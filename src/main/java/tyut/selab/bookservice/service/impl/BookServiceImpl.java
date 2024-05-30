@@ -11,7 +11,7 @@ import tyut.selab.bookservice.vo.BookVo;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.impl.UserDaoImpl;
 import tyut.selab.userservice.domain.User;
-import tyut.selab.utils.Page;
+import tyut.selab.utils.PageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ public class BookServiceImpl implements BookService {
         BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
         return bookDao.update(bookInfo);
     }
-
+    @Override
     public Integer deleteBook(Integer bookId) {
         return bookDao.delete(bookId);
     }
@@ -55,8 +55,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName) {
-        Page<BookVo> page = new Page<BookVo>();
+    public PageUtil<BookVo> selectList(Integer cur, Integer size, Integer userId, String bookName) {
+        PageUtil<BookVo> page = new PageUtil<BookVo>();
         page.setCur(cur);
         page.setSize(size);
         if(cur==1){
@@ -79,8 +79,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName) {
-        Page<BookVo> page = new Page<BookVo>();
+    public PageUtil<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName) {
+        PageUtil<BookVo> page = new PageUtil<BookVo>();
         page.setSize(size);
         page.setCur(cur);
         if(cur==1){
@@ -104,8 +104,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookVo> selectListByOwnerId(Integer cur, Integer size, Integer userId) {
-        Page<BookVo> page = new Page<BookVo>();
+    public PageUtil<BookVo> selectListByOwnerId(Integer cur, Integer size, Integer userId) {
+        PageUtil<BookVo> page = new PageUtil<BookVo>();
         page.setSize(size);
         page.setCur(cur);
         if(cur == 1){
@@ -126,8 +126,8 @@ public class BookServiceImpl implements BookService {
         return page;
     }
 
-    public Page<BookVo> selectAllList (Integer cur, Integer size){
-        Page<BookVo> page = new Page<BookVo>();
+    public PageUtil<BookVo> selectAllList (Integer cur, Integer size){
+        PageUtil<BookVo> page = new PageUtil<BookVo>();
         page.setSize(size);
         page.setCur(cur);
         if(cur==1){
