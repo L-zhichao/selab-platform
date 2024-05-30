@@ -175,4 +175,44 @@ public class BaseDao {
         // 返回的是影响数据库记录数
         return rows;
     }
+
+
+
+
+
+
+        // 通用的查询方法，返回结果集的第一条记录的指定列的值
+        protected String queryForObject(String sql, Object... params) {
+
+            Connection connection = JDBCUtil.getConnection();
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            String result = null;
+
+            try {
+                preparedStatement = connection.prepareStatement(sql);
+                // 设置参数
+                if (params != null) {
+                    for (int i = 0; i < params.length; i++) {
+                        preparedStatement.setObject(i + 1, params[i]);
+                    }
+                }
+                resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    result = resultSet.getString(2); // 总是返回第2列user_name的值
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } finally {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return result;
+        }
+
+
+
 }

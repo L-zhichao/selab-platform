@@ -16,10 +16,7 @@ import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.userservice.domain.User;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -34,13 +31,12 @@ public class TaskReportServiceImpl implements TaskReportService {
      * */
     private TaskReportDao taskReportDao=new TaskReportDaoImpl();
     private Integer userId;
+
     /**
      *  新增汇报记录
      * @param taskReportDto
      * @return
      */
-
-    //如何获取用户id
     public Integer save(TaskReportDto taskReportDto) {
 
         // 验证输入参数
@@ -80,7 +76,11 @@ public class TaskReportServiceImpl implements TaskReportService {
         taskReport.setCreateTime(new Date());
 
         try {
-            return taskReportDao.insert(taskReport);
+            Integer insert = taskReportDao.insert(taskReport);
+            if(insert!=null){
+                taskReport.setReportStatus(1);
+            }
+            return insert;
         }catch (Exception e) {
             throw new RuntimeException();
         }
@@ -93,23 +93,32 @@ public class TaskReportServiceImpl implements TaskReportService {
     @Override
     public List<TaskReportVo> queryByUserIdAndTaskId(Integer taskId, Integer userId) {
 
-        List<TaskReportVo> taskReportVos = new ArrayList<>();
         List<TaskReport> taskReports = null;
-        if(taskId==null){
-            throw new IllegalArgumentException("任务id不能为空");
+        if(taskId==null||userId==null){
+            throw new IllegalArgumentException("任务id和用户id都不能为空");
         }
+
         try {
             taskReports=taskReportDao.selectByUserId(userId,taskId);
-        }catch (Exception e){
-            throw new RuntimeException();
+        }catch (RuntimeException e){
+            throw new RuntimeException("查询汇报记录时出错",e);
         }
 
+        if (taskReports == null || taskReports.isEmpty()) {
+            return Collections.emptyList();//返回空列表
+        }
 
-    //将TaskReport封装成TaskReportVo对象
+        //查询用户名
+        String userName = taskReportDao.getUserNameByUserId(userId);
+
+        //将TaskReport封装成TaskReportVo对象
+        List<TaskReportVo> taskReportVos = new ArrayList<>();
         for(TaskReport taskReport : taskReports){
             TaskReportVo taskReportVo = new TaskReportVo();
-            taskReportVo.setTaskId(taskReport.getTaskId());
+
             taskReportVo.setReportId(taskReport.getReportId());
+            taskReportVo.setTaskId(taskReport.getTaskId());
+            taskReportVo.setUserName(userName);
             taskReportVo.setReportStatus(taskReport.getReportStatus());
             taskReportVo.setDetails(taskReport.getDetails());
             taskReportVo.setReportTime(taskReport.getCreateTime());
@@ -206,6 +215,9 @@ public Integer queryuseridByreportid(Integer reportid){
     return taskInfo.getPublisherId();
 }
 
+/**
+ * 用于从controller层接收userId
+ * */
     public void setUserId(Integer userId){
         this.userId=userId;
     }

@@ -88,4 +88,12 @@ public interface TaskReportDao {
      */
     Integer conflict (TaskReportDto taskReportDto);
 
+    /**
+     * 通过userId获取userName
+     * 针对【sys_user】表
+     * @param userId
+     * @return userName
+     * */
+    public String getUserNameByUserId(Integer userId);
+
 }

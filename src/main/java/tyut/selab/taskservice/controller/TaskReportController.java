@@ -22,6 +22,7 @@ import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.service.impl.TaskReportServiceImpl;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
+import tyut.selab.taskservice.view.TaskInfoForUser;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.utils.Page;
@@ -82,7 +83,7 @@ import java.util.List;
 
         Integer save = taskReportService.save(taskReportDto);
         if(save!=null){
-            return Result.success(null,"汇报成功");
+            return Result.success(HttpStatus.NO_CONTENT,"汇报成功");
         }else{
             return Result.error(HttpStatus.ERROR,"汇报失败");
         }
@@ -128,31 +129,35 @@ import java.util.List;
      *  param: taskId
      * @param request
      * @param response
-     * @return TaskReportDto
+     * @return TaskReportVo
      */
     private Result queryMyReport(HttpServletRequest request, HttpServletResponse response){
         List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
 
-//        //获取用户id
-//        HttpSession session = request.getSession(false);
-//        if (session != null) {
-//            Object userIdStr = session.getAttribute("userId");
-//            if(userIdStr instanceof Integer){
-//                Integer  userId=(Integer) userIdStr;
-//            }
-//        }
-
         //获取请求参数
         Integer taskId = Integer.valueOf(request.getParameter("taskId"));
-//        Integer cur = Integer.valueOf(request.getParameter("cur"));
-//        Integer size = Integer.valueOf(request.getParameter("size"));
+        Integer cur = Integer.valueOf(request.getParameter("cur")); // 返回第几页
+        Integer size = Integer.valueOf(request.getParameter("size"));// 每页返回数量
 
-      //  taskReportVos = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+        //获取用户id
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object userIdStr = session.getAttribute("userId");
+            if(userIdStr instanceof Integer){
+                Integer  userId=(Integer) userIdStr;
+                taskReportVos = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+            }
+        }
+
+        TaskInfoForUser taskInfoForUser = new TaskInfoForUser();
+
+
+
 
         if(taskReportVos!=null){
-            return Result.success(null);//嗲修改
+            return Result.success(null);//待修改
         }else {
-            return Result.error(HttpStatus.ERROR,"查询失败");//????
+            return Result.error(HttpStatus.ERROR,"当前任务汇报为空列表");
         }
 
     }

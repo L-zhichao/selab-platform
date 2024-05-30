@@ -54,7 +54,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
     }
 
     /**
-     * 通过用户id和taskId查询汇报信息（查询本人汇报记录) 【userid后端获取】
+     * 通过用户id和taskId查询汇报信息（查询本人汇报记录)
      *
      * @param userId
      * @return
@@ -185,4 +185,12 @@ String sql= """
         }
     }
 
+/**
+ * 通过userId获取userName
+ * */
+    @Override
+    public String getUserNameByUserId(Integer userId) {
+        String sql="select user_name from sys_user where user_id=?";
+        return queryForObject(sql,userId);
+    }
 }
