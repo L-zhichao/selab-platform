@@ -224,8 +224,8 @@ import java.util.List;
                 if (successT.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有汇报记录");
                 }else {
-                    WebUtil.writeJson(response,Result.success(successT,"请求成功"));
-                    return null;
+//                    WebUtil.writeJson(response,Result.success(successT,"请求成功"));
+                    return Result.success(successT,"请求成功");
                 }
 
             }
@@ -294,9 +294,9 @@ import java.util.List;
                     }else {
                         taskInfoVoPage=taskReportVos;
                     }
-                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
+//                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
 //                    return Result.success(taskInfoVoPage,"请求成功");
-                    return null;
+                    return Result.success(taskInfoVoPage,"请求成功");
                 }
             }else {
                 BaseDao baseDao = new BaseDao();
@@ -331,8 +331,8 @@ select distinct task_id as taskId from task_report
                     }else {
                         taskInfoVoPage=SuccessTaskReportVos;
                     }
-                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
-                    return null;
+//                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
+                    return Result.success(taskInfoVoPage,"请求成功");
                 }
             }
         }
@@ -369,8 +369,8 @@ select distinct task_id as taskId from task_report
                 if (i==1){
                     //成功找到任务，并且完成删除操作
                     resultMaker.setMsg("删除成功");
-                    WebUtil.writeJson(response,resultMaker);
-                    return null;
+//                    WebUtil.writeJson(response,resultMaker);
+                    return resultMaker;
                 }else {
                     //未找到
                     return Result.error(HttpStatus.NOT_FOUND,"未找到该汇报记录");
@@ -385,8 +385,8 @@ select distinct task_id as taskId from task_report
             if (i==1){
                 //成功找到任务，并且完成删除操作
                 resultMaker.setMsg("删除成功");
-                WebUtil.writeJson(response,resultMaker);
-                return null;
+//                WebUtil.writeJson(response,resultMaker);
+                return resultMaker;
             }else {
                 //未找到
                 return Result.error(HttpStatus.NOT_FOUND,"未找到该汇报记录");
@@ -456,8 +456,8 @@ select distinct task_id as taskId from task_report
                 if (successN.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有需要汇报的用户");
                 }else {
-                    WebUtil.writeJson(response,Result.success(successN,"请求成功"));
-                    return null;
+//                    WebUtil.writeJson(response,Result.success(successN,"请求成功"));
+                    return Result.success(successN,"请求成功");
                 }
             }
             //taksid 输入非法： 不是自己发布的任务的id
@@ -486,8 +486,8 @@ select distinct task_id as taskId from task_report
                     }else {
                         Page.addAll(needReportUsers);
                     }
-                    WebUtil.writeJson(response,Result.success(Page,"请求成功"));
-                    return null;
+//                    WebUtil.writeJson(response,Result.success(Page,"请求成功"));
+                    return Result.success(Page,"请求成功");
                 }
             }
         }else {
@@ -521,8 +521,8 @@ select distinct task_id as taskId from task_report
                     }else {
                         Page.addAll(needReportUsers);
                     }
-                    WebUtil.writeJson(response,Result.success(Page,"请求成功"));
-                    return null;
+//                    WebUtil.writeJson(response,Result.success(Page,"请求成功"));
+                    return Result.success(Page,"请求成功");
                 }
             }else {
                 //查询所有任务的汇报用户
@@ -562,8 +562,8 @@ select distinct task_id as taskId from task_report
                     if (successN.isEmpty()){
                         return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有需要汇报的用户");
                     }else {
-                        WebUtil.writeJson(response,Result.success(successN,"请求成功"));
-                        return null;
+//                        WebUtil.writeJson(response,Result.success(successN,"请求成功"));
+                        return Result.success(successN,"请求成功");
                     }
                 }
             }
