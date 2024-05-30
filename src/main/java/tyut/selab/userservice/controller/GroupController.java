@@ -151,7 +151,7 @@ public class GroupController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Result.error(400, "添加失败");
+        return Result.error(400, "添加失败或没有权限");
     }
 
     /**
@@ -197,11 +197,11 @@ public class GroupController extends HttpServlet {
             groupVo.setGroupId(Integer.valueOf(groupId));
             groupVo.setCreateTime(date);
 
-            int insert = groupService.update(groupVo);
-            if (insert == 0) {
-                return Result.error(400, "添加失败");
+            int update = groupService.update(groupVo);
+            if (update == 0) {
+                return Result.error(400, "修改失败或没有权限");
             }
-            return Result.success(insert);
+            return Result.success(update);
 
 
         } catch (ParserConfigurationException | SAXException e) {
@@ -219,10 +219,10 @@ public class GroupController extends HttpServlet {
         public Result delete (HttpServletRequest req, HttpServletResponse resp){
             Integer groupId = Integer.valueOf(req.getParameter("groupId"));
             Integer delete = groupService.delete(groupId);
-            if (delete == 0) {
+            if (delete == 1) {
                 return Result.success(delete);
             } else {
-                return Result.error(400, "删除失败");
+                return Result.error(400, "不存在该用户或没有权限");
             }
 
         }
@@ -243,6 +243,9 @@ public class GroupController extends HttpServlet {
             Integer cur = Integer.valueOf((request.getParameter("cur") == null) ? "1" : request.getParameter("cur"));
             Integer szie = Integer.valueOf((request.getParameter("szie") == null) ? "5" : request.getParameter("szie"));
             List<GroupVo> groupVos = groupService.selectAllGroup(cur, szie);
+            if(groupVos == null){
+                return Result.error(400,"查询失败，没有权限");
+            }
             return Result.success(groupVos);
         }
 

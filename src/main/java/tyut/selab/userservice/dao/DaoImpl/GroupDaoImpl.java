@@ -72,9 +72,9 @@ public class GroupDaoImpl implements GroupDao {
             //判断是否执行
             JDBCUtils.closeResource(conn, preparedStatement);
             if (i == 0) {
-                return 1;
-            } else {
                 return 0;
+            } else {
+                return 1;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -108,13 +108,15 @@ public class GroupDaoImpl implements GroupDao {
     public Integer update(Group group) {
         try {
             Connection conn = JDBCUtils.getConnection();
-            String sql = "update sys_group set group_name = ?,create_time = ? where group_id = ?;";
+            String sql = "update sys_group set group_name = ?,create_time = ? ,update_time = ? where group_id = ?;";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1,group.getGroupName());
             //时间类型转换
             java.sql.Date createTime = new java.sql.Date(group.getCreateTime().getTime());
             preparedStatement.setDate(2, createTime);
-            preparedStatement.setInt(3,group.getGroupId());
+            java.util.Date date = new java.util.Date();
+            preparedStatement.setDate(3, new java.sql.Date(date.getTime()));
+            preparedStatement.setInt(4,group.getGroupId());
             int i = preparedStatement.executeUpdate();
             JDBCUtils.closeResource(conn, preparedStatement);
             return i;
