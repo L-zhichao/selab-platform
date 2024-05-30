@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.JwtHelperUtils;
 import tyut.selab.loginservice.utils.SecurityUtil;
+import tyut.selab.loginservice.utils.WebUtils;
 import tyut.selab.utils.Result;
 
 import java.io.IOException;
@@ -46,7 +47,9 @@ public class LoginFilter implements Filter {
                 filterChain.doFilter(servletRequest, servletResponse);
 
             }
-            new Result(STATUS_CODE_NON_TOKEN,"Token不存在或已过期");
+
+            Result result = new Result(STATUS_CODE_NON_TOKEN, "Token不存在或已过期");
+            WebUtils.writeJson(response,result);
         }
         //放行
         filterChain.doFilter(request, response);
