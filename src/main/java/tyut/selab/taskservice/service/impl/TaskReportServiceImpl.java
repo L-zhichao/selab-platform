@@ -132,11 +132,17 @@ public class TaskReportServiceImpl implements TaskReportService {
         } catch (SQLException e) {
             return taskReportVos;  // 如果发生异常，返回空列表
         }
+        if (taskReports == null) {
+            return taskReportVos;  // 如果taskReports为null，返回空列表
+        }
         String sql = """
-                select user_name from sys_user where user_id = ?
-                """;
+            select user_name as userName from sys_user where user_id = ?
+            """;
         // 将TaskReport封装成TaskReportVo对象
         for (TaskReport taskReport : taskReports) {
+            if (taskReport == null) {
+                continue;  // 如果taskReport为null，跳过这次循环
+            }
             TaskReportVo taskReportVo = new TaskReportVo();
             taskReportVo.setTaskId(taskReport.getTaskId());
             taskReportVo.setReportId(taskReport.getReportId());
@@ -172,10 +178,10 @@ public class TaskReportServiceImpl implements TaskReportService {
         List<Integer> userIds = taskReportDao.selectByTaskIdForUserId(taskId);
         //userid 变成 username
         String sql = """
-                select user_name  from sys_user where user_id = ?
+                select user_name as userName  from sys_user where user_id = ?
                 """;
         String sql1 = """
-                select report_id  from task_report where user_id = ? and task_id=?
+                select report_id as reportId  from task_report where user_id = ? and task_id=?
                 """;
         for (Integer i:userIds){
             User userName = baseDao.baseQueryObject(User.class, sql,i);
@@ -183,7 +189,7 @@ public class TaskReportServiceImpl implements TaskReportService {
             NeedReportUser needReportUser=new NeedReportUser();
             if (userName != null) {
                 needReportUser.setUserName(userName.getUserName());
-                if (i1.getTaskid()!=null){
+                if (i1 != null){
                     needReportUser.setIsReport(1);//在汇报表中存在 代表以及汇报过
                 }else {
                     needReportUser.setIsReport(0);

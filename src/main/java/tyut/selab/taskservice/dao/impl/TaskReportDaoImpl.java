@@ -9,6 +9,7 @@ import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.Task;
 import tyut.selab.taskservice.view.TaskReportVo;
+import tyut.selab.userservice.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,8 +76,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public List<TaskReport> selectByTaskIdTaskReports(Integer taskId)  {
         List<TaskReport> taskReports=new ArrayList<>();
-        String sql1="select * from task_report where task_id=?";
-
+        String sql1="select report_id as reportId,task_id as taskId,user_id as userId,report_status as reportStatus,details,create_time as createTime from task_report where task_id=?";
         taskReports = baseQuery(TaskReport.class, sql1, taskId);
         return taskReports;
     }
@@ -92,10 +92,13 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
         //获取对应任务的小组
         List<TaskGroup> taskGroups = taskGroupDao.selectAllTaskGroupsByTaskId(taskId);
         //获取小组的对应成员id
-        String str="select user_id from user_group where group_id=?";
+        String str="select user_id as userId from user_group where group_id=?";
         for (TaskGroup group :taskGroups){
-            List<Integer> integerss = baseQuery(Integer.class, str, group.getGroupId());
-            integers.addAll(integerss);
+            List<Task> integerss = baseQuery(Task.class, str, group.getGroupId());
+//            integers.addAll(integerss);
+            for (Task t:integerss){
+                integers.add(t.getUserId());
+            }
         }
         return integers;
     }
@@ -171,8 +174,9 @@ String sql= """
      * */
     @Override
     public Integer queryTaskIdByrid(Integer reportId){
-        String sql1="select task_id from task_report where report_id=?";
-        return baseQueryObject(Integer.class, sql1,reportId);
+        String sql1="select task_id as taskId from task_report where report_id=?";
+        TaskReport task = baseQueryObject(TaskReport.class, sql1, reportId);
+        return task.getTaskId();
     }
 
     @Override

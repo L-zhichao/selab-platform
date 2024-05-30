@@ -192,6 +192,9 @@ import java.util.List;
                 List<TaskReportVo> successT=new ArrayList<>();
                 String userName = userMessage.getUserName();
                 List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(userName);
+                if (taskInfoVos.isEmpty()){
+                    return Result.error(HttpStatus.NO_CONTENT,"暂未发布任务");
+                }
                 for (TaskInfoVo taskInfoVo:taskInfoVos){
                     try {
                         taskReportVos = taskReportService.queryAllTask(taskInfoVo.getId());
@@ -298,7 +301,7 @@ import java.util.List;
             }else {
                 BaseDao baseDao = new BaseDao();
                 String str1 = """
-select DISTINCT task_id from task_report
+select distinct task_id as taskId from task_report
 """;
                 List<Task>taskids=new ArrayList<>();
                 taskids=baseDao.baseQuery(Task.class, str1);
@@ -308,7 +311,7 @@ select DISTINCT task_id from task_report
                     List<TaskReportVo> SuccessTaskReportVos = new ArrayList<>();
                     for (Task id:taskids){
                         try {
-                            taskReportVos = taskReportService.queryAllTask(id.getTaskid());
+                            taskReportVos = taskReportService.queryAllTask(id.getTaskId());
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
@@ -461,7 +464,7 @@ select DISTINCT task_id from task_report
             Integer userId = userMessage.getUserId();
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
-            if (userId.equals(taskInfo.getPublisherId())){
+            if (!userId.equals(taskInfo.getPublisherId())){
                 return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报用户");
             }else {
                 //taskid->groupid->userid
@@ -526,7 +529,7 @@ select DISTINCT task_id from task_report
                 //获取所有taskid
                 BaseDao baseDao = new BaseDao();
                 String str1 = """
-                select DISTINCT id from task_info
+                select id as taskId from task_info
                               """;
                 List<Task>taskids=new ArrayList<>();
                 taskids=baseDao.baseQuery(Task.class, str1);
@@ -535,7 +538,7 @@ select DISTINCT task_id from task_report
                 }else {
                     List<NeedReportUser> successN=new ArrayList<>();
                     for (Task i:taskids){
-                         needReportUsers = taskReportService.queryAllUserForReport(i.getTaskid());
+                         needReportUsers = taskReportService.queryAllUserForReport(i.getTaskId());
                         if (!needReportUsers.isEmpty()) {
                             if (cur!=1&&size!=Integer.MAX_VALUE){
                                 int beginIndex = (cur - 1) * size;
@@ -577,9 +580,9 @@ select DISTINCT task_id from task_report
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
        // UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
-        user.setUserName("zhangsan");
-        user.setRoleId(1);
-        user.setUserId(1);
+        user.setUserName("xiaoli");
+        user.setRoleId(2);
+        user.setUserId(2);
         return user;
     }
     protected void findMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
