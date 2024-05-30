@@ -85,7 +85,7 @@ public class LoginController extends HttpServlet {
         }
         //在数据库中查找是否有该账号的注册记录，如果有则登录成功，并生成对应的Token传给前端
         try {
-            if(1 == userService.findByUsername(userLoginReq.getUsername()) && 1 == userService.findByPassword(userService.getUserByUsername(userLoginReq.getUsername()).getPassword())){
+            if(1 == userService.findByUsername(userLoginReq.getUsername()) && userLoginReq.getPassword().equals(userService.getUserByUsername(userLoginReq.getUsername()).getPassword())){
                 //登录成功后根据username生成Token
                 String token = loginService.login(userLoginReq);
                 UserLocal userLocal = userService.getUserLocal(userLoginReq.getUsername());
