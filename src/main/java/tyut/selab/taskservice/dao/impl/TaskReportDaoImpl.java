@@ -176,7 +176,11 @@ String sql= """
     public Integer queryTaskIdByrid(Integer reportId){
         String sql1="select task_id as taskId from task_report where report_id=?";
         TaskReport task = baseQueryObject(TaskReport.class, sql1, reportId);
-        return task.getTaskId();
+        if (task!=null){
+            return task.getTaskId();
+        }else {
+            return -1;
+        }
     }
 
     @Override

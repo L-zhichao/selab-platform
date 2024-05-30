@@ -209,6 +209,9 @@ public Integer queryuseridByreportid(Integer reportid){
     //调用TaskServiceImpl方法
     TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
     Integer taskid=taskReportDao.queryTaskIdByrid(reportid);
+    if (taskid==-1){
+        return -1;
+    }
     TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
     return taskInfo.getPublisherId();
 }

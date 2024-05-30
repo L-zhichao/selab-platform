@@ -233,6 +233,9 @@ import java.util.List;
             Integer userId = userMessage.getUserId();
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
+            if (taskInfo==null){
+                return Result.error(HttpStatus.NOT_FOUND,"没有该任务");
+            }
             if (userId.equals(taskInfo.getPublisherId())){
                 try {
                     taskReportVos = taskReportService.queryAllTask(taskid);
@@ -256,8 +259,8 @@ import java.util.List;
                     }else {
                         taskInfoVoPage=taskReportVos;
                     }
-                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
-                    return null;
+//                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
+                    return Result.success(taskInfoVoPage,"请求成功");
                 }
             }else {
                 return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报记录");
@@ -361,6 +364,9 @@ select distinct task_id as taskId from task_report
             //根据reportid查出该任务的发布者
             Integer userId = userMessage.getUserId();
             Integer publisherId=taskReportService.queryuseridByreportid(reportid);
+            if (publisherId==-1){
+                return Result.error(HttpStatus.NOT_FOUND,"无该汇报记录");
+            }
             if (userId.equals(publisherId)){
                 //执行删除任务
                 //直接调用dao方法
@@ -464,6 +470,9 @@ select distinct task_id as taskId from task_report
             Integer userId = userMessage.getUserId();
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
+            if(taskInfo==null){
+                return Result.error(HttpStatus.NOT_FOUND,"没有该任务");
+            }
             if (!userId.equals(taskInfo.getPublisherId())){
                 return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报用户");
             }else {
