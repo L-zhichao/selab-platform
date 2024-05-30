@@ -20,7 +20,7 @@ import java.util.List;
 public class LoginFilter implements Filter {
     public List<String> ignoreUrl
             = Arrays.asList(
-            "/LoginController","/login","/register");
+            "/LoginController","/login","/register","/sendEmail");
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;

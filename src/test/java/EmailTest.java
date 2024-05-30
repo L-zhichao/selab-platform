@@ -171,4 +171,10 @@ public class EmailTest {
         }
 
     }
+    @Test
+    public void formatTest(){
+        String head = "你好我是%s";
+        Object body = 15;
+        System.out.println(String.format(head,body));
+    }
 }

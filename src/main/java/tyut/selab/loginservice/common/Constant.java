@@ -9,6 +9,8 @@ public interface Constant {
     Integer STATUS_CODE_INNSER_ERROR = 500;
     Integer STATUS_CODE_NON_IMPLEMENTATION = 501;
     Integer STATUS_CODE_NON_TOKEN = 505;
+    String HEAD = "平台注册验证码信息";
+    String TYPE = "QQ邮箱注册平台";
     String VERIFICATION_HTML_TEXT = "<!DOCTYPE html>   " +
             "<html>   " +
             "<head>   " +

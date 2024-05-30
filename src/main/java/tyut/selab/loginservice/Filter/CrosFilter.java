@@ -13,7 +13,7 @@ import java.util.List;
 public class CrosFilter implements Filter {
     public List<String> ignoreUrl
             = Arrays.asList(
-            "/LoginController","login","/register");
+            "/LoginController","login","/register","/sendEmail");
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
