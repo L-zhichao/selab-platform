@@ -364,10 +364,10 @@ public class TaskController extends HttpServlet {
             TaskInfoVo taskInfoVo = taskInfoService.queryById(taskGroup.getTaskId());
             taskInfoVos.add(taskInfoVo);
         }
-        if (taskInfoVos==null){
+        if (taskInfoVos.isEmpty()){
             return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布");
         }else {
-            WebUtil.writeJson(response,Result.success(taskInfoVos));
+//            WebUtil.writeJson(response,Result.success(taskInfoVos,"请求成功"));
             return Result.success(taskInfoVos,"请求成功");
         }
 //        return Result.success(taskInfoVos);
@@ -385,6 +385,7 @@ public class TaskController extends HttpServlet {
         user.setUserName("zhangsan");
         user.setRoleId(1);
         user.setUserId(1);
+        user.setGroupId(2);
         return user;
     }
 

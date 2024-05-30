@@ -17,6 +17,7 @@ import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
 import tyut.selab.taskservice.dto.TaskReportDto;
+import tyut.selab.taskservice.myutils.Task;
 import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.TaskReportService;
@@ -196,13 +197,16 @@ import java.util.List;
                 List<TaskReportVo> successT=new ArrayList<>();
                 String userName = userMessage.getUserName();
                 List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(userName);
+                if (taskInfoVos.isEmpty()){
+                    return Result.error(HttpStatus.NO_CONTENT,"暂未发布任务");
+                }
                 for (TaskInfoVo taskInfoVo:taskInfoVos){
                     try {
                         taskReportVos = taskReportService.queryAllTask(taskInfoVo.getId());
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
-                    if (taskReportVos!=null) {
+                    if (!taskReportVos.isEmpty()) {
                        if (cur!=1&&size!=Integer.MAX_VALUE){
                             int beginIndex = (cur - 1) * size;
                             int endIndex = cur * size - 1;
@@ -222,10 +226,10 @@ import java.util.List;
                         }
                     }
                 }
-                if (successT==null){
+                if (successT.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有汇报记录");
                 }else {
-                    WebUtil.writeJson(response,Result.success(successT));
+//                    WebUtil.writeJson(response,Result.success(successT,"请求成功"));
                     return Result.success(successT,"请求成功");
                 }
 
@@ -234,13 +238,16 @@ import java.util.List;
             Integer userId = userMessage.getUserId();
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
-            if (userId==taskInfo.getPublisherId()){
+            if (taskInfo==null){
+                return Result.error(HttpStatus.NOT_FOUND,"没有该任务");
+            }
+            if (userId.equals(taskInfo.getPublisherId())){
                 try {
                     taskReportVos = taskReportService.queryAllTask(taskid);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                if (taskReportVos==null){
+                if (taskReportVos.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
                 }else {
                     List<TaskReportVo> taskInfoVoPage;
@@ -257,7 +264,7 @@ import java.util.List;
                     }else {
                         taskInfoVoPage=taskReportVos;
                     }
-                    WebUtil.writeJson(response,Result.success(taskInfoVoPage));
+//                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
                     return Result.success(taskInfoVoPage,"请求成功");
                 }
             }else {
@@ -278,7 +285,7 @@ import java.util.List;
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                if (taskReportVos==null){
+                if (taskReportVos.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
                 }else {
                     List<TaskReportVo> taskInfoVoPage;
@@ -295,23 +302,24 @@ import java.util.List;
                     }else {
                         taskInfoVoPage=taskReportVos;
                     }
-                    WebUtil.writeJson(response,Result.success(taskInfoVoPage));
+//                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
+//                    return Result.success(taskInfoVoPage,"请求成功");
                     return Result.success(taskInfoVoPage,"请求成功");
                 }
             }else {
                 BaseDao baseDao = new BaseDao();
                 String str1 = """
-select DISTINCT task_id from task_report
+select distinct task_id as taskId from task_report
 """;
-                List<Integer>taskids=new ArrayList<>();
-                taskids=baseDao.baseQuery(Integer.class, str1);
-                if (taskids==null){
+                List<Task>taskids=new ArrayList<>();
+                taskids=baseDao.baseQuery(Task.class, str1);
+                if (taskids.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"暂无汇报信息");
                 }else {
                     List<TaskReportVo> SuccessTaskReportVos = new ArrayList<>();
-                    for (Integer id:taskids){
+                    for (Task id:taskids){
                         try {
-                            taskReportVos = taskReportService.queryAllTask(id);
+                            taskReportVos = taskReportService.queryAllTask(id.getTaskId());
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
@@ -331,7 +339,7 @@ select DISTINCT task_id from task_report
                     }else {
                         taskInfoVoPage=SuccessTaskReportVos;
                     }
-                    WebUtil.writeJson(response,Result.success(taskInfoVoPage));
+//                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
                     return Result.success(taskInfoVoPage,"请求成功");
                 }
             }
@@ -361,7 +369,10 @@ select DISTINCT task_id from task_report
             //根据reportid查出该任务的发布者
             Integer userId = userMessage.getUserId();
             Integer publisherId=taskReportService.queryuseridByreportid(reportid);
-            if (userId==publisherId){
+            if (publisherId==-1){
+                return Result.error(HttpStatus.NOT_FOUND,"无该汇报记录");
+            }
+            if (userId.equals(publisherId)){
                 //执行删除任务
                 //直接调用dao方法
                 Integer i = taskReportDao.deleteByReportId(reportid);
@@ -369,7 +380,7 @@ select DISTINCT task_id from task_report
                 if (i==1){
                     //成功找到任务，并且完成删除操作
                     resultMaker.setMsg("删除成功");
-                    WebUtil.writeJson(response,resultMaker);
+//                    WebUtil.writeJson(response,resultMaker);
                     return resultMaker;
                 }else {
                     //未找到
@@ -385,7 +396,7 @@ select DISTINCT task_id from task_report
             if (i==1){
                 //成功找到任务，并且完成删除操作
                 resultMaker.setMsg("删除成功");
-                WebUtil.writeJson(response,resultMaker);
+//                WebUtil.writeJson(response,resultMaker);
                 return resultMaker;
             }else {
                 //未找到
@@ -433,7 +444,7 @@ select DISTINCT task_id from task_report
                 List<NeedReportUser> successN=new ArrayList<>();
                 for (TaskInfoVo taskInfoVo:taskInfoVos){
                      needReportUsers = taskReportService.queryAllUserForReport(taskInfoVo.getId());
-                    if (needReportUsers!=null) {
+                    if (!needReportUsers.isEmpty()) {
                         if (cur!=1&&size!=Integer.MAX_VALUE){
                             int beginIndex = (cur - 1) * size;
                             int endIndex = cur * size - 1;
@@ -453,10 +464,10 @@ select DISTINCT task_id from task_report
                         }
                     }
                 }
-                if (successN==null){
+                if (successN.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有需要汇报的用户");
                 }else {
-                    WebUtil.writeJson(response,Result.success(successN));
+//                    WebUtil.writeJson(response,Result.success(successN,"请求成功"));
                     return Result.success(successN,"请求成功");
                 }
             }
@@ -464,12 +475,15 @@ select DISTINCT task_id from task_report
             Integer userId = userMessage.getUserId();
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
-            if (userId!=taskInfo.getPublisherId()){
+            if(taskInfo==null){
+                return Result.error(HttpStatus.NOT_FOUND,"没有该任务");
+            }
+            if (!userId.equals(taskInfo.getPublisherId())){
                 return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报用户");
             }else {
                 //taskid->groupid->userid
                 needReportUsers = taskReportService.queryAllUserForReport(taskid);
-                if (needReportUsers==null){
+                if (needReportUsers.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
                 }else {
                     List<NeedReportUser> Page=new ArrayList<>();
@@ -486,7 +500,7 @@ select DISTINCT task_id from task_report
                     }else {
                         Page.addAll(needReportUsers);
                     }
-                    WebUtil.writeJson(response,Result.success(Page));
+//                    WebUtil.writeJson(response,Result.success(Page,"请求成功"));
                     return Result.success(Page,"请求成功");
                 }
             }
@@ -504,7 +518,7 @@ select DISTINCT task_id from task_report
             if (taskid!=null){
                 //查询特定任务的汇报用户
                 needReportUsers = taskReportService.queryAllUserForReport(taskid);
-                if (needReportUsers==null){
+                if (needReportUsers.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
                 }else {
                     List<NeedReportUser> Page=new ArrayList<>();
@@ -521,7 +535,7 @@ select DISTINCT task_id from task_report
                     }else {
                         Page.addAll(needReportUsers);
                     }
-                    WebUtil.writeJson(response,Result.success(Page));
+//                    WebUtil.writeJson(response,Result.success(Page,"请求成功"));
                     return Result.success(Page,"请求成功");
                 }
             }else {
@@ -529,17 +543,17 @@ select DISTINCT task_id from task_report
                 //获取所有taskid
                 BaseDao baseDao = new BaseDao();
                 String str1 = """
-                select DISTINCT id from task_info
+                select id as taskId from task_info
                               """;
-                List<Integer>taskids=new ArrayList<>();
-                taskids=baseDao.baseQuery(Integer.class, str1);
-                if (taskids==null){
+                List<Task>taskids=new ArrayList<>();
+                taskids=baseDao.baseQuery(Task.class, str1);
+                if (taskids.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布,没有可以汇报的用户");
                 }else {
                     List<NeedReportUser> successN=new ArrayList<>();
-                    for (Integer i:taskids){
-                         needReportUsers = taskReportService.queryAllUserForReport(i);
-                        if (needReportUsers!=null) {
+                    for (Task i:taskids){
+                         needReportUsers = taskReportService.queryAllUserForReport(i.getTaskId());
+                        if (!needReportUsers.isEmpty()) {
                             if (cur!=1&&size!=Integer.MAX_VALUE){
                                 int beginIndex = (cur - 1) * size;
                                 int endIndex = cur * size - 1;
@@ -559,11 +573,11 @@ select DISTINCT task_id from task_report
                             }
                         }
                     }
-                    if (successN==null){
+                    if (successN.isEmpty()){
                         return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有需要汇报的用户");
                     }else {
-                        WebUtil.writeJson(response,Result.success(successN));
-                        return Result.success(successN);
+//                        WebUtil.writeJson(response,Result.success(successN,"请求成功"));
+                        return Result.success(successN,"请求成功");
                     }
                 }
             }
@@ -580,9 +594,9 @@ select DISTINCT task_id from task_report
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
        // UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
-        user.setUserName("zhangsan");
-        user.setRoleId(1);
-        user.setUserId(1);
+        user.setUserName("xiaoli");
+        user.setRoleId(2);
+        user.setUserId(2);
         return user;
     }
     protected void findMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
