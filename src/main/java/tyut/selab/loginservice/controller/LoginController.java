@@ -111,17 +111,46 @@ public class LoginController extends HttpServlet {
     public Result sendEmail(HttpServletRequest request,HttpServletResponse response){
         String msg = "";
         HttpSession session = request.getSession();
-        String email = (String)session.getAttribute("email");
-        String username = (String)session.getAttribute("username");
-        //防止直接通过url路径进入操作，并且session的这两个参数都在register接口中进行
-        if(session.isNew() || null == email || null == username){
-            session.removeAttribute("email");
-            session.removeAttribute("username");
-            session.invalidate();
-            msg = "请先填写注册信息";
+        String email = request.getParameter("email");
+        String username = request.getParameter("username");
+        if(null == username || "".equals(username)) {
+            msg = "用户名称不能为空";
+            return Result.error(STATUS_CODE_NON_IMPLEMENTATION, msg);
+        }else if(false == QQEmailService.checkUserName(username)){
+            msg = "用户名6到12个字符，可以包含中文、大小写字母、和数字，传来的用户名格式不正确";
             return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
+        }else {
+            try {
+                if(1 == userService.findByUsername(username)){
+                    msg = "该用户名已被注册";
+                    return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                msg = "服务器内部异常";
+                return Result.error(STATUS_CODE_INNSER_ERROR,msg);
+            }
         }
-        if(!session.isNew() && null == session.getAttribute("verify")) {
+        if(null == email || "".equals(email)) {
+            msg = "邮箱信息不能为空";
+            return Result.error(STATUS_CODE_NON_IMPLEMENTATION, msg);
+        }else if(false == QQEmailService.checkEmail(email)){
+            msg = "用户邮箱输入格式错误，邮箱格式应满足qq邮箱的默认格式";
+            return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
+        }else {
+            try {
+                if(3 == emailService.queryNumForSameEmail(email)){
+                    msg = "该邮箱已经被多次注册，请换一个新的邮箱再试试吧";
+                    return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                msg = "服务器内部异常";
+                return Result.error(STATUS_CODE_INNSER_ERROR,msg);
+            }
+        }
+        //防止直接通过url路径进入操作，并且session的这两个参数都在register接口中进行
+        if( session.isNew() && null == session.getAttribute("verify")) {
             session.setMaxInactiveInterval(60);
             String verify = SecurityUtil.getRandom();
             String body = String.format(VERIFICATION_HTML_TEXT, HEAD,username, TYPE, verify, "注册");
@@ -193,15 +222,9 @@ public class LoginController extends HttpServlet {
                 }
                 //将验证码存入到Session中Session的有效期是60秒
                 HttpSession session = request.getSession();
-                session.setAttribute("email",userRegisterDto.getEmail());
-                session.setAttribute("username",userRegisterDto.getUserName());
-                if(!session.isNew() && null == session.getAttribute("verify")){
-                    msg = "请先发送验证码，再进行验证操作";
-                    return Result.error(STATUS_CODE_INNSER_ERROR,msg);
-                }
                 //如果我们的session是新创建的那么就重新执行一遍发验证码的逻辑
                 if(!session.isNew() && null != session.getAttribute("verify")){
-                    if (null != session.getAttribute("verify") && null != request.getHeader("verify") && !"".equals(request.getHeader("verify"))) {
+                    if (null != request.getHeader("verify") && !"".equals(request.getHeader("verify"))) {
                         if(!session.getAttribute("verify").equals(request.getHeader("verify"))){
                             msg = "验证码不正确，请重新输入";
                             return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
@@ -221,12 +244,15 @@ public class LoginController extends HttpServlet {
                             msg = "服务器内部问题";
                             return Result.error(STATUS_CODE_INNSER_ERROR,msg);
                         }
+                        session.removeAttribute("verify");
+                        session.invalidate();
                         return Result.success(null);
                     }
-                    msg = "验证码错误";
+                    msg = "验证码不能为空";
                     return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
                 }
-                msg = "请发送验证码";
+                session.invalidate();
+                msg = "还未发送验证码";
                 return Result.error(STATUS_CODE_NON_IMPLEMENTATION,msg);
             }
             msg = "用户邮箱输入格式错误，邮箱格式应满足qq邮箱的默认格式";
