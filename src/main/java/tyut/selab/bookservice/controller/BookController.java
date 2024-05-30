@@ -40,7 +40,7 @@ public class BookController extends HttpServlet {
         String methodName = split[split.length - 1];
         Result result = null;
         if (methodName.equals("queryOne")) {
-            query(req, resp);
+            result = queryOne(req, resp);
         } else if (methodName.equals("list")) {
             result = list(req, resp);
         } else if (methodName.equals("delete")) {
@@ -68,9 +68,9 @@ public class BookController extends HttpServlet {
         String methodName = split[split.length - 1];
         Result result = null;
         if (methodName.equals("save")) {
-            query(req, resp);
+            result = save(req, resp);
         } else if (methodName.equals("update")) {
-            result = list(req, resp);
+            result = update(req, resp);
         } else {
             result = Result.error(500004,"路径有误");
         }
@@ -129,13 +129,6 @@ public class BookController extends HttpServlet {
      *  param: bookId bookName userId cur[不为空] size[不为空]
      * @return list<BookVo>
      */
-    private Result query(HttpServletRequest request,HttpServletResponse response){
-        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
-        Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
-        String bookName = request.getAttribute("bookName").toString();
-
-        return null;
-    }
 
     /**
      * 查询所有书籍(分页查询)
@@ -148,9 +141,6 @@ public class BookController extends HttpServlet {
     private Result list(HttpServletRequest request, HttpServletResponse response) {
         //接受请求参数
         if ((request.getParameter("cur") == null) || (request.getParameter("size") == null) || Integer.parseInt(request.getParameter("cur")) <= 0 || Integer.parseInt(request.getParameter("size")) <= 0){
-//            result.setMsg("页码或每页数量为空");
-//            result.setCode(500001);
-//            return result;
             return Result.error(500001,"信息错误");
         }
 
@@ -158,16 +148,13 @@ public class BookController extends HttpServlet {
         int size = Integer.parseInt(request.getParameter("size"));
 
         //将参数传递给服务层，进行分页查询
-        PageUtil<BookVo> bookVoPageUtil = bookService.selectList(cur, size);
+        if(request.getParameter("bookId") == null && request.getParameter("bookName") == null && request.getParameter("userId") == null){
+            PageUtil<BookVo> bookVoPageUtil = bookService.selectList(cur, size);
+            return Result.success(bookVoPageUtil);
+        } else if (request.getParameter("bookId") != null && request.getParameter("bookName") == null && request.getParameter("userId") == null) {
 
-        //将分页查询的结果响应给客户端
-
-//        if(bookVoList.isEmpty()) {
-//            result.setMsg("查询信息为空");
-//            result.setData(null);
-//            result.setCode(500003);
-//        }
-        return Result.success(bookVoPageUtil);
+        }
+        return null;
     }
 
     /**
