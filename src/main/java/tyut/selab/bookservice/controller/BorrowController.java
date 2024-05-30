@@ -231,7 +231,7 @@ public class BorrowController extends HttpServlet {
 
         } else if (request.getParameter("userId") != null && request.getParameter("bookId") == null) {
             Integer userId = Integer.valueOf(request.getParameter("userId"));
-            PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByUserid(userId, cur, size);
+            PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByUserId(userId, cur, size);
 
             return Result.success(borrowBookVoPageUtil);
         }
