@@ -38,11 +38,23 @@ public class UserRegisterDto implements Serializable {
      * 用户性别
      */
     private Integer sex;
-
-
+    /**
+     * 验证码信息
+     */
+    private String identify;
     private static final long serialVersionUID = 1L;
 
     public UserRegisterDto() {
+    }
+
+    public UserRegisterDto(String userName, String password, Integer groupId, String email, String phone, Integer sex, String identify) {
+        this.userName = userName;
+        this.password = password;
+        this.groupId = groupId;
+        this.email = email;
+        this.phone = phone;
+        this.sex = sex;
+        this.identify = identify;
     }
 
     public UserRegisterDto(String userName, String password, Integer groupId, String email, String phone, Integer sex) {
@@ -53,6 +65,7 @@ public class UserRegisterDto implements Serializable {
         this.phone = phone;
         this.sex = sex;
     }
+
     public String getUserName() {
         return userName;
     }
@@ -99,6 +112,15 @@ public class UserRegisterDto implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getIdentify() {
+        return identify;
+    }
+
+    public void setIdentify(String identify) {
+        this.identify = identify;
+    }
+
     @Override
     public String toString() {
         return "UserRegisterDto{" +
@@ -108,6 +130,7 @@ public class UserRegisterDto implements Serializable {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", sex=" + sex +
+                ", identify='" + identify + '\'' +
                 '}';
     }
 }

@@ -6,8 +6,14 @@ public interface Constant {
      *  对于同一邮箱注册的最大用户数量
      */
     public static final Integer MAX_SAME_MMAIL_REGISTER_NUM = 3;
-    Integer STATUS_CODE_INNSER_ERROR = 500;
-    Integer STATUS_CODE_NON_IMPLEMENTATION = 501;
+    Integer ACCOUNT_FORMAT_ERROR = 50101;//账号输入格式问题
+    Integer PASSWORD_FORMAT_ERROR = 50102;//密码输入格式问题
+    Integer PHONENUM_FORMAT_ERROR = 50103;//电话号码格式错误
+    Integer VERIFY_INFO_ERROR = 50104;//输入验证码错误
+    Integer MAIL_FORMAT_ERROR_CODE = 50105;//邮箱格式错误
+    Integer ACCOUNT_OR_PASSWORD_ERROR = 50106;//账号或密码格式错误
+    Integer FAILED_SEND_ERROR_CODE = 50002;//验证码发送失败
+    Integer STATUS_CODE_INNSER_ERROR = 50001;//服务器内部异常问题
     Integer STATUS_CODE_NON_TOKEN = 505;
     String HEAD = "平台注册验证码信息";
     String TYPE = "QQ邮箱注册平台";
