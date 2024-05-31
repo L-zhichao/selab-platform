@@ -243,20 +243,4 @@ public class BorrowServiceImpl implements BorrowService {
         return borrowBookVo;
     }
 
-
-    public PageUtil<BorrowBookVo> selectListByBorrowId(Integer borrowId) {
-        PageUtil<BorrowBookVo> borrowBookVoPageUtil = new PageUtil<>();
-        List<BorrowBookVo> books = new ArrayList<BorrowBookVo>();
-
-        List<BorrowBook> borrowBooks = borrowBookDao.selectAllByBorrowId(borrowId);
-
-        for(BorrowBook book : borrowBooks){
-            BorrowBookVo borrowBookVo = borrowBookToVo(book);
-            books.add(borrowBookVo);
-        }
-
-        borrowBookVoPageUtil.setData(books);
-
-        return borrowBookVoPageUtil;
-    }
 }
