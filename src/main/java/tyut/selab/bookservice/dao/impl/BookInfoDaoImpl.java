@@ -63,7 +63,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public BookInfo selectByBookIdBookInfo(Integer bookId) {
-        String sql = "select book_name BookName,book_author BookAuthor,book_details BookDetails,price Price,owner Owner,remark Remark,book_ref BookRef from book_info where userId = ?";
+        String sql = "select book_name bookName,book_author bookAuthor,book_details bookDetails,price price,owner owner,status,remark remark,book_ref bookRef from book_info where book_id = ?";
         int param = bookId;
         List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class,sql,param);
         return bookInfos.get(0);
