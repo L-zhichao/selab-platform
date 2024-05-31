@@ -97,22 +97,12 @@ public class BookController extends HttpServlet {
         BookDto bookDto = tool(request, response);
         Integer i = bookService.insertBook(bookDto);
         Result result = new Result(500002,null);
-        if (i >= 0) {
-            try {
-                request.getRequestDispatcher("book/list").forward(request,response);
-            } catch (ServletException e) {
-                throw new ServiceException("页面跳转失败");
-            } catch (IOException e) {
-                throw new ServiceException("获取信息失败");
-            }
-            result.setCode(200);
-            result.setMsg("图书信息添加成功");
+        if (i > 0) {
+            return result.success(null);
         }
         else{
-            result.setCode(500005);
-            result.setMsg("图书信息添加失败");
+            return result.error(500005,"图书信息添加失败");
         }
-        return result;
     }
 
     /**
@@ -131,21 +121,11 @@ public class BookController extends HttpServlet {
         Integer i = bookService.updateBook(bookVo);
         Result result = new Result(500002,null);
         if (i > 0) {
-            try {
-                request.getRequestDispatcher("book/list").forward(request,response);
-            } catch (ServletException e) {
-                throw new ServiceException("页面跳转失败");
-            } catch (IOException e) {
-                throw new ServiceException("获取信息失败");
-            }
-            result.setCode(200);
-            result.setMsg("图书信息修改成功");
+            return result.success(null);
         }
         else{
-            result.setCode(500005);
-            result.setMsg("图书信息修改失败");
+            return result.error(500005,"图书信息修改失败");
         }
-        return result;
     }
 
     /**
@@ -155,18 +135,16 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result queryOne(HttpServletRequest request, HttpServletResponse response) {
-        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
-        BookVo bookVo = bookService.selectBookById(bookId);
-        Result result = new Result(500002,null);
-        if(bookVo != null){
-            result.setCode(200);
-            result.setData(bookVo);
-            result.setMsg("成功查询");
-        }else{
-            result.setCode(500009);
-            result.setMsg("没有找到该书");
+        if (request.getParameter("bookId") != null) {
+            Integer bookId = Integer.valueOf(request.getParameter("bookId").toString());
+            BookVo bookVo = bookService.selectBookById(bookId);
+            if (bookVo != null) {
+                return Result.success(bookVo);
+            } else {
+                return Result.error(500009, "没有找到该书");
+            }
         }
-        return result;
+        return Result.error(500009, "没有找到该书");
     }
 
     /**
@@ -184,20 +162,20 @@ public class BookController extends HttpServlet {
         int size = Integer.parseInt(request.getParameter("size"));
         //将参数传递给服务层，进行分页查询
         PageUtil<BookVo> bookVoPageUtil = new PageUtil<BookVo>();
-        if(request.getAttribute("userId")==null &&request.getAttribute("bookName")==null){
+        if(request.getParameter("userId")==null &&request.getParameter("bookName")==null){
             bookVoPageUtil = bookService.selectAllList(cur,size);
             return Result.success(bookVoPageUtil);
-        } else if (request.getAttribute("userId")==null &&request.getAttribute("bookName")!=null) {
-            String bookName = request.getAttribute("bookName").toString();
+        } else if (request.getParameter("userId")==null &&request.getParameter("bookName")!=null) {
+            String bookName = request.getParameter("bookName").toString();
             bookVoPageUtil = bookService.selectBookByBookName(cur,size,bookName);
             return Result.success(bookVoPageUtil);
-        } else if (request.getAttribute("userId")!=null &&request.getAttribute("bookName")==null) {
-            Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
+        } else if (request.getParameter("userId")!=null &&request.getParameter("bookName")==null) {
+            Integer userId = Integer.valueOf(request.getParameter("userId").toString());
             bookVoPageUtil = bookService.selectListByOwnerId(cur,size,userId);
             return Result.success(bookVoPageUtil);
         } else{
-            Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
-            String bookName = request.getAttribute("bookName").toString();
+            Integer userId = Integer.valueOf(request.getParameter("userId").toString());
+            String bookName = request.getParameter("bookName").toString();
             bookVoPageUtil = bookService.selectList(cur,size,userId,bookName);
             return Result.success(bookVoPageUtil);
         }
@@ -212,19 +190,18 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result delete(HttpServletRequest request, HttpServletResponse response) {
-        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
-        Integer i = bookService.deleteBook(bookId);
-        response.setCharacterEncoding("UTF-8");
-        Result result = new Result(404,bookId);
-        if (i > 0) {
-            result.setCode(200);
-            result.setMsg("图书信息删除成功");
+        if(request.getParameter("bookId")!=null){
+            Integer bookId = Integer.valueOf(request.getParameter("bookId").toString());
+            Integer i = bookService.deleteBook(bookId);
+            response.setCharacterEncoding("UTF-8");
+            if (i > 0) {
+                return Result.success(null);
+            }
+            else{
+                return Result.error(500009,"图书信息删除失败");
+            }
         }
-        else{
-            result.setCode(500009);
-            result.setMsg("图书信息删除失败");
-        }
-        return result;
+        return Result.error(500009,"图书信息删除失败");
     }
 
     /**

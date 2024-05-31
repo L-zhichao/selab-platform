@@ -199,6 +199,13 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     @Override
+    public BorrowBookVo selectByBorrowId(Integer borrowId){
+        BorrowBook borrowBook = borrowBookDao.selectByBorrowIdBorrowBook(borrowId);
+        BorrowBookVo borrowBookVo = borrowBookToVo(borrowBook);
+        return borrowBookVo;
+    }
+
+    @Override
     public BorrowBook borrowBookDtoToBorrowBook(BorrowBookDto borrowBookDto) {
         BorrowBook borrowBook = new BorrowBook();
 
@@ -236,7 +243,7 @@ public class BorrowServiceImpl implements BorrowService {
         return borrowBookVo;
     }
 
-    @Override
+
     public PageUtil<BorrowBookVo> selectListByBorrowId(Integer borrowId) {
         PageUtil<BorrowBookVo> borrowBookVoPageUtil = new PageUtil<>();
         List<BorrowBookVo> books = new ArrayList<BorrowBookVo>();

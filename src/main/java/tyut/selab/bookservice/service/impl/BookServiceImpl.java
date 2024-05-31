@@ -108,11 +108,7 @@ public class BookServiceImpl implements BookService {
         List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectByOwnerBookInfo(cur, size, userId);
         for (BookInfo bookInfo : bookInfos) {
-            Integer owner = bookInfo.getOwner();
             BookVo bookVo = bookIofoToBookVo(bookInfo);
-            User user = userDao.selectByUserIdUser(owner);
-            String ownerName = user.getUserName();
-            bookVo.setOwnerName(ownerName);
             bookVos.add(bookVo);
         }
         page.setData(bookVos);
@@ -131,11 +127,7 @@ public class BookServiceImpl implements BookService {
         List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectAllList(cur, size);
         for (BookInfo bookInfo : bookInfos) {
-            Integer owner = bookInfo.getOwner();
             BookVo bookVo = bookIofoToBookVo(bookInfo);
-            User user = userDao.selectByUserIdUser(owner);
-            String ownerName = user.getUserName();
-            bookVo.setOwnerName(ownerName);
             bookVos.add(bookVo);
         }
         page.setData(bookVos);
