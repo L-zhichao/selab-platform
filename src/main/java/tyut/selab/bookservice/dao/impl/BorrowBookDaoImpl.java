@@ -105,4 +105,11 @@ public class BorrowBookDaoImpl implements BorrowBookDao {
         String sql = "select count(*) from book_borrow where status = 0;";
         return Integer.parseInt(String.valueOf((baseDao.baseQueryObject(Long.class,sql))));
     }
+
+    @Override
+    public List<BorrowBook> selectAllByBorrowId(Integer borrowId) {
+        String sql = "select borrow_id borrowId,book_id bookId,borrow_user borrowUser,borrow_duration borrowDuration,status,borrow_time borrowTime,return_time returnTime from book_borrow where borrow_id = ?;";
+        List<BorrowBook> borrowBooks = baseDao.baseQuery(BorrowBook.class, sql, borrowId);
+        return borrowBooks;
+    }
 }
