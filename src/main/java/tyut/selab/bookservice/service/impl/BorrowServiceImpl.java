@@ -46,8 +46,6 @@ public class BorrowServiceImpl implements BorrowService {
         Integer status = bookInfo.getStatus();
         UserLocal user = SecurityUtil.getUser();
         Integer userId = user.getUserId();
-//        Integer userId = 1;
-
         //判断是否可借阅，并进行相关处理
         if(status == 0){
             BorrowBook borrowBook = borrowBookDtoToBorrowBook(borrowBookDto);
@@ -91,8 +89,8 @@ public class BorrowServiceImpl implements BorrowService {
         }
         status = 1;
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date(ft.format(System.currentTimeMillis()));
-        borrowBook.setReturnTime(date);
+        Date returnTime = new Date();
+        borrowBook.setReturnTime(returnTime);
         Integer i = borrowBookDao.update(borrowBook);
         if (i > 0){
             BookInfo bookInfo = bookInfoDao.selectByBookIdBookInfo(bookId);
@@ -206,7 +204,6 @@ public class BorrowServiceImpl implements BorrowService {
 
         UserLocal user = SecurityUtil.getUser();
         Integer userId = user.getUserId();
-
 
         borrowBook.setBookId(borrowBookDto.getBookId());
         borrowBook.setBorrowDuration(borrowBookDto.getBorrowDuration());
