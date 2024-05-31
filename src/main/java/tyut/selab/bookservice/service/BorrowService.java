@@ -55,4 +55,6 @@ public interface BorrowService {
 
     public BorrowBookVo borrowBookToVo(BorrowBook borrowBook);
 
+    public PageUtil<BorrowBookVo> selectListByBorrowId(Integer borrowId);
+
 }
