@@ -275,33 +275,16 @@ public class UserDaoImpl implements UserDao {
             preparedStatement.setInt(1,roleId);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
-                int delFlag = resultSet.getInt("del_flag");
-                if (delFlag==0){
-                    User user = new User();
+                //int delFlag = resultSet.getInt("del_flag");
+                //if (delFlag==0){
                     Long userId = resultSet.getLong("user_id");
-                    //User user = selectByUserIdUser(userId);
-                    String userName = resultSet.getString("user_name");
-                    Date createTime = resultSet.getDate("create_time");
-                    Date updateTime = resultSet.getDate("update_time");
-                    String email = resultSet.getString("email");
-                    String remark = resultSet.getString("remark");
-                    String phone = resultSet.getString("phone");
-                    int sex = resultSet.getInt("sex");
+                    User user = selectByUserIdUser(userId);
+                    //加之后data数据穿不进去 不加会爆异常空指针
                     user.setUserId(userId);
-                    user.setUserName(userName);
-                    user.setCreateTime(createTime);
-                    user.setUpdateTime(updateTime);
-                    user.setEmail(email);
-                    user.setRemark(remark);
-                    user.setPhone(phone);
-                    user.setSex(sex);
-                    user.setDelFlag(delFlag);
-                    //user.setUserId(userId);
-                    //group.setCreateTime(createTime);
                     list.add(user);
-            }else {
-                throw new RuntimeException("此小组已删除");
-            }
+                //}else {
+                //   throw new RuntimeException("此小组已删除");
+                //}
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -467,7 +450,64 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> selectAll() {
-        return null;
+        PreparedStatement preparedStatement;
+        preparedStatement = null;
+        Connection connection = null;
+        ResultSet resultSet =null;
+        ArrayList<User> list = new ArrayList<>();
+        Properties prop = new Properties();
+        ResultSet resultSet1=null;
+        try {
+            prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
+            DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
+            connection = dataSource.getConnection();
+            String sql = "select * from sys_user";
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                User user ;
+                long userId;
+                int delFlag = resultSet.getInt("del_flag");
+                if (delFlag==0){
+                    userId = resultSet.getLong("user_id");
+                    user = selectByUserIdUser(userId);
+                    Integer groupId = getGroupId(userId);
+                    user.setGroupId(groupId);
+                    user.setUserId(userId);
+                    list.add(user);
+                }else {
+                    throw new RuntimeException("已删除");
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (preparedStatement!=null)
+                    preparedStatement.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (connection!=null)
+                    connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (resultSet!=null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (resultSet1!=null)
+                    resultSet1.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return list;
     }
 
     /**

@@ -161,6 +161,12 @@ public class UserController extends HttpServlet {
     /**
      *  查询小组所有用户
      *  param: cur size groupId  roleId 两个中有一个不为空或全为空，全为空则查询全部
+     *  queryall java.lang.NullPointerException: Cannot invoke &quot;java.lang.Integer.intValue()&quot; because &quot;groupId&quot; is null
+     *  tyut.selab.userservice.dao.impl.UserDaoImpl.getgroupName(UserDaoImpl.java:384)
+     * 	tyut.selab.userservice.service.impl.UserServiceImpl.selectAll(UserServiceImpl.java:177)
+     * 	tyut.selab.userservice.controller.UserController.query(UserController.java:193)
+     * 	tyut.selab.userservice.controller.UserController.doGet(UserController.java:45)
+     *
      * @param request
      * @param response
      * @return list<User>
@@ -168,35 +174,31 @@ public class UserController extends HttpServlet {
     private Result query(HttpServletRequest request,HttpServletResponse response){
         Integer groupId = Integer.valueOf((request.getParameter("groupId") == null) ? "0" : request.getParameter("groupId"));
         Integer roleId = Integer.valueOf((request.getParameter("roleId") == null) ? "0" : request.getParameter("roleId"));
-        ArrayList<UserVo> groupList = new ArrayList<>();
-        ArrayList<UserVo> userVoArrayList = new ArrayList<>();
-        ArrayList<UserVo> list = new ArrayList<>();
         if (groupId!=0&&roleId==0){
             List<UserVo> userVos = userService.selectByGroupId(groupId);
-            groupList.addAll(userVos);
-            if (groupList.isEmpty()){
+            if (userVos.isEmpty()){
                 Result error = result.error(400,"未查询到相关用户");
                 return error;
             }
-            Result success=result.success(groupList);
+            // 错误码： 500xx
+            Result success=result.success(userVos);
             return success;
         } else if (groupId==0&&roleId!=0) {
             List<UserVo> userVos=userService.selectByRoleId(roleId);
-            userVoArrayList.addAll(userVos);
-            if (userVoArrayList.isEmpty()){
-                Result error = result.error(400,"未查询到相关用户");
+//            userVoArrayList.addAll(userVos);
+            if (userVos.isEmpty()){
+                Result error = result.error(400, "未查询到相关用户");
                 return error;
             }
-            Result success=result.success(groupList);
+            Result success=result.success(userVos);
             return success;
         }else if(groupId==0&&roleId==0){
             List<UserVo> userVos=userService.selectAll();
-            list.addAll(userVos);
-            if (list.isEmpty()){
+            if (userVos.isEmpty()){
                 Result error = result.error(400,"未查询到相关用户");
                 return error;
             }
-            Result success=result.success(groupList);
+            Result success=result.success(userVos);
             return success;
         }
         Result error = result.error(400,"未查询到相关用户");

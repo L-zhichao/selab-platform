@@ -167,20 +167,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserVo> selectAll() {
-        ArrayList<UserVo> userVos = new ArrayList<>();
+        List<UserVo> userVos = new ArrayList<>();
         List<User> users = userDao.selectAll();
         for (User user: users){
             UserVo userVo = new UserVo();
             Long userId = user.getUserId();
             String userName = user.getUserName();
-            Integer groupId = user.getGroupId();
-            String groupName = userDao.getgroupName(groupId);
+            String groupName = userDao.getgroupName(user.getGroupId());
             Integer roleId = user.getRoleId();
             String email = user.getEmail();
             String phone = user.getPhone();
             Integer sex = user.getSex();
             userVo.setUserName(userName);
-            userVo.setGroupId(groupId);
+            userVo.setGroupId(user.getGroupId());
             userVo.setGroupName(groupName);
             userVo.setRoleId(roleId);
             if(roleId == 1){
@@ -215,7 +214,7 @@ public class UserServiceImpl implements UserService {
             String userName = user.getUserName();
             Integer groupId = userDao.getGroupId(userId);
             String groupName = userDao.getgroupName(groupId);
-            //Integer roleId = user.getRoleId();
+            //roleId = user.getRoleId();
             String email = user.getEmail();
             String phone = user.getPhone();
             Integer sex = user.getSex();
