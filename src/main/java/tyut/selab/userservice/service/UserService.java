@@ -44,4 +44,8 @@ public interface UserService {
     public Integer update(UserVo userVo);
 
     Integer groupUpdate(UserVo userVo);
+
+    List<UserVo> selectByRoleId(Integer roleId);
+
+    List<UserVo> selectAll();
 }

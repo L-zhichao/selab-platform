@@ -18,11 +18,13 @@ public class UserDaoImpl implements UserDao {
         PreparedStatement preparedStatement;
         preparedStatement = null;
         Connection connection = null;
-        Integer count;
+        Integer count=0;
+        ResultSet resultSet=null;
         Properties prop = new Properties();
         String userName = user.getUserName();
         Integer groupId = user.getGroupId();
         Integer roleId = user.getRoleId();
+        Integer userId=null;
         String email = user.getEmail();
         String phone = user.getPhone();
         Integer sex = user.getSex();
@@ -44,8 +46,18 @@ public class UserDaoImpl implements UserDao {
             preparedStatement .setString(7,phone);
             preparedStatement .setInt(8,sex);
             preparedStatement .setInt(9,delFlag);
-            String sql1="insert into user_group (user_id,group_id) values (?,?)";
-            count = preparedStatement.executeUpdate();//影响的行数
+            count = preparedStatement.executeUpdate();
+            String sql1="select LAST_INSERT_ID() from sys_user";
+            preparedStatement=connection.prepareStatement(sql1);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                userId=resultSet.getInt("LAST_INSERT_ID()");
+            }
+            String sql2="insert into user_group(user_id, group_id) VALUES (?,?)";
+            preparedStatement=connection.prepareStatement(sql2);
+            preparedStatement.setInt(1,userId);
+            preparedStatement.setInt(2,groupId);
+            count += preparedStatement.executeUpdate();//影响的行数
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -61,8 +73,58 @@ public class UserDaoImpl implements UserDao {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+            try {
+                if (resultSet!=null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
         return count;
+    }
+
+    @Override
+    public Integer getGroupId(Long userId) {
+        PreparedStatement preparedStatement;
+        preparedStatement = null;
+        Connection connection = null;
+        ResultSet resultSet =null;
+        Integer groupId = null;
+        Properties prop = new Properties();
+        try {
+            prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
+            DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
+            connection = dataSource.getConnection();
+            String sql = "select group_id from user_group where user_id = ? ";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1,userId);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                groupId=resultSet.getInt("group_id");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (preparedStatement!=null)
+                    preparedStatement.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (connection!=null)
+                    connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (resultSet!=null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return groupId;
     }
 
     @Override
@@ -197,9 +259,126 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> selectByGroupIdUsers(Integer groupId) {
+    public ArrayList<User> selectByRoleIdUsers(Integer roleId) {
+        PreparedStatement preparedStatement;
+        preparedStatement = null;
+        Connection connection = null;
+        ResultSet resultSet =null;
+        ArrayList<User> list = new ArrayList<>();
+        Properties prop = new Properties();
+        try {
+            prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
+            DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
+            connection = dataSource.getConnection();
+            String sql = "select * from sys_user where role_id=?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1,roleId);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                int delFlag = resultSet.getInt("del_flag");
+                if (delFlag==0){
+                    User user = new User();
+                    Long userId = resultSet.getLong("user_id");
+                    //User user = selectByUserIdUser(userId);
+                    String userName = resultSet.getString("user_name");
+                    Date createTime = resultSet.getDate("create_time");
+                    Date updateTime = resultSet.getDate("update_time");
+                    String email = resultSet.getString("email");
+                    String remark = resultSet.getString("remark");
+                    String phone = resultSet.getString("phone");
+                    int sex = resultSet.getInt("sex");
+                    user.setUserId(userId);
+                    user.setUserName(userName);
+                    user.setCreateTime(createTime);
+                    user.setUpdateTime(updateTime);
+                    user.setEmail(email);
+                    user.setRemark(remark);
+                    user.setPhone(phone);
+                    user.setSex(sex);
+                    user.setDelFlag(delFlag);
+                    //user.setUserId(userId);
+                    //group.setCreateTime(createTime);
+                    list.add(user);
+            }else {
+                throw new RuntimeException("此小组已删除");
+            }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (preparedStatement!=null)
+                    preparedStatement.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (connection!=null)
+                    connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (resultSet!=null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return list;
+    }
 
-        return null;
+    @Override
+    public List<User> selectByGroupIdUsers(Integer groupId) {
+        PreparedStatement preparedStatement;
+        preparedStatement = null;
+        Connection connection = null;
+        ResultSet resultSet =null;
+        ArrayList<User> list = new ArrayList<>();
+        Properties prop = new Properties();
+        try {
+            prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
+            DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
+            connection = dataSource.getConnection();
+            String sql = "select * from user_group where group_id=?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1,groupId);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                //int delFlag = resultSet.getInt("del_flag");
+                //if (delFlag==0){
+                    Long userId = resultSet.getLong("user_id");
+                    User user = selectByUserIdUser(userId);
+                    user.setUserId(userId);
+                    //group.setCreateTime(createTime);
+                    list.add(user);
+                }//else {
+                //    throw new RuntimeException("此小组已删除");
+                //}
+            //}
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (preparedStatement!=null)
+                    preparedStatement.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (connection!=null)
+                    connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (resultSet!=null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return list;
     }
 
     @Override
@@ -208,8 +387,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public String groupName(Integer groupId) {
-
+    public String getgroupName(Integer groupId) {
         PreparedStatement preparedStatement;
         preparedStatement = null;
         Connection connection = null;
@@ -287,8 +465,13 @@ public class UserDaoImpl implements UserDao {
         return count;
     }
 
+    @Override
+    public List<User> selectAll() {
+        return null;
+    }
+
     /**
-     * Cannot invoke "java.lang.Integer.intValue()" because the return value of "tyut.selab.userservice.domain.User.getRoleId()" is null
+     *
      * @param user
      * @return
      */

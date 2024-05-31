@@ -2,6 +2,7 @@ package tyut.selab.userservice.dao;
 
 import tyut.selab.userservice.domain.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,7 +57,13 @@ public interface UserDao {
 
     Integer groupUpdate(User user);
 
-    String groupName(Integer groupId);
+    String getgroupName(Integer groupId);
+
+    Integer getGroupId(Long userId);
+
+    ArrayList<User> selectByRoleIdUsers(Integer roleId);
+
+    List<User> selectAll();
 }
 
 

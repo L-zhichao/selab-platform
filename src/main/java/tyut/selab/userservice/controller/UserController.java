@@ -44,7 +44,7 @@ public class UserController extends HttpServlet {
                 try {
                     Result result = query(req, resp);
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("code", result.getCode());
+                    jsonObject.put("code",result.getCode());
                     jsonObject.put("msg", result.getMsg());
                     jsonObject.put("data", result.getData());
                     resp.setCharacterEncoding("UTF-8");
@@ -166,10 +166,12 @@ public class UserController extends HttpServlet {
      * @return list<User>
      */
     private Result query(HttpServletRequest request,HttpServletResponse response){
-        Integer groupId = Integer.valueOf(request.getParameter("groupId"));
-        Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+        Integer groupId = Integer.valueOf((request.getParameter("groupId") == null) ? "0" : request.getParameter("groupId"));
+        Integer roleId = Integer.valueOf((request.getParameter("roleId") == null) ? "0" : request.getParameter("roleId"));
         ArrayList<UserVo> groupList = new ArrayList<>();
-        if (groupId!=null&&roleId==null){
+        ArrayList<UserVo> userVoArrayList = new ArrayList<>();
+        ArrayList<UserVo> list = new ArrayList<>();
+        if (groupId!=0&&roleId==0){
             List<UserVo> userVos = userService.selectByGroupId(groupId);
             groupList.addAll(userVos);
             if (groupList.isEmpty()){
@@ -178,13 +180,31 @@ public class UserController extends HttpServlet {
             }
             Result success=result.success(groupList);
             return success;
+        } else if (groupId==0&&roleId!=0) {
+            List<UserVo> userVos=userService.selectByRoleId(roleId);
+            userVoArrayList.addAll(userVos);
+            if (userVoArrayList.isEmpty()){
+                Result error = result.error(400,"未查询到相关用户");
+                return error;
+            }
+            Result success=result.success(groupList);
+            return success;
+        }else if(groupId==0&&roleId==0){
+            List<UserVo> userVos=userService.selectAll();
+            list.addAll(userVos);
+            if (list.isEmpty()){
+                Result error = result.error(400,"未查询到相关用户");
+                return error;
+            }
+            Result success=result.success(groupList);
+            return success;
         }
-        return null;
+        Result error = result.error(400,"未查询到相关用户");
+        return error;
     }
 
     /**
      *  通过id查询用户信息 [id在路径后面]  " queryById/2  (id = 2)
-     *   java.lang.NullPointerException: Cannot invoke "java.lang.Integer.intValue()" because "groupId" is null
      * @param request
      * @param response
      * @return
