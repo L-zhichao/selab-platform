@@ -9,10 +9,12 @@ import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
 import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
+import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.Task;
 import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.view.TaskInfoForUser;
+import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.userservice.domain.User;
 
@@ -105,23 +107,7 @@ public class TaskReportServiceImpl implements TaskReportService {
             throw new RuntimeException("查询汇报记录时出错",e);
         }
 
-        if (taskReport == null) {
-            return null;
-        }
-
-        //查询用户名
-        String userName = taskReportDao.getUserNameByUserId(userId);
-
-        //将TaskReport封装成TaskReportVo对象
-       TaskReportVo taskReportVo = new TaskReportVo();
-
-        taskReportVo.setReportId(taskReport.getReportId());
-        taskReportVo.setTaskId(taskReport.getTaskId());
-        taskReportVo.setUserName(userName);
-        taskReportVo.setReportStatus(taskReport.getReportStatus());
-        taskReportVo.setDetails(taskReport.getDetails());
-        taskReportVo.setReportTime(taskReport.getCreateTime());
-
+        TaskReportVo taskReportVo = ToTaskReportVo(taskReport);
         return taskReportVo;
     }
 
@@ -226,4 +212,29 @@ public Integer queryuseridByreportid(Integer reportid){
     public void setUserId(Integer userId){
         this.userId=userId;
     }
+
+    /**
+     * 将taskReport转化为taskReportVo
+     * */
+    private TaskReportVo ToTaskReportVo(TaskReport taskReport){
+        if(taskReport==null){
+            return null;
+        }
+
+        //查询用户名
+        String userName = taskReportDao.getUserNameByUserId(userId);
+
+        //将TaskReport封装成TaskReportVo对象
+        TaskReportVo taskReportVo = new TaskReportVo();
+
+        taskReportVo.setReportId(taskReport.getReportId());
+        taskReportVo.setTaskId(taskReport.getTaskId());
+        taskReportVo.setUserName(userName);
+        taskReportVo.setReportStatus(taskReport.getReportStatus());
+        taskReportVo.setDetails(taskReport.getDetails());
+        taskReportVo.setReportTime(taskReport.getCreateTime());
+
+        return taskReportVo;
+    }
+
 }

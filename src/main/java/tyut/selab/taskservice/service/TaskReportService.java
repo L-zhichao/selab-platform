@@ -1,8 +1,10 @@
 package tyut.selab.taskservice.service;
 
 import tyut.selab.taskservice.dto.NeedReportUser;
+import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.view.TaskInfoForUser;
+import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.taskservice.view.TaskReportVo;
 
 import java.sql.SQLException;
@@ -62,5 +64,6 @@ public interface TaskReportService {
      * 设置userId
      * */
   public void setUserId(Integer userId);
+
 
 }
