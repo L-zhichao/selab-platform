@@ -18,7 +18,6 @@ import tyut.selab.utils.Result;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 
 /**
  * @className: BookController
@@ -176,34 +175,31 @@ public class BookController extends HttpServlet {
      * param: bookName userId cur[不为空] size[不为空]   cur[当前页数] size[每页数量]
      *  @return list<BookVo>
      */
-    private Result list(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+    private Result list(HttpServletRequest request, HttpServletResponse response) {
+        if(request.getParameter("cur") == null || request.getParameter("size") == null || Integer.parseInt(request.getParameter("cur")) <= 0 || Integer.parseInt(request.getParameter("size")) <= 0){
+            return Result.error(500001,"信息错误");
+        }
         //接受请求参数
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
         //将参数传递给服务层，进行分页查询
         PageUtil<BookVo> bookVoPageUtil = new PageUtil<BookVo>();
-        if (cur == 0 || size==0) {
-            Result result = new Result(500001,null);
-            result.setMsg("页码或每页数量为空");
-            return result;
-        }else{
-            if(request.getAttribute("userId")==null &&request.getAttribute("bookName")==null){
-                bookVoPageUtil = bookService.selectAllList(cur,size);
-                return Result.success(bookVoPageUtil);
-            } else if (request.getAttribute("userId")==null &&request.getAttribute("bookName")!=null) {
-                String bookName = request.getAttribute("bookName").toString();
-                bookVoPageUtil = bookService.selectBookByBookName(cur,size,bookName);
-                return Result.success(bookVoPageUtil);
-            } else if (request.getAttribute("userId")!=null &&request.getAttribute("bookName")==null) {
-                Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
-                bookVoPageUtil = bookService.selectListByOwnerId(cur,size,userId);
-                return Result.success(bookVoPageUtil);
-            } else{
-                Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
-                String bookName = request.getAttribute("bookName").toString();
-                bookVoPageUtil = bookService.selectList(cur,size,userId,bookName);
-                return Result.success(bookVoPageUtil);
-            }
+        if(request.getAttribute("userId")==null &&request.getAttribute("bookName")==null){
+            bookVoPageUtil = bookService.selectAllList(cur,size);
+            return Result.success(bookVoPageUtil);
+        } else if (request.getAttribute("userId")==null &&request.getAttribute("bookName")!=null) {
+            String bookName = request.getAttribute("bookName").toString();
+            bookVoPageUtil = bookService.selectBookByBookName(cur,size,bookName);
+            return Result.success(bookVoPageUtil);
+        } else if (request.getAttribute("userId")!=null &&request.getAttribute("bookName")==null) {
+            Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
+            bookVoPageUtil = bookService.selectListByOwnerId(cur,size,userId);
+            return Result.success(bookVoPageUtil);
+        } else{
+            Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
+            String bookName = request.getAttribute("bookName").toString();
+            bookVoPageUtil = bookService.selectList(cur,size,userId,bookName);
+            return Result.success(bookVoPageUtil);
         }
     }
 
