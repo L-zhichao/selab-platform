@@ -13,45 +13,50 @@ import java.util.List;
 public interface BorrowBookDao {
 
     /**
-     *  增加书籍借阅信息
+     * 增加书籍借阅信息
+     *
      * @param borrowBook
      * @return
      */
     public Integer insert(BorrowBook borrowBook);
 
     /**
-     *  修改书籍借阅信息
+     * 修改书籍借阅信息
+     *
      * @param borrowBook
      * @return
      */
     public Integer update(BorrowBook borrowBook);
 
     /**
-     *  查询书籍借阅信息
+     * 查询书籍借阅信息
+     *
      * @param borrowId 借阅表id
      * @return
      */
     public BorrowBook selectByBorrowIdBorrowBook(Integer borrowId);
 
     /**
-     *  查询未归还书籍借阅信息
+     * 查询未归还书籍借阅信息
+     *
      * @param userId
      * @return
      */
     public List<BorrowBook> selectAllByBorrowUserForNoReturn(Integer userId);
 
-    public List<BorrowBook> selectAllForNoReturn(Integer cur,Integer size);
+    public List<BorrowBook> selectAllForNoReturn(Integer cur, Integer size);
 
     /**
-     *  查询借阅记录通过书籍id
+     * 查询借阅记录通过书籍id
+     *
      * @param bookId
      * @return
      */
-    public List<BorrowBook> selectAllByBookId(Integer bookId,Integer cur,Integer size);
+    public List<BorrowBook> selectAllByBookId(Integer bookId, Integer cur, Integer size);
 
     public List<BorrowBook> selectAllByBookId(Integer bookId);
 
-    public List<BorrowBook> selectAllByUserId(Integer userId,Integer cur,Integer size);
+    public List<BorrowBook> selectAllByUserId(Integer userId, Integer cur, Integer size);
 
     public List<BorrowBook> selectAll(Integer cur, Integer size);
 
@@ -63,7 +68,6 @@ public interface BorrowBookDao {
 
     public Integer selectAllCountForNoReturn();
 
-    public List<BorrowBook> selectAllByBorrowId(Integer borrowId);
 }
 
 
