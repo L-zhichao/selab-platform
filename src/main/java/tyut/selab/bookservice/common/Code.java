@@ -19,6 +19,6 @@ public interface Code {
     public static final Integer NO_RECORDED = 500010;
     public static final Integer HAVE_NOT_RECORDED = 500011;
     public static final Integer ALREADY_RETURNED = 500012;
-
+    public static final Integer INSUFFICIENT_PERMISSIONS = 500013;
 
 }
