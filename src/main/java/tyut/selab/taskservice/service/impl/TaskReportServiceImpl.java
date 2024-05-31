@@ -92,42 +92,37 @@ public class TaskReportServiceImpl implements TaskReportService {
      *  通过任务id和用户id查询汇报信息
      */
     @Override
-    public List<TaskReportVo> queryByUserIdAndTaskId(Integer taskId, Integer userId) {
+    public TaskReportVo queryByUserIdAndTaskId(Integer taskId, Integer userId) {
 
-        List<TaskReport> taskReports = null;
+        TaskReport taskReport = null;
         if(taskId==null||userId==null){
             throw new IllegalArgumentException("任务id和用户id都不能为空");
         }
 
         try {
-            taskReports=taskReportDao.selectByUserId(userId,taskId);
+            taskReport=taskReportDao.selectByUserId(userId,taskId);
         }catch (RuntimeException e){
             throw new RuntimeException("查询汇报记录时出错",e);
         }
 
-        if (taskReports == null || taskReports.isEmpty()) {
-            return Collections.emptyList();//返回空列表
+        if (taskReport == null) {
+            return null;
         }
 
         //查询用户名
         String userName = taskReportDao.getUserNameByUserId(userId);
 
         //将TaskReport封装成TaskReportVo对象
-        List<TaskReportVo> taskReportVos = new ArrayList<>();
-        for(TaskReport taskReport : taskReports){
-            TaskReportVo taskReportVo = new TaskReportVo();
+       TaskReportVo taskReportVo = new TaskReportVo();
 
-            taskReportVo.setReportId(taskReport.getReportId());
-            taskReportVo.setTaskId(taskReport.getTaskId());
-            taskReportVo.setUserName(userName);
-            taskReportVo.setReportStatus(taskReport.getReportStatus());
-            taskReportVo.setDetails(taskReport.getDetails());
-            taskReportVo.setReportTime(taskReport.getCreateTime());
+        taskReportVo.setReportId(taskReport.getReportId());
+        taskReportVo.setTaskId(taskReport.getTaskId());
+        taskReportVo.setUserName(userName);
+        taskReportVo.setReportStatus(taskReport.getReportStatus());
+        taskReportVo.setDetails(taskReport.getDetails());
+        taskReportVo.setReportTime(taskReport.getCreateTime());
 
-            taskReportVos.add(taskReportVo);
-        }
-
-        return taskReportVos;
+        return taskReportVo;
     }
 
     @Override

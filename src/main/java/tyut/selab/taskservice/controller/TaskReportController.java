@@ -11,8 +11,11 @@ import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.taskservice.common.HttpStatus;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskInfoDao;
+import tyut.selab.taskservice.dao.TaskReportDao;
+import tyut.selab.taskservice.dao.impl.TaskGroupDaoImpl;
 import tyut.selab.taskservice.dao.impl.TaskInfoDaoImpl;
 import tyut.selab.taskservice.dao.impl.TaskReportDaoImpl;
+import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
@@ -33,7 +36,9 @@ import tyut.selab.utils.Result;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,6 +54,11 @@ import java.util.List;
     private Result resultMaker = new Result(HttpStatus.SUCCESS,null);
     private TaskReportService taskReportService =new TaskReportServiceImpl();
     TaskInfoService taskInfoService=new TaskServiceImpl();
+    TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
+    TaskGroupDaoImpl taskGroupDao = new TaskGroupDaoImpl();
+    TaskReportDaoImpl taskReportDao=new TaskReportDaoImpl();
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         findMethod(req,resp);
@@ -133,32 +143,63 @@ import java.util.List;
      * @return TaskReportVo
      */
     private Result queryMyReport(HttpServletRequest request, HttpServletResponse response){
-        List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
 
         //获取请求参数
         Integer taskId = Integer.valueOf(request.getParameter("taskId"));
-        Integer cur = Integer.valueOf(request.getParameter("cur")); // 返回第几页
-        Integer size = Integer.valueOf(request.getParameter("size"));// 每页返回数量
+//        Integer cur = Integer.valueOf(request.getParameter("cur")); // 返回第几页
+//        Integer size = Integer.valueOf(request.getParameter("size"));// 每页返回数量
 
         //获取用户id
+        Integer userId=null;
         HttpSession session = request.getSession(false);
         if (session != null) {
             Object userIdStr = session.getAttribute("userId");
-            if(userIdStr instanceof Integer){
-                Integer  userId=(Integer) userIdStr;
-                taskReportVos = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+            if(userIdStr instanceof Integer ){
+                userId=(Integer)userIdStr;
             }
         }
 
+        TaskReportVo taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+        TaskReport report = taskReportDao.selectByUserId(userId, taskId);
+
         TaskInfoForUser taskInfoForUser = new TaskInfoForUser();
 
+        //获取TaskInfo对象
+        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
 
+        //发布者
+        Integer publisherId = taskInfo.getPublisherId();
+        String publisherName = taskGroupDao.findPublisherNameById(publisherId);
 
+        //任务发布范围小组名称
+        List<String> groupNames = taskGroupDao.findTaskGroupNamesByTaskId(taskId);
 
-        if(taskReportVos!=null){
-            return Result.success(null);//待修改
+        //将数据封装进TaskInfoForUser对象
+        taskInfoForUser.setId(taskInfo.getId());
+        taskInfoForUser.setPublisherName(publisherName);
+        taskInfoForUser.setGroupNames(groupNames);
+        taskInfoForUser.setName(taskInfo.getName());
+        taskInfoForUser.setContent(taskInfo.getContent());
+        taskInfoForUser.setDealTime(taskInfo.getDealTime());
+        taskInfoForUser.setPublishTime(taskInfo.getPublishTime());
+        //任务状态根据截止时间判断
+        Date now=new Date();
+        if(now.after(taskInfo.getDealTime())){
+            taskInfoForUser.setStatus(1);
         }else {
-            return Result.error(HttpStatus.ERROR,"当前任务汇报为空列表");
+            taskInfoForUser.setStatus(0);
+        }
+
+        //是否汇报
+        taskInfoForUser.setStatus(report.getReportStatus());
+
+        //汇报信息
+        taskInfoForUser.setTaskReportVo(taskReportVo);
+
+        if(taskReportVo!=null){
+            return Result.success(taskInfoForUser,"成功查询");
+        }else {
+            return Result.error(HttpStatus.ERROR,"当前任务汇报为空");
         }
 
     }
