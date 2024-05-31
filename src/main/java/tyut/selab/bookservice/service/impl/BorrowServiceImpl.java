@@ -247,6 +247,7 @@ public class BorrowServiceImpl implements BorrowService {
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             books.add(borrowBookVo);
         }
+
         borrowBookVoPageUtil.setData(books);
 
         return borrowBookVoPageUtil;
