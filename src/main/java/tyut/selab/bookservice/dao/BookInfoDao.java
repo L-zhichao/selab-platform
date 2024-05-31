@@ -1,10 +1,7 @@
 package tyut.selab.bookservice.dao;
 
 import tyut.selab.bookservice.domain.BookInfo;
-import tyut.selab.bookservice.vo.BookVo;
 
-import java.awt.print.Book;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -56,10 +53,6 @@ public interface BookInfoDao {
      */
     public List<BookInfo> selectAllByBookName(Integer cur, Integer size, String bookName);
 
-    /**
-     * 分页查询所有书籍信息
-     */
-    public List<BookInfo> selectAllList(Integer cur, Integer size);
 
     /**
      *  通过书籍名称和拥有者id查询书籍信息
@@ -67,9 +60,8 @@ public interface BookInfoDao {
      */
     public List<BookInfo> selectByOwnerBookName(Integer cur, Integer size, Integer userId, String bookName);
 
-    /**
-     *  查询书籍信息总条数
-     */
+    public List<BookInfo> selectAllList(Integer cur, Integer size);
+
     public Integer selectCount(String bookName,Integer userId);
 }
 

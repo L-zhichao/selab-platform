@@ -40,7 +40,7 @@ public interface BorrowBookDao {
      */
     public List<BorrowBook> selectAllByBorrowUserForNoReturn(Integer userId);
 
-    public List<BorrowBook> selectAllForNoReturn();
+    public List<BorrowBook> selectAllForNoReturn(Integer cur,Integer size);
 
     /**
      *  查询借阅记录通过书籍id
@@ -55,7 +55,15 @@ public interface BorrowBookDao {
 
     public List<BorrowBook> selectAll(Integer cur, Integer size);
 
-//    public List<BorrowBook> selectAllByBookId(Integer bookId);
+    public Integer selectAllCountByUserId(Integer userId);
+
+    public Integer selectAllCountByBookId(Integer bookId);
+
+    public Integer selectAllCount();
+
+    public Integer selectAllCountForNoReturn();
+
+    List<BorrowBook> selectAllByBorrowId(Integer borrowId, Integer cur, Integer size);
 }
 
 

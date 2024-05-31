@@ -17,8 +17,7 @@ import tyut.selab.utils.Result;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
+import java.io.PrintWriter;
 
 /**
  * @className: BookController
@@ -28,62 +27,64 @@ import java.lang.reflect.Method;
  * @version: 1.0
  */
 
-@WebServlet(name = "BookController",urlPatterns = {"/book/save","/book/update","/book/query","/book/list","/book/delete"})
+@WebServlet(name = "BookController",urlPatterns = {"/book/save","/book/update","/book/queryOne","/book/list","/book/delete"})
 public class BookController extends HttpServlet {
 
     private BookService bookService = new BookServiceImpl();
 
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         // 设置请求和响应的编码
-        resp.setContentType("text/html;charset=utf-8");
-        try {
-            req.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new ServiceException(e);
-        }
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html;charset=UTF-8");
+        req.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json;charset=utf-8");
         // 获取url并拆成段
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         // 获取此次请求是save? update? query? list? 还是 delete? [要操作的方法名]
         String methodName = split[split.length - 1];
-        Result result = new Result(404,null);
-        if(methodName.equals("save")){
-            result = save(req,resp);
-        } else if(methodName.equals("update")){
-            result = update(req,resp);
-        } else if(methodName.equals("queryOne")){
-            result = queryOne(req,resp);
-        } else if(methodName.equals("list")){
-            result = list(req,resp);
-        } else if(methodName.equals("delete")){
-            result = delete(req,resp);
+        Result result = null;
+        if (methodName.equals("queryOne")) {
+            result = queryOne(req, resp);
+        } else if (methodName.equals("list")) {
+            result = list(req, resp);
+        } else if (methodName.equals("delete")) {
+            result = delete(req, resp);
+        } else {
+            result = Result.error(500004,"路径有误");
         }
+
+        String jsonString = JSON.toJSONString(result);
+        PrintWriter writer = resp.getWriter();
+        writer.print(jsonString);
+        writer.flush();
+        writer.close();
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        // 获取请求消息体(其实对应的就是请求参数)
-        BufferedReader br = null;
-        try {
-            br = request.getReader();
-        } catch (IOException e) {
-            throw new ServiceException("获取请求体字符流失败");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // 设置请求和响应的编码
+        req.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json;charset=utf-8");
+        // 获取url并拆成段
+        String requestURI = req.getRequestURI();
+        String[] split = requestURI.split("/");
+        // 获取此次请求是save? update? query? list? 还是 delete? [要操作的方法名]
+        String methodName = split[split.length - 1];
+        Result result = null;
+        if (methodName.equals("save")) {
+            result = save(req, resp);
+        } else if (methodName.equals("update")) {
+            result = update(req, resp);
+        } else {
+            result = Result.error(500004,"路径有误");
         }
-        StringBuilder sb = new StringBuilder();
-        // 读取数据
-        String line = null;
-        while (true) {
-            try {
-                if (!((line = br.readLine()) != null)) break;
-            } catch (IOException e) {
-                throw new ServiceException("读取文本信息失败");
-            }
-            sb.append(line);
-        }
-        System.out.println(sb.toString());
+
+        String jsonString = JSON.toJSONString(result);
+        PrintWriter writer = resp.getWriter();
+        writer.print(jsonString);
+        writer.flush();
+        writer.close();
     }
 
     /**
@@ -96,22 +97,12 @@ public class BookController extends HttpServlet {
         BookDto bookDto = tool(request, response);
         Integer i = bookService.insertBook(bookDto);
         Result result = new Result(500002,null);
-        if (i >= 0) {
-            try {
-                request.getRequestDispatcher("book/list").forward(request,response);
-            } catch (ServletException e) {
-                throw new ServiceException("页面跳转失败");
-            } catch (IOException e) {
-                throw new ServiceException("获取信息失败");
-            }
-            result.setCode(200);
-            result.setMsg("图书信息添加成功");
+        if (i > 0) {
+            return result.success(null);
         }
         else{
-            result.setCode(500005);
-            result.setMsg("图书信息添加失败");
+            return result.error(500005,"图书信息添加失败");
         }
-        return result;
     }
 
     /**
@@ -130,21 +121,11 @@ public class BookController extends HttpServlet {
         Integer i = bookService.updateBook(bookVo);
         Result result = new Result(500002,null);
         if (i > 0) {
-            try {
-                request.getRequestDispatcher("book/list").forward(request,response);
-            } catch (ServletException e) {
-                throw new ServiceException("页面跳转失败");
-            } catch (IOException e) {
-                throw new ServiceException("获取信息失败");
-            }
-            result.setCode(200);
-            result.setMsg("图书信息修改成功");
+            return result.success(null);
         }
         else{
-            result.setCode(500005);
-            result.setMsg("图书信息修改失败");
+            return result.error(500005,"图书信息修改失败");
         }
-        return result;
     }
 
     /**
@@ -154,18 +135,16 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result queryOne(HttpServletRequest request, HttpServletResponse response) {
-        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
-        BookVo bookVo = bookService.selectBookById(bookId);
-        Result result = new Result(500002,null);
-        if(bookVo != null){
-            result.setCode(200);
-            result.setData(bookVo);
-            result.setMsg("成功查询");
-        }else{
-            result.setCode(500009);
-            result.setMsg("没有找到该书");
+        if (request.getParameter("bookId") != null) {
+            Integer bookId = Integer.valueOf(request.getParameter("bookId").toString());
+            BookVo bookVo = bookService.selectBookById(bookId);
+            if (bookVo != null) {
+                return Result.success(bookVo);
+            } else {
+                return Result.error(500009, "没有找到该书");
+            }
         }
-        return result;
+        return Result.error(500009, "没有找到该书");
     }
 
     /**
@@ -175,38 +154,30 @@ public class BookController extends HttpServlet {
      *  @return list<BookVo>
      */
     private Result list(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new ServiceException("编码为UTF—8失败");
+        if(request.getParameter("cur") == null || request.getParameter("size") == null || Integer.parseInt(request.getParameter("cur")) <= 0 || Integer.parseInt(request.getParameter("size")) <= 0){
+            return Result.error(500001,"信息错误");
         }
         //接受请求参数
         int cur = Integer.parseInt(request.getParameter("cur"));
         int size = Integer.parseInt(request.getParameter("size"));
         //将参数传递给服务层，进行分页查询
         PageUtil<BookVo> bookVoPageUtil = new PageUtil<BookVo>();
-        if (cur == 0 || size==0) {
-            Result result = new Result(500001,null);
-            result.setMsg("页码或每页数量为空");
-            return result;
-        }else{
-            if(request.getAttribute("userId")==null &&request.getAttribute("bookName")==null){
-                bookVoPageUtil = bookService.selectAllList(cur,size);
-                return Result.success(bookVoPageUtil);
-            } else if (request.getAttribute("userId")==null &&request.getAttribute("bookName")!=null) {
-                String bookName = request.getAttribute("bookName").toString();
-                bookVoPageUtil = bookService.selectBookByBookName(cur,size,bookName);
-                return Result.success(bookVoPageUtil);
-            } else if (request.getAttribute("userId")!=null &&request.getAttribute("bookName")==null) {
-                Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
-                bookVoPageUtil = bookService.selectListByOwnerId(cur,size,userId);
-                return Result.success(bookVoPageUtil);
-            } else{
-                Integer userId = Integer.valueOf(request.getAttribute("userId").toString());
-                String bookName = request.getAttribute("bookName").toString();
-                bookVoPageUtil = bookService.selectList(cur,size,userId,bookName);
-                return Result.success(bookVoPageUtil);
-            }
+        if(request.getParameter("userId")==null &&request.getParameter("bookName")==null){
+            bookVoPageUtil = bookService.selectAllList(cur,size);
+            return Result.success(bookVoPageUtil);
+        } else if (request.getParameter("userId")==null &&request.getParameter("bookName")!=null) {
+            String bookName = request.getParameter("bookName").toString();
+            bookVoPageUtil = bookService.selectBookByBookName(cur,size,bookName);
+            return Result.success(bookVoPageUtil);
+        } else if (request.getParameter("userId")!=null &&request.getParameter("bookName")==null) {
+            Integer userId = Integer.valueOf(request.getParameter("userId").toString());
+            bookVoPageUtil = bookService.selectListByOwnerId(cur,size,userId);
+            return Result.success(bookVoPageUtil);
+        } else{
+            Integer userId = Integer.valueOf(request.getParameter("userId").toString());
+            String bookName = request.getParameter("bookName").toString();
+            bookVoPageUtil = bookService.selectList(cur,size,userId,bookName);
+            return Result.success(bookVoPageUtil);
         }
     }
 
@@ -219,19 +190,18 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result delete(HttpServletRequest request, HttpServletResponse response) {
-        Integer bookId = Integer.valueOf(request.getAttribute("bookId").toString());
-        Integer i = bookService.deleteBook(bookId);
-        response.setCharacterEncoding("UTF-8");
-        Result result = new Result(500004,bookId);
-        if (i > 0) {
-            result.setCode(200);
-            result.setMsg("图书信息删除成功");
+        if(request.getParameter("bookId")!=null){
+            Integer bookId = Integer.valueOf(request.getParameter("bookId").toString());
+            Integer i = bookService.deleteBook(bookId);
+            response.setCharacterEncoding("UTF-8");
+            if (i > 0) {
+                return Result.success(null);
+            }
+            else{
+                return Result.error(500009,"图书信息删除失败");
+            }
         }
-        else{
-            result.setCode(500009);
-            result.setMsg("图书信息删除失败");
-        }
-        return result;
+        return Result.error(500009,"图书信息删除失败");
     }
 
     /**
@@ -254,7 +224,9 @@ public class BookController extends HttpServlet {
         String line = null;
         while (true) {
             try {
-                if (!((line = br.readLine()) != null)) break;
+                if (!((line = br.readLine()) != null)) {
+                    break;
+                }
             } catch (IOException e) {
                 throw new ServiceException("读取文本信息失败");
             }

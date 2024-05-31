@@ -31,15 +31,7 @@ public interface BookService {
     public Integer updateBook(BookVo bookVo);
 
     /**
-     *  删除书籍
-     * @param bookId
-     * @return
-     */
-    public Integer deleteBook(Integer bookId);
-
-    /**
      * 分页查询所有书籍
-     * 传入userId和bookName
      *
      * @return
      */
@@ -53,28 +45,21 @@ public interface BookService {
     public BookVo selectBookById(Integer bookId);
 
     /**
-     * 通过书籍名称查询书籍信息(支持模糊查询)
-     *
+     *   通过书籍名称查询书籍信息(支持模糊查询)
      * @param bookName
      * @return
      */
     public PageUtil<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName);
 
     /**
-     * 通过userid查询用户所拥有的所有书籍
-     *
+     *  通过userid查询用户所拥有的所有书籍
      * @return
      */
-    public PageUtil<BookVo> selectListByOwnerId(Integer cur, Integer size, Integer userId);
-
-    /**
-     * 分页查询所有书籍信息
-     *
-     * @param
-     * @return
-     */
-    public PageUtil<BookVo> selectAllList(Integer cur, Integer size);
+    public PageUtil<BookVo> selectListByOwnerId(Integer userid,Integer cur,Integer size);
 
     public BookVo bookIofoToBookVo(BookInfo bookInfo);
 
+    public Integer deleteBook(Integer bookId);
+
+    public PageUtil<BookVo> selectAllList(Integer cur,Integer size);
 }
