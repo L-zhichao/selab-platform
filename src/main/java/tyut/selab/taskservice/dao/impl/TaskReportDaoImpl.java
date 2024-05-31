@@ -57,16 +57,18 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
 
     /**
      * 通过用户id和taskId查询汇报信息（查询本人汇报记录)
-     *
+     * 只返回最新一条汇报信息
      * @param userId
      * @return
      */
-    public List<TaskReport> selectByUserId(Integer userId, Integer taskId){
+    public TaskReport selectByUserId(Integer userId, Integer taskId){
 
-        TaskReport taskReport = new TaskReport();
-        String sql="select from task_report where user_id=? and task_id=?";
-       List<TaskReport> reports =  baseQuery(TaskReport.class, sql, userId, taskId);
-        return reports;
+        String sql = "select * from task_report where user_id=? and task_id=? order by id desc limit 1";
+        List<TaskReport> reports = baseQuery(TaskReport.class, sql, userId, taskId);
+        if (reports != null && !reports.isEmpty()) {
+            return reports.get(0); // 返回列表中的第一个元素，即最新的记录
+        }
+        return null;
     }
 
     /**

@@ -31,7 +31,7 @@ public interface TaskReportDao {
      * @param userId
      * @return
      */
-    List<TaskReport> selectByUserId(Integer userId, Integer taskId);
+   TaskReport selectByUserId(Integer userId, Integer taskId);
 
     /**
      *  通过taskId查询所有汇报信息
