@@ -78,16 +78,10 @@ import java.util.List;
      */
     private Result report(HttpServletRequest request,HttpServletResponse response){
 
-        //从请求参数中获取userId
-        HttpSession session = request.getSession(false); // false 表示如果会话不存在，不要创建新的会话
-        if (session != null) {
-            Object userIdStr = session.getAttribute("userId");
-            if(userIdStr instanceof Integer){
-                Integer  userId=(Integer) userIdStr;
-                //将userId传入service层
-                taskReportService.setUserId(userId);
-            }
-        }
+        UserLocal userMessage = getUserMessage(request, response);
+        Integer userId = userMessage.getUserId();
+        //将userId传入service层
+        taskReportService.setUserId(userId);
 
         //将请求体中的JSON数据转换为TaskReportDto对象
         TaskReportDto taskReportDto =WebUtil.readJson(request,TaskReportDto.class);
@@ -150,14 +144,8 @@ import java.util.List;
 //        Integer size = Integer.valueOf(request.getParameter("size"));// 每页返回数量
 
         //获取用户id
-        Integer userId=null;
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Object userIdStr = session.getAttribute("userId");
-            if(userIdStr instanceof Integer ){
-                userId=(Integer)userIdStr;
-            }
-        }
+        UserLocal userMessage = getUserMessage(request, response);
+        Integer userId = userMessage.getUserId();
 
         TaskReportVo taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
         TaskReport report = taskReportDao.selectByUserId(userId, taskId);
