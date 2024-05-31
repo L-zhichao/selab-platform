@@ -254,6 +254,8 @@ public class BorrowController extends HttpServlet {
 
         UserLocal user = SecurityUtil.getUser();
 
+
+
         if(user.getRoleId() ==2){
             return Result.error(500013,"权限不足");
         }
