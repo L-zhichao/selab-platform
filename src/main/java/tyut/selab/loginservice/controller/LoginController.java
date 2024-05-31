@@ -39,6 +39,7 @@ public class LoginController extends HttpServlet {
      */
     private Result login(HttpServletRequest request, HttpServletResponse response){
 
+        return null;
     }
 
     /**

@@ -54,7 +54,7 @@ public class Result<T> {
         this.msg = msg;
     }
     public static <T> Result<T> success(T data){
-        return new Result(200,data,"");
+        return new Result(200,data,"success");
     }
     public static <T> Result<T> error(Integer code,String msg){
         return new Result<>(code,null,msg);

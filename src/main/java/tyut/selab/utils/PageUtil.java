@@ -2,19 +2,19 @@ package tyut.selab.utils;
 
 import java.util.List;
 
-public class PageUtil<T> {
-    /**
-     *   分页查询包装类
-     * @param <T>
-     */
+/**
+ *   分页查询包装类
+ * @param <T>
+ */
+public class PageUtil<T>{
     // 分页返回list数据
-    private List<T> data;
-    // 数据数量 （仅第一次返回即可）
-    private Integer total;
-    // 每页返回数量
-    private Integer size;
-    // 返回第几页 ( 从1开始）
-    private Integer cur;
+   private List<T> data;
+   // 数据数量 （仅第一次返回即可）
+   private Integer total;
+   // 每页返回数量
+   private Integer size;
+   // 返回第几页 ( 从1开始）
+   private Integer cur;
 
     public List<T> getData() {
         return data;
