@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import tyut.selab.loginservice.common.Constant;
 import tyut.selab.loginservice.domain.Email;
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.dto.UserLoginReq;
@@ -24,7 +23,6 @@ import tyut.selab.utils.Result;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static javax.swing.text.html.HTML.Tag.HEAD;
 import static tyut.selab.loginservice.common.Constant.*;
 
 /**
@@ -107,8 +105,7 @@ public class LoginController extends HttpServlet {
             return Result.error(STATUS_CODE_INNSER_ERROR,msg);
         }
         msg = "账号错误，请输入正确的账号";
-        return Result.error(ACCOUNT_OR_PASSWORD_ERROR,msg);
-
+        return Result.error(ACCOUNT_FORMAT_ERROR,msg);
     }
 
     /**
@@ -121,6 +118,7 @@ public class LoginController extends HttpServlet {
         String msg = "";
         HttpSession session = request.getSession();
         Email em = WebUtils.readJson(request,Email.class);
+        System.out.println(em);
         String email = em.getEmail();
         if(null == email || "".equals(email)) {
             msg = "邮箱信息不能为空";
@@ -144,10 +142,10 @@ public class LoginController extends HttpServlet {
         if( session.isNew() && null == session.getAttribute("verify")) {
             session.setMaxInactiveInterval(60);
             String verify = SecurityUtil.getRandom();
-            String body = String.format(VERIFICATION_HTML_TEXT, HEAD,"", TYPE, verify, "注册");
+            String body = String.format(VERIFICATION_HTML_TEXT, verify);
             boolean flag = true;
             try {
-                QQEmailService.qqemail(email, Constant.HEAD, body);
+                QQEmailService.qqemail(email,"[selab-platform-sender]:您的验证码信息请查收", body);
                 flag = false;
             } catch (Exception e) {
                 e.printStackTrace();

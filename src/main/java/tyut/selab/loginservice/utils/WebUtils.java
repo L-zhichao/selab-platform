@@ -13,12 +13,12 @@ import java.io.PrintWriter;
 public class WebUtils {
     // 从请求中获取JSON串并转换为Object
     public static <T> T readJson(HttpServletRequest request, Class<T> clazz){
-        T t =null;
+        T t = null;
         BufferedReader reader = null;
         StringBuffer buffer =new StringBuffer();
         try {
             reader = request.getReader();
-            String line =null;
+            String line = null;
             while(null != (line = reader.readLine())) {
                 buffer.append(line);
             }

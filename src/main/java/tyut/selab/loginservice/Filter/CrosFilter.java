@@ -13,14 +13,14 @@ import java.util.List;
 public class CrosFilter implements Filter {
     public List<String> ignoreUrl
             = Arrays.asList(
-            "/LoginController","login","/register","/sendEmail");
+            "login","/register","/sendEmail");
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpServletRequest request =(HttpServletRequest) servletRequest;
         String requestURI =request.getRequestURI();
+        boolean flag = true;
         if (!ignoreUrl.contains(requestURI)) {
-
 
             response.setHeader("Access-Control-Allow-Origin", "*");
             response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, HEAD");
@@ -29,11 +29,12 @@ public class CrosFilter implements Filter {
             // 非预检请求,放行即可,预检请求,则到此结束,不需要放行
             if(!request.getMethod().equalsIgnoreCase("OPTIONS")){
                 filterChain.doFilter(servletRequest, servletResponse);
+                flag = false;
             }
-
         }
-        //放行
-        filterChain.doFilter(request, response);
+        if(flag) {//放行
+            filterChain.doFilter(request, response);
+        }
     }
 
 }

@@ -11,12 +11,9 @@ public interface Constant {
     Integer PHONENUM_FORMAT_ERROR = 50103;//电话号码格式错误
     Integer VERIFY_INFO_ERROR = 50104;//输入验证码错误
     Integer MAIL_FORMAT_ERROR_CODE = 50105;//邮箱格式错误
-    Integer ACCOUNT_OR_PASSWORD_ERROR = 50106;//账号或密码格式错误
     Integer FAILED_SEND_ERROR_CODE = 50002;//验证码发送失败
     Integer STATUS_CODE_INNSER_ERROR = 50001;//服务器内部异常问题
-    Integer STATUS_CODE_NON_TOKEN = 505;
-    String HEAD = "平台注册验证码信息";
-    String TYPE = "QQ邮箱注册平台";
+    Integer STATUS_CODE_NON_TOKEN = 50003;//没有Token或者Token过期的错误
     String VERIFICATION_HTML_TEXT = "<!DOCTYPE html>   " +
             "<html>   " +
             "<head>   " +
@@ -145,15 +142,13 @@ public interface Constant {
             "            }   " +
             "        </style>   " +
             "        <div class=\"contaner\">   " +
-            "            <div class=\"title\">%s</div>   " +
+            "            <div class=\"title\">【selab-platform.com】</div>   " +
             "            <div class=\"content\">   " +
-            "                <p class=\"biaoti\"><b>亲爱的用户，你好！</b></p>   " +
             "                <b class=\"xtop\"><b class=\"xb1\"></b><b class=\"xb2\"></b><b class=\"xb3\"></b><b class=\"xb4\"></b></b>   " +
             "                <div class=\"xboxcontent\">   " +
             "                    <div class=\"neirong\">   " +
-            "                        <p><b>请核对你的用户名：</b><span id=\"userName\" class=\"font_darkblue\">%s</span></p>   " +
-            "                        <p><b>%s的验证码：</b><span class=\"font_lightblue\"><span id=\"yzm\" data=\"$(captcha)\" onclick=\"return false;\" t=\"7\" style=\"border-bottom: 1px dashed rgb(204, 204, 204); z-index: 1; position: static;\">%s</span></span><br><span class=\"font_gray\">(请输入该验证码完成注册，验证码60秒内有效！)</span></p>   " +
-            "                        <div class=\"line\">如果你未申请%s服务，请忽略该邮件。</div>   " +
+            "                        <p><b>您的QQ邮箱验证码是：</b><span class=\"font_lightblue\"><span id=\"yzm\" data=\"$(captcha)\" onclick=\"return false;\" t=\"7\" style=\"border-bottom: 1px dashed rgb(204, 204, 204); z-index: 1; position: static;\">%s</span></span><br></p>   " +
+            "                        <div class=\"line\">验证码有效期为<span id=\"userName\" class=\"font_darkblue\">1分钟</span>，请妥善保管验证码，切勿泄露。</div>   " +
             "                    </div>   " +
             "                </div>   " +
             "                <b class=\"xbottom\"><b class=\"xb4\"></b><b class=\"xb3\"></b><b class=\"xb2\"></b><b class=\"xb1\"></b></b>   " +

@@ -24,18 +24,17 @@ import static tyut.selab.loginservice.common.Constant.STATUS_CODE_NON_TOKEN;
 public class LoginFilter implements Filter {
     public List<String> ignoreUrl
             = Arrays.asList(
-            "/LoginController","/login","/register","/sendEmail");
+            "/login","/register","/sendEmail");
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String requestURI =request.getRequestURI();
+        Result result = null;
         if (!ignoreUrl.contains(requestURI)) {
             UserLocal userLocal = new UserLocal();
             String token = request.getHeader("Authorization");
-
             boolean flag = null != token && (!JwtHelperUtils.isExpiration(token));
-
             if (flag) {
                 userLocal.setUserId(JwtHelperUtils.getUserId(token));
                 userLocal.setUserName(JwtHelperUtils.getUsername(token));
@@ -45,14 +44,16 @@ public class LoginFilter implements Filter {
                 //将Token传给实体类对象UserLocal，并存入到ThreadLocal中，把该对象传给前端
                 SecurityUtil.setUser(userLocal);
                 filterChain.doFilter(servletRequest, servletResponse);
-
             }
-
-            Result result = new Result(STATUS_CODE_NON_TOKEN, "Token不存在或已过期");
-            WebUtils.writeJson(response,result);
+            result = new Result(STATUS_CODE_NON_TOKEN, "Token不存在或已过期");
+            if(!flag) {
+                WebUtils.writeJson(response, result);
+            }
         }
         //放行
-        filterChain.doFilter(request, response);
+        if(null == result) {
+            filterChain.doFilter(request, response);
+        }
     }
 
 }
