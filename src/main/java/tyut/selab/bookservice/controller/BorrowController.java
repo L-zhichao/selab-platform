@@ -218,22 +218,27 @@ public class BorrowController extends HttpServlet {
 
         //将参数传递给服务层，进行查询
 
-        if (request.getParameter("bookId") == null && request.getParameter("userId") == null){
+        if (request.getParameter("bookId") == null && request.getParameter("userId") == null && request.getParameter("borrowId") == null){
             PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectList(cur, size);
 
             return Result.success(borrowBookVoPageUtil);
 
-        }else if (request.getParameter("bookId") != null && request.getParameter("userId") == null){
+        }else if (request.getParameter("bookId") != null && request.getParameter("userId") == null && request.getParameter("borrowId") == null){
             Integer bookId = Integer.valueOf(request.getParameter("bookId"));
             PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByBookId(bookId, cur, size);
 
             return Result.success(borrowBookVoPageUtil);
 
-        } else if (request.getParameter("userId") != null && request.getParameter("bookId") == null) {
+        } else if (request.getParameter("userId") != null && request.getParameter("bookId") == null && request.getParameter("borrowId") == null) {
             Integer userId = Integer.valueOf(request.getParameter("userId"));
             PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByUserId(userId, cur, size);
 
             return Result.success(borrowBookVoPageUtil);
+        } else if (request.getParameter("userId") == null && request.getParameter("bookId") == null && request.getParameter("borrowId") != null) {
+            Integer borrowId = Integer.valueOf(request.getParameter("borrowId"));
+            BorrowBookVo borrowBookVo = borrowService.selectByBorrowId(borrowId);
+
+            return Result.success(borrowBookVo);
         }
         return null;
     }
