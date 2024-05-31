@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @className: BorrowController
@@ -245,12 +246,38 @@ public class BorrowController extends HttpServlet {
 
 
     /**
-     *  分页查询所有未归还书籍
-     *  param: cur size
+     *  分页查询本人借阅书籍记录
+     *  param: cur size (userId 通过登录模块获取)
      * @param request
      * @param response
      * @return
+     * 宋晨语
      */
+
+    private Result queryBorrowLog(HttpServletRequest request,HttpServletResponse response){
+        Result result = new Result(404, null);
+        Integer cur = Integer.valueOf(request.getParameter("cur"));
+        Integer size = Integer.valueOf(request.getParameter("size"));
+        Integer userId = 1;
+//        UserLocal user = SecurityUtil.getUser();
+//        Integer user_id = user.getUserId();
+        if (cur == null || size == null || userId == null || cur <= 0 || size <= 0) {
+            result.setCode(400);
+            result.setMsg("无效的参数");
+            return result;
+        }
+        PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByUserId(userId, cur, size);
+
+        result.setCode(200);
+        result.setData(borrowBookVoPageUtil);
+        result.setMsg("Success");
+
+        return result;
+
+
+
+
+    }
     private Result queryAllNoReturnBook(HttpServletRequest request,HttpServletResponse response){
         //接受请求参数
         if (request.getParameter("cur") == null || request.getParameter("size") == null || Integer.parseInt(request.getParameter("cur")) <= 0 || Integer.parseInt(request.getParameter("size")) <= 0){
@@ -272,15 +299,6 @@ public class BorrowController extends HttpServlet {
 
         return Result.success(borrowBookVoPageUtil);
     }
-
-    /**
-     *  分页查询本人借阅书籍记录
-     *  param: cur size (userId 通过登录模块获取)
-     * @param request
-     * @param response
-     * @return
-     */
-    private Result queryBorrowLog(HttpServletRequest request,HttpServletResponse response){return null;}
 
     private Result queryById(HttpServletRequest request,HttpServletResponse response){
         String requestURI = request.getRequestURI();
