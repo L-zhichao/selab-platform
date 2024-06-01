@@ -62,8 +62,6 @@ public interface BorrowBookDao {
     public Integer selectAllCount();
 
     public Integer selectAllCountForNoReturn();
-
-    public List<BorrowBook> selectAllByBorrowId(Integer borrowId);
 }
 
 
