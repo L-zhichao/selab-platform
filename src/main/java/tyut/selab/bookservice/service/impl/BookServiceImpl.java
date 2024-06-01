@@ -59,7 +59,7 @@ public class BookServiceImpl implements BookService {
         List<BookVo> list = new ArrayList<BookVo>();
         List<BookInfo> bookInfos = bookDao.selectByOwnerBookName(cur, size,userId,bookName);
         if(cur == 1){
-            Integer count = bookDao.selectCount(null,null);
+            Integer count = bookDao.selectCount(bookName,userId);
             pageUtil.setTotal(count);
         }
 
@@ -164,6 +164,7 @@ public class BookServiceImpl implements BookService {
         bookInfo.setStatus(0);
         Date nowdate = new Date();
         bookInfo.setCreateTime(nowdate);
+        bookInfo.setUpdateTime(nowdate);
         return bookInfo;
     }
 

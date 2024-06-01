@@ -279,7 +279,7 @@ public class BookController extends HttpServlet {
     }
 
     /**
-     * 这是一个直接从请求体拿数据封装为bookDto的工具类
+     * 这是一个直接从请求体拿数据转换为JSON对象的工具类
      * @param request
      * @param response
      * @return
