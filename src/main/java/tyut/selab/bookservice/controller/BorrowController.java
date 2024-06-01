@@ -17,7 +17,7 @@ import java.io.IOException;
  * @date: 2024/5/4 11:40
  * @version: 1.0
  */
-@WebServlet(name = "BorrowController",urlPatterns = {"/borrow/book","/borrow/return/*","/borrow/record","/borrow/my","borrow/noReturn"})
+@WebServlet(name = "BorrowController",urlPatterns = {"/borrow/book","/borrow/return/*","/borrow/record","/borrow/my","/borrow/noReturn"})
 public class BorrowController extends HttpServlet {
 
 

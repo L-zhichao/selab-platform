@@ -94,6 +94,7 @@ import java.util.Objects;
         }else{
             return Result.error(HttpStatus.ERROR,"汇报失败");
         }
+
     }
 
     /**
@@ -103,6 +104,8 @@ import java.util.Objects;
      * @return
      */
     private Result queryCount(HttpServletRequest request,HttpServletResponse response) throws SQLException {
+
+        TaskReport taskReport = new TaskReport();
 
        //判断任务是否存在
         //？？？ 不存在汇报记录，不代表任务不存在
@@ -123,14 +126,16 @@ import java.util.Objects;
         //权限不够-->管理员查询非自己发布的任务 && 普通用户
         //查看的任务taskid不是管理员自己发布的任务，或者查询者是普通用户的话返回权限不够
         //？？？ 空new出来的taskReport对象，获取UserId然后和 权限id比较，判断是否是自己发布的任务
-        if(!(taskReport.getUserId().equals(roleId)) && roleId==3){
-        if((!Objects.equals(publisherId, roleId)) && roleId==3){
-            return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止查询");
-        }else {
-            //查询
-            Integer count = taskReportService.queryTaskReportCount(taskId);
-            return Result.success(count,"操作成功");
+        if(!(taskReport.getUserId().equals(roleId)) && roleId==3) {
+            if ((!Objects.equals(publisherId, roleId)) && roleId == 3) {
+                return Result.error(HttpStatus.UNAUTHORIZED, "权限不够,禁止查询");
+            } else {
+                //查询
+                Integer count = taskReportService.queryTaskReportCount(taskId);
+                return Result.success(count, "操作成功");
+            }
         }
+        return Result.error(5000,"未知错误");
 
     }
 

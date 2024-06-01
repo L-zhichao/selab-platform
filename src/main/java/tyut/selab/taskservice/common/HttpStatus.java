@@ -82,6 +82,29 @@ public class HttpStatus {
     public static final int NOT_IMPLEMENTED = 501;
 
     /**
+     * 权限不允许
+     */
+    public static final int PermissionNotAllowed = 50011;
+
+    /**
+     *  任务最大数量限制错误
+     */
+    public static final int MaxTasksError = 50012;
+
+    /**
+     * 传入数据错误
+     */
+    public static final int IncomingDataError = 50013;
+
+    /**
+     * 未知错误
+     */
+    public static final int UnknowError = 50014;
+//    public static final int
+//    public static final int
+
+
+    /**
      * 系统警告消息
      */
     public static final int WARN = 601;

@@ -48,15 +48,27 @@ public class TaskController extends HttpServlet {
     private Result<Void> save(HttpServletRequest request, HttpServletResponse response){
         TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
 
+        //进行数据叫校验问题
+        //保存和修改任务的时候，截至时间是不是应该比当前时间多
+        Date dealTime = taskInfoDto.getDealTime();
+        Date date = new Date();
+        if (date.getTime() > dealTime.getTime()){
+            return Result.error(HttpStatus.IncomingDataError,"截止时间设置不合理");
+        }
+
+
+
+
         //判断用户身份，不同身份发布任务的范围不一样，权限不够就返回error(其他组接口没有实现，先注释）
         UserLocal userMessage = getUserMessage();
         Integer roleId = userMessage.getRoleId();
         if (roleId == 3 ){
-            return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能发布任务");
+            return Result.error(HttpStatus.PermissionNotAllowed,"普通用户不能发布任务");
         }
 
-        //save 的时候发布者应该就是请求者本身.改成其他发布者没作用
+        //save 的时候发布者以及更新者应该就是请求者本身.改成其他发布者没作用
         taskInfoDto.setPublisherId(userMessage.getUserId());
+        taskInfoDto.setUpdaterId(userMessage.getUserId());
 
         //相同的用户发布的任务最大个数应该有限制，超级管理员没有此限制
         if (roleId == 2){
@@ -65,23 +77,17 @@ public class TaskController extends HttpServlet {
             List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(userName);
             //如果任务数量 >= 3 返回权限问题
             if (taskInfoVos.size() >= 3){
-                return Result.error(HttpStatus.UNAUTHORIZED,"管理员最多只能发布三个任务");
+                return Result.error(HttpStatus.MaxTasksError,"管理员最多只能发布三个任务");
             }
         }
 
         //设置任务小组不能是自己小组的父组
 
-        //保存和修改任务的时候，截至时间是不是应该比当前时间多
-        Date dealTime = taskInfoDto.getDealTime();
-        Date date = new Date();
-        if (date.getTime() > dealTime.getTime()){
-            return Result.error(HttpStatus.WARN,"截止时间设置不合理");
-        }
 
         int i = taskInfoService.save(taskInfoDto);
         //添加任务的时候标题和内容不能重复
         if (i == 0 ){
-            return Result.error(HttpStatus.CONFLICT,"任务已存在");
+            return Result.error(HttpStatus.IncomingDataError,"当前任务的标题和内容和现有的任务冲突");
         }else{
             return Result.success(null,"添加成功");
         }
@@ -107,7 +113,7 @@ public class TaskController extends HttpServlet {
        String userName = userMessage.getUserName();
 
        if (roleId == 3 ){
-           return Result.error(HttpStatus.UNAUTHORIZED,"普通用户没有发布的任务");
+           return Result.error(HttpStatus.PermissionNotAllowed,"普通用户没有发布的任务");
        }
        //
        //
@@ -167,7 +173,7 @@ public class TaskController extends HttpServlet {
                if (userName.equals(publisherName)){
                    taskInfoVos = taskInfoVosOrigin;
                }else{
-                   return Result.error(HttpStatus.UNAUTHORIZED,"普通管理员不能查看其他管理员发布的任务");
+                   return Result.error(HttpStatus.PermissionNotAllowed,"普通管理员不能查看其他管理员发布的任务");
                }
            }
            //
@@ -217,7 +223,7 @@ public class TaskController extends HttpServlet {
       TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
       if (roleId != 1 ){
           if (!(taskInfoVo.getPublisherName().equals(userName))){
-              return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止修改");
+              return Result.error(HttpStatus.PermissionNotAllowed,"权限不够,禁止修改");
           }
       }
       //
@@ -232,10 +238,10 @@ public class TaskController extends HttpServlet {
       taskInfoDto.setUpdaterId(loginUser.getUserId());
       Integer row = taskInfoService.update(taskInfoDto, taskId);
       if(row == 0){
-          return Result.error(HttpStatus.NOT_FOUND,"任务不存在");
+          return Result.error(HttpStatus.IncomingDataError,"所要更新的任务不存在");
       }else if(row == 1){
           //如果修改的标题和内容和已有的，没有被数据库删除的任务冲突，则报错
-          return Result.error(HttpStatus.CONFLICT,"修改的任务和现有的任务冲突");
+          return Result.error(HttpStatus.IncomingDataError,"修改的任务和现有的任务冲突");
       }
       else{
           return Result.success(null,"操作成功");
@@ -253,7 +259,7 @@ public class TaskController extends HttpServlet {
         int taskId = Integer.parseInt(request.getParameter("taskId"));
         TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
         if (taskInfoVo == null){
-            return Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
+            return Result.error(HttpStatus.IncomingDataError, "该任务不存在");
         }
 
 //        //权限问题，超级管理员能查询所有的任务id，管理员只能查看自己发布的任务，用户只能查看自己接收的任务
@@ -298,7 +304,7 @@ public class TaskController extends HttpServlet {
         if (flag){
             return Result.success(taskInfoVo,"请求成功");
         }else{
-            return Result.error(HttpStatus.UNAUTHORIZED,"权限不允许查询");
+            return Result.error(HttpStatus.PermissionNotAllowed,"权限不允许查询");
         }
         //
         //
@@ -323,7 +329,7 @@ public class TaskController extends HttpServlet {
 
         //验证请求参数
         if (taskId == null ) {
-            return Result.error(HttpStatus.NOT_FOUND, "任务id不能为空");
+            return Result.error(HttpStatus.IncomingDataError, "任务id不能为空");
         }
         TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
 
@@ -333,7 +339,7 @@ public class TaskController extends HttpServlet {
         String userName = loginUser.getUserName();
 
         if (!(taskInfoVo.getPublisherName().equals(userName))||roleId==3){
-            return Result.error(HttpStatus.UNAUTHORIZED,"权限不足，无法删除");
+            return Result.error(HttpStatus.PermissionNotAllowed,"权限不足，无法删除");
         }else {
             //删除任务
             Integer delete = taskInfoService.delete(taskId);
@@ -342,7 +348,7 @@ public class TaskController extends HttpServlet {
             if(delete!=0){
                 return Result.success(null,"删除成功");
             }else {
-                return Result.error(HttpStatus.ERROR,"删除失败");
+                return Result.error(HttpStatus.UnknowError,"删除失败");
             }
         }
     }
@@ -416,12 +422,12 @@ public class TaskController extends HttpServlet {
             WebUtil.writeJson(resp,result);
         } catch (NullPointerException e1){
             e1.printStackTrace();
-            result = Result.error(HttpStatus.NOT_FOUND,"缺少参数");
+            result = Result.error(HttpStatus.IncomingDataError,"缺少参数");
             WebUtil.writeJson(resp,result);
         }
         catch (Exception e2) {
             e2.printStackTrace();
-            result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
+            result = Result.error(HttpStatus.UnknowError,"未知错误报错");
             WebUtil.writeJson(resp,result);
         }
     }
