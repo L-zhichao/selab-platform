@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @WebServlet(name="UserController",urlPatterns = "/user/*")
 public class UserController extends HttpServlet {
     private UserVo userVo=new UserVo();
-    private Result result=new Result(200,null);
+    //private Result result=new Result(200,null);
     private UserService userService=new UserServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -111,17 +111,7 @@ public class UserController extends HttpServlet {
         //super.doGet(req, resp);
     }
 
-    private Result groupUpdate(HttpServletRequest req, HttpServletResponse resp) {
-        userVo.setUserId(Long.valueOf(req.getParameter("userId")));
-        userVo.setGroupId(Integer.valueOf(req.getParameter("groupId")));
-        Integer update=userService.groupUpdate(userVo);
-        if (update>0){
-            Result success=result.success(null);
-            return success;
-        }
-        Result error= result.error(400,"修改失败");
-        return error;
-    }
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -156,57 +146,137 @@ public class UserController extends HttpServlet {
         //super.doPost(req, resp);
     }
 
+    /**
+     * success
+     * @param req
+     * @param resp
+     * @return
+     */
+    private Result groupUpdate(HttpServletRequest req, HttpServletResponse resp) {
+        String userIdStr = req.getParameter("userId");
+        Long userId = null;
+        boolean isInteger = true;
+        for (int i = 0; i < userIdStr.length(); i++) {
+            if (!Character.isDigit(userIdStr.charAt(i))) {
+                isInteger = false;
+                break;
+            }
+        }
+        if (isInteger) {
+            userId = Long.parseLong(userIdStr);
+            userVo.setUserId(userId);
+        } else {
+            return Result.error(50009,"输入信息错误");
+        }
+        String groupIdStr = req.getParameter("groupId");
+        Integer groupId = null;
+        isInteger = true;
+        for (int i = 0; i < groupIdStr.length(); i++) {
+            if (!Character.isDigit(groupIdStr.charAt(i))) {
+                isInteger = false;
+                break;
+            }
+        }
+        if (isInteger) {
+            groupId = Integer.parseInt(groupIdStr);
+            userVo.setGroupId(groupId);
+        } else {
+            return Result.error(50009,"输入信息错误");
+        }
+        userVo.setUserId(userId);
+        //userVo.setUserId(Long.valueOf(req.getParameter("userId")));
+        //userVo.setGroupId(Integer.valueOf(req.getParameter("groupId")));
+        Integer update=userService.groupUpdate(userVo);
+        if (update>0){
+            return Result.success(null);
+        }
+        return Result.error(50005,"修改用户信息失败");
+    }
 
 
     /**
      *  查询小组所有用户
+     *  success
      *  param: cur size groupId  roleId 两个中有一个不为空或全为空，全为空则查询全部
-     *  queryall java.lang.NullPointerException: Cannot invoke &quot;java.lang.Integer.intValue()&quot; because &quot;groupId&quot; is null
-     *  tyut.selab.userservice.dao.impl.UserDaoImpl.getgroupName(UserDaoImpl.java:384)
-     * 	tyut.selab.userservice.service.impl.UserServiceImpl.selectAll(UserServiceImpl.java:177)
-     * 	tyut.selab.userservice.controller.UserController.query(UserController.java:193)
-     * 	tyut.selab.userservice.controller.UserController.doGet(UserController.java:45)
-     *
      * @param request
      * @param response
      * @return list<User>
      */
     private Result query(HttpServletRequest request,HttpServletResponse response){
-        Integer groupId = Integer.valueOf((request.getParameter("groupId") == null) ? "0" : request.getParameter("groupId"));
-        Integer roleId = Integer.valueOf((request.getParameter("roleId") == null) ? "0" : request.getParameter("roleId"));
+        Integer groupId=0;
+        String groupIdStr=null;
+        if (request.getParameter("groupId")==null){
+            groupId=0;
+        } else if (request.getParameter("groupId")!=null) {
+            groupIdStr=request.getParameter("groupId");
+            boolean isInteger = true;
+            for (int i = 0; i < groupIdStr.length(); i++) {
+                if (!Character.isDigit(groupIdStr.charAt(i))) {
+                    isInteger = false;
+                    break;
+                }
+            }
+            if (isInteger) {
+                groupId = Integer.parseInt(groupIdStr);
+            } else {
+                return Result.error(50009,"输入信息错误");
+            }
+        }
+        Integer roleId=0;
+        String roleIdStr=null;
+        if (request.getParameter("roleId")==null){
+            roleId=0;
+        } else if (request.getParameter("roleId")!=null) {
+            roleIdStr=request.getParameter("roleId");
+            boolean isInteger = true;
+            for (int i = 0; i < roleIdStr.length(); i++) {
+                if (!Character.isDigit(roleIdStr.charAt(i))) {
+                    isInteger = false;
+                    break;
+                }
+            }
+            if (isInteger) {
+                roleId = Integer.parseInt(roleIdStr);
+            } else {
+                return Result.error(50009,"输入信息错误");
+            }
+        }
+        //Integer groupId = Integer.valueOf((request.getParameter("groupId") == null) ? "0" : request.getParameter("groupId"));
+        //Integer roleId = Integer.valueOf((request.getParameter("roleId") == null) ? "0" : request.getParameter("roleId"));
         if (groupId!=0&&roleId==0){
             List<UserVo> userVos = userService.selectByGroupId(groupId);
             if (userVos.isEmpty()){
-                Result error = result.error(400,"未查询到相关用户");
-                return error;
+                //Result error = result.error(400,"未查询到相关用户");
+                return Result.error(50006,"查询用户失败");
             }
             // 错误码： 500xx
-            Result success=result.success(userVos);
-            return success;
+            //Result success=result.success(userVos);
+            return Result.success(userVos);
         } else if (groupId==0&&roleId!=0) {
             List<UserVo> userVos=userService.selectByRoleId(roleId);
 //            userVoArrayList.addAll(userVos);
             if (userVos.isEmpty()){
-                Result error = result.error(400, "未查询到相关用户");
-                return error;
+                //Result error = result.error(400, "未查询到相关用户");
+                return Result.error(50006,"查询用户失败");
             }
-            Result success=result.success(userVos);
-            return success;
+            //Result success=result.success(userVos);
+            return Result.success(userVos);
         }else if(groupId==0&&roleId==0){
             List<UserVo> userVos=userService.selectAll();
             if (userVos.isEmpty()){
-                Result error = result.error(400,"未查询到相关用户");
-                return error;
+                //Result error = result.error(400,"未查询到相关用户");
+                return Result.error(50006,"查询用户失败");
             }
-            Result success=result.success(userVos);
-            return success;
+            //Result success=result.success(userVos);
+            return Result.success(userVos);
         }
-        Result error = result.error(400,"未查询到相关用户");
-        return error;
+        //Result error = result.error(400,"未查询到相关用户");
+        return Result.error(50006,"查询用户失败");
     }
 
     /**
      *  通过id查询用户信息 [id在路径后面]  " queryById/2  (id = 2)
+     *  success
      * @param request
      * @param response
      * @return
@@ -215,18 +285,33 @@ public class UserController extends HttpServlet {
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
         String userIdStr= split[split.length - 1];
-        Long userId = Long.parseLong(userIdStr);
+        Long userId= 0L;
+        boolean isInteger = true;
+        for (int i = 0; i < userIdStr.length(); i++) {
+            if (!Character.isDigit(userIdStr.charAt(i))) {
+                isInteger = false;
+                break;
+            }
+        }
+
+        if (isInteger) {
+            userId = Long.parseLong(userIdStr);
+        } else {
+            return Result.error(50009,"输入信息错误");
+        }
         UserVo selected = userService.selectByUserId(userId);
         if(selected!=null) {
-            Result success=result.success(selected);
-            return success;
+            //Result success=result.success(selected);
+            return Result.success(selected);
         }
-        Result error = result.error(400,"未查询到相关用户");
-        return error;
+        //Result error = result.error(400,"未查询到相关用户");
+        return Result.error(50006,"查询用户失败");
     }
 
     /**
      *  增加用户
+     *  post 流读取
+     *  success
      *  param: UserDto
      * @param request
      * @param response
@@ -237,15 +322,17 @@ public class UserController extends HttpServlet {
         UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
         Integer save = userService.save(userVo);
         if (save>0){
-            Result success=result.success(null);
-            return success;
+            //Result success=result.success(null);
+            return Result.success(null);
         }
-        Result error= result.error(400,"新增用户失败");
-        return error;
+        //Result error= result.error(400,"新增用户失败");
+        return Result.error(50007,"添加用户失败");
     }
 
     /**
      *  修改用户信息
+     *  post 流读取
+     *  success
      *  param: UserVo对象
      * @param request
      * @param response
@@ -264,41 +351,87 @@ public class UserController extends HttpServlet {
         }
         Integer save = userService.update(userVo);
         if (save>0){
-            Result success = result.success(null);
-            return success;
+            //Result success = result.success(null);
+            return Result.success(null);
         }
-        Result error= result.error(400,"修改用户信息失败");
-        return error;
+        //Result error= result.error(400,"修改用户信息失败");
+        return Result.error(50005,"修改用户信息失败");
     }
 
     /**
      *  注销用户
+     *  success
      *  param: 要删除用户的userId
      * @param request
      * @param response
      * @return
      */
     private Result logout(HttpServletRequest request,HttpServletResponse response){
-        Integer userId = Integer.valueOf(request.getParameter("userId"));
+        String userIdStr = request.getParameter("userId");
+        Integer userId= 0;
+        boolean isInteger = true;
+        for (int i = 0; i < userIdStr.length(); i++) {
+            if (!Character.isDigit(userIdStr.charAt(i))) {
+                isInteger = false;
+                break;
+            }
+        }
+
+        if (isInteger) {
+            userId = Integer.parseInt(userIdStr);
+        } else {
+            return Result.error(50009,"输入信息错误");
+        }
+        //Integer userId = Integer.valueOf(request.getParameter("userId"));
         Integer delete = userService.delete(userId);
         if (delete>0){
-            Result success = result.success(null);
-            return success;
+            //Result success = result.success(null);
+            return Result.success(null);
         }
-        Result error = result.error(400,"未能删除成功");
-        return error;
+        //Result error = result.error(400,"未能删除成功");
+        return Result.error(50008,"删除用户信息失败");
     }
 
     /**
      *  修改用户权限
+     *  success
      *  param: UserRoleDto
      * @param request
      * @param response
      * @return
      */
     private Result updateRole(HttpServletRequest request, HttpServletResponse response){
-        Integer roleId = Integer.valueOf(request.getParameter("roleId"));
-        Long userId = Long.valueOf(request.getParameter("userId"));
+        String roleIdStr = request.getParameter("roleId");
+        Integer roleId=0;
+        boolean isInteger = true;
+        for (int i = 0; i < roleIdStr.length(); i++) {
+            if (!Character.isDigit(roleIdStr.charAt(i))) {
+                isInteger = false;
+                break;
+            }
+        }
+        if (isInteger) {
+            roleId = Integer.parseInt(roleIdStr);
+        } else {
+            return Result.error(50009,"输入信息错误");
+        }
+        String userIdStr = request.getParameter("userId");
+        Long userId= 0L;
+        isInteger = true;
+        for (int i = 0; i < userIdStr.length(); i++) {
+            if (!Character.isDigit(userIdStr.charAt(i))) {
+                isInteger = false;
+                break;
+            }
+        }
+
+        if (isInteger) {
+            userId = Long.parseLong(userIdStr);
+        } else {
+            return Result.error(50009,"输入信息错误");
+        }
+        //Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+        //Long userId = Long.valueOf(request.getParameter("userId"));
         //Date date = new Date();
         userVo.setUserId(userId);
         //userVo.setGroupName();
@@ -306,11 +439,11 @@ public class UserController extends HttpServlet {
         //userVo.setRoleName();
         Integer save = userService.updateUserRole(userVo);
         if (save>0){
-           Result success = result.success(null);
-           return success;
+           //Result success = result.success(null);
+           return Result.success(null);
         }
-        Result error = result.error(400,"没有权限修改用户权限");
-        return error;
+        //Result error = result.error(400,"没有权限修改用户权限");
+        return Result.error(50005,"修改用户信息失败");
     }
 
 }

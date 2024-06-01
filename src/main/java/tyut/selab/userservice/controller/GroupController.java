@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 @WebServlet(name="GroupController",value="/group/*")
 public class GroupController extends HttpServlet {
-    private Result result=new Result(200,null);
+    //private Result result=new Result(200,null);
     //private UserVo userVo = new UserVo();
     private GroupService groupService=new GroupServiceImpl();
 
@@ -102,6 +102,8 @@ public class GroupController extends HttpServlet {
 
     /**
      *  新增小组
+     *  succcess
+     *  post 流读取
      *  param:GroupDto对象
      * @param req
      * @param resp
@@ -119,18 +121,17 @@ public class GroupController extends HttpServlet {
         }
         Integer insert = groupService.insert(groupDto);
         if(insert>0){
-            Result success = result.success(null);
-            return success;
+            return Result.success(null);
         }
-        Result error = result.error(400, "未能成功添加");
-        return error;
+        return Result.error(50001, "添加小组失败");
 
     }
 
     /**
      *  修改小组信息
+     *  post 流读取
      *  param: GroupVo对象
-     *  原来可以现在不行
+     *  success
      * @param req
      * @param resp
      * @return
@@ -147,15 +148,14 @@ public class GroupController extends HttpServlet {
         }
         Integer update = groupService.update(groupVo);
         if(update>0){
-            Result success = result.success(null);
-            return success;
+            return Result.success(null);
         }
-        Result error = result.error(400, "未能成功修改");
-        return error;
+        return Result.error(50002, "修改小组失败");
     }
 
     /**
      *  删除小组信息
+     *  success
      *  param: groupId
      * @param req
      * @param resp
@@ -168,19 +168,30 @@ public class GroupController extends HttpServlet {
             throw new RuntimeException(e);
         }
         String groupIdStr = req.getParameter("groupId");
-        Integer groupId = Integer.parseInt(groupIdStr);
+        Integer groupId = null;
+        boolean isInteger = true;
+        for (int i = 0; i < groupIdStr.length(); i++) {
+            if (!Character.isDigit(groupIdStr.charAt(i))) {
+                isInteger = false;
+                break;
+            }
+        }
+        if (isInteger) {
+            groupId = Integer.parseInt(groupIdStr);
+        } else {
+            return Result.error(50009,"输入信息错误");
+        }
         Integer delete = groupService.delete(groupId);
         if (delete>0){
-            Result success = result.success(null);
-            return success;
+            return Result.success(null);
         }
-        Result error = result.error(400, "未能成功删除");
-        return error;
+        return Result.error(50003, "删除小组失败");
     }
 
     /**
      * 查询所有小组信息
      *  param: cur size
+     *  success
      * @param request
      * @param response
      * @return list<GroupVo>
@@ -191,13 +202,51 @@ public class GroupController extends HttpServlet {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        Integer cur = Integer.valueOf((request.getParameter("cur") == null) ? "1" : request.getParameter("cur"));
-        Integer szie = Integer.valueOf((request.getParameter("szie") == null) ? "5" : request.getParameter("szie"));
+        Integer cur=0;
+        String curStr=null;
+        if (request.getParameter("cur")==null){
+            cur=1;
+        }else if (request.getParameter("cur")!=null){
+            curStr = request.getParameter("cur");
+            boolean isInteger = true;
+            for (int i = 0; i < curStr.length(); i++) {
+                if (!Character.isDigit(curStr.charAt(i))) {
+                    isInteger = false;
+                    break;
+                }
+            }
+            if (isInteger) {
+                cur = Integer.parseInt(curStr);
+            } else {
+                return Result.error(50009,"输入信息错误");
+            }
+        }
+        Integer szie=0;
+        String szieStr=null;
+        if (request.getParameter("szie")==null){
+            szie=10;
+        }else if (request.getParameter("szie")!=null){
+            szieStr = request.getParameter("szie");
+            boolean isInteger = true;
+            for (int i = 0; i < szieStr.length(); i++) {
+                if (!Character.isDigit(szieStr.charAt(i))) {
+                    isInteger = false;
+                    break;
+                }
+            }
+            if (isInteger) {
+                szie = Integer.parseInt(szieStr);
+            } else {
+                return Result.error(50009,"输入信息错误");
+            }
+        }
+        //Integer cur = Integer.valueOf((request.getParameter("cur") == null) ? "1" : request.getParameter("cur"));
+        //Integer szie = Integer.valueOf((request.getParameter("szie") == null) ? "5" : request.getParameter("szie"));
 
         List<GroupVo> groupVos = groupService.selectAllGroup(cur, szie);
         if (groupVos.isEmpty()){
-            return result.error(400,"查询失败");
+            return Result.error(50004,"查询小组失败");
         }
-        return result.success(groupVos);
+        return Result.success(groupVos);
     }
 }
