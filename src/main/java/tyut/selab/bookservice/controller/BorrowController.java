@@ -22,7 +22,6 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @className: BorrowController
@@ -258,9 +257,8 @@ public class BorrowController extends HttpServlet {
         Result result = new Result(404, null);
         Integer cur = Integer.valueOf(request.getParameter("cur"));
         Integer size = Integer.valueOf(request.getParameter("size"));
-        Integer userId = 1;
-//        UserLocal user = SecurityUtil.getUser();
-//        Integer user_id = user.getUserId();
+        UserLocal user = SecurityUtil.getUser();
+        Integer userId = user.getUserId();
         if (cur == null || size == null || userId == null || cur <= 0 || size <= 0) {
             result.setCode(400);
             result.setMsg("无效的参数");
