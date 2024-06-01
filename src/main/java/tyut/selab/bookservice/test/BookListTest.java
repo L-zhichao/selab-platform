@@ -1,7 +1,5 @@
 package tyut.selab.bookservice.test;
 
-import org.junit.jupiter.api.Test;
-import tyut.selab.bookservice.controller.BookController;
 import tyut.selab.utils.Result;
 
 /**
