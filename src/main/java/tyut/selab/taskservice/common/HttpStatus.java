@@ -102,7 +102,10 @@ public class HttpStatus {
     public static final int UnknowError = 50014;
 //    public static final int
 //    public static final int
-
+    /**
+     * 无数据返回
+     */
+    public static final int NoDataFromDatabase = 50015;
 
     /**
      * 系统警告消息
