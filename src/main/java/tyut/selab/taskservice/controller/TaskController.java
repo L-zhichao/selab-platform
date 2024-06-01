@@ -370,6 +370,7 @@ public class TaskController extends HttpServlet {
     private Result queryForUser(HttpServletRequest request,HttpServletResponse response){
         List<TaskInfoVo> taskInfoVos=new ArrayList<>();
         String userName = request.getParameter("username");//没用使用userName
+
         TaskGroupDao taskGroupDao=new TaskGroupDaoImpl();
         List<TaskGroup> taskGroups = taskGroupDao.selectByGroupId(getUserMessage().getGroupId());//获取groupId?
         for (TaskGroup taskGroup:taskGroups){
@@ -377,7 +378,7 @@ public class TaskController extends HttpServlet {
             taskInfoVos.add(taskInfoVo);
         }
         if (taskInfoVos.isEmpty()){
-            return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布");
+            return Result.error(HttpStatus.NoDataFromDatabase,"暂无任务发布");
         }else {
 //            WebUtil.writeJson(response,Result.success(taskInfoVos,"请求成功"));
             return Result.success(taskInfoVos,"请求成功");
