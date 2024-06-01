@@ -87,7 +87,7 @@ public class BorrowServiceImpl implements BorrowService {
         if (status == 1){
             return -3;
         }
-        status = 1;
+        borrowBook.setStatus(1);
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
         Date returnTime = new Date();
         borrowBook.setReturnTime(returnTime);
@@ -184,7 +184,7 @@ public class BorrowServiceImpl implements BorrowService {
 
         //第一页，返回一共有多少条记录
         if(cur == 1){
-            Integer i = borrowBookDao.selectAllCount();
+            Integer i = borrowBookDao.selectAllCountForNoReturn();
             borrowBookVoPageUtil.setTotal(i);
         }
 
