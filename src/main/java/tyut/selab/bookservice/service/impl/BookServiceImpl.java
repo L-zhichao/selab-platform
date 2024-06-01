@@ -49,8 +49,7 @@ public class BookServiceImpl implements BookService {
     public BookVo selectBookById(Integer bookId) {
         BookInfo bookInfo = null;
         bookInfo = bookDao.selectByBookIdBookInfo(bookId);
-        String jsonString = JSONUtils.toJSONString(bookInfo);
-        BookVo bookVo = JSONObject.parseObject(jsonString, BookVo.class);
+        BookVo bookVo = bookIofoToBookVo(bookInfo);
         return bookVo;
     }
 
