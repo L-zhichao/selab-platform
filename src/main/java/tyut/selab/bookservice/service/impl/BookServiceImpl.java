@@ -147,6 +147,7 @@ public class BookServiceImpl implements BookService {
         bookVo.setStatus(bookInfo.getStatus());
         bookVo.setUpdateTime(bookInfo.getUpdateTime());
         bookVo.setBookRef(bookInfo.getBookRef());
+        bookVo.setOwner(bookInfo.getOwner());
         User user = userDao.selectByUserIdUser(owner);
         String ownerName = user.getUserName();
         bookVo.setOwnerName(ownerName);
