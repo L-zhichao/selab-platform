@@ -62,4 +62,8 @@ public interface BookService {
     public Integer deleteBook(Integer bookId);
 
     public PageUtil<BookVo> selectAllList(Integer cur,Integer size);
+
+    BookInfo bookDtoToBookInfo(BookDto bookDto);
+
+    BookInfo bookVoToBookInfo(BookVo bookVo);
 }
