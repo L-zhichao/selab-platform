@@ -44,7 +44,7 @@ public class LoginFilter implements Filter {
                 userLocal.setToken(token);
                 //将Token传给实体类对象UserLocal，并存入到ThreadLocal中，把该对象传给前端
                 SecurityUtil.setUser(userLocal);
-                filterChain.doFilter(servletRequest, servletResponse);
+                filterChain.doFilter(request, response);
                 WebUtils.writeJson(response, Result.success(null));
             }else{
                 WebUtils.writeJson(response,Result.error(50055,"登录验证失败,请重新登录!"));
@@ -52,7 +52,7 @@ public class LoginFilter implements Filter {
 //            filterChain.doFilter(servletRequest, servletResponse);
         }
         if(!flag){
-            filterChain.doFilter(servletRequest, servletResponse);
+            filterChain.doFilter(request, response);
         }
     }
 
