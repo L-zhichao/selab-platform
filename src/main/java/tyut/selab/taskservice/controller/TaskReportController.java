@@ -40,6 +40,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @className: TaskReportController
@@ -53,6 +54,7 @@ import java.util.List;
 
     private Result resultMaker = new Result(HttpStatus.SUCCESS,null);
     private TaskReportService taskReportService =new TaskReportServiceImpl();
+    TaskInfoService taskService=new TaskServiceImpl();
     TaskInfoService taskInfoService=new TaskServiceImpl();
     TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
     TaskGroupDaoImpl taskGroupDao = new TaskGroupDaoImpl();
@@ -102,15 +104,17 @@ import java.util.List;
      */
     private Result queryCount(HttpServletRequest request,HttpServletResponse response) throws SQLException {
 
-        TaskReport taskReport = new TaskReport();
-
        //判断任务是否存在
         //？？？ 不存在汇报记录，不代表任务不存在
        Integer taskId = Integer.valueOf(request.getParameter("taskId"));
-        List<TaskReportVo> taskReportVos = taskReportService.queryAllTask(taskId);
-        if(taskReportVos==null){
+        TaskInfoVo taskInfoVo = taskService.queryById(taskId);
+        if(taskInfoVo==null){
             return  Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
         }
+
+        //发布者id
+        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
+        Integer publisherId = taskInfo.getPublisherId();
 
         //获取用户id
         UserLocal userMessage = getUserMessage(request, response);
@@ -120,6 +124,7 @@ import java.util.List;
         //查看的任务taskid不是管理员自己发布的任务，或者查询者是普通用户的话返回权限不够
         //？？？ 空new出来的taskReport对象，获取UserId然后和 权限id比较，判断是否是自己发布的任务
         if(!(taskReport.getUserId().equals(roleId)) && roleId==3){
+        if((!Objects.equals(publisherId, roleId)) && roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止查询");
         }else {
             //查询
