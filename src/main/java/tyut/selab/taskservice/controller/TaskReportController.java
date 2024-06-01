@@ -53,6 +53,7 @@ import java.util.List;
 
     private Result resultMaker = new Result(HttpStatus.SUCCESS,null);
     private TaskReportService taskReportService =new TaskReportServiceImpl();
+    TaskInfoService taskService=new TaskServiceImpl();
     TaskInfoService taskInfoService=new TaskServiceImpl();
     TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
     TaskGroupDaoImpl taskGroupDao = new TaskGroupDaoImpl();
@@ -107,8 +108,8 @@ import java.util.List;
 
        //判断任务是否存在
        Integer taskId = Integer.valueOf(request.getParameter("taskId"));
-        List<TaskReportVo> taskReportVos = taskReportService.queryAllTask(taskId);
-        if(taskReportVos==null){
+        TaskInfoVo taskInfoVo = taskService.queryById(taskId);
+        if(taskInfoVo==null){
             return  Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
         }
 
