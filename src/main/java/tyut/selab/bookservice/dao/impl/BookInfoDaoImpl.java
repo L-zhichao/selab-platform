@@ -18,14 +18,14 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     private BaseDao baseDao = new BaseDao();
     @Override
     public Integer insert(BookInfo bookInfo) {
-        String sql = "insert into book_info (book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,remark,create_time createTime,book_ref bookRef values (DEFAULT,?,?,?,?,?,?,?,?,?)";
+        String sql = "insert into book_info (book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,remark,create_time createTime,book_ref bookRef) values (DEFAULT,?,?,?,?,?,?,?,?,?)";
         Object[] params = {bookInfo.getBookName(),bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getStatus(),bookInfo.getRemark(),bookInfo.getCreateTime(),bookInfo.getBookRef()};
         return baseDao.baseUpdate(sql,params);
     }
 
     @Override
     public Integer update(BookInfo bookInfo) {
-        String sql = "update book_info set book_id=?,book_name=?,book_author=?,book_details=?,price=?,owner=?,status=?,create_time createTime,update_time updateTime,book_ref=? where book_name=?";
+        String sql = "update book_info set book_id=?,book_name=?,book_author=?,book_details=?,price=?,owner=?,status=?,create_time=?,update_time=?,book_ref=? where book_name=?";
         Object[] params = {bookInfo.getBookId(),bookInfo.getBookName(),bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getStatus(),bookInfo.getCreateTime(),bookInfo.getUpdateTime(),bookInfo.getBookRef(),bookInfo.getBookName()};
         return baseDao.baseUpdate(sql,params);
     }
@@ -40,15 +40,16 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     public List<BookInfo> selectByOwnerBookName(Integer cur, Integer size, Integer userId, String bookName) {
         String sql ="select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where owner=? and book_name like ? limit ?,?";
         int index = (cur - 1) * size;
-        List<BookInfo> bookInfos = baseQuery(BookInfo.class, sql,userId,"%"+bookName+"%",index,size);
+        List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class,sql,userId,"%"+bookName+"%",index,size);
         return bookInfos;
     }
 
     @Override
     public List<BookInfo> selectByOwnerBookInfo(Integer cur, Integer size, Integer userId) {
-        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where owner = ? limit ?,?;";
+        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where owner=? limit ?,?;";
         int index = (cur - 1) * size;
-        return baseDao.baseQuery(BookInfo.class,sql,userId,index,size);
+        List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class,sql,userId,index,size);
+        return bookInfos;
     }
 
     @Override
@@ -56,13 +57,13 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
         // 使用通配符之后的模糊匹配
         String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where book_name like ? limit ?,?;";
         int index = (cur - 1) * size;
-        List<BookInfo> bookInfos = baseQuery(BookInfo.class, sql,"%"+bookName+"%",index,size);
+        List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class, sql,"%"+bookName+"%",index,size);
         return bookInfos;
     }
 
     @Override
     public BookInfo selectByBookIdBookInfo(Integer bookId) {
-        String sql = "select book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where book_id = ?";
+        String sql = "select book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where book_id=?";
         List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class, sql, bookId);
         if (!bookInfos.isEmpty()) {
             return bookInfos.get(0);
@@ -75,7 +76,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     public List<BookInfo> selectAllList(Integer cur, Integer size) {
         String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info limit ?,?";
         int index = (cur - 1) * size;
-        List<BookInfo> bookInfos = baseQuery(BookInfo.class,sql,index,size);
+        List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class,sql,index,size);
         return bookInfos;
     }
 
@@ -91,7 +92,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
             return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class,sql,"%"+bookName+"%")));
         }
         else if(bookName==null && userId!=null){
-            sql+=" where owner = ?";
+            sql+=" where owner=?";
             return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class,sql,userId)));
         }
         else{
