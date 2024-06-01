@@ -32,7 +32,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public Integer delete(Integer bookId) {
-        String sql = "delete from book_info where bookId=?";
+        String sql = "delete from book_info where book_id=?";
         return baseDao.baseUpdate(sql,bookId);
     }
 
@@ -46,7 +46,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public List<BookInfo> selectByOwnerBookInfo(Integer cur, Integer size, Integer userId) {
-        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where user_id = ? limit (?,?)";
+        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where owner = ? limit ?,?;";
         int index = (cur - 1) * size;
         return baseDao.baseQuery(BookInfo.class,sql,userId,index,size);
     }
@@ -54,7 +54,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     @Override
     public List<BookInfo> selectAllByBookName(Integer cur, Integer size, String bookName) {
         // 使用通配符之后的模糊匹配
-        String sql = "select * from book_info where book_name like ? limit (?,?)";
+        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where book_name like ? limit ?,?;";
         int index = (cur - 1) * size;
         List<BookInfo> bookInfos = baseQuery(BookInfo.class, sql,"%" + bookName + "%",index,size);
         return bookInfos;
@@ -77,7 +77,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public Integer selectCount(String bookName,Integer userId) {
-        String sql = "select count(*) from book_info";
+        String sql = "select count(*) from book_info ";
         if (bookName!=null && userId!=null){
             sql+="where book_name like ? and user_id =?";
             return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class,sql,"%"+bookName+"%",userId)));
@@ -87,7 +87,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
             return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class,sql,"%"+bookName+"%")));
         }
         else if(bookName==null && userId!=null){
-            sql+="where userId =?";
+            sql+="where owner = ?";
             return Integer.parseInt(String.valueOf(baseDao.baseQueryObject(Long.class,sql,userId)));
         }
         else{
