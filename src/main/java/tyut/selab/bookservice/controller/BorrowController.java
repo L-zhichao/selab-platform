@@ -237,9 +237,9 @@ public class BorrowController extends HttpServlet {
             return Result.success(borrowBookVoPageUtil);
         } else if (request.getParameter("userId") == null && request.getParameter("bookId") == null && request.getParameter("borrowId") != null) {
             Integer borrowId = Integer.valueOf(request.getParameter("borrowId"));
-            PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByBorrowId(borrowId);
+            BorrowBookVo borrowBookVo = borrowService.selectByBorrowId(borrowId);
 
-            return Result.success(borrowBookVoPageUtil);
+            return Result.success(borrowBookVo);
         }
         return null;
     }
@@ -286,8 +286,6 @@ public class BorrowController extends HttpServlet {
 
         UserLocal user = SecurityUtil.getUser();
 
-
-
         if(user.getRoleId() ==2){
             return Result.error(500013,"权限不足");
         }
@@ -303,7 +301,12 @@ public class BorrowController extends HttpServlet {
     private Result queryById(HttpServletRequest request,HttpServletResponse response){
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
-        String borrowId = split[split.length - 1];
-        return null;
+        Integer borrowId = Integer.valueOf(split[split.length - 1]);
+        BorrowBookVo borrowBookVo = borrowService.selectByBorrowId(borrowId);
+        if(borrowBookVo != null){
+            return Result.success(borrowBookVo);
+        }else{
+            return Result.error(500003,"查询信息为空");
+        }
     }
 }
