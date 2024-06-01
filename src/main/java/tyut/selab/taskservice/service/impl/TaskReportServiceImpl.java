@@ -218,7 +218,7 @@ public Integer queryuseridByreportid(Integer reportid){
      * */
     private TaskReportVo ToTaskReportVo(TaskReport taskReport){
         if(taskReport==null){
-            return null;
+            throw new RuntimeException("任务汇报对象为空");
         }
 
         //查询用户名

@@ -92,7 +92,7 @@ import java.util.Objects;
         if(save!=null){
             return Result.success(HttpStatus.NO_CONTENT,"汇报成功");
         }else{
-            return Result.error(HttpStatus.ERROR,"汇报失败");
+            return Result.error(HttpStatus.UnknowError,"未知错误");
         }
 
     }
@@ -105,10 +105,7 @@ import java.util.Objects;
      */
     private Result queryCount(HttpServletRequest request,HttpServletResponse response) throws SQLException {
 
-        TaskReport taskReport = new TaskReport();
-
        //判断任务是否存在
-        //？？？ 不存在汇报记录，不代表任务不存在
        Integer taskId = Integer.valueOf(request.getParameter("taskId"));
         TaskInfoVo taskInfoVo = taskService.queryById(taskId);
         if(taskInfoVo==null){
@@ -123,20 +120,18 @@ import java.util.Objects;
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
 
-        //权限不够-->管理员查询非自己发布的任务 && 普通用户
-        //查看的任务taskid不是管理员自己发布的任务，或者查询者是普通用户的话返回权限不够
-        //？？？ 空new出来的taskReport对象，获取UserId然后和 权限id比较，判断是否是自己发布的任务
-        if(!(taskReport.getUserId().equals(roleId)) && roleId==3) {
-            if ((!Objects.equals(publisherId, roleId)) && roleId == 3) {
+        try {
+            //权限不够-->管理员查询非自己发布的任务 || 普通用户
+            if ((!Objects.equals(publisherId, roleId)) || roleId == 3) {
                 return Result.error(HttpStatus.UNAUTHORIZED, "权限不够,禁止查询");
             } else {
                 //查询
                 Integer count = taskReportService.queryTaskReportCount(taskId);
                 return Result.success(count, "操作成功");
             }
+        }catch (RuntimeException e){
+            return Result.error(HttpStatus.UnknowError,"未知错误");
         }
-        return Result.error(5000,"未知错误");
-
     }
 
 
@@ -151,7 +146,18 @@ import java.util.Objects;
     private Result queryMyReport(HttpServletRequest request, HttpServletResponse response){
 
         //获取请求参数
-        Integer taskId = Integer.valueOf(request.getParameter("taskId"));
+        String taskIdStr = request.getParameter("taskId");
+        if (taskIdStr == null || taskIdStr.isEmpty()) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId不能为空");
+        }
+
+        Integer taskId = null;
+        try {
+            taskId = Integer.valueOf(taskIdStr);
+        } catch (NumberFormatException e) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId必须为整数");
+        }
+
 //        Integer cur = Integer.valueOf(request.getParameter("cur")); // 返回第几页
 //        Integer size = Integer.valueOf(request.getParameter("size"));// 每页返回数量
 
@@ -159,7 +165,6 @@ import java.util.Objects;
         UserLocal userMessage = getUserMessage(request, response);
         Integer userId = userMessage.getUserId();
 
-        //返回相同的内容，但是vo对象进行了封装，有什么意义？
         TaskReportVo taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
         TaskReport report = taskReportDao.selectByUserId(userId, taskId);
 
@@ -200,7 +205,7 @@ import java.util.Objects;
         if(taskReportVo!=null){
             return Result.success(taskInfoForUser,"成功查询");
         }else {
-            return Result.error(HttpStatus.ERROR,"当前任务汇报为空");
+            return Result.error(HttpStatus.UnknowError,"未知错误");
         }
 
     }

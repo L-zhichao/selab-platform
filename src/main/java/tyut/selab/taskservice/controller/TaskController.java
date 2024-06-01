@@ -324,13 +324,19 @@ public class TaskController extends HttpServlet {
 
     private Result delete(HttpServletRequest request,HttpServletResponse response){
 
-        //从请求中获取taskId
-        Integer taskId= Integer.valueOf(request.getParameter("taskId"));
-
-        //验证请求参数
-        if (taskId == null ) {
-            return Result.error(HttpStatus.IncomingDataError, "任务id不能为空");
+        //获取请求参数
+        String taskIdStr = request.getParameter("taskId");
+        if (taskIdStr == null || taskIdStr.isEmpty()) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId不能为空");
         }
+
+        Integer taskId = null;
+        try {
+            taskId = Integer.valueOf(taskIdStr);
+        } catch (NumberFormatException e) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId必须为整数");
+        }
+
         TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
 
         //权限验证
@@ -348,7 +354,7 @@ public class TaskController extends HttpServlet {
             if(delete!=0){
                 return Result.success(null,"删除成功");
             }else {
-                return Result.error(HttpStatus.UnknowError,"删除失败");
+                return Result.error(HttpStatus.UnknowError,"删除失败，未知错误");
             }
         }
     }
