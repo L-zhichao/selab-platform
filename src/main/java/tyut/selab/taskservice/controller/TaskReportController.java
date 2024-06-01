@@ -40,6 +40,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @className: TaskReportController
@@ -104,8 +105,6 @@ import java.util.List;
      */
     private Result queryCount(HttpServletRequest request,HttpServletResponse response) throws SQLException {
 
-        TaskReport taskReport = new TaskReport();
-
        //判断任务是否存在
        Integer taskId = Integer.valueOf(request.getParameter("taskId"));
         TaskInfoVo taskInfoVo = taskService.queryById(taskId);
@@ -113,12 +112,16 @@ import java.util.List;
             return  Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
         }
 
+        //发布者id
+        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
+        Integer publisherId = taskInfo.getPublisherId();
+
         //获取用户id
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
 
         //权限不够-->管理员查询非自己发布的任务 && 普通用户
-        if(!(taskReport.getUserId().equals(roleId)) && roleId==3){
+        if((!Objects.equals(publisherId, roleId)) && roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止查询");
         }else {
             //查询
