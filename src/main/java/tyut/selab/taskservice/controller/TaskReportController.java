@@ -92,7 +92,6 @@ import java.util.List;
         }else{
             return Result.error(HttpStatus.ERROR,"汇报失败");
         }
-
     }
 
     /**
@@ -106,6 +105,7 @@ import java.util.List;
         TaskReport taskReport = new TaskReport();
 
        //判断任务是否存在
+        //？？？ 不存在汇报记录，不代表任务不存在
        Integer taskId = Integer.valueOf(request.getParameter("taskId"));
         List<TaskReportVo> taskReportVos = taskReportService.queryAllTask(taskId);
         if(taskReportVos==null){
@@ -117,6 +117,8 @@ import java.util.List;
         Integer roleId = userMessage.getRoleId();
 
         //权限不够-->管理员查询非自己发布的任务 && 普通用户
+        //查看的任务taskid不是管理员自己发布的任务，或者查询者是普通用户的话返回权限不够
+        //？？？ 空new出来的taskReport对象，获取UserId然后和 权限id比较，判断是否是自己发布的任务
         if(!(taskReport.getUserId().equals(roleId)) && roleId==3){
             return Result.error(HttpStatus.UNAUTHORIZED,"权限不够,禁止查询");
         }else {
@@ -147,6 +149,7 @@ import java.util.List;
         UserLocal userMessage = getUserMessage(request, response);
         Integer userId = userMessage.getUserId();
 
+        //返回相同的内容，但是vo对象进行了封装，有什么意义？
         TaskReportVo taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
         TaskReport report = taskReportDao.selectByUserId(userId, taskId);
 
@@ -229,12 +232,15 @@ import java.util.List;
                 if (taskInfoVos.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"暂未发布任务");
                 }
+                //将管理员发布的所有任务进行遍历，每次都查询该任务的所有所有汇报记录
                 for (TaskInfoVo taskInfoVo:taskInfoVos){
                     try {
+                        //每一次遍历会不会将前面的遍历覆盖？因为是直接将查询结果进行赋值，不会，因为最后让list集合successT进行了add操作
                         taskReportVos = taskReportService.queryAllTask(taskInfoVo.getId());
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
+                    //如果本次循环中的任务汇报记录不是空的，将查询到的结果根据分页的要求，封装进入所要返回前端的list集合内
                     if (!taskReportVos.isEmpty()) {
                        if (cur!=1&&size!=Integer.MAX_VALUE){
                             int beginIndex = (cur - 1) * size;
@@ -254,7 +260,8 @@ import java.util.List;
                           successT.addAll(taskReportVos);
                         }
                     }
-                }
+                }//循环结束，判断所要返回给前端的内容中是否有内容
+                //？？？ 如果没有内容的话，是否直接返回空的集合，而不用返回错误代码？？
                 if (successT.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有汇报记录");
                 }else {
@@ -263,22 +270,28 @@ import java.util.List;
                 }
 
             }
-            //id是否输入合法
+            //输入taskId的情况下，id是否输入合法
             Integer userId = userMessage.getUserId();
+            //临时调用dao层的方法，查询是否有该方法
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
             if (taskInfo==null){
                 return Result.error(HttpStatus.NOT_FOUND,"没有该任务");
             }
+            //有该方法：
+            //如果查询的用户是人物的发布者
             if (userId.equals(taskInfo.getPublisherId())){
                 try {
+                    //查询该任务的所有汇报记录
                     taskReportVos = taskReportService.queryAllTask(taskid);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
+                //判断该任务是否有汇报记录
                 if (taskReportVos.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
                 }else {
+                    //将查询到的任务按照分页要求进行分页
                     List<TaskReportVo> taskInfoVoPage;
                     if (cur!=1&&size!=Integer.MAX_VALUE){
                         int beginIndex = (cur - 1) * size;
@@ -296,10 +309,12 @@ import java.util.List;
 //                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
                     return Result.success(taskInfoVoPage,"请求成功");
                 }
-            }else {
+            }
+            else {//如果进行查询的用户不是人物的发布者而是其他管理员
                 return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报记录");
             }
-        }else {
+        }
+        else {//权限是超级管理员
             //判断参数是否为空
                 if (cur<0||size<0){
                     return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
@@ -308,7 +323,7 @@ import java.util.List;
             if (request.getParameter("taskid")!=null){
                 taskid = Integer.parseInt(request.getParameter("taskid"));
             }
-            if (taskid!=null){
+            if (taskid!=null){//如果参数不是null，那么就查询指定任务的汇报记录
                 try {
                     taskReportVos = taskReportService.queryAllTask(taskid);
                 } catch (SQLException e) {
@@ -335,17 +350,20 @@ import java.util.List;
 //                    return Result.success(taskInfoVoPage,"请求成功");
                     return Result.success(taskInfoVoPage,"请求成功");
                 }
-            }else {
+            }
+            else {  //如果参数taskId为null，那么就是查询所有的任务的所有的汇报记录
+                //临时编写sql语句进查询所有 有汇报记录的任务id
                 BaseDao baseDao = new BaseDao();
                 String str1 = """
-select distinct task_id as taskId from task_report
-""";
+                                select distinct task_id as taskId from task_report
+                                """;
                 List<Task>taskids=new ArrayList<>();
                 taskids=baseDao.baseQuery(Task.class, str1);
                 if (taskids.isEmpty()){
                     return Result.error(HttpStatus.NO_CONTENT,"暂无汇报信息");
-                }else {
+                }else {//如果不为空的话就就是有任务的汇报
                     List<TaskReportVo> SuccessTaskReportVos = new ArrayList<>();
+                    //通过对有汇报记录的任务进行遍历，查询到有汇报记录的任务的所有汇报记录
                     for (Task id:taskids){
                         try {
                             taskReportVos = taskReportService.queryAllTask(id.getTaskId());
@@ -384,7 +402,6 @@ select distinct task_id as taskId from task_report
      * 直接将汇报记录删除了
      */
     private Result delete(HttpServletRequest request,HttpServletResponse response){
-        TaskReportDaoImpl taskReportDao=new TaskReportDaoImpl();
         //权限判断:只有管理员才能进行删除操作
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
@@ -393,7 +410,7 @@ select distinct task_id as taskId from task_report
         //权限判断
         if (roleId == 3 ){
             return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能删除汇报记录");
-        }else if (roleId==2){
+        }else if (roleId==2){ //身份是普通管理员
             //判断是否有权限删除
             //根据reportid查出该任务的发布者
             Integer userId = userMessage.getUserId();
@@ -418,7 +435,7 @@ select distinct task_id as taskId from task_report
             }else {
                 return Result.error(HttpStatus.UNAUTHORIZED,"没有权限删除他人任务的汇报记录");
             }
-        }else {
+        }else {   // 身份是超级管理员
             //直接调用dao方法
             Integer i = taskReportDao.deleteByReportId(reportid);
             //检查执行结果
