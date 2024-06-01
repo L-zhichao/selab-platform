@@ -8,16 +8,23 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.bookservice.dto.BookDto;
+import tyut.selab.bookservice.dto.BorrowBookDto;
 import tyut.selab.bookservice.exception.ServiceException;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.service.impl.BookServiceImpl;
 import tyut.selab.bookservice.vo.BookVo;
+import tyut.selab.loginservice.dto.UserLocal;
+import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.utils.PageUtil;
 import tyut.selab.utils.Result;
 
+import java.awt.print.Book;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @className: BookController
@@ -94,7 +101,35 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result<Void> save(HttpServletRequest request, HttpServletResponse response) {
-        BookDto bookDto = tool(request, response);
+        //权限判断
+        UserLocal user = SecurityUtil.getUser();
+        if(user.getRoleId() == 2){
+            return Result.error(500013,"权限不足");
+        }
+
+        JSONObject jsonObject = tool(request, response);
+        if (jsonObject.get("bookName") == null || jsonObject.get("bookAuthor") == null || jsonObject.get("bookDetails") == null || jsonObject.get("price") == null || jsonObject.get("owner") ==null || jsonObject.get("remark") == null || jsonObject.get("bookRef") == null) {
+            return Result.error(500001,"信息输入有误");
+        }
+
+        String bookName = (String) jsonObject.get("bookName");
+        String bookAuthor = (String) jsonObject.get("bookAuthor");
+        String bookDetails = (String) jsonObject.get("bookDetails");
+        Integer price = (Integer) jsonObject.get("price");
+        Integer owner = (Integer) jsonObject.get("owner");
+        String remark = (String) jsonObject.get("remark");
+        String bookRef = (String) jsonObject.get("bookRef");
+
+        //将参数封装为Dto类
+        BookDto bookDto = new BookDto();
+        bookDto.setBookName(bookName);
+        bookDto.setBookAuthor(bookAuthor);
+        bookDto.setBookDetails(bookDetails);
+        bookDto.setPrice(price);
+        bookDto.setOwner(owner);
+        bookDto.setRemark(remark);
+        bookDto.setBookRef(bookRef);
+
         Integer i = bookService.insertBook(bookDto);
         Result result = new Result(500002,null);
         if (i > 0) {
@@ -112,11 +147,50 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result update(HttpServletRequest request, HttpServletResponse response) {
-        BookDto bookDto = tool(request,response);
-        // 把Java对象转换成字符串
-        String json = JSON.toJSONString(bookDto);
-        // 再把字符串转换为Java对象
-        BookVo bookVo = JSON.parseObject(json, BookVo.class);
+        //权限判断
+        UserLocal user = SecurityUtil.getUser();
+        if(user.getRoleId() == 2){
+            return Result.error(500013,"权限不足");
+        }
+
+        // 处理JSON对象，从请求体中读取参数
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        JSONObject jsonObject = tool(request,response);
+        Integer bookId = (Integer) jsonObject.get("bookId");
+        String bookName = (String) jsonObject.get("bookName");
+        String bookAuthor = (String) jsonObject.get("bookAuthor");
+        String bookDetails = (String) jsonObject.get("bookDetails");
+        Integer price = (Integer) jsonObject.get("price");
+        Integer owner = (Integer) jsonObject.get("owner");
+        //String ownerName = (String) jsonObject.get("ownerName");
+        Integer status = (Integer) jsonObject.get("status");
+        Date createTime = null;
+        try {
+            createTime = sdf.parse((String) jsonObject.get("createTime"));
+        } catch (ParseException e) {
+            throw new ServiceException("获取添加时间失败");
+        }
+        Date updateTime = null;
+        try {
+            updateTime = sdf.parse((String) jsonObject.get("updateTime"));
+        } catch (ParseException e) {
+            throw new ServiceException("获取修改时间失败");
+        }
+        String bookRef = (String) jsonObject.get("bookRef");
+
+        // 封装到BookVo类中
+        BookVo bookVo = new BookVo();
+        bookVo.setBookId(bookId);
+        bookVo.setBookName(bookName);
+        bookVo.setBookAuthor(bookAuthor);
+        bookVo.setBookDetails(bookDetails);
+        bookVo.setPrice(price);
+        bookVo.setStatus(status);
+        bookVo.setCreateTime(createTime);
+        bookVo.setUpdateTime(updateTime);
+        bookVo.setBookRef(bookRef);
+        bookVo.setOwner(owner);
+        //bookVo.setOwnerName(ownerName);
         // 执行更新方法，得到改变行数的返回值
         Integer i = bookService.updateBook(bookVo);
         Result result = new Result(500002,null);
@@ -144,7 +218,7 @@ public class BookController extends HttpServlet {
                 return Result.error(500009, "没有找到该书");
             }
         }
-        return Result.error(500009, "没有找到该书");
+        return Result.error(500001, "信息输入有误");
     }
 
     /**
@@ -201,7 +275,7 @@ public class BookController extends HttpServlet {
                 return Result.error(500009,"图书信息删除失败");
             }
         }
-        return Result.error(500009,"图书信息删除失败");
+        return Result.error(500001,"信息输入有误");
     }
 
     /**
@@ -211,7 +285,7 @@ public class BookController extends HttpServlet {
      * @return
      * @throws IOException
      */
-    public static BookDto tool (HttpServletRequest request, HttpServletResponse response) {
+    public static JSONObject tool (HttpServletRequest request, HttpServletResponse response) {
         // 获取请求消息体(其实对应的就是请求参数)
         BufferedReader br = null;
         try {
@@ -232,10 +306,10 @@ public class BookController extends HttpServlet {
             }
             sb.append(line);
         }
-        // 先转换为JSON字符串，再封装为BookDao类
-        String DTO = sb.toString();
-        BookDto bookDto = JSONObject.parseObject(DTO, BookDto.class);
-        return bookDto;
+        String requestBody = sb.toString();
+        // 使用JSON获取参数名对应的参数值
+        JSONObject jsonObject = JSON.parseObject(requestBody);
+        return jsonObject;
     }
 
 }
