@@ -87,7 +87,7 @@ public class BorrowServiceImpl implements BorrowService {
         if (status == 1){
             return -3;
         }
-        status = 1;
+        borrowBook.setStatus(1);
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
         Date returnTime = new Date();
         borrowBook.setReturnTime(returnTime);
@@ -184,7 +184,7 @@ public class BorrowServiceImpl implements BorrowService {
 
         //第一页，返回一共有多少条记录
         if(cur == 1){
-            Integer i = borrowBookDao.selectAllCount();
+            Integer i = borrowBookDao.selectAllCountForNoReturn();
             borrowBookVoPageUtil.setTotal(i);
         }
 
@@ -196,6 +196,13 @@ public class BorrowServiceImpl implements BorrowService {
 
         borrowBookVoPageUtil.setData(list);
         return borrowBookVoPageUtil;
+    }
+
+    @Override
+    public BorrowBookVo selectByBorrowId(Integer borrowId){
+        BorrowBook borrowBook = borrowBookDao.selectByBorrowIdBorrowBook(borrowId);
+        BorrowBookVo borrowBookVo = borrowBookToVo(borrowBook);
+        return borrowBookVo;
     }
 
     @Override
@@ -236,19 +243,4 @@ public class BorrowServiceImpl implements BorrowService {
         return borrowBookVo;
     }
 
-    @Override
-    public PageUtil<BorrowBookVo> selectListByBorrowId(Integer borrowId) {
-        PageUtil<BorrowBookVo> borrowBookVoPageUtil = new PageUtil<>();
-        List<BorrowBookVo> books = new ArrayList<BorrowBookVo>();
-
-        List<BorrowBook> borrowBooks = borrowBookDao.selectAllByBorrowId(borrowId);
-
-        for(BorrowBook book : borrowBooks){
-            BorrowBookVo borrowBookVo = borrowBookToVo(book);
-            books.add(borrowBookVo);
-        }
-        borrowBookVoPageUtil.setData(books);
-
-        return borrowBookVoPageUtil;
-    }
 }
