@@ -18,15 +18,15 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     private BaseDao baseDao = new BaseDao();
     @Override
     public Integer insert(BookInfo bookInfo) {
-        String sql = "insert into book_info (book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,remark,create_time createTime,update_time updateTime,book_ref bookRef) values (DEFAULT,?,?,?,?,?,?,?,?,?)";
+        String sql = "insert into book_info (book_id,book_name,book_author,book_details,price,owner,status,remark,create_time,update_time,book_ref) values (DEFAULT,?,?,?,?,?,?,?,?,?,?)";
         Object[] params = {bookInfo.getBookName(),bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getStatus(),bookInfo.getRemark(),bookInfo.getCreateTime(),bookInfo.getUpdateTime(),bookInfo.getBookRef()};
         return baseDao.baseUpdate(sql,params);
     }
 
     @Override
     public Integer update(BookInfo bookInfo) {
-        String sql = "update book_info set book_id=?,book_name=?,book_author=?,book_details=?,price=?,owner=?,status=?,create_time=?,update_time=?,book_ref=? where book_name=?";
-        Object[] params = {bookInfo.getBookId(),bookInfo.getBookName(),bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getStatus(),bookInfo.getCreateTime(),bookInfo.getUpdateTime(),bookInfo.getBookRef(),bookInfo.getBookName()};
+        String sql = "update book_info set book_name=?,book_author=?,book_details=?,price=?,owner=?,status=?,create_time=?,update_time=?,book_ref=? where book_id=?";
+        Object[] params = {bookInfo.getBookName(),bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getStatus(),bookInfo.getCreateTime(),bookInfo.getUpdateTime(),bookInfo.getBookRef(),bookInfo.getBookId()};
         return baseDao.baseUpdate(sql,params);
     }
 
