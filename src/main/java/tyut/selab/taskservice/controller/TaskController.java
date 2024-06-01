@@ -13,7 +13,7 @@ import tyut.selab.utils.Result;
 
 import java.io.IOException;
 
-@WebServlet(name = "TaskController",urlPatterns = {"/"})
+@WebServlet(name = "TaskController",urlPatterns = {"/task"})
 public class TaskController extends HttpServlet {
     private TaskInfoService taskInfoService = new TaskServiceImpl();
     @Override

@@ -16,9 +16,9 @@ public class WebUtils {
         T t = null;
         BufferedReader reader = null;
         StringBuffer buffer =new StringBuffer();
+        String line = null;
         try {
             reader = request.getReader();
-            String line = null;
             while(null != (line = reader.readLine())) {
                 buffer.append(line);
             }
@@ -38,10 +38,10 @@ public class WebUtils {
         PrintWriter writer = null;
         try {
             String json = JSONObject.toJSONString(result);
-             writer = response.getWriter();
+            writer = response.getWriter();
             writer.write(json);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }finally {
             writer.flush();
             writer.close();

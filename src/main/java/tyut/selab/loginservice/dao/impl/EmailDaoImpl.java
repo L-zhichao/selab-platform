@@ -23,9 +23,9 @@ public class EmailDaoImpl extends BaseDao implements EmailDao, Constant {
     @Override
     public Integer insert(Email email) throws SQLException {
         //添加email表中的字段为user_id,email,create_time
-        String sql = "insert into sys_email values(?,?,now())";
+        String sql = "insert into sys_email values(null,?,now())";
         int result = 0;
-        result = executeUpdate(sql,email.getUserId(),email.getEmail());
+        result = executeUpdate(sql,email.getEmail());
         return result;
     }
 

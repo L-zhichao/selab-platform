@@ -116,7 +116,6 @@ public class LoginController extends HttpServlet {
      */
     public Result sendEmail(HttpServletRequest request,HttpServletResponse response){
         String msg = "";
-        HttpSession session = request.getSession();
         Email em = WebUtils.readJson(request,Email.class);
         System.out.println(em);
         String email = em.getEmail();
@@ -128,7 +127,7 @@ public class LoginController extends HttpServlet {
             return Result.error(MAIL_FORMAT_ERROR_CODE,msg);
         }else {
             try {
-                if(3 == emailService.queryNumForSameEmail(email)){
+                if(MAX_SAME_MMAIL_REGISTER_NUM == emailService.queryNumForSameEmail(email)){
                     msg = "该邮箱已经被多次注册，请换一个新的邮箱再试试吧";
                     return Result.error(MAIL_FORMAT_ERROR_CODE,msg);
                 }
@@ -138,28 +137,43 @@ public class LoginController extends HttpServlet {
                 return Result.error(STATUS_CODE_INNSER_ERROR,msg);
             }
         }
-        //防止直接通过url路径进入操作，并且session的这两个参数都在register接口中进行
-        if( session.isNew() && null == session.getAttribute("verify")) {
+        HttpSession session = request.getSession();
+        if(session.isNew()) {
+            session.setAttribute("start", System.currentTimeMillis());
+        }else if(null != session.getAttribute("start") && 60000 < (System.currentTimeMillis() - (long)session.getAttribute("start"))){
+            session.removeAttribute("start");
+            session.removeAttribute("verify");
+            session.invalidate();
+            session = request.getSession();
+            session.setAttribute("start", System.currentTimeMillis());
+            //对于session设置的这个方法的理解：并不是session本身是60秒时间才被销毁，而是session在60秒内不被调用才会被销毁
             session.setMaxInactiveInterval(60);
-            String verify = SecurityUtil.getRandom();
-            String body = String.format(VERIFICATION_HTML_TEXT, verify);
-            boolean flag = true;
-            try {
-                QQEmailService.qqemail(email,"[selab-platform-sender]:您的验证码信息请查收", body);
-                flag = false;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            //在这里可以判断验证码是否已经发送
-            if (flag) {
-                msg = "验证码发送失败";
-                return Result.error(FAILED_SEND_ERROR_CODE, msg);
-            }
-            session.setAttribute("verify", verify);
-            return Result.success(null);
         }
-        msg = "请等待60秒后，再进行发送";
-        return Result.error(FAILED_SEND_ERROR_CODE,msg);
+        if (null != session.getAttribute("start") && 60000 >= (System.currentTimeMillis() - (long)session.getAttribute("start"))) {
+            //防止直接通过url路径进入操作，并且session的这两个参数都在register接口中进行
+            if( session.isNew() && null == session.getAttribute("verify")) {
+                String verify = SecurityUtil.getRandom();
+                String body = String.format(VERIFICATION_HTML_TEXT, verify);
+                boolean flag = true;
+                try {
+                    QQEmailService.qqemail(email,"[selab-platform-sender]:您的验证码信息请查收", body);
+                    flag = false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //在这里可以判断验证码是否已经发送
+                if (flag) {
+                    msg = "验证码发送失败";
+                    return Result.error(FAILED_SEND_ERROR_CODE, msg);
+                }
+                session.setAttribute("verify", verify);
+                return Result.success(null);
+            }
+            msg = "请再等待" + (60000 - (System.currentTimeMillis() - (long)session.getAttribute("start")))/1000 +"秒，再进行发送验证码";
+            return Result.error(FAILED_SEND_ERROR_CODE,msg);
+        }
+        msg = "服务器内部问题，获取session问题";
+        return Result.error(STATUS_CODE_INNSER_ERROR,msg);
     }
     /**
      * 注册操作
@@ -211,37 +225,41 @@ public class LoginController extends HttpServlet {
                     return Result.error(STATUS_CODE_INNSER_ERROR,msg);
                 }
                 //将验证码存入到Session中Session的有效期是60秒
-                HttpSession session = request.getSession();
-                //如果我们的session是新创建的那么就重新执行一遍发验证码的逻辑
-                if(!session.isNew() && null != session.getAttribute("verify")){
-                    if (null != userRegisterDto.getIdentify() && !"".equals(userRegisterDto.getIdentify())) {
-                        if(!session.getAttribute("verify").equals(userRegisterDto.getIdentify())){
-                            msg = "验证码不正确，请重新输入";
-                            return Result.error(VERIFY_INFO_ERROR,msg);
-                        }
-                        //验证码验证成功后，将对应的信息存入到数据库中，并且将邮箱注册信息存入到Email表中来记录邮箱注册次数
-                        try {
-                            loginService.register(userRegisterDto);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                            msg = "服务器内部问题";
-                            return Result.error(STATUS_CODE_INNSER_ERROR,msg);
-                        }
-                        try {
-                            emailService.save(new Email(emailService.getEmailNum() + 1, userRegisterDto.getEmail()));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            msg = "服务器内部问题";
-                            return Result.error(STATUS_CODE_INNSER_ERROR,msg);
-                        }
-                        session.removeAttribute("verify");
-                        session.invalidate();
-                        return Result.success(null);
-                    }
-                    msg = "验证码不能为空";
+                HttpSession session = null;
+                if(null != userRegisterDto.getIdentify() && 6 == userRegisterDto.getIdentify().length()){
+                    session = request.getSession();
+                }else{
+                    msg = "请输入6位数验证码信息再进行注册";
                     return Result.error(VERIFY_INFO_ERROR,msg);
                 }
+                //如果我们的session是新创建的那么就重新执行一遍发验证码的逻辑
+                if(!session.isNew() && null != session.getAttribute("verify")){
+                    if(!session.getAttribute("verify").equals(userRegisterDto.getIdentify())){
+                        msg = "验证码不正确，请重新输入";
+                        return Result.error(VERIFY_INFO_ERROR,msg);
+                    }
+                    //验证码验证成功后，将对应的信息存入到数据库中，并且将邮箱注册信息存入到Email表中来记录邮箱注册次数
+                    try {
+                        loginService.register(userRegisterDto);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        msg = "服务器内部问题";
+                        return Result.error(STATUS_CODE_INNSER_ERROR,msg);
+                    }
+                    try {
+                        emailService.save(new Email(userRegisterDto.getEmail()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        msg = "服务器内部问题";
+                        return Result.error(STATUS_CODE_INNSER_ERROR,msg);
+                    }
+                    session.removeAttribute("verify");
+                    session.removeAttribute("start");
+                    session.invalidate();
+                    return Result.success(null);
+                }
                 session.removeAttribute("verify");
+                session.removeAttribute("start");
                 session.invalidate();
                 msg = "请先发送验证码";
                 return Result.error(FAILED_SEND_ERROR_CODE,msg);

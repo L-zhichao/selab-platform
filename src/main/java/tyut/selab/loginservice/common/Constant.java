@@ -5,7 +5,7 @@ public interface Constant {
     /**
      *  对于同一邮箱注册的最大用户数量
      */
-    public static final Integer MAX_SAME_MMAIL_REGISTER_NUM = 3;
+    public static final Integer MAX_SAME_MMAIL_REGISTER_NUM = 1;
     Integer ACCOUNT_FORMAT_ERROR = 50101;//账号输入格式问题
     Integer PASSWORD_FORMAT_ERROR = 50102;//密码输入格式问题
     Integer PHONENUM_FORMAT_ERROR = 50103;//电话号码格式错误

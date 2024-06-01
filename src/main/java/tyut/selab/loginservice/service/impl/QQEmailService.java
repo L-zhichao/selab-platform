@@ -75,7 +75,7 @@ public class QQEmailService {
         String name = userName;
         boolean flag = false;
         //用户名6到12个字符，可以包含中文、大小写字母、和数字
-        if(name.matches("^[\u4e00-\u9fa5a-zA-Z0-9]{6,12}$")){
+        if(name.matches("^[\u4e00-\u9fa5a-zA-Z0-9]{2,10}$")){
             flag = true;
         }
         return flag;

@@ -15,26 +15,27 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static tyut.selab.loginservice.common.Constant.STATUS_CODE_NON_TOKEN;
-
 /**
- * Description: 所有请求都走此过滤器来判断用户是否登录
- **/
+// * Description: 所有请求都走此过滤器来判断用户是否登录
+// **/
 @WebFilter(filterName = "LoginFilter", urlPatterns = {"/*"})
 public class LoginFilter implements Filter {
     public List<String> ignoreUrl
             = Arrays.asList(
-            "/login","/register","/sendEmail");
+            "/login","/register","/sendEmail","/");
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String requestURI =request.getRequestURI();
-        Result result = null;
+        System.out.println(requestURI);
+        String msg = "";
+        boolean flag = false;
         if (!ignoreUrl.contains(requestURI)) {
             UserLocal userLocal = new UserLocal();
             String token = request.getHeader("Authorization");
-            boolean flag = null != token && (!JwtHelperUtils.isExpiration(token));
+            // token获取不到
+            flag = null != token && (!JwtHelperUtils.isExpiration(token));
             if (flag) {
                 userLocal.setUserId(JwtHelperUtils.getUserId(token));
                 userLocal.setUserName(JwtHelperUtils.getUsername(token));
@@ -44,15 +45,14 @@ public class LoginFilter implements Filter {
                 //将Token传给实体类对象UserLocal，并存入到ThreadLocal中，把该对象传给前端
                 SecurityUtil.setUser(userLocal);
                 filterChain.doFilter(servletRequest, servletResponse);
+                WebUtils.writeJson(response, Result.success(null));
+            }else{
+                WebUtils.writeJson(response,Result.error(50055,"登录验证失败,请重新登录!"));
             }
-            result = new Result(STATUS_CODE_NON_TOKEN, "Token不存在或已过期");
-            if(!flag) {
-                WebUtils.writeJson(response, result);
-            }
+//            filterChain.doFilter(servletRequest, servletResponse);
         }
-        //放行
-        if(null == result) {
-            filterChain.doFilter(request, response);
+        if(!flag){
+            filterChain.doFilter(servletRequest, servletResponse);
         }
     }
 
