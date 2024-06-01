@@ -46,6 +46,13 @@ public interface BorrowService {
     public PageUtil<BorrowBookVo> selectList(Integer cur,Integer size);
 
     /**
+     *  通过borrowId查询借阅记录
+     *  @param borrowId
+     *  @return
+     */
+    public BorrowBookVo selectByBorrowId(Integer borrowId);
+
+    /**
      *  查询所有未归还书籍
      * @return
      */
@@ -55,6 +62,5 @@ public interface BorrowService {
 
     public BorrowBookVo borrowBookToVo(BorrowBook borrowBook);
 
-    public PageUtil<BorrowBookVo> selectListByBorrowId(Integer borrowId);
 
 }
