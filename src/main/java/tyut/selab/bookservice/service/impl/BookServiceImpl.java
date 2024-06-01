@@ -1,7 +1,5 @@
 package tyut.selab.bookservice.service.impl;
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.alibaba.fastjson.JSONObject;
 import tyut.selab.bookservice.dao.BookInfoDao;
 import tyut.selab.bookservice.dao.impl.BookInfoDaoImpl;
 import tyut.selab.bookservice.domain.BookInfo;
@@ -14,6 +12,7 @@ import tyut.selab.userservice.domain.User;
 import tyut.selab.utils.PageUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,15 +27,13 @@ public class BookServiceImpl implements BookService {
     private UserDao userDao = new UserDaoImpl();
     @Override
     public Integer insertBook(BookDto bookDto) {
-        String jsonString = JSONUtils.toJSONString(bookDto);
-        BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
+        BookInfo bookInfo = bookDtoToBookInfo(bookDto);
         return bookDao.insert(bookInfo);
     }
 
     @Override
     public Integer updateBook(BookVo bookVo)  {
-        String jsonString = JSONUtils.toJSONString(bookVo);
-        BookInfo bookInfo = JSONObject.parseObject(jsonString,BookInfo.class);
+        BookInfo bookInfo = bookVoToBookInfo(bookVo);
         return bookDao.update(bookInfo);
     }
 
@@ -47,10 +44,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookVo selectBookById(Integer bookId) {
-        BookInfo bookInfo = null;
-        bookInfo = bookDao.selectByBookIdBookInfo(bookId);
-        String jsonString = JSONUtils.toJSONString(bookInfo);
-        BookVo bookVo = JSONObject.parseObject(jsonString, BookVo.class);
+        BookInfo bookInfo = bookDao.selectByBookIdBookInfo(bookId);
+        BookVo bookVo = bookIofoToBookVo(bookInfo);
         return bookVo;
     }
 
@@ -60,7 +55,7 @@ public class BookServiceImpl implements BookService {
         pageUtil.setCur(cur);
         pageUtil.setSize(size);
         List<BookVo> list = new ArrayList<BookVo>();
-        List<BookInfo> bookInfos = bookDao.selectAllList(cur, size);
+        List<BookInfo> bookInfos = bookDao.selectByOwnerBookName(cur, size,userId,bookName);
         if(cur == 1){
             Integer count = bookDao.selectCount(null,null);
             pageUtil.setTotal(count);
@@ -152,5 +147,37 @@ public class BookServiceImpl implements BookService {
         String ownerName = user.getUserName();
         bookVo.setOwnerName(ownerName);
         return bookVo;
+    }
+
+    @Override
+    public BookInfo bookDtoToBookInfo(BookDto bookDto){
+        BookInfo bookInfo = new BookInfo();
+        bookInfo.setPrice(bookDto.getPrice());
+        bookInfo.setBookAuthor(bookDto.getBookAuthor());
+        bookInfo.setBookDetails(bookDto.getBookDetails());
+        bookInfo.setBookName(bookDto.getBookName());
+        bookInfo.setOwner(bookDto.getOwner());
+        bookInfo.setRemark(bookDto.getRemark());
+        bookInfo.setBookRef(bookDto.getBookRef());
+        bookInfo.setStatus(0);
+        Date nowdate = new Date();
+        bookInfo.setCreateTime(nowdate);
+        return bookInfo;
+    }
+
+    @Override
+    public BookInfo bookVoToBookInfo(BookVo bookVo){
+        BookInfo bookInfo = new BookInfo();
+        bookInfo.setPrice(bookVo.getPrice());
+        bookInfo.setBookAuthor(bookVo.getBookAuthor());
+        bookInfo.setBookDetails(bookVo.getBookDetails());
+        bookInfo.setBookName(bookVo.getBookName());
+        bookInfo.setOwner(bookVo.getOwner());
+        bookInfo.setStatus(bookVo.getStatus());
+        bookInfo.setBookId(bookVo.getBookId());
+        bookInfo.setBookRef(bookVo.getBookRef());
+        bookInfo.setCreateTime(bookVo.getCreateTime());
+        bookInfo.setUpdateTime(bookVo.getUpdateTime());
+        return bookInfo;
     }
 }
