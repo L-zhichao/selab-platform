@@ -63,7 +63,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public TaskReport selectByUserId(Integer userId, Integer taskId){
 
-        String sql = "select * from task_report where user_id=? and task_id=? order by id desc limit 1";
+        String sql = "select * from task_report where user_id=? and task_id=? order by report_id desc limit 1";
         List<TaskReport> reports = baseQuery(TaskReport.class, sql, userId, taskId);
         if (reports != null && !reports.isEmpty()) {
             return reports.get(0); // 返回列表中的第一个元素，即最新的记录

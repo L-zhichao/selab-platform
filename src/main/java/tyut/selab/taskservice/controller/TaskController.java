@@ -338,6 +338,9 @@ public class TaskController extends HttpServlet {
         }
 
         TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
+        if(taskInfoVo==null){
+            return Result.error(HttpStatus.NoDataFromDatabase,"该任务不存在");
+        }
 
         //权限验证
         UserLocal loginUser = getUserMessage();
