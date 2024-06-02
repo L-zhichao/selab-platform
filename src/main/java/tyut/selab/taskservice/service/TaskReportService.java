@@ -63,7 +63,7 @@ public interface TaskReportService {
     /**
      * 设置userId
      * */
-  public void setUserId(Integer userId);
+  //public void setUserId(Integer userId);
 
 
 }

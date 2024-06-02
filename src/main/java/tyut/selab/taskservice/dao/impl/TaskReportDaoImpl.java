@@ -43,16 +43,22 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
                 record.getCreateTime()
         };
 
-        String sql1="select report_id from task_report where task_id=? and user_id=? and report_status=? and details=? and create_time=?";
-        String sql="INSERT INTO task_reports (task_id, user_id, report_status, details, create_time) VALUES (?, ?, ?, ?, ?)";
+        //查重
+        String sqlCheck="select from task_report where task_id=? and user_id=? and report_status=? and details=?";
+        TaskReport sameTaskReport = baseQueryObject(TaskReport.class, sqlCheck);
+        if(sameTaskReport!=null){
+            throw new RuntimeException("存在相同汇报信息");
+        }
 
-        Integer rowsAffected;
+        String sqlInsert="INSERT INTO task_report (task_id, user_id, report_status, details, create_time) VALUES (?, ?, ?, ?, ?)";
+
+        Integer rowsAffected=null;
         try {
-            rowsAffected = baseUpdate(sql, report);
+            rowsAffected = baseUpdate(sqlInsert, report);
+            return rowsAffected;
         }catch (RuntimeException e){
             throw e;
         }
-        return rowsAffected;
     }
 
     /**
@@ -185,23 +191,15 @@ String sql= """
         }
     }
 
-    @Override
-    public Integer conflict(TaskReportDto taskReportDto) {
-        String sql="select count(*) from task_report where task_id =? and report_status=? and details=?";
-        TaskInfo taskInfo = baseQueryObject(TaskInfo.class, sql, taskReportDto.getTaskId(), taskReportDto.getReportStatus(), taskReportDto.getDetails());
-        if(taskInfo!=null){
-            return 1;
-        }else {
-            return 0;
-        }
-    }
+
 
 /**
  * 通过userId获取userName
  * */
-    @Override
+
     public String getUserNameByUserId(Integer userId) {
-        String sql="select user_name from sys_user where user_id=?";
-        return queryForObject(sql,userId);
+        String sql="select from sys_user where user_id=?";
+        User user = baseQueryObject(User.class, sql);
+        return user.getUserName();
     }
 }
