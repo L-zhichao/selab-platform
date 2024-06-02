@@ -3,6 +3,8 @@ package tyut.selab.userservice.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.junit.Test;
+import tyut.selab.loginservice.dto.UserLocal;
+import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.userservice.Dto.UserDto;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.service.impl.UserServiceImpl;
@@ -80,7 +82,6 @@ public class UserController extends HttpServlet {
                     throw new RuntimeException(e);
                 }
             }
-
         } else if (methodName.equals("queryById")) {
             try {
                 Result result = queryById(req, resp);
@@ -153,6 +154,12 @@ public class UserController extends HttpServlet {
      * @return
      */
     private Result groupUpdate(HttpServletRequest req, HttpServletResponse resp) {
+        //判断权限
+        SecurityUtil SecurityUtil = null;
+        UserLocal userSecurity = SecurityUtil.getUser();
+        if(userSecurity.getRoleId() == 3||userSecurity.getRoleId()==2){
+            return Result.error(500010,"权限不足");
+        }
         String userIdStr = req.getParameter("userId");
         Long userId = null;
         boolean isInteger = true;
@@ -317,9 +324,20 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result save(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        String jsonData = request.getReader().lines().collect(Collectors.joining());
-        UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
+    private Result save(HttpServletRequest request,HttpServletResponse response) {
+        //判断权限
+        SecurityUtil SecurityUtil = null;
+        UserLocal userSecurity = SecurityUtil.getUser();
+        if(userSecurity.getRoleId() == 2||userSecurity.getRoleId()==3){
+            return Result.error(500010,"权限不足");
+        }
+        UserVo userVo = null;
+        try {
+            String jsonData = request.getReader().lines().collect(Collectors.joining());
+            userVo = JSON.parseObject(jsonData, UserVo.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Integer save = userService.save(userVo);
         if (save>0){
             //Result success=result.success(null);
@@ -339,6 +357,12 @@ public class UserController extends HttpServlet {
      * @return
      */
     private Result update(HttpServletRequest request, HttpServletResponse response){
+        //判断权限
+        SecurityUtil SecurityUtil = null;
+        UserLocal userSecurity = SecurityUtil.getUser();
+        if(userSecurity.getRoleId() == 3){
+            return Result.error(500010,"权限不足");
+        }
         String jsonData = null;
         UserVo userVo=null;
         try {
@@ -367,6 +391,12 @@ public class UserController extends HttpServlet {
      * @return
      */
     private Result logout(HttpServletRequest request,HttpServletResponse response){
+        //判断权限
+        SecurityUtil SecurityUtil = null;
+        UserLocal userSecurity = SecurityUtil.getUser();
+        if(userSecurity.getRoleId() == 3){
+            return Result.error(500010,"权限不足");
+        }
         String userIdStr = request.getParameter("userId");
         Integer userId= 0;
         boolean isInteger = true;
@@ -401,6 +431,12 @@ public class UserController extends HttpServlet {
      * @return
      */
     private Result updateRole(HttpServletRequest request, HttpServletResponse response){
+        //判断权限
+        SecurityUtil SecurityUtil = null;
+        UserLocal userSecurity = SecurityUtil.getUser();
+        if(userSecurity.getRoleId() == 3||userSecurity.getRoleId()==2){
+            return Result.error(500010,"权限不足");
+        }
         String roleIdStr = request.getParameter("roleId");
         Integer roleId=0;
         boolean isInteger = true;
@@ -438,12 +474,11 @@ public class UserController extends HttpServlet {
         userVo.setRoleId(roleId);
         //userVo.setRoleName();
         Integer save = userService.updateUserRole(userVo);
-        if (save>0){
+        if (save > 0){
            //Result success = result.success(null);
            return Result.success(null);
         }
         //Result error = result.error(400,"没有权限修改用户权限");
         return Result.error(50005,"修改用户信息失败");
     }
-
 }

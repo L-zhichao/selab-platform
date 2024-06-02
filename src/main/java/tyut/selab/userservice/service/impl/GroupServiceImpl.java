@@ -10,6 +10,7 @@ import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.GroupVo;
+import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.Result;
 
 
@@ -32,7 +33,6 @@ public class GroupServiceImpl implements GroupService {
         group.setUpdateUser(1);
         Integer insert = groupDao.insert(group);
         return insert;
-
     }
 
     @Override
@@ -52,7 +52,8 @@ public class GroupServiceImpl implements GroupService {
             Date createTime = group.getCreateTime();
             Date updateTime = group.getUpdateTime();
             //通过groupid查询所有的uservo对象
-            userService.selectByGroupId(groupId);
+            List<UserVo> userVos = userService.selectByGroupId(groupId);
+            groupVo.setUserVos(userVos);
             groupVo.setGroupId(groupId);
             groupVo.setGroupName(groupName);
             groupVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
@@ -72,11 +73,10 @@ public class GroupServiceImpl implements GroupService {
         group.setGroupId(groupId);
         group.setGroupName(groupName);
         group.setUpdateUser(1);
+        //group.setCreateTime(groupVo.getCreateTime());
         group.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
         group.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
         Integer update = groupDao.update(group);
         return update;
     }
-
-
 }

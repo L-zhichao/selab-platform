@@ -13,4 +13,12 @@ public class UserLocal {
     private String userName;
     private Integer groupId;
     private Integer roleId;
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
+    }
 }
