@@ -170,7 +170,7 @@ import java.util.Objects;
             return Result.error(HttpStatus.IncomingDataError, "taskId不能为空");
         }
 
-        Integer taskId = null;
+        Integer taskId;
         try {
             taskId = Integer.valueOf(taskIdStr);
         } catch (NumberFormatException e) {
@@ -183,6 +183,9 @@ import java.util.Objects;
         //获取用户id
         UserLocal userMessage = getUserMessage(request, response);
         Integer userId = userMessage.getUserId();
+
+        //将userId传入service层
+        taskReportService.setUserId(userId);
 
         TaskReportVo taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
         TaskReport report = taskReportDao.selectByUserId(userId, taskId);
@@ -687,9 +690,9 @@ import java.util.Objects;
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
        // UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
-        user.setUserName("user1");
-        user.setRoleId(3);
-        user.setUserId(2);
+        user.setUserName("JohnDoe");
+        user.setRoleId(2);
+        user.setUserId(1);
         return user;
     }
     protected void findMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

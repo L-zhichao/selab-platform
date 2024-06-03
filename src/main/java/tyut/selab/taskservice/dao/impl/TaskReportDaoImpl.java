@@ -3,12 +3,8 @@ package tyut.selab.taskservice.dao.impl;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.domain.TaskGroup;
-import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
-import tyut.selab.taskservice.dto.TaskInfoDto;
-import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.Task;
-import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.userservice.domain.User;
 
 import java.util.ArrayList;
@@ -47,7 +43,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
         String sqlCheck="select from task_report where task_id=? and user_id=? and report_status=? and details=?";
         TaskReport sameTaskReport = baseQueryObject(TaskReport.class, sqlCheck);
         if(sameTaskReport!=null){
-            throw new RuntimeException("存在相同汇报信息");
+            throw new RuntimeException("Same report exists");
         }
 
         String sqlInsert="INSERT INTO task_report (task_id, user_id, report_status, details, create_time) VALUES (?, ?, ?, ?, ?)";
@@ -72,12 +68,12 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
         String sql = """
                     select report_id as reportId,task_id as taskId,user_id as userId,report_status as reportStatus,details,create_time as createTime
                     from task_report
-                    where task_id=? and user_id=?
+                    where user_id=? and task_id=?
                     order by report_id desc
                     limit 1
                     """;
 
-        List<TaskReport> reports = baseQuery(TaskReport.class, sql, taskId, userId);
+        List<TaskReport> reports = baseQuery(TaskReport.class, sql, userId, taskId);
         if (reports != null && !reports.isEmpty()) {
             return reports.get(0); // 返回列表中的第一个元素，即最新的记录
         }
@@ -200,11 +196,17 @@ String sql= """
 
 /**
  * 通过userId获取userName
- * */
+ */
 
     public String getUserNameByUserId(Integer userId) {
-        String sql="select from sys_user where user_id=?";
-        User user = baseQueryObject(User.class, sql);
-        return user.getUserName();
+        String sql="select user_name as userName from sys_user where user_id=?";
+        User user = baseQueryObject(User.class, sql,userId);
+        String userName= user.getUserName();
+        if(userName!=null){
+            return userName;
+        }else {
+            throw new RuntimeException("User not found");
+        }
     }
+
 }

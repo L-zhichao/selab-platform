@@ -69,7 +69,6 @@ public class BaseDao {
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-
             }
             JDBCUtil.releaseConnection();
         }
