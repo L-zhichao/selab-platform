@@ -21,6 +21,7 @@ public class CrosFilter implements Filter {
         String requestURI =request.getRequestURI();
         boolean flag = true;
         if (!ignoreUrl.contains(requestURI)) {
+
             response.setHeader("Access-Control-Allow-Origin", "*");
             response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, HEAD");
             response.setHeader("Access-Control-Max-Age", "3600");
