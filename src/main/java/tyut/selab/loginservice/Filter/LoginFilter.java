@@ -50,9 +50,8 @@ public class LoginFilter implements Filter {
             } else {
                 WebUtils.writeJson(response, Result.error(50055, "登录验证失败,请重新登录!"));
             }
-//            filterChain.doFilter(servletRequest, servletResponse);
-
+        }else {
+        filterChain.doFilter(request, response);
         }
-
     }
 }
