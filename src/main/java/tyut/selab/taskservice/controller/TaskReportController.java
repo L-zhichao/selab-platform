@@ -121,18 +121,18 @@ import java.util.Objects;
         //判断任务是否存在
         TaskInfoVo taskInfoVo = taskService.queryById(taskId);
         if(taskInfoVo==null){
-            return  Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
+            return  Result.error(HttpStatus.NoDataFromDatabase, "该任务不存在");
         }
 
         //发布者id
         TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
         Integer publisherId = taskInfo.getPublisherId();
 
-        //获取用户id
+        //角色id
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
 
-        //权限不够-->管理员查询非自己发布的任务 || 普通用户
+        //权限
         if ( roleId == 3) {
             return Result.error(HttpStatus.PermissionNotAllowed, "权限不够,禁止查询：普通用户");
         } else if (roleId==2) {
@@ -688,7 +688,7 @@ import java.util.Objects;
        // UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
         user.setUserName("JohnDoe");
-        user.setRoleId(2);
+        user.setRoleId(3);
         user.setUserId(1);
         return user;
     }

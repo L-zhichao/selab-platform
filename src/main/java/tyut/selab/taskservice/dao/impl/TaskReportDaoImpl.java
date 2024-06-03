@@ -170,11 +170,9 @@ String sql= """
      * */
     @Override
     public Integer queryTaskReportCount(Integer taskId) {
-       // String sql="SELECT COUNT(*) AS reports_count FROM task_reports where task_id=?";
+      String sql="SELECT COUNT(*) AS reports_count FROM task_report WHERE task_id=?";
 
-        String sql="SELECT * FROM task_report WHERE task_id = ?";
-        List<TaskReport> reports = baseQuery(TaskReport.class, sql, taskId);
-        return reports.size();
+        return baseCountQuery(sql, taskId);
     }
     /**
      * 通过reportid查询某一任务的taskid

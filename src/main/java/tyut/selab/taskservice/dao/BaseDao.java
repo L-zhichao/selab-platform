@@ -175,42 +175,48 @@ public class BaseDao {
         return rows;
     }
 
+    /**
+     * 返回结果集中的计数
+     * */
+    public Integer baseCountQuery(String sql, Object... params) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Integer count = 0;
+
+        try {
+            conn =JDBCUtil.getConnection();
+            stmt = conn.prepareStatement(sql);
+
+            // 设置参数
+            for (int i = 0; i < params.length; i++) {
+                stmt.setObject(i + 1, params[i]);
+            }
+
+            rs = stmt.executeQuery();
+            if (rs.next()) { // 获取结果集的第一行
+                count = rs.getInt(1); // 假设COUNT(*)是结果集的第一列
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            // 关闭资源
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return count; // 返回计数结果
+    }
 
 
 
 
-//
-//        // 通用的查询方法，返回结果集的第一条记录的指定列的值
-//        protected String queryForObject(String sql, Object... params) {
-//
-//            Connection connection = JDBCUtil.getConnection();
-//            PreparedStatement preparedStatement = null;
-//            ResultSet resultSet = null;
-//            String result = null;
-//
-//            try {
-//                preparedStatement = connection.prepareStatement(sql);
-//                // 设置参数
-//                if (params != null) {
-//                    for (int i = 0; i < params.length; i++) {
-//                        preparedStatement.setObject(i + 1, params[i]);
-//                    }
-//                }
-//                resultSet = preparedStatement.executeQuery();
-//                if (resultSet.next()) {
-//                    result = resultSet.getString(2); // 总是返回第2列user_name的值
-//                }
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            } finally {
-//                try {
-//                    resultSet.close();
-//                } catch (SQLException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//            return result;
-//        }
 
 
 
