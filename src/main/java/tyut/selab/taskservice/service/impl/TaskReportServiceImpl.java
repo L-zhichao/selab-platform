@@ -101,8 +101,7 @@ public class TaskReportServiceImpl implements TaskReportService {
             throw new RuntimeException("查询汇报记录时出错",e);
         }
 
-        TaskReportVo taskReportVo = ToTaskReportVo(taskReport);
-        return taskReportVo;
+        return ToTaskReportVo(taskReport);
     }
 
     @Override
@@ -151,8 +150,7 @@ public class TaskReportServiceImpl implements TaskReportService {
         if (taskId == null) {
             throw new IllegalArgumentException("任务id不能为空");
         }
-        Integer count = taskReportDao.queryTaskReportCount(taskId);
-        return count;
+        return taskReportDao.queryTaskReportCount(taskId);
     }
 
     @Override
