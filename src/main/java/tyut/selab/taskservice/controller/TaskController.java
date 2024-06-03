@@ -20,6 +20,7 @@ import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.utils.Result;
 
 
+import javax.mail.Flags;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -56,8 +57,19 @@ public class TaskController extends HttpServlet {
             return Result.error(HttpStatus.IncomingDataError,"截止时间设置不合理");
         }
 
+        List<Integer> groupIds = taskInfoDto.getGroupIds();
+        if (groupIds.isEmpty()){
+            return Result.error(HttpStatus.IncomingDataError,"没有设置任务的小组范围");
+        }
 
+        if (taskInfoDto.getContent() == null || taskInfoDto.getName() == null){
+            return Result.error(HttpStatus.IncomingDataError,"没有设置任务内容和标题");
+        }
 
+       boolean flag = taskInfoService.isGroupsExist(taskInfoDto.getGroupIds());
+        if (! flag ){
+            return Result.error(HttpStatus.IncomingDataError,"小组不存在");
+        }
 
         //判断用户身份，不同身份发布任务的范围不一样，权限不够就返回error(其他组接口没有实现，先注释）
         UserLocal userMessage = getUserMessage();
@@ -115,14 +127,20 @@ public class TaskController extends HttpServlet {
        if (roleId == 3 ){
            return Result.error(HttpStatus.PermissionNotAllowed,"普通用户没有发布的任务");
        }
-       //
-       //
-       //
-       //
+
 
        String publisherName = request.getParameter("publisherName");
-       int cur = Integer.parseInt(request.getParameter("cur"));
-       int size = Integer.parseInt(request.getParameter("size"));
+       String cur1 = request.getParameter("cur");
+       String size1 = request.getParameter("size");
+       if (cur1 == null){
+           cur1 = "1";
+       }
+       if(size1 == null){
+           size1 = "10";
+       }
+       int cur = Integer.parseInt(cur1);
+       int size = Integer.parseInt(size1);
+
        List<TaskInfoVo> taskInfoVoPage = null;
 
        if (publisherName == null){
@@ -209,6 +227,7 @@ public class TaskController extends HttpServlet {
   private Result update(HttpServletRequest request,HttpServletResponse response){
 
 
+
       //获取前端传入的taskid
       String requestURI = request.getRequestURI();
       String[] split = requestURI.split("/");
@@ -226,13 +245,17 @@ public class TaskController extends HttpServlet {
               return Result.error(HttpStatus.PermissionNotAllowed,"权限不够,禁止修改");
           }
       }
-      //
-      //
-      //
-      //
+
 
 
       TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
+
+      Date dealTime = taskInfoDto.getDealTime();
+      Date date = new Date();
+      if (date.getTime() > dealTime.getTime() || taskInfoDto.getContent() == null || taskInfoDto.getName() == null || taskInfoDto.getGroupIds().isEmpty()){
+          return Result.error(HttpStatus.IncomingDataError,"数据不合理");
+      }
+
       //无论更新者是谁，都设置为当前请求者的id
       //任务的发布者也不能更改(在dao层实现）
       taskInfoDto.setUpdaterId(loginUser.getUserId());

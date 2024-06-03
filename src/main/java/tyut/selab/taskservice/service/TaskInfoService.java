@@ -65,4 +65,11 @@ public interface TaskInfoService {
      */
     public List<TaskInfoVo> queryTaskInfoByGroupId(Integer groupId);
 
+
+    /**
+     *     查询集合中的group是否存在，返回Trun 表示存在
+     * @param groupIds
+     * @return
+     */
+    boolean isGroupsExist(List<Integer> groupIds);
 }
