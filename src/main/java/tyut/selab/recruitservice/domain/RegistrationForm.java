@@ -1,5 +1,10 @@
 package tyut.selab.recruitservice.domain;
+import tyut.selab.userservice.vo.UserVo;
 
+import tyut.selab.recruitservice.dto.RegistrationDto;
+import tyut.selab.recruitservice.view.RegistrationVo;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 /**
@@ -10,6 +15,7 @@ public class RegistrationForm {
     /**
      * 主键id
      */
+
     private Integer id;
     /**
      *面试者id
@@ -22,7 +28,7 @@ public class RegistrationForm {
     /**
      *联系方式
      */
-    private Integer phone;
+    private String phone;
     /**
      *意向部门  1开发 2网安 3人工智能 4虚拟现实
      */
@@ -65,11 +71,11 @@ public class RegistrationForm {
     }
     public RegistrationForm(){}
 
-    public RegistrationForm(Integer id, Integer intervieweesId, String email, Integer phone, Integer intentDepartment, String classroom, Date interviewTime, String introduce, String purpose, String remark, Date initTime, Date updateTime) {
+    public RegistrationForm(Integer id, Integer intervieweesId, String email, String phone, Integer intentDepartment, String classroom, Date interviewTime, String introduce, String purpose, String remark, Date initTime, Date updateTime) {
         this.id = id;
         IntervieweesId = intervieweesId;
         this.email = email;
-        this.phone = Integer.valueOf(phone);
+        this.phone = phone;
         this.intentDepartment = intentDepartment;
         this.classroom = classroom;
         this.interviewTime = interviewTime;
@@ -80,6 +86,50 @@ public class RegistrationForm {
         this.updateTime = updateTime;
     }
 
+    public void toDto(){
+    }
+    public static RegistrationForm fromDto(RegistrationDto registrationDto){
+        RegistrationForm registrationForm = new RegistrationForm();
+        registrationForm.setEmail(registrationDto.getEmail());
+        registrationForm.setPhone(registrationDto.getPhone().toString());
+        registrationForm.setIntentDepartment(registrationDto.getIntentDepartment());
+        registrationForm.setGrade(registrationDto.getGrade());
+        registrationForm.setClassroom(registrationDto.getClassroom());
+        registrationForm.setIntroduce(registrationDto.getIntroduce());
+        registrationForm.setPurpose(registrationDto.getPurpose());
+        registrationForm.setInterviewTime(registrationDto.getInterviewTime());
+        registrationForm.setRemark(registrationDto.getRemark());
+        return registrationForm;
+    }
+    public static RegistrationForm fromVo(RegistrationVo registrationVo){
+        RegistrationForm registrationForm = new RegistrationForm();
+        registrationForm.setId(registrationVo.getId());
+        registrationForm.setEmail(registrationVo.getEmail());
+        registrationForm.setPhone(String.valueOf(registrationVo.getPhone()));
+        registrationForm.setIntentDepartment(registrationVo.getIntentDepartment());
+        registrationForm.setClassroom(registrationVo.getClassroom());
+        registrationForm.setGrade(registrationVo.getGrade());
+        registrationForm.setIntroduce(registrationVo.getIntroduce());
+        registrationForm.setPurpose(registrationVo.getPurpose());
+        registrationForm.setInterviewTime(registrationVo.getInterviewTime());
+        registrationForm.setRemark(registrationVo.getRemark());
+        return registrationForm;
+    }
+    public static RegistrationVo toVo(RegistrationForm registrationForm){
+        RegistrationVo registrationVo = new RegistrationVo();
+        registrationVo.setId(registrationForm.getId());
+        registrationVo.setInterviewees(new UserVo());
+        registrationVo.setEmail(registrationForm.getEmail());
+        registrationVo.setPhone(registrationForm.getPhone());
+        registrationVo.setIntentDepartment(registrationForm.getIntentDepartment());
+        registrationVo.setClassroom(registrationForm.getClassroom());
+        registrationVo.setGrade(Integer.parseInt(registrationForm.getGrade().toString()));
+        registrationVo.setInterviewTime(registrationForm.getInterviewTime());
+        registrationVo.setIntroduce(registrationForm.getIntroduce());
+        registrationVo.setPurpose(registrationForm.getPurpose());
+        registrationVo.setRemark(registrationForm.getRemark());
+        return registrationVo;
+    }
     @Override
     public String toString() {
         return "RegistrationVo{" +
@@ -135,12 +185,12 @@ public class RegistrationForm {
         this.email = email;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return (phone);
     }
 
     public void setPhone(String phone) {
-        this.phone = Integer.valueOf(phone);
+        this.phone = phone;
     }
 
 

@@ -4,7 +4,10 @@ import tyut.selab.recruitservice.dao.RegistrationDao;
 import tyut.selab.recruitservice.dao.impl.RegistrationDaoImpl;
 import tyut.selab.recruitservice.domain.RegistrationForm;
 import tyut.selab.recruitservice.dto.RegistrationDto;
+import tyut.selab.recruitservice.service.InsertException;
+import tyut.selab.recruitservice.service.QueryMyException;
 import tyut.selab.recruitservice.service.RegistrationService;
+import tyut.selab.recruitservice.service.UpdateException;
 import tyut.selab.recruitservice.view.RegistrationVo;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.service.impl.UserServiceImpl;
@@ -14,20 +17,36 @@ import tyut.selab.utils.PageUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static tyut.selab.recruitservice.domain.RegistrationForm.toVo;
+
 public class RegistrationServiceImpl implements RegistrationService {
-    RegistrationDao registrationDao = new RegistrationDaoImpl();
+    private RegistrationDao registrationDao = new RegistrationDaoImpl();
+    public void setDao(RegistrationDao registrationDao){
+        this.registrationDao = registrationDao;
+    }
+    private RegistrationDto registrationDto;
 
     @Override
-    public Integer insertRegistration(RegistrationDto registrationDto) {
-        return null;
+    public Integer insertRegistration(RegistrationDto registrationDto)throws InsertException{
+        Integer rows = registrationDao.insert(RegistrationForm.fromDto(registrationDto));
+        if(rows>=1){
+            return rows;
+        }
+        else{
+            throw new InsertException();
+        }
     }
 
     @Override
-    public Integer updateRegistration(RegistrationVo registrationVo) {
-        return null;
+    public Integer updateRegistration(RegistrationVo registrationVo) throws UpdateException {
+        Integer rows = registrationDao.update(RegistrationForm.fromVo(registrationVo));
+        if(rows>=1){
+            return rows;
+        }
+        else{
+            throw new UpdateException();
+        }
     }
-
-
     private PageUtil<RegistrationVo> toPageUtilOfRegistrationVos(PageUtil<RegistrationForm> pageUtil){
         List<RegistrationVo> registrationVos = new ArrayList<>();
         UserService userService = new UserServiceImpl();
@@ -42,13 +61,14 @@ public class RegistrationServiceImpl implements RegistrationService {
         registrationVoPageUtil.setData(registrationVos);
         return registrationVoPageUtil;
     }
+
+
     @Override
     public PageUtil<RegistrationVo> selectList(Integer cur, Integer size) {
         PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectAll(cur,size);
         if(registrationFormPageUtil == null){
             return new PageUtil<>();
         }
-
         return toPageUtilOfRegistrationVos(registrationFormPageUtil);
     }
 
@@ -93,11 +113,15 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public RegistrationVo queryMyRecruit(Integer userId) {
-        return null;
+    public RegistrationVo queryMyRecruit(Integer userId) throws QueryMyException {
+        if (registrationDao.selectByRegistrationId(userId).getIntervieweesId() == null) {
+            throw new QueryMyException();
+        } else {
+                RegistrationVo registrationVo = toVo(registrationDao.selectByRegistrationId(userId));
+                return registrationVo;
+          }
     }
-
-    public RegistrationVo getRegistrationVo(UserVo userVo,RegistrationForm registrationForm){
+        public RegistrationVo getRegistrationVo(UserVo userVo,RegistrationForm registrationForm){
         return new RegistrationVo(
                 registrationForm.getId(),
                 userVo,
@@ -112,3 +136,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         );
     }
 }
+
+
+

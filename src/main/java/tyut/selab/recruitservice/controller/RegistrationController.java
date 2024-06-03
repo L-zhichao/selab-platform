@@ -1,16 +1,23 @@
 package tyut.selab.recruitservice.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.sun.net.httpserver.Authenticator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.loginservice.utils.SecurityUtil;
+import tyut.selab.recruitservice.dto.RegistrationDto;
+import tyut.selab.recruitservice.service.InsertException;
+import tyut.selab.recruitservice.service.QueryMyException;
+import tyut.selab.recruitservice.service.UpdateException;
 import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
 import tyut.selab.recruitservice.service.RegistrationService;
 import tyut.selab.recruitservice.view.RegistrationVo;
 import tyut.selab.utils.Result;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -21,16 +28,11 @@ public class RegistrationController extends HttpServlet {
     private RegistrationService RegistrationService = new RegistrationServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        resp.setContentType("application/json;charset=UTF-8");
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName =split[split.length-1];
         Result result = null;
-        if("insertRegistration".equals(methodName)){
-            result = save(req,resp);
-        }else if("updateRegistration".equals(methodName)){
-            result = update(req,resp);
-        }else if ("selectList".equals(methodName)) {
+        if ("selectList".equals(methodName)) {
             result = selectList(req, resp);
         }else if ("selectRegistrationById".equals(methodName)) {
             result = selectRegistrationById(req,resp);
@@ -41,7 +43,16 @@ public class RegistrationController extends HttpServlet {
         }else if ("selectByGradeId".equals(methodName)) {
             result = selectByGradeId(req,resp);
         }else if ("queryMyRecruit".equals(methodName)) {
+//            result = queryMy(req,resp, Integer.valueOf(req.getParameter("userId")));
             result = queryMy(req,resp);
+        }else if("insertRegistration".equals(methodName)){
+            result = save(req,resp);
+            result.setMsg("Success");
+            resp.getWriter().write(JSON.toJSONString(result));
+        } else if ("updateRegistration".equals(methodName)) {
+            result = update(req,resp);
+            result.setMsg("Success");
+            resp.getWriter().write(JSON.toJSONString(result));
         }else {
             result = new Result(404,null);
             result.setMsg("填入地址无效！");
@@ -51,7 +62,7 @@ public class RegistrationController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            doGet(req,resp);
+        doGet(req,resp);
     }
 
     /**
@@ -72,6 +83,22 @@ public class RegistrationController extends HttpServlet {
         }
     }
 
+    private String toJdbc(HttpServletRequest request){
+
+        try {
+            BufferedReader reader = null;
+            reader = request.getReader();
+            StringBuilder jsonRequest = new StringBuilder();
+            String line;
+            while((line=reader.readLine())!=null){
+                jsonRequest.append(line);
+            }
+
+            return jsonRequest.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /** 新增报名表
      *  param: registrationDto
@@ -79,8 +106,19 @@ public class RegistrationController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result save(HttpServletRequest request,HttpServletResponse response){
-        return null;
+    private Result save(HttpServletRequest request, HttpServletResponse response){
+        String requestBody = toJdbc(request);
+        System.out.println(requestBody);
+        RegistrationDto registrationDto = JSONObject.parseObject(requestBody,RegistrationDto.class);
+        System.out.println(registrationDto);
+       try{RegistrationService.insertRegistration(registrationDto);
+           Result<RegistrationDto> result = new Result<>(200,registrationDto);
+           return result;
+       }catch(InsertException e){
+           System.out.println("插入失败");
+           Result<RegistrationDto> result = new Result<>(303,registrationDto);
+           return result;
+       }
     }
 
     /**
@@ -89,8 +127,19 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result update(HttpServletRequest request,HttpServletResponse response){
-        return null;
+        String requestBody = toJdbc(request);
+        System.out.println(JSON.parseObject(requestBody,RegistrationVo.class));
+        RegistrationVo registrationVo = JSON.parseObject(requestBody,RegistrationVo.class);
+        try{RegistrationService.updateRegistration(registrationVo);
+            Result<RegistrationVo> result = new Result<>(200,registrationVo);
+            return result;
+        }catch(UpdateException e){
+            System.out.println("修改失败");
+            Result<RegistrationVo> result = new Result<>(303,registrationVo);
+            return result;
+        }
     }
+
 
     /**
      *  分页查询所有报名表
@@ -114,6 +163,7 @@ public class RegistrationController extends HttpServlet {
     /**
      *   通过 registrationId 查询报名表信息
      * param registrationId 报名表id
+     * @return
      */
     private Result<RegistrationVo> selectRegistrationById(HttpServletRequest request,HttpServletResponse response){
 //        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
@@ -129,7 +179,7 @@ public class RegistrationController extends HttpServlet {
             return objectResult;
         }
         RegistrationVo rev = RegistrationService.selectRegistrationById(registrationId);
-        if(rev.getId() == 0){
+        if(rev.getId() == null || rev.getId() == 0){
             Result<RegistrationVo> objectResult = new Result<>(501, null);
             objectResult.setMsg("未找到对应对象");
             return objectResult;
@@ -161,6 +211,7 @@ public class RegistrationController extends HttpServlet {
         PageUtil<RegistrationVo> registrationVos = RegistrationService.selectByIntervieweesName(cur, size, intervieweesName);
         return getListResult(registrationVos.getData());
     }
+
 
     /**
      *  通过意向部门查询报名表
@@ -214,9 +265,22 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result queryMy(HttpServletRequest request,HttpServletResponse response){
-       return null;
+        Integer registrationId = Integer.valueOf(request.getParameter("userId"));
+        // id为非自然数 或不是数字
+        if(registrationId < 1||!isNumer(String.valueOf(registrationId))){
+            Result<RegistrationVo> objectResult = new Result<>(502, null);
+            objectResult.setMsg("输入数据有误");
+            return objectResult;
+        }
+        try{RegistrationVo registrationVo =RegistrationService.queryMyRecruit(registrationId);
+            RegistrationVo [] data = {registrationVo};
+            Result<RegistrationVo[]> result = new Result<>(200,data);
+            return result;
+        }catch (QueryMyException e){
+            Result<RegistrationVo[]> result = new Result<>(204,new RegistrationVo[]{});
+            return result;
+        }
     }
-
     private Result<List<RegistrationVo>> getListResult(List<RegistrationVo> registrationVos) {
         if(registrationVos.isEmpty()){
             Result<List<RegistrationVo>> objectResult = new Result<>(501, null);

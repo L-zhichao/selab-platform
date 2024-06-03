@@ -4,6 +4,7 @@
     <facet type="web" name="Web">
       <configuration>
         <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/web/web/web/WEB-INF/web.xml" />
           <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/web/web/WEB-INF/web.xml" />
         </descriptors>
         <webroots>
@@ -12,6 +13,7 @@
         <sourceRoots>
           <root url="file://$MODULE_DIR$/src/main/java" />
           <root url="file://$MODULE_DIR$/src/main/resources" />
+          <root url="file://$MODULE_DIR$/lib" />
         </sourceRoots>
       </configuration>
     </facet>
@@ -26,13 +28,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="javax.activation-api-1.2.0" level="project" />
-    <orderEntry type="library" name="javax.servlet-api-3.0.1" level="project" />
-    <orderEntry type="library" name="druid-1.1.12 (3)" level="project" />
-    <orderEntry type="library" name="fastjson-1.2.83-javadoc (2)" level="project" />
-    <orderEntry type="library" name="jakarta.servlet-api-6.0.0 (2)" level="project" />
-    <orderEntry type="library" name="fastjson-1.2.83-javadoc (3)" level="project" />
-    <orderEntry type="library" name="fastjson-1.2.83-javadoc" level="project" />
+    <orderEntry type="library" name="druid-1.1.12" level="project" />
     <orderEntry type="library" name="fastjson-1.2.83" level="project" />
+    <orderEntry type="library" name="mysql-connector-j-8.0.32 (3)" level="project" />
+    <orderEntry type="library" name="jakarta.servlet-api-6.0.0 (2)" level="project" />
   </component>
 </module>

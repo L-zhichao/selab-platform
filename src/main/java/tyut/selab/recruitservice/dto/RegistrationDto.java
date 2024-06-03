@@ -6,69 +6,65 @@ import java.util.Objects;
 public class RegistrationDto {
 
     /**
-     *邮箱地址
+     * 邮箱地址
      */
+    private String interviewees;
     private String email;
     /**
-     *联系方式
+     * 联系方式
      */
-    private Integer phone;
+    private String phone;
     /**
-     *意向部门  1开发 2网安 3人工智能 4虚拟现实
+     * 意向部门  1开发 2网安 3人工智能 4虚拟现实
      */
     private Integer intentDepartment;
     /**
-     *  所属年级 [1为大一 2为大二 ...]
+     * 所属年级 [1为大一 2为大二 ...]
      */
     private Integer grade;
     /**
-     *所属班级（注：class为关键字）
+     * 所属班级（注：class为关键字）
      */
     private String classroom;
 
     /**
-     *个人介绍
+     * 个人介绍
      */
     private String introduce;
     /**
-     *加入目的
+     * 加入目的
      */
     private String purpose;
 
     /**
-     *面试时间
+     * 面试时间
      */
+    private String remark;
     private Date interviewTime;
+
 
     @Override
     public String toString() {
         return "RegistrationDto{" +
-                "email='" + email + '\'' +
+                "interviewees='" + interviewees + '\'' +
+                ", email='" + email + '\'' +
                 ", phone=" + phone +
                 ", intentDepartment=" + intentDepartment +
                 ", grade=" + grade +
                 ", classroom='" + classroom + '\'' +
                 ", introduce='" + introduce + '\'' +
                 ", purpose='" + purpose + '\'' +
+                ", remark='" + remark + '\'' +
                 ", interviewTime=" + interviewTime +
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RegistrationDto that = (RegistrationDto) o;
-        return Objects.equals(email, that.email) && Objects.equals(phone, that.phone) && Objects.equals(intentDepartment, that.intentDepartment) && Objects.equals(grade, that.grade) && Objects.equals(classroom, that.classroom) && Objects.equals(introduce, that.introduce) && Objects.equals(purpose, that.purpose) && Objects.equals(interviewTime, that.interviewTime);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(email, phone, intentDepartment, grade, classroom, introduce, purpose, interviewTime);
-    }
-
     public void setIntentDepartment(Integer intentDepartment) {
         this.intentDepartment = intentDepartment;
+    }
+
+    public Integer getIntentDepartment() {
+        return intentDepartment;
     }
 
     public Integer getGrade() {
@@ -87,14 +83,13 @@ public class RegistrationDto {
         this.email = email;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
-
 
 
     public String getClassroom() {
@@ -130,10 +125,41 @@ public class RegistrationDto {
         this.interviewTime = interviewTime;
     }
 
+    public String getInterviewees() {
+        return interviewees;
+    }
+
+    public void setInterviewees(String interviewees) {
+        this.interviewees = interviewees;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     public RegistrationDto() {
     }
 
-    public RegistrationDto(String email, Integer phone, Integer intentDepartment, Integer grade, String classroom, String introduce, String purpose, Date interviewTime) {
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RegistrationDto that = (RegistrationDto) o;
+        return Objects.equals(interviewees, that.interviewees) && Objects.equals(email, that.email) && Objects.equals(phone, that.phone) && Objects.equals(intentDepartment, that.intentDepartment) && Objects.equals(grade, that.grade) && Objects.equals(classroom, that.classroom) && Objects.equals(introduce, that.introduce) && Objects.equals(purpose, that.purpose) && Objects.equals(remark, that.remark) && Objects.equals(interviewTime, that.interviewTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(interviewees, email, phone, intentDepartment, grade, classroom, introduce, purpose, remark, interviewTime);
+    }
+
+    public RegistrationDto(String interviewees, String email, String phone, Integer intentDepartment, Integer grade, String classroom, String introduce, String purpose, String remark, Date interviewTime) {
+        this.interviewees = interviewees;
         this.email = email;
         this.phone = phone;
         this.intentDepartment = intentDepartment;
@@ -141,6 +167,8 @@ public class RegistrationDto {
         this.classroom = classroom;
         this.introduce = introduce;
         this.purpose = purpose;
+        this.remark = remark;
         this.interviewTime = interviewTime;
     }
+
 }

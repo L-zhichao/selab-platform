@@ -77,7 +77,7 @@ public class BaseDao {
                 Object obj =clazz.getDeclaredConstructor().newInstance();
 
                 for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnLabel(i);
+                        String columnName = metaData.getColumnLabel(i);
                     Object value = resultSet.getObject(columnName);
                     // 处理datetime类型字段和java.util.Data转换问题
                     if(value.getClass().equals(LocalDateTime.class)){
