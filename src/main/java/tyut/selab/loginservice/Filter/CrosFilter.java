@@ -28,7 +28,7 @@ public class CrosFilter implements Filter {
             response.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With");
             // 非预检请求,放行即可,预检请求,则到此结束,不需要放行
             if(!request.getMethod().equalsIgnoreCase("OPTIONS")){
-                filterChain.doFilter(servletRequest, servletResponse);
+                filterChain.doFilter(request, response);
                 flag = false;
             }
         }
