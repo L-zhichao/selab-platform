@@ -4,10 +4,7 @@ import tyut.selab.recruitservice.dao.RegistrationDao;
 import tyut.selab.recruitservice.dao.impl.RegistrationDaoImpl;
 import tyut.selab.recruitservice.domain.RegistrationForm;
 import tyut.selab.recruitservice.dto.RegistrationDto;
-import tyut.selab.recruitservice.service.InsertException;
-import tyut.selab.recruitservice.service.QueryMyException;
-import tyut.selab.recruitservice.service.RegistrationService;
-import tyut.selab.recruitservice.service.UpdateException;
+import tyut.selab.recruitservice.service.*;
 import tyut.selab.recruitservice.view.RegistrationVo;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.service.impl.UserServiceImpl;
@@ -64,19 +61,19 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 
     @Override
-    public PageUtil<RegistrationVo> selectList(Integer cur, Integer size) {
+    public PageUtil<RegistrationVo> selectList(Integer cur, Integer size) throws ServiceException {
         PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectAll(cur,size);
-        if(registrationFormPageUtil == null){
-            return new PageUtil<>();
+        if(registrationFormPageUtil.getData() == null){
+            throw new ServiceException();
         }
         return toPageUtilOfRegistrationVos(registrationFormPageUtil);
     }
 
     @Override
-    public RegistrationVo selectRegistrationById(Integer registrationId) {
+    public RegistrationVo selectRegistrationById(Integer registrationId) throws ServiceException {
         RegistrationForm registrationForm = registrationDao.selectByRegistrationId(registrationId);
-        if(registrationForm == null){
-            return new RegistrationVo();
+        if(registrationForm == null || registrationForm.getId() == 0){
+            throw new ServiceException();
         }
         UserServiceImpl userService = new UserServiceImpl();
         UserVo userVo = userService.selectByUserId(registrationId);
@@ -84,10 +81,10 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public PageUtil<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size, String intervieweesName) {
+    public PageUtil<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size, String intervieweesName) throws ServiceException {
         PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectByIntervieweesName(intervieweesName,cur,size);
-        if(registrationFormPageUtil == null){
-            return new PageUtil<>();
+        if(registrationFormPageUtil.getData() == null){
+            throw new ServiceException();
         }
         return toPageUtilOfRegistrationVos(registrationFormPageUtil);
     }
@@ -95,19 +92,19 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 
     @Override
-    public PageUtil<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size) {
+    public PageUtil<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size) throws ServiceException {
         PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectByIntentDepartment(intentDepartment, cur, size);
-        if(registrationFormPageUtil == null){
-            return new PageUtil<>();
+        if(registrationFormPageUtil.getData() == null){
+            throw new ServiceException();
         }
         return toPageUtilOfRegistrationVos(registrationFormPageUtil);
     }
 
     @Override
-    public PageUtil<RegistrationVo> selectByGradeId(Integer grade, Integer cur, Integer size) {
+    public PageUtil<RegistrationVo> selectByGradeId(Integer grade, Integer cur, Integer size) throws ServiceException {
         PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectByGradeId(grade, cur, size);
-        if(registrationFormPageUtil == null){
-            return new PageUtil<>();
+        if(registrationFormPageUtil.getData() == null){
+            throw new ServiceException();
         }
         return toPageUtilOfRegistrationVos(registrationFormPageUtil);
     }

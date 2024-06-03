@@ -28,34 +28,34 @@ public interface RegistrationService {
      *  分页查询所有报名表
      * @return
      */
-    public PageUtil<RegistrationVo> selectList(Integer cur, Integer size);
+    public PageUtil<RegistrationVo> selectList(Integer cur, Integer size) throws ServiceException;
 
     /**
      *   通过 registrationId 查询报名表信息
      * @param registrationId 报名表id
      * @return
      */
-    public RegistrationVo selectRegistrationById(Integer registrationId);
+    public RegistrationVo selectRegistrationById(Integer registrationId) throws ServiceException;
 
     /**
      *   通过面试者Name查询报名表信息(支持模糊查询)
      * @param intervieweesName
      * @return
      */
-    public PageUtil<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size,String intervieweesName);
+    public PageUtil<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size,String intervieweesName) throws ServiceException;
 
     /**
      *  通过意向部门查询报名表
      * @return
      */
-    public PageUtil<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size);
+    public PageUtil<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size) throws ServiceException;
 
     /**
      *  通过年级查询报名表
      * @param grade
      * @return
      */
-    public PageUtil<RegistrationVo> selectByGradeId(Integer grade,Integer cur,Integer size);
+    public PageUtil<RegistrationVo> selectByGradeId(Integer grade,Integer cur,Integer size) throws ServiceException;
 
     /**
      *  查询本人提交报名表
