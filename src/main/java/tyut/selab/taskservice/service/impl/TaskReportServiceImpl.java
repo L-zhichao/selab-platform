@@ -56,12 +56,6 @@ public class TaskReportServiceImpl implements TaskReportService {
             throw new IllegalArgumentException("汇报信息不能为空");
         }
 
-        //查重
-        int isConflict = taskReportDao.conflict(taskReportDto);
-        if(isConflict==1){
-            throw new RuntimeException("存在相同汇报信息");
-        }
-
         // 创建TaskReport对象
         TaskReport taskReport = new TaskReport();
 
@@ -107,8 +101,7 @@ public class TaskReportServiceImpl implements TaskReportService {
             throw new RuntimeException("查询汇报记录时出错",e);
         }
 
-        TaskReportVo taskReportVo = ToTaskReportVo(taskReport);
-        return taskReportVo;
+        return ToTaskReportVo(taskReport);
     }
 
     @Override
@@ -157,8 +150,7 @@ public class TaskReportServiceImpl implements TaskReportService {
         if (taskId == null) {
             throw new IllegalArgumentException("任务id不能为空");
         }
-        Integer count = taskReportDao.queryTaskReportCount(taskId);
-        return count;
+        return taskReportDao.queryTaskReportCount(taskId);
     }
 
     @Override
@@ -218,7 +210,7 @@ public Integer queryuseridByreportid(Integer reportid){
      * */
     private TaskReportVo ToTaskReportVo(TaskReport taskReport){
         if(taskReport==null){
-            return null;
+            throw new RuntimeException("任务汇报对象为空");
         }
 
         //查询用户名

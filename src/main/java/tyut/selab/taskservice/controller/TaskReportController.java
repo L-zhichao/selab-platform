@@ -92,7 +92,7 @@ import java.util.Objects;
         if(save!=null){
             return Result.success(HttpStatus.NO_CONTENT,"汇报成功");
         }else{
-            return Result.error(HttpStatus.ERROR,"汇报失败");
+            return Result.error(HttpStatus.UnknowError,"未知错误");
         }
 
     }
@@ -105,11 +105,20 @@ import java.util.Objects;
      */
     private Result queryCount(HttpServletRequest request,HttpServletResponse response) throws SQLException {
 
-        TaskReport taskReport = new TaskReport();
+     //获取请求参数
+        String taskIdStr = request.getParameter("taskId");
+        if (taskIdStr == null || taskIdStr.isEmpty()) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId不能为空");
+        }
 
-       //判断任务是否存在
-        //？？？ 不存在汇报记录，不代表任务不存在
-       Integer taskId = Integer.valueOf(request.getParameter("taskId"));
+        Integer taskId = null;
+        try {
+            taskId = Integer.valueOf(taskIdStr);
+        } catch (NumberFormatException e) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId必须为整数");
+        }
+
+        //判断任务是否存在
         TaskInfoVo taskInfoVo = taskService.queryById(taskId);
         if(taskInfoVo==null){
             return  Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
@@ -123,20 +132,25 @@ import java.util.Objects;
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
 
-        //权限不够-->管理员查询非自己发布的任务 && 普通用户
-        //查看的任务taskid不是管理员自己发布的任务，或者查询者是普通用户的话返回权限不够
-        //？？？ 空new出来的taskReport对象，获取UserId然后和 权限id比较，判断是否是自己发布的任务
-        if(!(taskReport.getUserId().equals(roleId)) && roleId==3) {
-            if ((!Objects.equals(publisherId, roleId)) && roleId == 3) {
-                return Result.error(HttpStatus.UNAUTHORIZED, "权限不够,禁止查询");
-            } else {
+        //权限不够-->管理员查询非自己发布的任务 || 普通用户
+        if ( roleId == 3) {
+            return Result.error(HttpStatus.PermissionNotAllowed, "权限不够,禁止查询：普通用户");
+        } else if (roleId==2) {
+
+            Integer userId=userMessage.getUserId();
+            if(!Objects.equals(publisherId,userId)){
+                return Result.error(HttpStatus.PermissionNotAllowed, "权限不够,禁止查询：非本人发布任务");
+            }else{
                 //查询
                 Integer count = taskReportService.queryTaskReportCount(taskId);
-                return Result.success(count, "操作成功");
+                return Result.success(count, "查询成功：管理员");
             }
-        }
-        return Result.error(5000,"未知错误");
 
+        } else {//超管
+
+            Integer count = taskReportService.queryTaskReportCount(taskId);
+            return Result.success(count, "查询成功：超级管理员");
+        }
     }
 
 
@@ -151,7 +165,18 @@ import java.util.Objects;
     private Result queryMyReport(HttpServletRequest request, HttpServletResponse response){
 
         //获取请求参数
-        Integer taskId = Integer.valueOf(request.getParameter("taskId"));
+        String taskIdStr = request.getParameter("taskId");
+        if (taskIdStr == null || taskIdStr.isEmpty()) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId不能为空");
+        }
+
+        Integer taskId = null;
+        try {
+            taskId = Integer.valueOf(taskIdStr);
+        } catch (NumberFormatException e) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId必须为整数");
+        }
+
 //        Integer cur = Integer.valueOf(request.getParameter("cur")); // 返回第几页
 //        Integer size = Integer.valueOf(request.getParameter("size"));// 每页返回数量
 
@@ -159,7 +184,6 @@ import java.util.Objects;
         UserLocal userMessage = getUserMessage(request, response);
         Integer userId = userMessage.getUserId();
 
-        //返回相同的内容，但是vo对象进行了封装，有什么意义？
         TaskReportVo taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
         TaskReport report = taskReportDao.selectByUserId(userId, taskId);
 
@@ -167,6 +191,9 @@ import java.util.Objects;
 
         //获取TaskInfo对象
         TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
+        if(taskInfo==null){
+            return Result.error(HttpStatus.NoDataFromDatabase,"该任务信息不存在");
+        }
 
         //发布者
         Integer publisherId = taskInfo.getPublisherId();
@@ -200,7 +227,7 @@ import java.util.Objects;
         if(taskReportVo!=null){
             return Result.success(taskInfoForUser,"成功查询");
         }else {
-            return Result.error(HttpStatus.ERROR,"当前任务汇报为空");
+            return Result.error(HttpStatus.UnknowError,"未知错误");
         }
 
     }
@@ -222,12 +249,12 @@ import java.util.Objects;
         Integer roleId = userMessage.getRoleId();
         //普通用户无法查看
         if (roleId==3){
-            return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看汇报记录");
+            return Result.error(HttpStatus.PermissionNotAllowed,"普通用户不能查看汇报记录");
         }else if (roleId==2){
             //普通管理员
             //判断参数是否为空
                 if (cur<0||size<0){
-                    return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
+                    return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
             if (request.getParameter("taskid")!=null){
@@ -240,7 +267,7 @@ import java.util.Objects;
                 String userName = userMessage.getUserName();
                 List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(userName);
                 if (taskInfoVos.isEmpty()){
-                    return Result.error(HttpStatus.NO_CONTENT,"暂未发布任务");
+                    return Result.error(HttpStatus.NoDataFromDatabase,"暂未发布任务");
                 }
                 //将管理员发布的所有任务进行遍历，每次都查询该任务的所有所有汇报记录
                 for (TaskInfoVo taskInfoVo:taskInfoVos){
@@ -273,7 +300,7 @@ import java.util.Objects;
                 }//循环结束，判断所要返回给前端的内容中是否有内容
                 //？？？ 如果没有内容的话，是否直接返回空的集合，而不用返回错误代码？？
                 if (successT.isEmpty()){
-                    return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有汇报记录");
+                    return Result.error(HttpStatus.NoDataFromDatabase,"所有任务暂时还没有汇报记录");
                 }else {
 //                    WebUtil.writeJson(response,Result.success(successT,"请求成功"));
                     return Result.success(successT,"请求成功");
@@ -286,7 +313,7 @@ import java.util.Objects;
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
             if (taskInfo==null){
-                return Result.error(HttpStatus.NOT_FOUND,"没有该任务");
+                return Result.error(HttpStatus.IncomingDataError,"没有该任务");
             }
             //有该方法：
             //如果查询的用户是人物的发布者
@@ -299,7 +326,7 @@ import java.util.Objects;
                 }
                 //判断该任务是否有汇报记录
                 if (taskReportVos.isEmpty()){
-                    return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
+                    return Result.error(HttpStatus.NoDataFromDatabase,"该任务暂时还没有汇报记录");
                 }else {
                     //将查询到的任务按照分页要求进行分页
                     List<TaskReportVo> taskInfoVoPage;
@@ -321,13 +348,13 @@ import java.util.Objects;
                 }
             }
             else {//如果进行查询的用户不是人物的发布者而是其他管理员
-                return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报记录");
+                return Result.error(HttpStatus.PermissionNotAllowed,"没有权限查看他人任务的汇报记录");
             }
         }
         else {//权限是超级管理员
             //判断参数是否为空
                 if (cur<0||size<0){
-                    return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
+                    return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
             if (request.getParameter("taskid")!=null){
@@ -370,7 +397,7 @@ import java.util.Objects;
                 List<Task>taskids=new ArrayList<>();
                 taskids=baseDao.baseQuery(Task.class, str1);
                 if (taskids.isEmpty()){
-                    return Result.error(HttpStatus.NO_CONTENT,"暂无汇报信息");
+                    return Result.error(HttpStatus.NoDataFromDatabase,"暂无汇报信息");
                 }else {//如果不为空的话就就是有任务的汇报
                     List<TaskReportVo> SuccessTaskReportVos = new ArrayList<>();
                     //通过对有汇报记录的任务进行遍历，查询到有汇报记录的任务的所有汇报记录
@@ -415,18 +442,28 @@ import java.util.Objects;
         //权限判断:只有管理员才能进行删除操作
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
+        Integer reportid=null;
         //读取参数
-        Integer reportid = Integer.parseInt(request.getParameter("reportid"));
+        String reportidStr = request.getParameter("reportid");
+        if (reportidStr == null) {
+            return Result.error(HttpStatus.IncomingDataError,"没用传入必要参数");
+        } else {
+            try {
+                 reportid = Integer.parseInt(reportidStr);
+            } catch (NumberFormatException e) {
+                return Result.error(HttpStatus.IncomingDataError,"参数非法");
+            }
+        }
         //权限判断
         if (roleId == 3 ){
-            return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能删除汇报记录");
+            return Result.error(HttpStatus.PermissionNotAllowed,"普通用户不能删除汇报记录");
         }else if (roleId==2){ //身份是普通管理员
             //判断是否有权限删除
             //根据reportid查出该任务的发布者
             Integer userId = userMessage.getUserId();
             Integer publisherId=taskReportService.queryuseridByreportid(reportid);
             if (publisherId==-1){
-                return Result.error(HttpStatus.NOT_FOUND,"无该汇报记录");
+                return Result.error(HttpStatus.IncomingDataError,"无该汇报记录");
             }
             if (userId.equals(publisherId)){
                 //执行删除任务
@@ -440,10 +477,10 @@ import java.util.Objects;
                     return resultMaker;
                 }else {
                     //未找到
-                    return Result.error(HttpStatus.NOT_FOUND,"未找到该汇报记录");
+                    return Result.error(HttpStatus.IncomingDataError,"未找到该汇报记录");
                 }
             }else {
-                return Result.error(HttpStatus.UNAUTHORIZED,"没有权限删除他人任务的汇报记录");
+                return Result.error(HttpStatus.PermissionNotAllowed,"没有权限删除他人任务的汇报记录");
             }
         }else {   // 身份是超级管理员
             //直接调用dao方法
@@ -456,7 +493,7 @@ import java.util.Objects;
                 return resultMaker;
             }else {
                 //未找到
-                return Result.error(HttpStatus.NOT_FOUND,"未找到该汇报记录");
+                return Result.error(HttpStatus.IncomingDataError,"未找到该汇报记录");
             }
         }
 
@@ -479,13 +516,13 @@ import java.util.Objects;
         int size = request.getParameter("size") != null ? Integer.parseInt(request.getParameter("size")) : Integer.MAX_VALUE;
 
         if (roleId == 3 ){
-            return Result.error(HttpStatus.UNAUTHORIZED,"普通用户不能查看所有需要汇报的用户");
+            return Result.error(HttpStatus.PermissionNotAllowed,"普通用户不能查看所有需要汇报的用户");
         }else if (roleId==2){
             //管理员只能查看自己发布的需要汇报的用户信息
             //读取参数 cur size
             //taksid 输入非法： 不是自己发布的任务的id？？？？ 待处理
                 if (cur<0||size<0){
-                    return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
+                    return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
 
@@ -521,7 +558,7 @@ import java.util.Objects;
                     }
                 }
                 if (successN.isEmpty()){
-                    return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有需要汇报的用户");
+                    return Result.error(HttpStatus.NoDataFromDatabase,"所有任务暂时还没有需要汇报的用户");
                 }else {
 //                    WebUtil.writeJson(response,Result.success(successN,"请求成功"));
                     return Result.success(successN,"请求成功");
@@ -532,15 +569,15 @@ import java.util.Objects;
             TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
             TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskid);
             if(taskInfo==null){
-                return Result.error(HttpStatus.NOT_FOUND,"没有该任务");
+                return Result.error(HttpStatus.IncomingDataError,"没有该任务");
             }
             if (!userId.equals(taskInfo.getPublisherId())){
-                return Result.error(HttpStatus.UNAUTHORIZED,"没有权限查看他人任务的汇报用户");
+                return Result.error(HttpStatus.PermissionNotAllowed,"没有权限查看他人任务的汇报用户");
             }else {
                 //taskid->groupid->userid
                 needReportUsers = taskReportService.queryAllUserForReport(taskid);
                 if (needReportUsers.isEmpty()){
-                    return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
+                    return Result.error(HttpStatus.NoDataFromDatabase,"该任务没有汇报的用户");
                 }else {
                     List<NeedReportUser> Page=new ArrayList<>();
                     if (cur!=1&&size!=Integer.MAX_VALUE){
@@ -563,7 +600,7 @@ import java.util.Objects;
         }else {
             //超级管理员
                 if (cur<0||size<0){
-                    return Result.error(HttpStatus.UNSUPPORTED_TYPE,"参数非法");
+                    return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
             if (request.getParameter("taskid")!=null){
@@ -575,7 +612,7 @@ import java.util.Objects;
                 //查询特定任务的汇报用户
                 needReportUsers = taskReportService.queryAllUserForReport(taskid);
                 if (needReportUsers.isEmpty()){
-                    return Result.error(HttpStatus.NO_CONTENT,"该任务没有汇报的用户");
+                    return Result.error(HttpStatus.NoDataFromDatabase,"该任务没有汇报的用户");
                 }else {
                     List<NeedReportUser> Page=new ArrayList<>();
                     if (cur!=1&&size!=Integer.MAX_VALUE){
@@ -604,7 +641,7 @@ import java.util.Objects;
                 List<Task>taskids=new ArrayList<>();
                 taskids=baseDao.baseQuery(Task.class, str1);
                 if (taskids.isEmpty()){
-                    return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布,没有可以汇报的用户");
+                    return Result.error(HttpStatus.NoDataFromDatabase,"暂无任务发布,没有可以汇报的用户");
                 }else {
                     List<NeedReportUser> successN=new ArrayList<>();
                     for (Task i:taskids){
@@ -630,7 +667,7 @@ import java.util.Objects;
                         }
                     }
                     if (successN.isEmpty()){
-                        return Result.error(HttpStatus.NO_CONTENT,"所有任务暂时还没有需要汇报的用户");
+                        return Result.error(HttpStatus.NoDataFromDatabase,"所有任务暂时还没有需要汇报的用户");
                     }else {
 //                        WebUtil.writeJson(response,Result.success(successN,"请求成功"));
                         return Result.success(successN,"请求成功");
@@ -650,8 +687,8 @@ import java.util.Objects;
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
        // UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
-        user.setUserName("xiaoli");
-        user.setRoleId(2);
+        user.setUserName("user1");
+        user.setRoleId(3);
         user.setUserId(2);
         return user;
     }

@@ -347,31 +347,55 @@ public class TaskController extends HttpServlet {
 
     private Result delete(HttpServletRequest request,HttpServletResponse response){
 
-        //从请求中获取taskId
-        Integer taskId= Integer.valueOf(request.getParameter("taskId"));
-
-        //验证请求参数
-        if (taskId == null ) {
-            return Result.error(HttpStatus.IncomingDataError, "任务id不能为空");
+        //获取请求参数
+        String taskIdStr = request.getParameter("taskId");
+        if (taskIdStr == null || taskIdStr.isEmpty()) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId不能为空");
         }
+
+        Integer taskId = null;
+        try {
+            taskId = Integer.valueOf(taskIdStr);
+        } catch (NumberFormatException e) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId必须为整数");
+        }
+
         TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
+        if(taskInfoVo==null){
+            return Result.error(HttpStatus.NoDataFromDatabase,"该任务不存在");
+        }
 
         //权限验证
         UserLocal loginUser = getUserMessage();
         Integer roleId = loginUser.getRoleId();
-        String userName = loginUser.getUserName();
 
-        if (!(taskInfoVo.getPublisherName().equals(userName))||roleId==3){
-            return Result.error(HttpStatus.PermissionNotAllowed,"权限不足，无法删除");
-        }else {
+        if (roleId==3){
+            return Result.error(HttpStatus.PermissionNotAllowed,"权限不足，无法删除：普通用户");
+        }
+        if (roleId==2) {
+            String userName = loginUser.getUserName();
+            if(!(taskInfoVo.getPublisherName().equals(userName))){
+                return Result.error(HttpStatus.PermissionNotAllowed,"权限不足，无法删除：非本人发布任务");
+            } else {
+                //删除任务
+                Integer delete = taskInfoService.delete(taskId);
+
+                //根据操作结果构造Result对象并返回
+                if (delete != 0) {
+                    return Result.success(null, "删除成功");
+                } else {
+                    return Result.error(HttpStatus.UnknowError, "删除失败，未知错误");
+                }
+            }
+        } else {
             //删除任务
             Integer delete = taskInfoService.delete(taskId);
 
             //根据操作结果构造Result对象并返回
-            if(delete!=0){
-                return Result.success(null,"删除成功");
-            }else {
-                return Result.error(HttpStatus.UnknowError,"删除失败");
+            if (delete != 0) {
+                return Result.success(null, "删除成功");
+            } else {
+                return Result.error(HttpStatus.UnknowError, "删除失败，未知错误");
             }
         }
     }
@@ -387,6 +411,7 @@ public class TaskController extends HttpServlet {
     private Result queryForUser(HttpServletRequest request,HttpServletResponse response){
         List<TaskInfoVo> taskInfoVos=new ArrayList<>();
         String userName = request.getParameter("username");//没用使用userName
+
         TaskGroupDao taskGroupDao=new TaskGroupDaoImpl();
         List<TaskGroup> taskGroups = taskGroupDao.selectByGroupId(getUserMessage().getGroupId());//获取groupId?
         for (TaskGroup taskGroup:taskGroups){
@@ -394,7 +419,7 @@ public class TaskController extends HttpServlet {
             taskInfoVos.add(taskInfoVo);
         }
         if (taskInfoVos.isEmpty()){
-            return Result.error(HttpStatus.NO_CONTENT,"暂无任务发布");
+            return Result.error(HttpStatus.NoDataFromDatabase,"暂无任务发布");
         }else {
 //            WebUtil.writeJson(response,Result.success(taskInfoVos,"请求成功"));
             return Result.success(taskInfoVos,"请求成功");

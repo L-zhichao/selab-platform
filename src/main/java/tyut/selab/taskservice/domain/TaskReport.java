@@ -8,6 +8,8 @@ import java.util.Date;
  * @TableName task_report
  */
 public class TaskReport implements Serializable {
+
+
     /**
      * 主键唯一索引
      */
