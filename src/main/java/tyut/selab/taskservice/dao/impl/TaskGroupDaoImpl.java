@@ -127,4 +127,20 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
         }
     }
 
+    @Override
+    public boolean isGroupsExist(List<Integer> groupIds) {
+        boolean flag = true;
+        String sql = """
+                select group_id groupId from sys_group where group_id = ?
+                """;
+        for(Integer i : groupIds){
+            List<Group> groups = baseQuery(Group.class, sql, i);
+            if(groups == null){
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
+
 }

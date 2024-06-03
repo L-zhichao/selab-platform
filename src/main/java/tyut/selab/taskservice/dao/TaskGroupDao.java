@@ -70,4 +70,11 @@ public interface TaskGroupDao {
      * @return 返回发布者的名称
      */
     String findPublisherNameById(Integer publisherId);
+
+    /**
+     *     查询集合中的group是否存在，返回Trun 表示存在
+     * @param groupIds
+     * @return
+     */
+    boolean isGroupsExist(List<Integer> groupIds);
 }
