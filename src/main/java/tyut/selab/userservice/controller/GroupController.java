@@ -113,11 +113,11 @@ public class GroupController extends HttpServlet {
      */
     private Result save(HttpServletRequest req, HttpServletResponse resp) {
         //判断权限
-        SecurityUtil SecurityUtil = null;
+        /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 3||userSecurity.getRoleId()==2){
             return Result.error(500010,"权限不足");
-        }
+        }*/
         String jsonData = null;
         GroupDto groupDto = null;
         try {
@@ -146,11 +146,11 @@ public class GroupController extends HttpServlet {
      */
     private Result update(HttpServletRequest req, HttpServletResponse resp){
         //判断权限
-        SecurityUtil SecurityUtil = null;
+        /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 3){
             return Result.error(500010,"权限不足");
-        }
+        }*/
         String jsonData = null;
         GroupVo groupVo=null;
         try {
@@ -177,11 +177,11 @@ public class GroupController extends HttpServlet {
      */
     private Result delete(HttpServletRequest req, HttpServletResponse resp){
         //判断权限
-        SecurityUtil SecurityUtil = null;
+        /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 3){
             return Result.error(500010,"权限不足");
-        }
+        }*/
         try {
             req.setCharacterEncoding("UTF-8");
         } catch (UnsupportedEncodingException e) {

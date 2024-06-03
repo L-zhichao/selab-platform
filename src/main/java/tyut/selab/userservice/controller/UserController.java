@@ -155,11 +155,11 @@ public class UserController extends HttpServlet {
      */
     private Result groupUpdate(HttpServletRequest req, HttpServletResponse resp) {
         //判断权限
-        SecurityUtil SecurityUtil = null;
+        /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 3||userSecurity.getRoleId()==2){
             return Result.error(500010,"权限不足");
-        }
+        }*/
         String userIdStr = req.getParameter("userId");
         Long userId = null;
         boolean isInteger = true;
@@ -326,11 +326,11 @@ public class UserController extends HttpServlet {
      */
     private Result save(HttpServletRequest request,HttpServletResponse response) {
         //判断权限
-        SecurityUtil SecurityUtil = null;
+        /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 2||userSecurity.getRoleId()==3){
             return Result.error(500010,"权限不足");
-        }
+        }*/
         UserVo userVo = null;
         try {
             String jsonData = request.getReader().lines().collect(Collectors.joining());
@@ -358,11 +358,11 @@ public class UserController extends HttpServlet {
      */
     private Result update(HttpServletRequest request, HttpServletResponse response){
         //判断权限
-        SecurityUtil SecurityUtil = null;
+        /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 3){
             return Result.error(500010,"权限不足");
-        }
+        }*/
         String jsonData = null;
         UserVo userVo=null;
         try {
@@ -392,11 +392,11 @@ public class UserController extends HttpServlet {
      */
     private Result logout(HttpServletRequest request,HttpServletResponse response){
         //判断权限
-        SecurityUtil SecurityUtil = null;
+        /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 3){
             return Result.error(500010,"权限不足");
-        }
+        }*/
         String userIdStr = request.getParameter("userId");
         Integer userId= 0;
         boolean isInteger = true;
@@ -432,11 +432,11 @@ public class UserController extends HttpServlet {
      */
     private Result updateRole(HttpServletRequest request, HttpServletResponse response){
         //判断权限
-        SecurityUtil SecurityUtil = null;
+        /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 3||userSecurity.getRoleId()==2){
             return Result.error(500010,"权限不足");
-        }
+        }*/
         String roleIdStr = request.getParameter("roleId");
         Integer roleId=0;
         boolean isInteger = true;
