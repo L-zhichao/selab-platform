@@ -132,17 +132,24 @@ import java.util.Objects;
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
 
-        try {
-            //权限不够-->管理员查询非自己发布的任务 || 普通用户
-            if ((!Objects.equals(publisherId, roleId)) || roleId == 3) {
-                return Result.error(HttpStatus.UNAUTHORIZED, "权限不够,禁止查询");
-            } else {
+        //权限不够-->管理员查询非自己发布的任务 || 普通用户
+        if ( roleId == 3) {
+            return Result.error(HttpStatus.PermissionNotAllowed, "权限不够,禁止查询：普通用户");
+        } else if (roleId==2) {
+
+            Integer userId=userMessage.getUserId();
+            if(!Objects.equals(publisherId,userId)){
+                return Result.error(HttpStatus.PermissionNotAllowed, "权限不够,禁止查询：非本人发布任务");
+            }else{
                 //查询
                 Integer count = taskReportService.queryTaskReportCount(taskId);
-               return Result.success(count, "操作成功");
+                return Result.success(count, "查询成功：管理员");
             }
-        }catch (RuntimeException e){
-            return Result.error(HttpStatus.UnknowError,"未知错误");
+
+        } else {//超管
+
+            Integer count = taskReportService.queryTaskReportCount(taskId);
+            return Result.success(count, "查询成功：超级管理员");
         }
     }
 
