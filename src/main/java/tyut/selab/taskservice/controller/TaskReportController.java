@@ -105,8 +105,20 @@ import java.util.Objects;
      */
     private Result queryCount(HttpServletRequest request,HttpServletResponse response) throws SQLException {
 
-       //判断任务是否存在
-       Integer taskId = Integer.valueOf(request.getParameter("taskId"));
+     //获取请求参数
+        String taskIdStr = request.getParameter("taskId");
+        if (taskIdStr == null || taskIdStr.isEmpty()) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId不能为空");
+        }
+
+        Integer taskId = null;
+        try {
+            taskId = Integer.valueOf(taskIdStr);
+        } catch (NumberFormatException e) {
+            return Result.error(HttpStatus.IncomingDataError, "taskId必须为整数");
+        }
+
+        //判断任务是否存在
         TaskInfoVo taskInfoVo = taskService.queryById(taskId);
         if(taskInfoVo==null){
             return  Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
@@ -127,7 +139,7 @@ import java.util.Objects;
             } else {
                 //查询
                 Integer count = taskReportService.queryTaskReportCount(taskId);
-                return Result.success(count, "操作成功");
+               return Result.success(count, "操作成功");
             }
         }catch (RuntimeException e){
             return Result.error(HttpStatus.UnknowError,"未知错误");
@@ -172,6 +184,9 @@ import java.util.Objects;
 
         //获取TaskInfo对象
         TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
+        if(taskInfo==null){
+            return Result.error(HttpStatus.NoDataFromDatabase,"该任务信息不存在");
+        }
 
         //发布者
         Integer publisherId = taskInfo.getPublisherId();

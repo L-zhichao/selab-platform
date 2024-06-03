@@ -81,19 +81,13 @@ public interface TaskReportDao {
      * */
     public Integer queryTaskIdByrid(Integer reportId);
 
-    /**
-     * 根据传入的taskReportDto对象判断在数据库中是否冲突
-     * @param taskReportDto
-     * @return 返回1 标识任务和现有的任务冲突，返回0 标识不冲突
-     */
-    Integer conflict (TaskReportDto taskReportDto);
+
 
     /**
      * 通过userId获取userName
-     * 针对【sys_user】表
      * @param userId
      * @return userName
      * */
-    public String getUserNameByUserId(Integer userId);
+  public String getUserNameByUserId(Integer userId);
 
 }

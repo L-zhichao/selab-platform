@@ -56,12 +56,6 @@ public class TaskReportServiceImpl implements TaskReportService {
             throw new IllegalArgumentException("汇报信息不能为空");
         }
 
-        //查重
-        int isConflict = taskReportDao.conflict(taskReportDto);
-        if(isConflict==1){
-            throw new RuntimeException("存在相同汇报信息");
-        }
-
         // 创建TaskReport对象
         TaskReport taskReport = new TaskReport();
 
