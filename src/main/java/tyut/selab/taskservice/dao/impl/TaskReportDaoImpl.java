@@ -69,8 +69,15 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public TaskReport selectByUserId(Integer userId, Integer taskId){
 
-        String sql = "select * from task_report where user_id=? and task_id=? order by report_id desc limit 1";
-        List<TaskReport> reports = baseQuery(TaskReport.class, sql, userId, taskId);
+        String sql = """
+                    select report_id as reportId,task_id as taskId,user_id as userId,report_status as reportStatus,details,create_time as createTime
+                    from task_report
+                    where task_id=? and user_id=?
+                    order by report_id desc
+                    limit 1
+                    """;
+
+        List<TaskReport> reports = baseQuery(TaskReport.class, sql, taskId, userId);
         if (reports != null && !reports.isEmpty()) {
             return reports.get(0); // 返回列表中的第一个元素，即最新的记录
         }
@@ -169,11 +176,9 @@ String sql= """
     public Integer queryTaskReportCount(Integer taskId) {
        // String sql="SELECT COUNT(*) AS reports_count FROM task_reports where task_id=?";
 
-        String sql="SELECT * FROM task_report WHERE report_id = ?";
+        String sql="SELECT * FROM task_report WHERE task_id = ?";
         List<TaskReport> reports = baseQuery(TaskReport.class, sql, taskId);
-        Integer taskReportCount=reports.size();
-        return taskReportCount;
-
+        return reports.size();
     }
     /**
      * 通过reportid查询某一任务的taskid

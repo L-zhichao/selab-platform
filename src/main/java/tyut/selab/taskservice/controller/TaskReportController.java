@@ -687,8 +687,8 @@ import java.util.Objects;
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
        // UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
-        user.setUserName("xiaoli");
-        user.setRoleId(2);
+        user.setUserName("user1");
+        user.setRoleId(3);
         user.setUserId(2);
         return user;
     }
