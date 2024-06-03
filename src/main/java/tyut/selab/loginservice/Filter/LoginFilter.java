@@ -28,7 +28,6 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String requestURI =request.getRequestURI();
-        System.out.println(requestURI);
         String msg = "";
         boolean flag = false;
         if (!ignoreUrl.contains(requestURI)) {
@@ -45,13 +44,10 @@ public class LoginFilter implements Filter {
                 //将Token传给实体类对象UserLocal，并存入到ThreadLocal中，把该对象传给前端
                 SecurityUtil.setUser(userLocal);
                 filterChain.doFilter(request, response);
-                WebUtils.writeJson(response, Result.success(null));
             }else{
                 WebUtils.writeJson(response,Result.error(50055,"登录验证失败,请重新登录!"));
             }
-//            filterChain.doFilter(servletRequest, servletResponse);
-        }
-        if(!flag){
+        }else{
             filterChain.doFilter(request, response);
         }
     }

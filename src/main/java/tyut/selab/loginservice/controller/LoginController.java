@@ -80,7 +80,7 @@ public class LoginController extends HttpServlet {
             return Result.error(PASSWORD_FORMAT_ERROR,msg);
         }
         if(false == QQEmailService.checkUserName(userLoginReq.getUsername())){
-            msg = "用户名6到12个字符，可以包含中文、大小写字母、和数字，请检查自己的用户名格式是否正确";
+            msg = "用户名2到10个字符，可以包含中文、大小写字母、和数字，请检查自己的用户名格式是否正确";
             return Result.error(ACCOUNT_FORMAT_ERROR,msg);
         }else if(false == QQEmailService.checkPassword(userLoginReq.getPassword())){
             msg = "密码6到12个字符，其中至少1个大写字母，1个小写字母和1个数字,不能包含特殊字符，不可以是中文,请检查自己的用户名格式是否正确";
@@ -117,7 +117,6 @@ public class LoginController extends HttpServlet {
     public Result sendEmail(HttpServletRequest request,HttpServletResponse response){
         String msg = "";
         Email em = WebUtils.readJson(request,Email.class);
-        System.out.println(em);
         String email = em.getEmail();
         if(null == email || "".equals(email)) {
             msg = "邮箱信息不能为空";
@@ -196,7 +195,7 @@ public class LoginController extends HttpServlet {
             return Result.error(PASSWORD_FORMAT_ERROR,msg);
         }
         if(false == QQEmailService.checkUserName(userRegisterDto.getUserName())){
-            msg = "用户名6到12个字符，可以包含中文、大小写字母、和数字，请检查自己的用户名格式是否正确";
+            msg = "用户名2到10个字符，可以包含中文、大小写字母、和数字，请检查自己的用户名格式是否正确";
             return Result.error(ACCOUNT_FORMAT_ERROR,msg);
         }else if(false == QQEmailService.checkPassword(userRegisterDto.getPassword())){
             msg = "密码6到12个字符，其中至少1个大写字母，1个小写字母和1个数字,不能包含特殊字符，不可以是中文,请检查自己的用户名格式是否正确";

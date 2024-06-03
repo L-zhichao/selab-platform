@@ -31,6 +31,13 @@ public class JdbcUtilsV2 {
             dataSource = DruidDataSourceFactory.createDataSource(properties);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }finally{
+            try {
+                assert resourceAsStream != null;
+                resourceAsStream.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
 
