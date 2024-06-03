@@ -195,6 +195,11 @@ public class TaskServiceImpl implements TaskInfoService {
         return taskInfoVos;
     }
 
+    @Override
+    public boolean isGroupsExist(List<Integer> groupIds) {
+        return taskGroupDao.isGroupsExist(groupIds);
+    }
+
 
     /**
      * 实现类内部的方法，将数据库中查询到的TaskInfo对象封装为TaskInfoVo传给前端
