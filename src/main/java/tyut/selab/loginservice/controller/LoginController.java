@@ -72,12 +72,17 @@ public class LoginController extends HttpServlet {
         UserLoginReq userLoginReq = WebUtils.readJson(request, UserLoginReq.class);
         String msg = "";
         //判断输入的用户名密码是否为空，不能省略不然后面可能会出现空指针
-        if(null == userLoginReq.getUsername() || "".equals(userLoginReq.getUsername())){
-            msg = "用户名称不能为空";
-            return Result.error(ACCOUNT_FORMAT_ERROR,msg);
-        }else if(null == userLoginReq.getPassword() || "".equals(userLoginReq.getPassword())){
-            msg = "用户密码不能为空";
-            return Result.error(PASSWORD_FORMAT_ERROR,msg);
+        if(null != userLoginReq) {
+            if (null == userLoginReq.getUsername() || "".equals(userLoginReq.getUsername())) {
+                msg = "用户名称不能为空";
+                return Result.error(ACCOUNT_FORMAT_ERROR, msg);
+            } else if (null == userLoginReq.getPassword() || "".equals(userLoginReq.getPassword())) {
+                msg = "用户密码不能为空";
+                return Result.error(PASSWORD_FORMAT_ERROR, msg);
+            }
+        }else{
+            msg = "用户登录信息获取失败";
+            return Result.error(STATUS_CODE_INNSER_ERROR,msg);
         }
         if(false == QQEmailService.checkUserName(userLoginReq.getUsername())){
             msg = "用户名2到10个字符，可以包含中文、大小写字母、和数字，请检查自己的用户名格式是否正确";
@@ -117,7 +122,13 @@ public class LoginController extends HttpServlet {
     public Result sendEmail(HttpServletRequest request,HttpServletResponse response){
         String msg = "";
         Email em = WebUtils.readJson(request,Email.class);
-        String email = em.getEmail();
+        String email = null;
+        if(null != em){
+            email = em.getEmail();
+        }else{
+            msg = "邮箱信息获取失败";
+            return Result.error(STATUS_CODE_INNSER_ERROR,msg);
+        }
         if(null == email || "".equals(email)) {
             msg = "邮箱信息不能为空";
             return Result.error(MAIL_FORMAT_ERROR_CODE, msg);
@@ -187,6 +198,10 @@ public class LoginController extends HttpServlet {
         UserRegisterDto userRegisterDto = WebUtils.readJson(request, UserRegisterDto.class);
         String msg = "";
         //判断用户输入的用户名称和密码是否符合规范
+        if(null == userRegisterDto){
+            msg = "用户注册信息获取失败";
+            return Result.error(STATUS_CODE_INNSER_ERROR,msg);
+        }
         if(null == userRegisterDto.getUserName() || "".equals(userRegisterDto.getUserName())){
             msg = "用户名称不能为空";
             return Result.error(ACCOUNT_FORMAT_ERROR,msg);
