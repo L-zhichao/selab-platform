@@ -177,8 +177,11 @@ import java.util.Objects;
             return Result.error(HttpStatus.IncomingDataError, "taskId必须为整数");
         }
 
-//        Integer cur = Integer.valueOf(request.getParameter("cur")); // 返回第几页
-//        Integer size = Integer.valueOf(request.getParameter("size"));// 每页返回数量
+        //获取TaskInfo对象
+        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
+        if(taskInfo==null){
+            return Result.error(HttpStatus.NoDataFromDatabase,"该任务不存在");
+        }
 
         //获取用户id
         UserLocal userMessage = getUserMessage(request, response);
@@ -191,12 +194,6 @@ import java.util.Objects;
         TaskReport report = taskReportDao.selectByUserId(userId, taskId);
 
         TaskInfoForUser taskInfoForUser = new TaskInfoForUser();
-
-        //获取TaskInfo对象
-        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
-        if(taskInfo==null){
-            return Result.error(HttpStatus.NoDataFromDatabase,"该任务信息不存在");
-        }
 
         //发布者
         Integer publisherId = taskInfo.getPublisherId();
