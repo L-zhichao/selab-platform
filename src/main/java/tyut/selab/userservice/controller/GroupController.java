@@ -1,5 +1,6 @@
 package tyut.selab.userservice.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -61,9 +63,9 @@ public class GroupController extends HttpServlet {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        } else if (methodName.equals("queryAllGroup")) {
+        } else if (methodName.equals("queryAll")) {
             try {
-                Result result = queryAllGroup(req, resp);
+                Result result = queryAll(req, resp);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("code", result.getCode());
                 jsonObject.put("msg", result.getMsg());
@@ -125,25 +127,23 @@ public class GroupController extends HttpServlet {
         //设置请求体字符集
         req.setCharacterEncoding("UTF-8");
         //获取json格式对应数据，必须名字相同
-        //String jsonData = req.getReader().lines().collect(Collectors.joining());
-        //GroupDto groupDto = JSON.parseObject(jsonData, GroupDto.class);
-        StringBuffer xmlData = new StringBuffer();
-        BufferedReader reader = req.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            xmlData.append(line);
-        }
+        String jsonData = req.getReader().lines().collect(Collectors.joining());
+        GroupDto groupDto = JSON.parseObject(jsonData, GroupDto.class);
+//        StringBuffer xmlData = new StringBuffer();
+//        BufferedReader reader = req.getReader();
+//        String line;
+//        while ((line = reader.readLine()) != null) {
+//            xmlData.append(line);
+//        }
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource source = new InputSource(new StringReader(xmlData.toString()));
-            Document document = builder.parse(source);
-
-            // 获取 groupName 标签的参数值
-            Node groupNameNode = document.getElementsByTagName("groupName").item(0);
-            String groupName = groupNameNode.getTextContent();
-
-            GroupDto groupDto = new GroupDto(groupName);
+//            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//            DocumentBuilder builder = factory.newDocumentBuilder();
+//            InputSource source = new InputSource(new StringReader(xmlData.toString()));
+//            Document document = builder.parse(source);
+//
+//            // 获取 groupName 标签的参数值
+//            Node groupNameNode = document.getElementsByTagName("groupName").item(0);
+//            String groupName = groupNameNode.getTextContent();
             int insert = groupService.insert(groupDto);
             if (insert != 1) {
                 return Result.success(insert);
@@ -166,47 +166,36 @@ public class GroupController extends HttpServlet {
         // 设置字符编码
         req.setCharacterEncoding("UTF-8");
         // 获取参数值
-        //String jsonData = req.getReader().lines().collect(Collectors.joining());
-        //GroupVo groupVo = JSON.parseObject(jsonData, GroupVo.class);
-        StringBuffer xmlData = new StringBuffer();
-        BufferedReader reader = req.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            xmlData.append(line);
-        }
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource source = new InputSource(new StringReader(xmlData.toString()));
-            Document document = builder.parse(source);
-
-            // 获取 groupName 标签的参数值
-            Node groupNameNode = document.getElementsByTagName("groupName").item(0);
-            String groupName = groupNameNode.getTextContent();
-
-            Node groupIdNode = document.getElementsByTagName("groupId").item(0);
-            String groupId = groupIdNode.getTextContent();
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Node createTimeNode = document.getElementsByTagName("createTime").item(0);
-            String createTime = createTimeNode.getTextContent();
-            Date date = simpleDateFormat.parse(createTime);
-
-            GroupVo groupVo = new GroupVo();
-            groupVo.setGroupName(groupName);
-            groupVo.setGroupId(Integer.valueOf(groupId));
-            groupVo.setCreateTime(date);
+        String jsonData = req.getReader().lines().collect(Collectors.joining());
+        GroupVo groupVo = JSON.parseObject(jsonData, GroupVo.class);
+//        StringBuffer xmlData = new StringBuffer();
+//        BufferedReader reader = req.getReader();
+//        String line;
+//        while ((line = reader.readLine()) != null) {
+//            xmlData.append(line);
+//        }
+//            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//            DocumentBuilder builder = factory.newDocumentBuilder();
+//            InputSource source = new InputSource(new StringReader(xmlData.toString()));
+//            Document document = builder.parse(source);
+//
+//            // 获取 groupName 标签的参数值
+//            Node groupNameNode = document.getElementsByTagName("groupName").item(0);
+//            String groupName = groupNameNode.getTextContent();
+//
+//            Node groupIdNode = document.getElementsByTagName("groupId").item(0);
+//            String groupId = groupIdNode.getTextContent();
+//
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            Node createTimeNode = document.getElementsByTagName("createTime").item(0);
+//            String createTime = createTimeNode.getTextContent();
+//            Date date = simpleDateFormat.parse(createTime);
 
             int update = groupService.update(groupVo);
             if (update == 0) {
                 return Result.error(400, "修改失败或没有权限");
             }
             return Result.success(update);
-
-
-        } catch (ParserConfigurationException | SAXException e) {
-            throw new RuntimeException(e);
-        }
     }
         /**
          * 删除小组信息
@@ -235,7 +224,7 @@ public class GroupController extends HttpServlet {
          * @param response GET
          * @return list<GroupVo>
          */
-        public Result queryAllGroup (HttpServletRequest request, HttpServletResponse response) throws Exception {
+        public Result queryAll (HttpServletRequest request, HttpServletResponse response) throws Exception {
             request.setCharacterEncoding("utf-8");
             response.setContentType("text/html;charset=UTF-8");
 

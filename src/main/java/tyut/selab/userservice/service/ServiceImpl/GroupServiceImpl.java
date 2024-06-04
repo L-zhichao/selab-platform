@@ -26,64 +26,70 @@ public class GroupServiceImpl implements GroupService {
 
         Group group = new Group();
         group.setGroupName(groupDto.getGroupName());
-        Integer roleId = JudgeRoleId.GetJudgeRoleId();
-        if (roleId.equals(1) || roleId.equals(2)) {
-            SecurityUtil securityUtil = new SecurityUtil();
-            UserLocal user = securityUtil.getUser();
-            Integer userId = user.getUserId();
-            Integer groupId = user.getGroupId();
-            group.setParentId(userId);
-            group.setUpdateUser(groupId);
-            return groupDao.insert(group);
-        }
-//        group.setParentId(1);
-//        group.setUpdateUser(01);
-        return 0;
+//        Integer roleId = JudgeRoleId.GetJudgeRoleId();
+//        if (roleId.equals(1) || roleId.equals(2)) {
+//
+//        }
+//        SecurityUtil securityUtil = new SecurityUtil();
+//        UserLocal user = securityUtil.getUser();
+//        Integer userId = user.getUserId();
+//        Integer groupId = user.getGroupId();
+//        group.setParentId(userId);
+//        group.setUpdateUser(groupId);
+        group.setParentId(1);
+        group.setUpdateUser(01);
+        return groupDao.insert(group);
+
+       // return 0;
     }
 
     @Override
     public Integer delete(Integer groupId) {
-        Integer roleId = JudgeRoleId.GetJudgeRoleId();
-        if (roleId.equals(1) || roleId.equals(2)) {
-            return groupDao.delete(groupId);
-        }
-        return 0;
+        return groupDao.delete(groupId);
+//        Integer roleId = JudgeRoleId.GetJudgeRoleId();
+//        if (roleId.equals(1) || roleId.equals(2)) {
+//
+//        }
+//        return 0;
     }
 
     @Override
     public List<GroupVo> selectAllGroup(Integer cur, Integer szie) {
-        Integer roleId = JudgeRoleId.GetJudgeRoleId();
-        if (roleId.equals(1) || roleId.equals(2)) {
-            List<GroupVo> list = new ArrayList<>();
-            List<Group> groups = groupDao.selectAllGroup(cur, szie);
-            for (Group group : groups) {
-                GroupVo groupVo = new GroupVo();
-                Integer groupId = group.getGroupId();
-                String groupName = group.getGroupName();
-                Date createTime = group.getCreateTime();
-                List<UserVo> userVos = userService.selectByGroupId(groupId);
-                groupVo.setGroupId(groupId);
-                groupVo.setGroupName(groupName);
-                groupVo.setCreateTime(createTime);
-                groupVo.setUserVos(userVos);
-                list.add(groupVo);
-            }
-            return list;
+        List<GroupVo> list = new ArrayList<>();
+        List<Group> groups = groupDao.selectAllGroup(cur, szie);
+        for (Group group : groups) {
+            GroupVo groupVo = new GroupVo();
+            Integer groupId = group.getGroupId();
+            String groupName = group.getGroupName();
+            Date createTime = group.getCreateTime();
+            List<UserVo> userVos = userService.selectByGroupId(groupId);
+            groupVo.setGroupId(groupId);
+            groupVo.setGroupName(groupName);
+            groupVo.setCreateTime(createTime);
+            groupVo.setUserVos(userVos);
+            list.add(groupVo);
         }
-        return null;
+        return list;
+//        Integer roleId = JudgeRoleId.GetJudgeRoleId();
+//        if (roleId.equals(1) || roleId.equals(2)) {
+//
+//        }
+//        return null;
     }
 
     @Override
     public Integer update(GroupVo groupVo) {
-        Integer roleId = JudgeRoleId.GetJudgeRoleId();
-        if (roleId.equals(1) || roleId.equals(2)) {
-            Group group = new Group();
-            group.setGroupName(groupVo.getGroupName());
-            group.setCreateTime(groupVo.getCreateTime());
-            group.setGroupId(groupVo.getGroupId());
-            return groupDao.update(group);
-        }
-        return 0;
+        Group group = new Group();
+        group.setGroupName(groupVo.getGroupName());
+        group.setCreateTime(groupVo.getCreateTime());
+        group.setGroupId(groupVo.getGroupId());
+        return groupDao.update(group);
+
+//        Integer roleId = JudgeRoleId.GetJudgeRoleId();
+//        if (roleId.equals(1) || roleId.equals(2)) {
+//
+//        }
+//        return 0;
     }
 
 
