@@ -116,6 +116,9 @@ public class BookController extends HttpServlet {
         String bookAuthor = (String) jsonObject.get("bookAuthor");
         String bookDetails = (String) jsonObject.get("bookDetails");
         Integer price = (Integer) jsonObject.get("price");
+        if (price<=0){
+            return Result.error(500001,"信息输入有误");
+        }
         Integer owner = (Integer) jsonObject.get("owner");
         String remark = (String) jsonObject.get("remark");
         String bookRef = (String) jsonObject.get("bookRef");
@@ -153,14 +156,22 @@ public class BookController extends HttpServlet {
             return Result.error(500013,"权限不足");
         }
 
+        JSONObject jsonObject = tool(request, response);
+        if (jsonObject.get("bookId") == null || jsonObject.get("bookName") == null || jsonObject.get("bookAuthor") == null || jsonObject.get("bookDetails") == null || jsonObject.get("price") == null || jsonObject.get("owner") ==null || jsonObject.get("bookRef") == null
+                    || jsonObject.get("status") == null || jsonObject.get("createTime") == null || jsonObject.get("updateTime") == null) {
+            return Result.error(500001,"信息输入有误");
+        }
+
         // 处理JSON对象，从请求体中读取参数
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        JSONObject jsonObject = tool(request,response);
         Integer bookId = (Integer) jsonObject.get("bookId");
         String bookName = (String) jsonObject.get("bookName");
         String bookAuthor = (String) jsonObject.get("bookAuthor");
         String bookDetails = (String) jsonObject.get("bookDetails");
         Integer price = (Integer) jsonObject.get("price");
+        if (price<=0){
+            return Result.error(500001,"信息输入有误");
+        }
         Integer owner = (Integer) jsonObject.get("owner");
         //String ownerName = (String) jsonObject.get("ownerName");
         Integer status = (Integer) jsonObject.get("status");
