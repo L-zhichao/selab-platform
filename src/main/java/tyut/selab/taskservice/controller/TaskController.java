@@ -291,9 +291,15 @@ public class TaskController extends HttpServlet {
      * @return
      */
     private Result<TaskInfoVo> queryById(HttpServletRequest request, HttpServletResponse response) {
-        int taskId = Integer.parseInt(request.getParameter("taskId"));
+        //数据筛选
+        int taskId;
+        try {
+            taskId = Integer.parseInt(request.getParameter("taskId"));
+        }catch (Exception e){
+            return Result.error(HttpStatus.IncomingDataError,"应该传入查询的任务Id");
+        }
         TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
-        if (taskInfoVo == null){
+        if (taskInfoVo == null) {
             return Result.error(HttpStatus.IncomingDataError, "该任务不存在");
         }
 
@@ -305,10 +311,9 @@ public class TaskController extends HttpServlet {
         Integer roleId = userMessage.getRoleId();
         String userName = userMessage.getUserName();
         //判断请求用户是否为超级管理员
-        if (roleId == 1 ){
+        if (roleId == 1) {
             flag = true;
-        }
-        else if(roleId == 3) {
+        } else if (roleId == 3) {
             //判断请求用户的查询任务是否是该用户所接取的任务之一
 
             //获取用户的小组id
@@ -322,8 +327,7 @@ public class TaskController extends HttpServlet {
                     }
                 }
             }
-        }
-        else if (roleId == 2){
+        } else if (roleId == 2) {
             //判断请求用户是否为任务的发布者
             //获取用户发布的所有任务
             List<TaskInfoVo> taskInfoVos2 = taskInfoService.queryTaskInfoBypublish(userName);
@@ -336,10 +340,10 @@ public class TaskController extends HttpServlet {
         }
 
 
-        if (flag){
-            return Result.success(taskInfoVo,"请求成功");
-        }else{
-            return Result.error(HttpStatus.PermissionNotAllowed,"权限不允许查询");
+        if (flag) {
+            return Result.success(taskInfoVo, "请求成功");
+        } else {
+            return Result.error(HttpStatus.PermissionNotAllowed, "权限不允许查询");
         }
         //
         //
