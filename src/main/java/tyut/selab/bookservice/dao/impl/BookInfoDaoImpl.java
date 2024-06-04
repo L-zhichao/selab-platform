@@ -25,7 +25,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public Integer update(BookInfo bookInfo) {
-        String sql = "update book_info set book_name=?,book_author=?,book_details=?,price=?,owner=?,status=?,create_time=?,update_time=?,book_ref=? where book_id=?";
+        String sql = "update book_info set book_name=?,book_author=?,book_details=?,price=?,owner=?,status=?,create_time=?,update_time=?,book_ref=? where book_id =?";
         Object[] params = {bookInfo.getBookName(),bookInfo.getBookAuthor(),bookInfo.getBookDetails(),bookInfo.getPrice(),bookInfo.getOwner(),bookInfo.getStatus(),bookInfo.getCreateTime(),bookInfo.getUpdateTime(),bookInfo.getBookRef(),bookInfo.getBookId()};
         return baseDao.baseUpdate(sql,params);
     }
