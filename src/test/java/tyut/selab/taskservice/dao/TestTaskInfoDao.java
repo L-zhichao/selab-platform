@@ -41,7 +41,7 @@ public class TestTaskInfoDao {
 
     @Test
     public void testSelectByTaskId() {
-        TaskInfo taskInfo = taskInfoDao.selectByTaskId(14);
+        TaskInfo taskInfo = taskInfoDao.selectByTaskId(1);
         System.out.println(taskInfo.getName());
         System.out.println(taskInfo.getContent());
     }

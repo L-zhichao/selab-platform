@@ -44,16 +44,16 @@ public class TaskReportServiceImpl implements TaskReportService {
 
         // 验证输入参数
         if (taskReportDto == null) {
-            throw new IllegalArgumentException("任务汇报对象不能为空");
+            throw new IllegalArgumentException("taskReportDto cannot be empty");
         }
         if (taskReportDto.getTaskId() == null) {
-            throw new IllegalArgumentException("任务id不能为空");
+            throw new IllegalArgumentException("taskId cannot be empty");
         }
         if (taskReportDto.getReportStatus() == null) {
-            throw new IllegalArgumentException("汇报状态不能为空");
+            throw new IllegalArgumentException("reportStatus cannot be empty");
         }
         if (taskReportDto.getDetails()==null) {
-            throw new IllegalArgumentException("汇报信息不能为空");
+            throw new IllegalArgumentException("details cannot be empty");
         }
 
         // 创建TaskReport对象
@@ -218,7 +218,7 @@ public Integer queryuseridByreportid(Integer reportid){
      * */
     private TaskReportVo ToTaskReportVo(TaskReport taskReport){
         if(taskReport==null){
-            throw new RuntimeException("Task not exist");
+            return null;
         }
 
         //查询用户名

@@ -213,8 +213,10 @@ import java.util.Objects;
         taskInfoForUser.setGroupNames(groupNames);
         taskInfoForUser.setName(taskInfo.getName());
         taskInfoForUser.setContent(taskInfo.getContent());
+
         taskInfoForUser.setDealTime(taskInfo.getDealTime());
         taskInfoForUser.setPublishTime(taskInfo.getPublishTime());
+
         //任务状态根据截止时间判断
         Date now=new Date();
         if(now.after(taskInfo.getDealTime())){
@@ -224,6 +226,13 @@ import java.util.Objects;
         }
 
         //是否汇报
+        if(taskReportVo!=null){
+            taskInfoForUser.setJudge(1);
+        }else{
+            taskInfoForUser.setJudge(0);
+        }
+
+        //任务状态
         taskInfoForUser.setStatus(report.getReportStatus());
 
         //汇报信息
@@ -693,7 +702,7 @@ import java.util.Objects;
        // UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
         user.setUserName("JohnDoe");
-        user.setRoleId(3);
+        user.setRoleId(1);
         user.setUserId(1);
         return user;
     }
