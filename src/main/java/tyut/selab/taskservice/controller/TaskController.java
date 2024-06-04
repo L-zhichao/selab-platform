@@ -20,7 +20,7 @@ import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.utils.Result;
 
 
-import javax.mail.Flags;
+//import javax.mail.Flags;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -439,7 +439,7 @@ public class TaskController extends HttpServlet {
         user.setUserName("zhangsan");
         user.setRoleId(1);
         user.setUserId(1);
-        user.setGroupId(2);
+        user.setGroupId(1);
         return user;
     }
 
