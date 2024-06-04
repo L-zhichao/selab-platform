@@ -7,19 +7,11 @@ public class JudgeRoleId {
 
     //userlocal为空，请求测试报错
 
-   /* public static Integer GetJudgeRoleId() {
+    public static Integer GetJudgeRoleId() {
         SecurityUtil securityUtil = new SecurityUtil();
         UserLocal userLocal = securityUtil.getUser();
-        Integer key;
-        //超级管理员
-        if (userLocal.getRoleId().equals(1)) {
-            key = 1;
-        } else if (userLocal.getRoleId().equals(2)) {
-            key = 2;
-        } else {
-            key = 3;
-        }
-        return key;
-    }*/
+        //1超管，2管理，3用户
+        return userLocal.getRoleId();
+    }
 
 }
