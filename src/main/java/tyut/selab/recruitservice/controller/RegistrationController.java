@@ -18,6 +18,8 @@ import java.io.PrintWriter;
 import java.util.List;
 import tyut.selab.utils.PageUtil;
 
+import javax.xml.transform.Templates;
+
 @WebServlet("/registration/*")
 public class RegistrationController extends HttpServlet {
     private RegistrationService RegistrationService = new RegistrationServiceImpl();
@@ -45,7 +47,7 @@ public class RegistrationController extends HttpServlet {
             result = update(req,resp);
         }else {
             result = new Result(404,null);
-            result.setMsg("填入地址无效！");
+            result.setMsg("填入地址无效");
         }
         writeJson(resp,result);
     }
@@ -83,7 +85,6 @@ public class RegistrationController extends HttpServlet {
             while((line=reader.readLine())!=null){
                 jsonRequest.append(line);
             }
-
             return jsonRequest.toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -103,11 +104,11 @@ public class RegistrationController extends HttpServlet {
         System.out.println(registrationDto);
        try{RegistrationService.insertRegistration(registrationDto);
            Result<RegistrationDto> result = new Result<>(200,registrationDto);
-           result.setMsg("查询成功");
+           result.setMsg("成功");
            return result;
        }catch(InsertException e){
            System.out.println("插入失败");
-           Result<RegistrationDto> result = new Result<>(500003,registrationDto);
+           Result<RegistrationDto> result = new Result<>(500003,null);
            result.setMsg("修改或插入数据失败");
            return result;
        }
@@ -130,10 +131,10 @@ public class RegistrationController extends HttpServlet {
         RegistrationVo registrationVo = JSON.parseObject(requestBody,RegistrationVo.class);
         try{RegistrationService.updateRegistration(registrationVo);
             Result<RegistrationVo> result = new Result<>(200,registrationVo);
-            result.setMsg("查询成功");
+            result.setMsg("成功");
             return result;
         }catch(UpdateException e){
-            Result<RegistrationVo> result = new Result<>(500003,registrationVo);
+            Result<RegistrationVo> result = new Result<>(500003,null);
             result.setMsg("修改或插入数据失败");
             return result;
         }
@@ -161,6 +162,11 @@ public class RegistrationController extends HttpServlet {
         } catch (ServiceException e) {
             e.printStackTrace();
         }
+        if(registrationVos == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500001, null);
+            objectResult.setMsg("未找到查询数据");
+            return objectResult;
+        }
         return getListResult(registrationVos.getData());
     }
 
@@ -187,6 +193,11 @@ public class RegistrationController extends HttpServlet {
             rev = RegistrationService.selectRegistrationById(registrationId);
         } catch (ServiceException e) {
             e.printStackTrace();
+        }
+        if(rev == null){
+            Result<RegistrationVo> objectResult = new Result<>(500001, null);
+            objectResult.setMsg("未找到查询数据");
+            return objectResult;
         }
         Result<RegistrationVo> objectResult = new Result<>(200, rev);
         objectResult.setMsg("查询成功");
@@ -218,6 +229,11 @@ public class RegistrationController extends HttpServlet {
         } catch (ServiceException e) {
             e.printStackTrace();
         }
+        if(registrationVos == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500001, null);
+            objectResult.setMsg("未找到查询数据");
+            return objectResult;
+        }
         return getListResult(registrationVos.getData());
     }
 
@@ -234,7 +250,8 @@ public class RegistrationController extends HttpServlet {
 //            return objectResult;
 //        }
         String intentDepartment = request.getParameter("intentDepartment");
-        if(Integer.parseInt(intentDepartment) != 1 && Integer.parseInt(intentDepartment) != 2 && Integer.parseInt(intentDepartment) != 3 && Integer.parseInt(intentDepartment) != 4){
+        if(Integer.parseInt(intentDepartment) != 1 && Integer.parseInt(intentDepartment) != 2
+                && Integer.parseInt(intentDepartment) != 3 && Integer.parseInt(intentDepartment) != 4){
             Result<List<RegistrationVo>> objectResult = new Result<>(500004, null);
             objectResult.setMsg("输入数据违法或不规范");
             return objectResult;
@@ -246,6 +263,11 @@ public class RegistrationController extends HttpServlet {
             registrationVos = RegistrationService.selectByIntentDepartment(Integer.valueOf(intentDepartment),cur, size);
         } catch (ServiceException e) {
             e.printStackTrace();
+        }
+        if(registrationVos == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500001, null);
+            objectResult.setMsg("未找到查询数据");
+            return objectResult;
         }
         return getListResult(registrationVos.getData());
     }
@@ -276,6 +298,11 @@ public class RegistrationController extends HttpServlet {
         } catch (ServiceException e) {
             e.printStackTrace();
         }
+        if(registrationVos == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500001, null);
+            objectResult.setMsg("未找到查询数据");
+            return objectResult;
+        }
         return getListResult(registrationVos.getData());
     }
 
@@ -297,7 +324,7 @@ public class RegistrationController extends HttpServlet {
             result.setMsg("查询成功");
             return result;
         }catch (QueryMyException e){
-            Result<RegistrationVo[]> result = new Result<>(500001,new RegistrationVo[]{});
+            Result<RegistrationVo[]> result = new Result<>(500001,null);
             result.setMsg("未找到查询数据");
             return result;
         }

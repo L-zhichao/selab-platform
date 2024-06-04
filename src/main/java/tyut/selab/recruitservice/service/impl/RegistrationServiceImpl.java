@@ -16,6 +16,9 @@ import java.util.List;
 
 import static tyut.selab.recruitservice.domain.RegistrationForm.toVo;
 
+/**
+ * @author 21017
+ */
 public class RegistrationServiceImpl implements RegistrationService {
     private RegistrationDao registrationDao = new RegistrationDaoImpl();
     public void setDao(RegistrationDao registrationDao){
@@ -63,6 +66,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public PageUtil<RegistrationVo> selectList(Integer cur, Integer size) throws ServiceException {
         PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectAll(cur,size);
+        if(registrationFormPageUtil == null){
+            throw new ServiceException();
+        }
         if(registrationFormPageUtil.getData() == null){
             throw new ServiceException();
         }
@@ -83,6 +89,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public PageUtil<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size, String intervieweesName) throws ServiceException {
         PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectByIntervieweesName(intervieweesName,cur,size);
+        if(registrationFormPageUtil == null){
+            throw new ServiceException();
+        }
         if(registrationFormPageUtil.getData() == null){
             throw new ServiceException();
         }
@@ -94,6 +103,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public PageUtil<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size) throws ServiceException {
         PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectByIntentDepartment(intentDepartment, cur, size);
+        if(registrationFormPageUtil == null){
+            throw new ServiceException();
+        }
         if(registrationFormPageUtil.getData() == null){
             throw new ServiceException();
         }
@@ -103,6 +115,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public PageUtil<RegistrationVo> selectByGradeId(Integer grade, Integer cur, Integer size) throws ServiceException {
         PageUtil<RegistrationForm> registrationFormPageUtil = registrationDao.selectByGradeId(grade, cur, size);
+        if(registrationFormPageUtil == null){
+            throw new ServiceException();
+        }
         if(registrationFormPageUtil.getData() == null){
             throw new ServiceException();
         }
