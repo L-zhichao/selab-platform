@@ -148,8 +148,16 @@ public class TaskReportServiceImpl implements TaskReportService {
     @Override
     public Integer queryTaskReportCount(Integer taskId) {
         if (taskId == null) {
-            throw new IllegalArgumentException("任务id不能为空");
+            throw new IllegalArgumentException("taskId cannot be empty");
         }
+
+        //判断任务是否存在
+//        TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
+//        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
+//        if(taskInfo==null){
+//            throw new RuntimeException("Task not exist");
+//        }
+
         return taskReportDao.queryTaskReportCount(taskId);
     }
 
@@ -210,7 +218,7 @@ public Integer queryuseridByreportid(Integer reportid){
      * */
     private TaskReportVo ToTaskReportVo(TaskReport taskReport){
         if(taskReport==null){
-            throw new RuntimeException("任务汇报对象为空");
+            throw new RuntimeException("Task not exist");
         }
 
         //查询用户名

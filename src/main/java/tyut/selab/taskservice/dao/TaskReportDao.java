@@ -1,8 +1,6 @@
 package tyut.selab.taskservice.dao;
 
 import tyut.selab.taskservice.domain.TaskReport;
-import tyut.selab.taskservice.dto.TaskInfoDto;
-import tyut.selab.taskservice.dto.TaskReportDto;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -85,9 +83,10 @@ public interface TaskReportDao {
 
     /**
      * 通过userId获取userName
+     *
      * @param userId
      * @return userName
-     * */
+     */
   public String getUserNameByUserId(Integer userId);
 
 }
