@@ -135,7 +135,7 @@ public class BookVo {
     /**
      * 价格
      */
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
