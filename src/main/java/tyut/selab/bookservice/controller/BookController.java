@@ -104,15 +104,14 @@ public class BookController extends HttpServlet {
         if (obj == null) {
             return false;
         }
-        String str = obj.toString();
-        return str.matches("^[a-zA-Z]+$");
+        return true;
     }
     public static boolean isInteger(Object obj) {
         if (obj == null) {
             return false;
         }
         // 使用双反斜杠转义正则表达式中的反斜杠
-        String regex = "^-?\\\\d+$";
+        String regex = "^[0-9]+$";
         return obj.toString().matches(regex);
     }
     public static boolean isDouble(Object obj) {
@@ -137,8 +136,8 @@ public class BookController extends HttpServlet {
         }
 
         JSONObject jsonObject = tool(request, response);
-        if (isString(jsonObject.get("bookName")) || isString(jsonObject.get("bookAuthor")) || isString(jsonObject.get("bookDetails")) || isDouble(jsonObject.get("price")) || isInteger(jsonObject.get("owner"))
-                || isString(jsonObject.get("remark")) || isString(jsonObject.get("bookRef"))) {
+        if (!isString(jsonObject.get("bookName")) || !isString(jsonObject.get("bookAuthor")) || !isString(jsonObject.get("bookDetails")) || !isDouble(jsonObject.get("price")) || !isInteger(jsonObject.get("owner"))
+                || !isString(jsonObject.get("remark")) || !isString(jsonObject.get("bookRef"))) {
             return Result.error(500001,"信息输入有误");
         }
 
@@ -187,8 +186,8 @@ public class BookController extends HttpServlet {
         }
 
         JSONObject jsonObject = tool(request, response);
-        if (isInteger(jsonObject.get("bookId")) || isString(jsonObject.get("bookName")) || isString(jsonObject.get("bookAuthor")) || isString(jsonObject.get("bookDetails")) || isDouble(jsonObject.get("price")) || isInteger(jsonObject.get("owner")) || isString(jsonObject.get("bookRef"))
-                    || isInteger(jsonObject.get("status")) || isString(jsonObject.get("createTime")) || isString(jsonObject.get("updateTime"))) {
+        if (!isInteger(jsonObject.get("bookId")) || !isString(jsonObject.get("bookName")) || !isString(jsonObject.get("bookAuthor")) || !isString(jsonObject.get("bookDetails")) || !isDouble(jsonObject.get("price")) || !isInteger(jsonObject.get("owner")) || !isString(jsonObject.get("bookRef"))
+                    || !isInteger(jsonObject.get("status")) || !isString(jsonObject.get("createTime")) || !isString(jsonObject.get("updateTime"))) {
             return Result.error(500001,"信息输入有误");
         }
 
