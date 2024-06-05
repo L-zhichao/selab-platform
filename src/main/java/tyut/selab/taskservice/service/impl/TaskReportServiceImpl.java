@@ -20,6 +20,7 @@ import tyut.selab.userservice.domain.User;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -35,12 +36,16 @@ public class TaskReportServiceImpl implements TaskReportService {
     private TaskReportDao taskReportDao=new TaskReportDaoImpl();
     private Integer userId;
 
+    // 使用静态变量来存储当前的reportId
+    private static AtomicInteger currentReportId = new AtomicInteger(0);
+
     /**
      *  新增汇报记录
      * @param taskReportDto
      * @return
      */
     public Integer save(TaskReportDto taskReportDto) {
+
 
         // 验证输入参数
         if (taskReportDto == null) {
@@ -56,18 +61,54 @@ public class TaskReportServiceImpl implements TaskReportService {
             throw new IllegalArgumentException("details cannot be empty");
         }
 
+        //查重
+        List<TaskReport> reportsExisting=null;
+        try {
+            reportsExisting = taskReportDao.selectByTaskIdTaskReports(taskReportDto.getTaskId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        for(TaskReport report :reportsExisting){
+            if(report.getTaskId().equals(taskReportDto.getTaskId())&& report.getReportStatus().equals(taskReportDto.getReportStatus()) && report.getDetails().equals(taskReportDto.getDetails())){
+                return null;
+            }
+        }
+
         // 创建TaskReport对象
         TaskReport taskReport = new TaskReport();
 
-        taskReport.setTaskId(taskReportDto.getTaskId());
-        taskReport.setReportStatus(taskReportDto.getReportStatus());
-        taskReport.setDetails(taskReportDto.getDetails());
-       //获取汇报人id
+        //获取汇报人id
         if(userId!=null){
-            taskReport.setUserId(userId);
+
+            //判断用户是否是任务发布小组的成员
+            List<Integer> userIds = taskReportDao.selectByTaskIdForUserId(taskReportDto.getTaskId());
+            boolean flag=false;
+            for (Integer id : userIds) {
+                if (id.equals(userId)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag){
+                taskReport.setUserId(userId);
+            }else {
+                return -1;
+            }
+
         }else {
             throw new RuntimeException("用户id为空，无法执行操作");
         }
+
+        //设置reportId自增
+        int reportId = currentReportId.incrementAndGet();
+
+        taskReport.setReportId(reportId);
+        taskReport.setTaskId(taskReportDto.getTaskId());
+        taskReport.setReportStatus(taskReportDto.getReportStatus());
+        taskReport.setDetails(taskReportDto.getDetails());
+
+
 
         // 自动设置createTime
         taskReport.setCreateTime(new Date());
@@ -79,6 +120,7 @@ public class TaskReportServiceImpl implements TaskReportService {
             }
             return insert;
         }catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException();
         }
     }
@@ -236,5 +278,6 @@ public Integer queryuseridByreportid(Integer reportid){
 
         return taskReportVo;
     }
+
 
 }

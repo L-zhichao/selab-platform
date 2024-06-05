@@ -19,6 +19,7 @@ import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
+import tyut.selab.taskservice.dto.ReportDto;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.Task;
 import tyut.selab.taskservice.myutils.WebUtil;
@@ -80,21 +81,26 @@ import java.util.Objects;
      */
     private Result report(HttpServletRequest request,HttpServletResponse response){
 
+       ReportDto reportDto;
+        //将请求体中的JSON数据转换为ReportDto-->TaskReportDto对象
+       reportDto=WebUtil.readJson(request, ReportDto.class);
+       TaskReportDto taskReportDto = reportDto.taskReportDto;
+
         UserLocal userMessage = getUserMessage(request, response);
         Integer userId = userMessage.getUserId();
+
         //将userId传入service层
         taskReportService.setUserId(userId);
 
-        //将请求体中的JSON数据转换为TaskReportDto对象
-        TaskReportDto taskReportDto =WebUtil.readJson(request,TaskReportDto.class);
-
         Integer save = taskReportService.save(taskReportDto);
         if(save!=null){
-            return Result.success(HttpStatus.NO_CONTENT,"汇报成功");
-        }else{
-            return Result.error(HttpStatus.UnknowError,"未知错误");
+            if(save == -1){
+                return Result.error(HttpStatus.PermissionNotAllowed,"非本人任务，无法汇报");
+            }else {
+                return Result.success(HttpStatus.NO_CONTENT,"汇报成功");
+            }
         }
-
+        return Result.error(HttpStatus.UnknowError,"存在相同汇报信息");
     }
 
     /**

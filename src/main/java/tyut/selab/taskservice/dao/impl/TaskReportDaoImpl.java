@@ -31,26 +31,18 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public Integer insert(TaskReport record){
 
-        Object[] report =new Object[]{
-                record.getTaskId(),
-                record.getUserId(),
-                record.getReportStatus(),
-                record.getDetails(),
-                record.getCreateTime()
-        };
-
         //查重
-        String sqlCheck="select from task_report where task_id=? and user_id=? and report_status=? and details=?";
-        TaskReport sameTaskReport = baseQueryObject(TaskReport.class, sqlCheck);
-        if(sameTaskReport!=null){
-            throw new RuntimeException("Same report exists");
-        }
+//        String sqlCheck="select from task_report where task_id=? and user_id=? and report_status=? and details=?";
+//        TaskReport sameTaskReport = baseQueryObject(TaskReport.class, sqlCheck,record.getTaskId(),record.getUserId(), record.getReportStatus(), record.getDetails());
+//        if(sameTaskReport!=null){
+//            throw new RuntimeException("Same report exists");
+//        }
 
-        String sqlInsert="INSERT INTO task_report (task_id, user_id, report_status, details, create_time) VALUES (?, ?, ?, ?, ?)";
+        String sqlInsert="INSERT INTO task_report (report_id,task_id, user_id, report_status, details, create_time) VALUES (?, ?, ?, ?, ?, ?)";
 
         Integer rowsAffected=null;
         try {
-            rowsAffected = baseUpdate(sqlInsert, report);
+            rowsAffected = baseUpdate(sqlInsert,record.getReportId(),record.getTaskId(),record.getUserId(), record.getReportStatus(), record.getDetails(), record.getCreateTime());
             return rowsAffected;
         }catch (RuntimeException e){
             throw e;
@@ -133,19 +125,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @return
      */
     public Integer updateByReportId(TaskReport record){
-
-            String sql1="SELECT * FROM task_report WHERE report_id = ?";
-            String sql = "UPDATE task_report SET task_id = ?, report_status = ? WHERE details = ?";
-
-            Object[] report = new Object[]{
-                    record.getTaskId(),
-                    record.getReportStatus(),
-                    record.getDetails()
-            };
-
-            return baseUpdate(sql, report);
-
-
+           return null;
     }
 
     /**
