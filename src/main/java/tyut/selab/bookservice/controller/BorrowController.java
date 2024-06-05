@@ -131,13 +131,14 @@ public class BorrowController extends HttpServlet {
         Date nowDate = new Date();
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-        if (jsonObject.get("bookId") == null || jsonObject.get("borrowDuration") == null || jsonObject.get("returnTime") == null || (Integer) jsonObject.get("bookId") <= 0 || (Integer) jsonObject.get("borrowDuration") <= 0 || nowDate.after(ft.parse((String) jsonObject.get("returnTime")))) {
+        if (jsonObject.get("bookId") == null || jsonObject.get("borrowDuration") == null || jsonObject.get("returnTime") == null || !(jsonObject.get("bookId").toString().matches("^[1-9]\\d*$")) || !((jsonObject.get("borrowDuration").toString()).matches("^[1-9]\\d*$")) || nowDate.after(ft.parse((String) jsonObject.get("returnTime")))) {
             return Result.error(500001,"信息错误");
         }
 
-        Integer bookId = (Integer) jsonObject.get("bookId");
-        Integer borrowDuration = (Integer) jsonObject.get("borrowDuration");
-        Date returnTime = ft.parse((String) jsonObject.get("returnTime"));
+        Integer bookId = Integer.valueOf(jsonObject.get("bookId").toString());
+        Integer borrowDuration = Integer.valueOf(jsonObject.get("borrowDuration").toString());
+        Date returnTime = ft.parse( String.valueOf(jsonObject.get("returnTime")));
+
 
         //将参数封装为Dto类
         BorrowBookDto borrowBookDto = new BorrowBookDto();
@@ -159,20 +160,20 @@ public class BorrowController extends HttpServlet {
             return Result.error(500008,"您已借阅");
         }else if (i == -5) {
             return Result.error(500009, "没有找到该书");
+        }else {
+            return Result.error(500001,"信息错误");
         }
-        return null;
     }
 
     /**
      *  归还书籍
      *  path param: bookId (路径变量)
      * @return
-     * 闫焕根
      */
     private Result returnBook(HttpServletRequest request,HttpServletResponse response){
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
-        if (split[split.length - 1] == null || Integer.valueOf(split[split.length - 1]) <= 0){
+        if (split[split.length - 1] == null || !(split[split.length - 1].matches("^[1-9]\\d*$"))){
             return Result.error(500001,"信息错误");
         }
 
@@ -188,8 +189,9 @@ public class BorrowController extends HttpServlet {
             return Result.error(500011,"此书不是您借的");
         } else if (i == -3) {
             return Result.error(500012,"您已归还");
+        }else {
+            return Result.error(500001,"信息错误");
         }
-        return null;
     }
 
     /**
@@ -203,18 +205,18 @@ public class BorrowController extends HttpServlet {
      */
     private Result query(HttpServletRequest request,HttpServletResponse response){
         //接收请求参数
-        if (request.getParameter("cur") == null || request.getParameter("size") == null || Integer.parseInt(request.getParameter("cur")) <= 0 || Integer.parseInt(request.getParameter("size")) <= 0){
+        if (request.getParameter("cur") == null || request.getParameter("size") == null || !(request.getParameter("cur").matches("^[1-9]\\d*$")) || !(request.getParameter("size").matches("^[1-9]\\d*$"))){
             return Result.error(500001,"信息错误");
         }
         //权限判断
-        UserLocal user = SecurityUtil.getUser();
-        if(user.getRoleId() == 2){
-            return Result.error(500013,"权限不足");
-        }
+//        UserLocal user = SecurityUtil.getUser();
+//        if(user.getRoleId() == 2){
+//            return Result.error(500013,"权限不足");
+//        }
 
 
-        int cur = Integer.parseInt(request.getParameter("cur"));
-        int size = Integer.parseInt(request.getParameter("size"));
+        Integer cur = Integer.valueOf(request.getParameter("cur"));
+        Integer size = Integer.valueOf(request.getParameter("size"));
 
         //将参数传递给服务层，进行查询
 
@@ -223,24 +225,25 @@ public class BorrowController extends HttpServlet {
 
             return Result.success(borrowBookVoPageUtil);
 
-        }else if (request.getParameter("bookId") != null && request.getParameter("userId") == null && request.getParameter("borrowId") == null){
+        }else if (request.getParameter("bookId") != null && request.getParameter("bookId").matches("^[1-9]\\d*$") && request.getParameter("userId") == null && request.getParameter("borrowId") == null){
             Integer bookId = Integer.valueOf(request.getParameter("bookId"));
             PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByBookId(bookId, cur, size);
 
             return Result.success(borrowBookVoPageUtil);
 
-        } else if (request.getParameter("userId") != null && request.getParameter("bookId") == null && request.getParameter("borrowId") == null) {
+        } else if (request.getParameter("userId") != null && request.getParameter("userId").matches(request.getParameter("userId")) && request.getParameter("bookId") == null && request.getParameter("borrowId") == null) {
             Integer userId = Integer.valueOf(request.getParameter("userId"));
             PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByUserId(userId, cur, size);
 
             return Result.success(borrowBookVoPageUtil);
-        } else if (request.getParameter("userId") == null && request.getParameter("bookId") == null && request.getParameter("borrowId") != null) {
+        } else if (request.getParameter("userId") == null && request.getParameter("bookId") == null && request.getParameter("borrowId") != null && request.getParameter("borrowId").matches(request.getParameter("borrowId"))) {
             Integer borrowId = Integer.valueOf(request.getParameter("borrowId"));
             BorrowBookVo borrowBookVo = borrowService.selectByBorrowId(borrowId);
 
             return Result.success(borrowBookVo);
+        }else {
+            return Result.error(500001,"信息错误");
         }
-        return null;
     }
 
 
@@ -254,23 +257,16 @@ public class BorrowController extends HttpServlet {
      */
 
     private Result queryBorrowLog(HttpServletRequest request,HttpServletResponse response){
-        Result result = new Result(404, null);
+        if(request.getParameter("cur") == null || request.getParameter("size") == null || !(request.getParameter("size").matches("^[1-9]\\d*$")) || !(request.getParameter("cur").matches("^[1-9]\\d*$"))){
+            return Result.error(500001,"信息错误");
+        }
         Integer cur = Integer.valueOf(request.getParameter("cur"));
         Integer size = Integer.valueOf(request.getParameter("size"));
         UserLocal user = SecurityUtil.getUser();
         Integer userId = user.getUserId();
-        if (cur == null || size == null || userId == null || cur <= 0 || size <= 0) {
-            result.setCode(400);
-            result.setMsg("无效的参数");
-            return result;
-        }
         PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByUserId(userId, cur, size);
 
-        result.setCode(200);
-        result.setData(borrowBookVoPageUtil);
-        result.setMsg("Success");
-
-        return result;
+        return Result.success(borrowBookVoPageUtil);
 
 
 
@@ -278,7 +274,7 @@ public class BorrowController extends HttpServlet {
     }
     private Result queryAllNoReturnBook(HttpServletRequest request,HttpServletResponse response){
         //接受请求参数
-        if (request.getParameter("cur") == null || request.getParameter("size") == null || Integer.parseInt(request.getParameter("cur")) <= 0 || Integer.parseInt(request.getParameter("size")) <= 0){
+        if (request.getParameter("cur") == null || request.getParameter("size") == null || !(request.getParameter("cur").matches("^[1-9]\\d*$")) || !(request.getParameter("size").matches("^[1-9]\\d*$")) ){
             return Result.error(500001,"信息错误");
         }
 
@@ -288,8 +284,8 @@ public class BorrowController extends HttpServlet {
             return Result.error(500013,"权限不足");
         }
 
-        int cur = Integer.parseInt(request.getParameter("cur"));
-        int size = Integer.parseInt(request.getParameter("size"));
+        Integer cur = Integer.valueOf(request.getParameter("cur"));
+        Integer size = Integer.valueOf(request.getParameter("size"));
 
         PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectAllForNoReturn(cur, size);
 
@@ -299,12 +295,12 @@ public class BorrowController extends HttpServlet {
     private Result queryById(HttpServletRequest request,HttpServletResponse response){
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
+        if(split[split.length - 1] == null || !(split[split.length - 1].matches("^[1-9]\\d*$"))){
+            return Result.error(500001,"信息错误");
+        }
         Integer borrowId = Integer.valueOf(split[split.length - 1]);
         BorrowBookVo borrowBookVo = borrowService.selectByBorrowId(borrowId);
-        if(borrowBookVo != null){
-            return Result.success(borrowBookVo);
-        }else{
-            return Result.error(500003,"查询信息为空");
-        }
+
+        return Result.success(borrowBookVo);
     }
 }
