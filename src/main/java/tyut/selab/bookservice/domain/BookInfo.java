@@ -31,7 +31,7 @@ public class BookInfo implements Serializable {
     /**
      * 价格
      */
-    private Integer price;
+    private Double price;
 
     /**
      * 书籍拥有者
@@ -131,7 +131,7 @@ public class BookInfo implements Serializable {
     /**
      * 价格
      */
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
