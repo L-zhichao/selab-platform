@@ -94,6 +94,35 @@ public class BookController extends HttpServlet {
         writer.close();
     }
 
+
+    /**
+     *  正则表达式来判断数据类型
+     * @param obj
+     * @return
+     */
+    public static boolean isString(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        String str = obj.toString();
+        return str.matches("^[a-zA-Z]+$");
+    }
+    public static boolean isInteger(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        // 使用双反斜杠转义正则表达式中的反斜杠
+        String regex = "^-?\\\\d+$";
+        return obj.toString().matches(regex);
+    }
+    public static boolean isDouble(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        String str = obj.toString();
+        return str.matches("-?\\d+(\\.\\d+)?");
+    }
+
     /**
      *  param: bookDto
      * @param request
@@ -108,20 +137,21 @@ public class BookController extends HttpServlet {
         }
 
         JSONObject jsonObject = tool(request, response);
-        if (jsonObject.get("bookName") == null || jsonObject.get("bookAuthor") == null || jsonObject.get("bookDetails") == null || jsonObject.get("price") == null || jsonObject.get("owner") ==null || jsonObject.get("remark") == null || jsonObject.get("bookRef") == null) {
+        if (isString(jsonObject.get("bookName")) || isString(jsonObject.get("bookAuthor")) || isString(jsonObject.get("bookDetails")) || isDouble(jsonObject.get("price")) || isInteger(jsonObject.get("owner"))
+                || isString(jsonObject.get("remark")) || isString(jsonObject.get("bookRef"))) {
             return Result.error(500001,"信息输入有误");
         }
 
-        String bookName = (String) jsonObject.get("bookName");
-        String bookAuthor = (String) jsonObject.get("bookAuthor");
-        String bookDetails = (String) jsonObject.get("bookDetails");
-        Integer price = (Integer) jsonObject.get("price");
+        String bookName = String.valueOf(jsonObject.get("bookName"));
+        String bookAuthor = String.valueOf(jsonObject.get("bookAuthor"));
+        String bookDetails = String.valueOf(jsonObject.get("bookDetails"));
+        Double price = Double.valueOf(jsonObject.get("price").toString());
         if (price<=0){
             return Result.error(500001,"信息输入有误");
         }
-        Integer owner = (Integer) jsonObject.get("owner");
-        String remark = (String) jsonObject.get("remark");
-        String bookRef = (String) jsonObject.get("bookRef");
+        Integer owner = Integer.valueOf(jsonObject.get("owner").toString());
+        String remark = String.valueOf(jsonObject.get("remark"));
+        String bookRef = String.valueOf(jsonObject.get("bookRef"));
 
         //将参数封装为Dto类
         BookDto bookDto = new BookDto();
@@ -157,37 +187,37 @@ public class BookController extends HttpServlet {
         }
 
         JSONObject jsonObject = tool(request, response);
-        if (jsonObject.get("bookId") == null || jsonObject.get("bookName") == null || jsonObject.get("bookAuthor") == null || jsonObject.get("bookDetails") == null || jsonObject.get("price") == null || jsonObject.get("owner") ==null || jsonObject.get("bookRef") == null
-                    || jsonObject.get("status") == null || jsonObject.get("createTime") == null || jsonObject.get("updateTime") == null) {
+        if (isInteger(jsonObject.get("bookId")) || isString(jsonObject.get("bookName")) || isString(jsonObject.get("bookAuthor")) || isString(jsonObject.get("bookDetails")) || isDouble(jsonObject.get("price")) || isInteger(jsonObject.get("owner")) || isString(jsonObject.get("bookRef"))
+                    || isInteger(jsonObject.get("status")) || isString(jsonObject.get("createTime")) || isString(jsonObject.get("updateTime"))) {
             return Result.error(500001,"信息输入有误");
         }
 
         // 处理JSON对象，从请求体中读取参数
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Integer bookId = (Integer) jsonObject.get("bookId");
-        String bookName = (String) jsonObject.get("bookName");
-        String bookAuthor = (String) jsonObject.get("bookAuthor");
-        String bookDetails = (String) jsonObject.get("bookDetails");
-        Integer price = (Integer) jsonObject.get("price");
+        Integer bookId = Integer.valueOf(jsonObject.get("bookId").toString());
+        String bookName = String.valueOf(jsonObject.get("bookName"));
+        String bookAuthor = String.valueOf(jsonObject.get("bookAuthor"));
+        String bookDetails = String.valueOf(jsonObject.get("bookDetails"));
+        Double price = Double.valueOf(jsonObject.get("price").toString());
         if (price<=0){
             return Result.error(500001,"信息输入有误");
         }
-        Integer owner = (Integer) jsonObject.get("owner");
+        Integer owner = Integer.valueOf(jsonObject.get("owner").toString());
         //String ownerName = (String) jsonObject.get("ownerName");
-        Integer status = (Integer) jsonObject.get("status");
+        Integer status = Integer.valueOf(jsonObject.get("status").toString());
         Date createTime = null;
         try {
-            createTime = sdf.parse((String) jsonObject.get("createTime"));
+            createTime = sdf.parse(String.valueOf(jsonObject.get("createTime")));
         } catch (ParseException e) {
             throw new ServiceException("获取添加时间失败");
         }
         Date updateTime = null;
         try {
-            updateTime = sdf.parse((String) jsonObject.get("updateTime"));
+            updateTime = sdf.parse(String.valueOf(jsonObject.get("updateTime")));
         } catch (ParseException e) {
             throw new ServiceException("获取修改时间失败");
         }
-        String bookRef = (String) jsonObject.get("bookRef");
+        String bookRef = String.valueOf(jsonObject.get("bookRef"));
 
         // 封装到BookVo类中
         BookVo bookVo = new BookVo();
