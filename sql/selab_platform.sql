@@ -201,7 +201,7 @@ CREATE TABLE `task_info`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `task_report`;
 CREATE TABLE `task_report`  (
-  `report_id` int NOT NULL COMMENT '主键唯一索引',
+  `report_id` int NOT NULL AUTO_INCREMENT COMMENT '主键唯一索引',
   `task_id` int NULL DEFAULT NULL,
   `user_id` int NULL DEFAULT NULL,
   `report_status` int NULL DEFAULT NULL COMMENT '汇报状态(1 已完成 0已红温)',

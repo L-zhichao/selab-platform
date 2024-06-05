@@ -20,6 +20,7 @@ import tyut.selab.userservice.domain.User;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -42,32 +43,63 @@ public class TaskReportServiceImpl implements TaskReportService {
      */
     public Integer save(TaskReportDto taskReportDto) {
 
+
         // 验证输入参数
         if (taskReportDto == null) {
-            throw new IllegalArgumentException("任务汇报对象不能为空");
+            throw new IllegalArgumentException("taskReportDto cannot be empty");
         }
         if (taskReportDto.getTaskId() == null) {
-            throw new IllegalArgumentException("任务id不能为空");
+            throw new IllegalArgumentException("taskId cannot be empty");
         }
         if (taskReportDto.getReportStatus() == null) {
-            throw new IllegalArgumentException("汇报状态不能为空");
+            throw new IllegalArgumentException("reportStatus cannot be empty");
         }
         if (taskReportDto.getDetails()==null) {
-            throw new IllegalArgumentException("汇报信息不能为空");
+            throw new IllegalArgumentException("details cannot be empty");
+        }
+
+        //查重
+        List<TaskReport> reportsExisting=null;
+        try {
+            reportsExisting = taskReportDao.selectByTaskIdTaskReports(taskReportDto.getTaskId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        for(TaskReport report :reportsExisting){
+            if(report.getTaskId().equals(taskReportDto.getTaskId())&& report.getReportStatus().equals(taskReportDto.getReportStatus()) && report.getDetails().equals(taskReportDto.getDetails())){
+                return null;
+            }
         }
 
         // 创建TaskReport对象
         TaskReport taskReport = new TaskReport();
 
-        taskReport.setTaskId(taskReportDto.getTaskId());
-        taskReport.setReportStatus(taskReportDto.getReportStatus());
-        taskReport.setDetails(taskReportDto.getDetails());
-       //获取汇报人id
+        //获取汇报人id
         if(userId!=null){
-            taskReport.setUserId(userId);
+
+            //判断用户是否是任务发布小组的成员
+            List<Integer> userIds = taskReportDao.selectByTaskIdForUserId(taskReportDto.getTaskId());
+            boolean flag=false;
+            for (Integer id : userIds) {
+                if (id.equals(userId)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag){
+                taskReport.setUserId(userId);
+            }else {
+                return -1;
+            }
+
         }else {
             throw new RuntimeException("用户id为空，无法执行操作");
         }
+
+        taskReport.setTaskId(taskReportDto.getTaskId());
+        taskReport.setReportStatus(taskReportDto.getReportStatus());
+        taskReport.setDetails(taskReportDto.getDetails());
 
         // 自动设置createTime
         taskReport.setCreateTime(new Date());
@@ -79,6 +111,7 @@ public class TaskReportServiceImpl implements TaskReportService {
             }
             return insert;
         }catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException();
         }
     }
@@ -88,7 +121,7 @@ public class TaskReportServiceImpl implements TaskReportService {
      *  通过任务id和用户id查询汇报信息
      */
     @Override
-    public TaskReportVo queryByUserIdAndTaskId(Integer taskId, Integer userId) {
+    public TaskReportVo queryByUserIdAndTaskId(Integer taskId, Integer userId) throws Exception{
 
         TaskReport taskReport = null;
         if(taskId==null||userId==null){
@@ -148,8 +181,16 @@ public class TaskReportServiceImpl implements TaskReportService {
     @Override
     public Integer queryTaskReportCount(Integer taskId) {
         if (taskId == null) {
-            throw new IllegalArgumentException("任务id不能为空");
+            throw new IllegalArgumentException("taskId cannot be empty");
         }
+
+        //判断任务是否存在
+//        TaskInfoDao taskInfoDao=new TaskInfoDaoImpl();
+//        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
+//        if(taskInfo==null){
+//            throw new RuntimeException("Task not exist");
+//        }
+
         return taskReportDao.queryTaskReportCount(taskId);
     }
 
@@ -210,7 +251,7 @@ public Integer queryuseridByreportid(Integer reportid){
      * */
     private TaskReportVo ToTaskReportVo(TaskReport taskReport){
         if(taskReport==null){
-            throw new RuntimeException("任务汇报对象为空");
+            return null;
         }
 
         //查询用户名
@@ -228,5 +269,6 @@ public Integer queryuseridByreportid(Integer reportid){
 
         return taskReportVo;
     }
+
 
 }

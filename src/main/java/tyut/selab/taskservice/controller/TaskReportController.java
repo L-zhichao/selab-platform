@@ -19,6 +19,7 @@ import tyut.selab.taskservice.domain.TaskGroup;
 import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
 import tyut.selab.taskservice.dto.NeedReportUser;
+import tyut.selab.taskservice.dto.ReportDto;
 import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.Task;
 import tyut.selab.taskservice.myutils.WebUtil;
@@ -80,21 +81,26 @@ import java.util.Objects;
      */
     private Result report(HttpServletRequest request,HttpServletResponse response){
 
+       ReportDto reportDto;
+        //将请求体中的JSON数据转换为ReportDto-->TaskReportDto对象
+       reportDto=WebUtil.readJson(request, ReportDto.class);
+       TaskReportDto taskReportDto = reportDto.taskReportDto;
+
         UserLocal userMessage = getUserMessage(request, response);
         Integer userId = userMessage.getUserId();
+
         //将userId传入service层
         taskReportService.setUserId(userId);
 
-        //将请求体中的JSON数据转换为TaskReportDto对象
-        TaskReportDto taskReportDto =WebUtil.readJson(request,TaskReportDto.class);
-
         Integer save = taskReportService.save(taskReportDto);
         if(save!=null){
-            return Result.success(HttpStatus.NO_CONTENT,"汇报成功");
-        }else{
-            return Result.error(HttpStatus.UnknowError,"未知错误");
+            if(save == -1){
+                return Result.error(HttpStatus.PermissionNotAllowed,"非本人任务，无法汇报");
+            }else {
+                return Result.success(HttpStatus.NO_CONTENT,"汇报成功");
+            }
         }
-
+        return Result.error(HttpStatus.UnknowError,"存在相同汇报信息");
     }
 
     /**
@@ -121,18 +127,18 @@ import java.util.Objects;
         //判断任务是否存在
         TaskInfoVo taskInfoVo = taskService.queryById(taskId);
         if(taskInfoVo==null){
-            return  Result.error(HttpStatus.NOT_FOUND, "该任务不存在");
+            return  Result.error(HttpStatus.NoDataFromDatabase, "该任务不存在");
         }
 
         //发布者id
         TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
         Integer publisherId = taskInfo.getPublisherId();
 
-        //获取用户id
+        //角色id
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
 
-        //权限不够-->管理员查询非自己发布的任务 || 普通用户
+        //权限
         if ( roleId == 3) {
             return Result.error(HttpStatus.PermissionNotAllowed, "权限不够,禁止查询：普通用户");
         } else if (roleId==2) {
@@ -170,30 +176,35 @@ import java.util.Objects;
             return Result.error(HttpStatus.IncomingDataError, "taskId不能为空");
         }
 
-        Integer taskId = null;
+        Integer taskId;
         try {
             taskId = Integer.valueOf(taskIdStr);
         } catch (NumberFormatException e) {
             return Result.error(HttpStatus.IncomingDataError, "taskId必须为整数");
         }
 
-//        Integer cur = Integer.valueOf(request.getParameter("cur")); // 返回第几页
-//        Integer size = Integer.valueOf(request.getParameter("size"));// 每页返回数量
+        //获取TaskInfo对象
+        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
+        if(taskInfo==null){
+            return Result.error(HttpStatus.NoDataFromDatabase,"该任务不存在");
+        }
 
         //获取用户id
         UserLocal userMessage = getUserMessage(request, response);
         Integer userId = userMessage.getUserId();
 
-        TaskReportVo taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+        //将userId传入service层
+        taskReportService.setUserId(userId);
+        TaskReportVo taskReportVo;
+        try {
+            taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error(HttpStatus.IncomingDataError,"该任务没有汇报记录");
+        }
         TaskReport report = taskReportDao.selectByUserId(userId, taskId);
 
         TaskInfoForUser taskInfoForUser = new TaskInfoForUser();
-
-        //获取TaskInfo对象
-        TaskInfo taskInfo = taskInfoDao.selectByTaskId(taskId);
-        if(taskInfo==null){
-            return Result.error(HttpStatus.NoDataFromDatabase,"该任务信息不存在");
-        }
 
         //发布者
         Integer publisherId = taskInfo.getPublisherId();
@@ -208,8 +219,10 @@ import java.util.Objects;
         taskInfoForUser.setGroupNames(groupNames);
         taskInfoForUser.setName(taskInfo.getName());
         taskInfoForUser.setContent(taskInfo.getContent());
+
         taskInfoForUser.setDealTime(taskInfo.getDealTime());
         taskInfoForUser.setPublishTime(taskInfo.getPublishTime());
+
         //任务状态根据截止时间判断
         Date now=new Date();
         if(now.after(taskInfo.getDealTime())){
@@ -219,6 +232,13 @@ import java.util.Objects;
         }
 
         //是否汇报
+        if(taskReportVo!=null){
+            taskInfoForUser.setJudge(1);
+        }else{
+            taskInfoForUser.setJudge(0);
+        }
+
+        //任务状态
         taskInfoForUser.setStatus(report.getReportStatus());
 
         //汇报信息
@@ -687,9 +707,9 @@ import java.util.Objects;
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
        // UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
-        user.setUserName("user1");
-        user.setRoleId(3);
-        user.setUserId(2);
+        user.setUserName("JohnDoe");
+        user.setRoleId(1);
+        user.setUserId(1);
         return user;
     }
     protected void findMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

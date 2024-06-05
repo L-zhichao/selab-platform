@@ -20,7 +20,7 @@ import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.utils.Result;
 
 
-import javax.mail.Flags;
+//import javax.mail.Flags;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -42,40 +42,47 @@ public class TaskController extends HttpServlet {
     }
 
     /**
-     *  增加任务
+     * 增加任务
      * param TaskInfoDto taskInfoDto
+     *
      * @return
      */
-    private Result<Void> save(HttpServletRequest request, HttpServletResponse response){
-        TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
+    private Result<Void> save(HttpServletRequest request, HttpServletResponse response) {
+        TaskInfoDto taskInfoDto;
+        try {
+            taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Result.error(HttpStatus.IncomingDataError,"传入数据错误");
+        }
 
         //进行数据叫校验问题
         //保存和修改任务的时候，截至时间是不是应该比当前时间多
         Date dealTime = taskInfoDto.getDealTime();
         Date date = new Date();
-        if (date.getTime() > dealTime.getTime()){
-            return Result.error(HttpStatus.IncomingDataError,"截止时间设置不合理");
+        if (date.getTime() > dealTime.getTime()) {
+            return Result.error(HttpStatus.IncomingDataError, "截止时间设置不合理");
         }
 
         List<Integer> groupIds = taskInfoDto.getGroupIds();
-        if (groupIds.isEmpty()){
-            return Result.error(HttpStatus.IncomingDataError,"没有设置任务的小组范围");
+        if (groupIds.isEmpty()) {
+            return Result.error(HttpStatus.IncomingDataError, "没有设置任务的小组范围");
         }
 
-        if (taskInfoDto.getContent() == null || taskInfoDto.getName() == null){
-            return Result.error(HttpStatus.IncomingDataError,"没有设置任务内容和标题");
+        if (taskInfoDto.getContent() == null || taskInfoDto.getName() == null) {
+            return Result.error(HttpStatus.IncomingDataError, "没有设置任务内容和标题");
         }
 
-       boolean flag = taskInfoService.isGroupsExist(taskInfoDto.getGroupIds());
-        if (! flag ){
-            return Result.error(HttpStatus.IncomingDataError,"小组不存在");
+        boolean flag = taskInfoService.isGroupsExist(taskInfoDto.getGroupIds());
+        if (!flag) {
+            return Result.error(HttpStatus.IncomingDataError, "小组不存在");
         }
 
         //判断用户身份，不同身份发布任务的范围不一样，权限不够就返回error(其他组接口没有实现，先注释）
         UserLocal userMessage = getUserMessage();
         Integer roleId = userMessage.getRoleId();
-        if (roleId == 3 ){
-            return Result.error(HttpStatus.PermissionNotAllowed,"普通用户不能发布任务");
+        if (roleId == 3) {
+            return Result.error(HttpStatus.PermissionNotAllowed, "普通用户不能发布任务");
         }
 
         //save 的时候发布者以及更新者应该就是请求者本身.改成其他发布者没作用
@@ -83,13 +90,13 @@ public class TaskController extends HttpServlet {
         taskInfoDto.setUpdaterId(userMessage.getUserId());
 
         //相同的用户发布的任务最大个数应该有限制，超级管理员没有此限制
-        if (roleId == 2){
+        if (roleId == 2) {
             //获取用户发布的所有任务
             String userName = userMessage.getUserName();
             List<TaskInfoVo> taskInfoVos = taskInfoService.queryTaskInfoBypublish(userName);
             //如果任务数量 >= 3 返回权限问题
-            if (taskInfoVos.size() >= 3){
-                return Result.error(HttpStatus.MaxTasksError,"管理员最多只能发布三个任务");
+            if (taskInfoVos.size() >= 3) {
+                return Result.error(HttpStatus.MaxTasksError, "管理员最多只能发布三个任务");
             }
         }
 
@@ -98,10 +105,10 @@ public class TaskController extends HttpServlet {
 
         int i = taskInfoService.save(taskInfoDto);
         //添加任务的时候标题和内容不能重复
-        if (i == 0 ){
-            return Result.error(HttpStatus.IncomingDataError,"当前任务的标题和内容和现有的任务冲突");
-        }else{
-            return Result.success(null,"添加成功");
+        if (i == 0) {
+            return Result.error(HttpStatus.IncomingDataError, "当前任务的标题和内容和现有的任务冲突");
+        } else {
+            return Result.success(null, "添加成功");
         }
     }
 
@@ -247,8 +254,13 @@ public class TaskController extends HttpServlet {
       }
 
 
-
-      TaskInfoDto taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
+      TaskInfoDto taskInfoDto;
+      try {
+          taskInfoDto = WebUtil.readJson(request, TaskInfoDto.class);
+      }catch(Exception e){
+          e.printStackTrace();
+          return Result.error(HttpStatus.IncomingDataError,"传入数据错误");
+      }
 
       Date dealTime = taskInfoDto.getDealTime();
       Date date = new Date();
@@ -279,9 +291,15 @@ public class TaskController extends HttpServlet {
      * @return
      */
     private Result<TaskInfoVo> queryById(HttpServletRequest request, HttpServletResponse response) {
-        int taskId = Integer.parseInt(request.getParameter("taskId"));
+        //数据筛选
+        int taskId;
+        try {
+            taskId = Integer.parseInt(request.getParameter("taskId"));
+        }catch (Exception e){
+            return Result.error(HttpStatus.IncomingDataError,"应该传入查询的任务Id");
+        }
         TaskInfoVo taskInfoVo = taskInfoService.queryById(taskId);
-        if (taskInfoVo == null){
+        if (taskInfoVo == null) {
             return Result.error(HttpStatus.IncomingDataError, "该任务不存在");
         }
 
@@ -293,10 +311,9 @@ public class TaskController extends HttpServlet {
         Integer roleId = userMessage.getRoleId();
         String userName = userMessage.getUserName();
         //判断请求用户是否为超级管理员
-        if (roleId == 1 ){
+        if (roleId == 1) {
             flag = true;
-        }
-        else if(roleId == 3) {
+        } else if (roleId == 3) {
             //判断请求用户的查询任务是否是该用户所接取的任务之一
 
             //获取用户的小组id
@@ -310,8 +327,7 @@ public class TaskController extends HttpServlet {
                     }
                 }
             }
-        }
-        else if (roleId == 2){
+        } else if (roleId == 2) {
             //判断请求用户是否为任务的发布者
             //获取用户发布的所有任务
             List<TaskInfoVo> taskInfoVos2 = taskInfoService.queryTaskInfoBypublish(userName);
@@ -324,10 +340,10 @@ public class TaskController extends HttpServlet {
         }
 
 
-        if (flag){
-            return Result.success(taskInfoVo,"请求成功");
-        }else{
-            return Result.error(HttpStatus.PermissionNotAllowed,"权限不允许查询");
+        if (flag) {
+            return Result.success(taskInfoVo, "请求成功");
+        } else {
+            return Result.error(HttpStatus.PermissionNotAllowed, "权限不允许查询");
         }
         //
         //
@@ -439,7 +455,7 @@ public class TaskController extends HttpServlet {
         user.setUserName("zhangsan");
         user.setRoleId(1);
         user.setUserId(1);
-        user.setGroupId(2);
+        user.setGroupId(1);
         return user;
     }
 

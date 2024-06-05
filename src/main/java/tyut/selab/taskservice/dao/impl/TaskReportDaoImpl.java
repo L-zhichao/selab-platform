@@ -3,12 +3,8 @@ package tyut.selab.taskservice.dao.impl;
 import tyut.selab.taskservice.dao.BaseDao;
 import tyut.selab.taskservice.dao.TaskReportDao;
 import tyut.selab.taskservice.domain.TaskGroup;
-import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.domain.TaskReport;
-import tyut.selab.taskservice.dto.TaskInfoDto;
-import tyut.selab.taskservice.dto.TaskReportDto;
 import tyut.selab.taskservice.myutils.Task;
-import tyut.selab.taskservice.view.TaskReportVo;
 import tyut.selab.userservice.domain.User;
 
 import java.util.ArrayList;
@@ -35,26 +31,11 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      */
     public Integer insert(TaskReport record){
 
-        Object[] report =new Object[]{
-                record.getTaskId(),
-                record.getUserId(),
-                record.getReportStatus(),
-                record.getDetails(),
-                record.getCreateTime()
-        };
-
-        //查重
-        String sqlCheck="select from task_report where task_id=? and user_id=? and report_status=? and details=?";
-        TaskReport sameTaskReport = baseQueryObject(TaskReport.class, sqlCheck);
-        if(sameTaskReport!=null){
-            throw new RuntimeException("存在相同汇报信息");
-        }
-
         String sqlInsert="INSERT INTO task_report (task_id, user_id, report_status, details, create_time) VALUES (?, ?, ?, ?, ?)";
 
         Integer rowsAffected=null;
         try {
-            rowsAffected = baseUpdate(sqlInsert, report);
+            rowsAffected = baseUpdate(sqlInsert,record.getTaskId(),record.getUserId(), record.getReportStatus(), record.getDetails(), record.getCreateTime());
             return rowsAffected;
         }catch (RuntimeException e){
             throw e;
@@ -72,12 +53,12 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
         String sql = """
                     select report_id as reportId,task_id as taskId,user_id as userId,report_status as reportStatus,details,create_time as createTime
                     from task_report
-                    where task_id=? and user_id=?
+                    where user_id=? and task_id=?
                     order by report_id desc
                     limit 1
                     """;
 
-        List<TaskReport> reports = baseQuery(TaskReport.class, sql, taskId, userId);
+        List<TaskReport> reports = baseQuery(TaskReport.class, sql, userId, taskId);
         if (reports != null && !reports.isEmpty()) {
             return reports.get(0); // 返回列表中的第一个元素，即最新的记录
         }
@@ -137,19 +118,7 @@ public class TaskReportDaoImpl  extends BaseDao implements TaskReportDao {
      * @return
      */
     public Integer updateByReportId(TaskReport record){
-
-            String sql1="SELECT * FROM task_report WHERE report_id = ?";
-            String sql = "UPDATE task_report SET task_id = ?, report_status = ? WHERE details = ?";
-
-            Object[] report = new Object[]{
-                    record.getTaskId(),
-                    record.getReportStatus(),
-                    record.getDetails()
-            };
-
-            return baseUpdate(sql, report);
-
-
+           return null;
     }
 
     /**
@@ -174,11 +143,9 @@ String sql= """
      * */
     @Override
     public Integer queryTaskReportCount(Integer taskId) {
-       // String sql="SELECT COUNT(*) AS reports_count FROM task_reports where task_id=?";
+      String sql="SELECT COUNT(*) AS reports_count FROM task_report WHERE task_id=?";
 
-        String sql="SELECT * FROM task_report WHERE task_id = ?";
-        List<TaskReport> reports = baseQuery(TaskReport.class, sql, taskId);
-        return reports.size();
+        return baseCountQuery(sql, taskId);
     }
     /**
      * 通过reportid查询某一任务的taskid
@@ -200,11 +167,17 @@ String sql= """
 
 /**
  * 通过userId获取userName
- * */
+ */
 
     public String getUserNameByUserId(Integer userId) {
-        String sql="select from sys_user where user_id=?";
-        User user = baseQueryObject(User.class, sql);
-        return user.getUserName();
+        String sql="select user_name as userName from sys_user where user_id=?";
+        User user = baseQueryObject(User.class, sql,userId);
+        String userName= user.getUserName();
+        if(userName!=null){
+            return userName;
+        }else {
+            throw new RuntimeException("User not found");
+        }
     }
+
 }

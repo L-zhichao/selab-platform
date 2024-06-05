@@ -135,7 +135,7 @@ public class TaskGroupDaoImpl extends BaseDao implements TaskGroupDao {
                 """;
         for(Integer i : groupIds){
             List<Group> groups = baseQuery(Group.class, sql, i);
-            if(groups == null){
+            if(groups.isEmpty()){
                 flag = false;
                 break;
             }
