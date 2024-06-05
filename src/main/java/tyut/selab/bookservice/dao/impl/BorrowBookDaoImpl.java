@@ -24,8 +24,8 @@ public class BorrowBookDaoImpl implements BorrowBookDao {
 
     @Override
     public Integer update(BorrowBook borrowBook) {
-        String sql ="update book_borrow set borrow_id = ?,book_id = ?,borrow_user = ?,borrow_duration = ?,status = ?,borrow_time = ?,return_time = ? where book_id = ?;";
-        Object[] params = {borrowBook.getBorrowId(),borrowBook.getBookId(),borrowBook.getBorrowUser(),borrowBook.getBorrowDuration(),borrowBook.getStatus(),borrowBook.getBorrowTime(),borrowBook.getReturnTime(),borrowBook.getBookId()};
+        String sql ="update book_borrow set book_id = ?,borrow_user = ?,borrow_duration = ?,status = ?,borrow_time = ?,return_time = ? where borrow_id = ?;";
+        Object[] params = {borrowBook.getBookId(),borrowBook.getBorrowUser(),borrowBook.getBorrowDuration(),borrowBook.getStatus(),borrowBook.getBorrowTime(),borrowBook.getReturnTime(),borrowBook.getBorrowId()};
         return baseDao.baseUpdate(sql,params);
     }
 
