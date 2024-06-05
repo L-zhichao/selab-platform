@@ -33,7 +33,7 @@ public class BookDto implements Serializable {
     /**
      * 价格
      */
-    private Integer price;
+    private Double price;
 
     /**
      * 书籍拥有者
@@ -99,7 +99,7 @@ public class BookDto implements Serializable {
     /**
      * 价格
      */
-    public Integer getPrice() {
+    public Double getPrice() {
         return price;
     }
 
