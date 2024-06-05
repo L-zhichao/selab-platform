@@ -58,7 +58,7 @@ public class TestTaskGroupDao {
 
     @Test
     public void testFindTaskGroupNamesByTaskId() {
-        List<String> taskGroupNamesByTaskId = taskGroupDao.findTaskGroupNamesByTaskId(1);
+        List<String> taskGroupNamesByTaskId = taskGroupDao.findTaskGroupNamesByTaskId(31);
         System.out.println("*************");
         for (String string : taskGroupNamesByTaskId){
             System.out.println(string);

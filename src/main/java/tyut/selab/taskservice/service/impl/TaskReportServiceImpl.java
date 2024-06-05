@@ -130,7 +130,7 @@ public class TaskReportServiceImpl implements TaskReportService {
      *  通过任务id和用户id查询汇报信息
      */
     @Override
-    public TaskReportVo queryByUserIdAndTaskId(Integer taskId, Integer userId) {
+    public TaskReportVo queryByUserIdAndTaskId(Integer taskId, Integer userId) throws Exception{
 
         TaskReport taskReport = null;
         if(taskId==null||userId==null){

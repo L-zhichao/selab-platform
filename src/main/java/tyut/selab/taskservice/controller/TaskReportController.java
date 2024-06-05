@@ -195,8 +195,13 @@ import java.util.Objects;
 
         //将userId传入service层
         taskReportService.setUserId(userId);
-
-        TaskReportVo taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+        TaskReportVo taskReportVo;
+        try {
+            taskReportVo = taskReportService.queryByUserIdAndTaskId(taskId, userId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error(HttpStatus.IncomingDataError,"该任务没有汇报记录");
+        }
         TaskReport report = taskReportDao.selectByUserId(userId, taskId);
 
         TaskInfoForUser taskInfoForUser = new TaskInfoForUser();

@@ -31,7 +31,7 @@ public interface TaskReportService {
      * @param userId
      * @return
      */
-    public TaskReportVo queryByUserIdAndTaskId(Integer taskId, Integer userId);
+    public TaskReportVo queryByUserIdAndTaskId(Integer taskId, Integer userId) throws Exception;
 
     /**
      *  通过id查询任务的所有所有汇报情况
