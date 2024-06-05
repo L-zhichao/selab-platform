@@ -36,9 +36,6 @@ public class TaskReportServiceImpl implements TaskReportService {
     private TaskReportDao taskReportDao=new TaskReportDaoImpl();
     private Integer userId;
 
-    // 使用静态变量来存储当前的reportId
-    private static AtomicInteger currentReportId = new AtomicInteger(0);
-
     /**
      *  新增汇报记录
      * @param taskReportDto
@@ -100,15 +97,9 @@ public class TaskReportServiceImpl implements TaskReportService {
             throw new RuntimeException("用户id为空，无法执行操作");
         }
 
-        //设置reportId自增
-        int reportId = currentReportId.incrementAndGet();
-
-        taskReport.setReportId(reportId);
         taskReport.setTaskId(taskReportDto.getTaskId());
         taskReport.setReportStatus(taskReportDto.getReportStatus());
         taskReport.setDetails(taskReportDto.getDetails());
-
-
 
         // 自动设置createTime
         taskReport.setCreateTime(new Date());
