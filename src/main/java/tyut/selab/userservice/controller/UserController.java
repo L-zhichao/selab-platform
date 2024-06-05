@@ -12,6 +12,7 @@ import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.userservice.service.ServiceImpl.UserServiceImpl;
 import tyut.selab.userservice.service.UserService;
+import tyut.selab.userservice.vo.GroupVo;
 import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.Result;
 
@@ -26,10 +27,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
@@ -168,6 +167,10 @@ public class UserController extends HttpServlet {
     private Result query(HttpServletRequest request,HttpServletResponse response){
         String groupId = request.getParameter("groupId");
         String userId = request.getParameter("userId");
+        //条件查询
+        Integer cur = Integer.valueOf((request.getParameter("cur") == null) ? "1" : request.getParameter("cur"));
+        Integer size = Integer.valueOf((request.getParameter("size") == null) ? "5" : request.getParameter("size"));
+
         List<UserVo>  usersByGroupId = new ArrayList<>();
         List<UserVo> Alluser = new ArrayList<>();
         List<UserVo> ResultList = new ArrayList<>();
@@ -177,21 +180,23 @@ public class UserController extends HttpServlet {
             ResultList.add(userByUserId);
         }else {
             if (groupId != null && userId == null) {
-                usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId));
+                usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId),cur,size);
                 ResultList.addAll(usersByGroupId);
-
             }
             if (userId != null && groupId == null ) {
                 userByUserId = userService.selectByUserId(Long.valueOf(userId));
                 ResultList.add(userByUserId);
             }
             if (userId == null && groupId == null){
-                Alluser = userService.queryAll();
+                Alluser = userService.queryAll(cur,size);
                 ResultList.addAll(Alluser);
             }
         }
-
-        return Result.success(ResultList);
+        if(ResultList == null){
+            return Result.error(400,"查询失败");
+        }else {
+            return Result.success(ResultList);
+        }
     }
 
 

@@ -16,6 +16,8 @@ import java.util.List;
 public interface UserDao {
 
 
+
+
     /**
      * 增加用户
      * @return
@@ -25,7 +27,7 @@ public interface UserDao {
     /**
      * 查询所有用户
      */
-    public List<User> selectAll();
+    public List<User> selectAll(Integer cur,Integer size);
 
     /**
      *通过groupId
@@ -57,7 +59,7 @@ public interface UserDao {
      * @param groupId
      * @return
      */
-    public List<User> selectByGroupIdUsers(Integer groupId);
+    public List<User> selectByGroupIdUsers(Integer groupId,Integer cur,Integer size);
 
     /**
      *  通过用户名称查询用户信息
