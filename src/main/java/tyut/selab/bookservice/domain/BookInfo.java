@@ -124,7 +124,7 @@ public class BookInfo implements Serializable {
     /**
      * 价格
      */
-    public Integer getPrice() {
+    public Double getPrice() {
         return price;
     }
 
