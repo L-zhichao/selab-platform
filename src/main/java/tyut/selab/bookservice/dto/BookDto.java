@@ -106,7 +106,7 @@ public class BookDto implements Serializable {
     /**
      * 价格
      */
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
