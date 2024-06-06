@@ -265,10 +265,10 @@ import java.util.Objects;
      */
     private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
         List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
-        Page pagee=null;
+        Page pagee=new Page();
         Integer taskid = null;
         int cur = request.getParameter("cur") != null ? Integer.parseInt(request.getParameter("cur")) : 1;
-        int size = request.getParameter("size") != null ? Integer.parseInt(request.getParameter("size")) : Integer.MAX_VALUE;
+        int size = request.getParameter("size") != null ? Integer.parseInt(request.getParameter("size")) :10;
         //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
@@ -304,12 +304,13 @@ import java.util.Objects;
                     }
                     //如果本次循环中的任务汇报记录不是空的，将查询到的结果根据分页的要求，封装进入所要返回前端的list集合内
                     if (!taskReportVos.isEmpty()) {
-                       if (cur!=1&&size!=Integer.MAX_VALUE){
+                       if (cur!=1||(size!=10&&cur!=1)){
                             int beginIndex = (cur - 1) * size;
                             int endIndex = cur * size - 1;
                             List<TaskReportVo> taskInfoVoPage;
                             if (beginIndex > taskReportVos.size() - 1){
                                 taskInfoVoPage = null;
+                                return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
 //                            successT.addAll(taskInfoVoPage);
                             }else if(endIndex > taskReportVos.size() - 1){
                                 taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
@@ -366,11 +367,12 @@ import java.util.Objects;
                 }else {
                     //将查询到的任务按照分页要求进行分页
                     List<TaskReportVo> taskInfoVoPage;
-                    if (cur!=1&&size!=Integer.MAX_VALUE){
+                    if (cur!=1||(size!=10&&cur!=1)){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
                             if (!taskInfoVoPage.isEmpty()){
@@ -416,11 +418,12 @@ import java.util.Objects;
                     return Result.error(HttpStatus.NO_CONTENT,"该任务暂时还没有汇报记录");
                 }else {
                     List<TaskReportVo> taskInfoVoPage;
-                    if (cur!=1&&size!=Integer.MAX_VALUE){
+                    if (cur!=1||(size!=10&&cur!=1)){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
                             if (!taskInfoVoPage.isEmpty()){
@@ -466,11 +469,12 @@ import java.util.Objects;
                         SuccessTaskReportVos.addAll(taskReportVos);
                     }
                     List<TaskReportVo> taskInfoVoPage;
-                    if (cur!=1&&size!=Integer.MAX_VALUE){
+                    if (cur!=1||(size!=10&&cur!=1)){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > SuccessTaskReportVos.size() - 1){
                             taskInfoVoPage = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > SuccessTaskReportVos.size() - 1){
                             taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,SuccessTaskReportVos.size());
                             if (!taskInfoVoPage.isEmpty()){
@@ -574,13 +578,13 @@ import java.util.Objects;
      */
     private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response) throws Exception {
         List<NeedReportUser> needReportUsers = new ArrayList<>();
-        Page pagee=null;
+        Page pagee=new Page();
         //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
         Integer taskid =null;
         int cur = request.getParameter("cur") != null ? Integer.parseInt(request.getParameter("cur")) : 1;
-        int size = request.getParameter("size") != null ? Integer.parseInt(request.getParameter("size")) : Integer.MAX_VALUE;
+        int size = request.getParameter("size") != null ? Integer.parseInt(request.getParameter("size")) :10;
 
         if (roleId == 3 ){
             return Result.error(HttpStatus.PermissionNotAllowed,"普通用户不能查看所有需要汇报的用户");
@@ -605,12 +609,13 @@ import java.util.Objects;
                 for (TaskInfoVo taskInfoVo:taskInfoVos){
                      needReportUsers = taskReportService.queryAllUserForReport(taskInfoVo.getId());
                     if (!needReportUsers.isEmpty()) {
-                        if (cur!=1&&size!=Integer.MAX_VALUE){
+                        if (cur!=1||(size!=10&&cur!=1)){
                             int beginIndex = (cur - 1) * size;
                             int endIndex = cur * size - 1;
                             List<NeedReportUser> Page;
                             if (beginIndex > needReportUsers.size() - 1){
                                 Page = null;
+                                return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
 //                            successN.addAll(Page);
                             }else if(endIndex > needReportUsers.size() - 1){
                                 Page = needReportUsers.subList(beginIndex,needReportUsers.size());
@@ -657,11 +662,12 @@ import java.util.Objects;
                     return Result.error(HttpStatus.NoDataFromDatabase,"该任务没有汇报的用户");
                 }else {
                     List<NeedReportUser> Page=new ArrayList<>();
-                    if (cur!=1&&size!=Integer.MAX_VALUE){
+                    if (cur!=1||(size!=10&&cur!=1)){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > needReportUsers.size() - 1){
                             Page = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > needReportUsers.size() - 1){
                             Page = needReportUsers.subList(beginIndex,needReportUsers.size());
                             if (!Page.isEmpty()){
@@ -702,11 +708,12 @@ import java.util.Objects;
                     return Result.error(HttpStatus.NoDataFromDatabase,"该任务没有汇报的用户");
                 }else {
                     List<NeedReportUser> Page=new ArrayList<>();
-                    if (cur!=1&&size!=Integer.MAX_VALUE){
+                    if (cur!=1||(size!=10&&cur!=1)){
                         int beginIndex = (cur - 1) * size;
                         int endIndex = cur * size - 1;
                         if (beginIndex > needReportUsers.size() - 1){
                             Page = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > needReportUsers.size() - 1){
                             Page = needReportUsers.subList(beginIndex,needReportUsers.size());
                             if (!Page.isEmpty()){
@@ -744,12 +751,13 @@ import java.util.Objects;
                     for (Task i:taskids){
                          needReportUsers = taskReportService.queryAllUserForReport(i.getTaskId());
                         if (!needReportUsers.isEmpty()) {
-                            if (cur!=1&&size!=Integer.MAX_VALUE){
+                            if (cur!=1||(size!=10&&cur!=1)){
                                 int beginIndex = (cur - 1) * size;
                                 int endIndex = cur * size - 1;
                                 List<NeedReportUser> Page;
                                 if (beginIndex > needReportUsers.size() - 1){
                                     Page = null;
+                                    return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
 //                                successN.addAll(Page);
                                 }else if(endIndex > needReportUsers.size() - 1){
                                     Page = needReportUsers.subList(beginIndex,needReportUsers.size());
