@@ -18,6 +18,7 @@ import tyut.selab.taskservice.myutils.WebUtil;
 import tyut.selab.taskservice.service.TaskInfoService;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
 import tyut.selab.taskservice.view.TaskInfoVo;
+import tyut.selab.utils.Page;
 import tyut.selab.utils.Result;
 
 
@@ -150,6 +151,9 @@ public class TaskController extends HttpServlet {
        int size = Integer.parseInt(size1);
 
        List<TaskInfoVo> taskInfoVoPage = null;
+       //创建page对象
+       Page page = new Page();
+       int total;
 
        if (publisherName == null){
            //查询所有
@@ -166,12 +170,6 @@ public class TaskController extends HttpServlet {
                    }
                }
            }
-           //
-           //
-           //
-           //
-//           List<TaskInfoVo> taskInfoVos = taskInfoVosOrigin;
-
            //判断前端查询的页面是否存在，如果不存在，返回空集合
            int beginIndex = (cur - 1) * size;
            int endIndex = cur * size - 1;
@@ -185,7 +183,11 @@ public class TaskController extends HttpServlet {
                //该页面的数据满足size个
                taskInfoVoPage = taskInfoVos.subList(beginIndex,endIndex+1);
            }
-
+           if (cur == 1) {
+               total = taskInfoVos.size();
+               page.setTotal(total);
+           }
+           page.setData(taskInfoVoPage);
        }else{
            //所查询的管理员发布的任务信息
            List<TaskInfoVo> taskInfoVosOrigin = taskInfoService.queryTaskInfoBypublish(publisherName);
@@ -221,9 +223,14 @@ public class TaskController extends HttpServlet {
                //该页面的数据满足size个
                taskInfoVoPage = taskInfoVos.subList(beginIndex,endIndex+1);
            }
+           if (cur == 1) {
+               total = taskInfoVos.size();
+               page.setTotal(total);
+           }
+           page.setData(taskInfoVoPage);
        }
        //查询后进行分页
-       return Result.success(taskInfoVoPage,"请求成功");
+       return Result.success(page,"请求成功");
    }
 
     /**
@@ -451,12 +458,12 @@ public class TaskController extends HttpServlet {
      * user 中的 roleId   1 标识超级管理员，返回 2 标识管理员，返回 3 表示普通用户
      */
     private UserLocal getUserMessage() {
-        UserLocal user = SecurityUtil.getUser();
-//        UserLocal user = new UserLocal();
-//        user.setUserName("zhangsan");
-//        user.setRoleId(1);
-//        user.setUserId(1);
-//        user.setGroupId(1);
+//        UserLocal user = SecurityUtil.getUser();
+        UserLocal user = new UserLocal();
+        user.setUserName("zhangsan");
+        user.setRoleId(1);
+        user.setUserId(1);
+        user.setGroupId(1);
         return user;
     }
 
