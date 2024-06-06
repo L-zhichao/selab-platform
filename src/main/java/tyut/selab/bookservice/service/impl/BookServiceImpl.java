@@ -34,12 +34,25 @@ public class BookServiceImpl implements BookService {
     @Override
     public Integer updateBook(BookVo bookVo)  {
         BookInfo bookInfo = bookVoToBookInfo(bookVo);
-        return bookDao.update(bookInfo);
+        Integer bookId = bookInfo.getBookId();
+        BookInfo book = bookDao.selectByBookIdBookInfo(bookId);
+        if(book == null){
+            return -1;
+        }else{
+            return bookDao.update(bookInfo);
+        }
     }
 
     @Override
     public Integer deleteBook(Integer bookId) {
-        return bookDao.delete(bookId);
+        BookInfo bookInfo = bookDao.selectByBookIdBookInfo(bookId);
+        Integer status = bookInfo.getStatus();
+        if (status == 0 || status == 2){
+            return bookDao.delete(bookId);
+        }
+        else{
+            return null;
+        }
     }
 
     @Override
@@ -78,7 +91,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public PageUtil<BookVo> selectBookByBookName(Integer cur, Integer size, String bookName) {
-        PageUtil<BookVo> page = new PageUtil<>();
+        PageUtil<BookVo> page = new PageUtil<BookVo>();
         page.setSize(size);
         page.setCur(cur);
         // 记录查阅总条数total
@@ -180,6 +193,7 @@ public class BookServiceImpl implements BookService {
         bookInfo.setRemark(bookDto.getRemark());
         bookInfo.setBookRef(bookDto.getBookRef());
         bookInfo.setStatus(0);
+        bookInfo.setDelFlag(0);
         Date nowdate = new Date();
         bookInfo.setCreateTime(nowdate);
         bookInfo.setUpdateTime(nowdate);
