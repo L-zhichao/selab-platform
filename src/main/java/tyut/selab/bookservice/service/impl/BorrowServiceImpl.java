@@ -115,6 +115,10 @@ public class BorrowServiceImpl implements BorrowService {
         }
 
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllByUserId(userId, cur, size);
+        if(borrowBooks == null){
+            borrowBookVoPageUtil.setData(null);
+            return borrowBookVoPageUtil;
+        }
         for(BorrowBook book : borrowBooks){
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             books.add(borrowBookVo);
@@ -140,6 +144,10 @@ public class BorrowServiceImpl implements BorrowService {
         }
 
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllByBookId(bookId,cur,size);
+        if(borrowBooks == null){
+            borrowBookVoPageUtil.setData(null);
+            return borrowBookVoPageUtil;
+        }
         for(BorrowBook book : borrowBooks){
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             books.add(borrowBookVo);
@@ -165,6 +173,11 @@ public class BorrowServiceImpl implements BorrowService {
 
 
         List<BorrowBook> borrowBooks = borrowBookDao.selectAll(cur, size);
+
+        if (borrowBooks == null){
+            borrowBookVoPageUtil.setData(null);
+            return borrowBookVoPageUtil;
+        }
         for(BorrowBook book : borrowBooks){
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             books.add(borrowBookVo);
@@ -189,6 +202,12 @@ public class BorrowServiceImpl implements BorrowService {
         }
 
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllForNoReturn(cur,size);
+
+        if (borrowBooks == null){
+            borrowBookVoPageUtil.setData(null);
+            return borrowBookVoPageUtil;
+        }
+
         for(BorrowBook book : borrowBooks){
             BorrowBookVo borrowBookVo = borrowBookToVo(book);
             list.add(borrowBookVo);
@@ -201,6 +220,9 @@ public class BorrowServiceImpl implements BorrowService {
     @Override
     public BorrowBookVo selectByBorrowId(Integer borrowId){
         BorrowBook borrowBook = borrowBookDao.selectByBorrowIdBorrowBook(borrowId);
+        if (borrowBook == null){
+            return null;
+        }
         BorrowBookVo borrowBookVo = borrowBookToVo(borrowBook);
         return borrowBookVo;
     }
