@@ -265,7 +265,7 @@ import java.util.Objects;
      */
     private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
         List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
-        int totle;
+        int totle=0;
         Page pagee=new Page();
         Integer taskid = null;
         int cur = request.getParameter("cur") != null ? Integer.parseInt(request.getParameter("cur")) : 1;
@@ -306,6 +306,7 @@ import java.util.Objects;
                     //如果本次循环中的任务汇报记录不是空的，将查询到的结果根据分页的要求，封装进入所要返回前端的list集合内
                     if (!taskReportVos.isEmpty()) {
 //                       if (cur!=1||(size!=10&&cur!=1)){
+                        totle+=taskReportVos.size();
                             int beginIndex = (cur - 1) * size;
                             int endIndex = cur * size - 1;
                             List<TaskReportVo> taskInfoVoPage;
@@ -335,10 +336,10 @@ import java.util.Objects;
 //
 //                        }
                     }
+
                 }//循环结束，判断所要返回给前端的内容中是否有内容
                 //？？？ 如果没有内容的话，是否直接返回空的集合，而不用返回错误代码？？
                 if (cur == 1) {
-                    totle=successT.size();
                     pagee.setTotal(totle);
                 }
                 if (successT.isEmpty()){
@@ -397,7 +398,7 @@ import java.util.Objects;
 //                        }
 //                    }
                     if (cur == 1) {
-                        totle=taskInfoVoPage.size();
+                        totle=taskReportVos.size();
                         pagee.setTotal(totle);
                     }
 //                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
@@ -452,7 +453,7 @@ import java.util.Objects;
 //                        }
 //                    }
                         if (cur == 1) {
-                            totle=taskInfoVoPage.size();
+                            totle=taskReportVos.size();
                             pagee.setTotal(totle);
                         }
 //                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
@@ -508,7 +509,7 @@ import java.util.Objects;
 //                        }
 //                    }
                         if (cur == 1) {
-                            totle=taskInfoVoPage.size();
+                            totle=SuccessTaskReportVos.size();
                             pagee.setTotal(totle);
                         }
 //                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
@@ -597,7 +598,7 @@ import java.util.Objects;
     private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response) throws Exception {
         List<NeedReportUser> needReportUsers = new ArrayList<>();
         Page pagee=new Page();
-        int totle;
+        int totle=0;
         //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
@@ -628,6 +629,7 @@ import java.util.Objects;
                 for (TaskInfoVo taskInfoVo:taskInfoVos){
                      needReportUsers = taskReportService.queryAllUserForReport(taskInfoVo.getId());
                     if (!needReportUsers.isEmpty()) {
+                        totle+=needReportUsers.size();
 //                        if (cur!=1||(size!=10&&cur!=1)){
                             int beginIndex = (cur - 1) * size;
                             int endIndex = cur * size - 1;
@@ -660,7 +662,6 @@ import java.util.Objects;
                     }
                 }
                 if (cur == 1) {
-                    totle=successN.size();
                     pagee.setTotal(totle);
                 }
                 if (successN.isEmpty()){
@@ -704,7 +705,7 @@ import java.util.Objects;
                             }
                         }
                     if (cur == 1) {
-                        totle=Page.size();
+                        totle=needReportUsers.size();
                         pagee.setTotal(totle);
                     }
 //                    }else {
@@ -753,7 +754,7 @@ import java.util.Objects;
                             }
                         }
                     if (cur == 1) {
-                        totle=Page.size();
+                        totle=needReportUsers.size();
                         pagee.setTotal(totle);
                     }
 //                    }else {
@@ -782,6 +783,7 @@ import java.util.Objects;
                     for (Task i:taskids){
                          needReportUsers = taskReportService.queryAllUserForReport(i.getTaskId());
                         if (!needReportUsers.isEmpty()) {
+                            totle+=needReportUsers.size();
                                 int beginIndex = (cur - 1) * size;
                                 int endIndex = cur * size - 1;
                                 List<NeedReportUser> Page;
@@ -812,7 +814,6 @@ import java.util.Objects;
                         }
                     }
                     if (cur == 1) {
-                         totle=successN.size();
                         pagee.setTotal(totle);
                     }
                     if (successN.isEmpty()){
@@ -835,9 +836,9 @@ import java.util.Objects;
      */
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
         UserLocal user = SecurityUtil.getUser();
-//        UserLocal user = new UserLocal();
+//       UserLocal user = new UserLocal();
 //        user.setUserName("JohnDoe");
-//        user.setRoleId(1);
+//       user.setRoleId(1);
 //        user.setUserId(1);
         return user;
     }
