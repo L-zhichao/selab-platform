@@ -468,12 +468,12 @@ import java.util.Objects;
         Integer roleId = userMessage.getRoleId();
         Integer reportid=null;
         //读取参数
-        String reportidStr = request.getParameter("reportId");
-        if (reportidStr == null) {
+        String reportIdStr = request.getParameter("reportId");
+        if (reportIdStr == null) {
             return Result.error(HttpStatus.IncomingDataError,"没用传入必要参数");
         } else {
             try {
-                 reportid = Integer.parseInt(reportidStr);
+                 reportid = Integer.parseInt(reportIdStr);
             } catch (NumberFormatException e) {
                 return Result.error(HttpStatus.IncomingDataError,"参数非法");
             }
@@ -627,8 +627,8 @@ import java.util.Objects;
                     return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
-            if (request.getParameter("taskid")!=null){
-                taskid = Integer.parseInt(request.getParameter("taskid"));
+            if (request.getParameter("taskId")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskId"));
             }
             //超级管理员能查看所有发布的需要汇报的用户信息
            //超级管理员也可以输入id
