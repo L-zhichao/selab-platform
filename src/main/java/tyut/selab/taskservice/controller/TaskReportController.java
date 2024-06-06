@@ -833,11 +833,11 @@ import java.util.Objects;
      *  user 中的 roleId   1 标识超级管理员，返回 2 标识管理员，返回 3 表示普通用户
      */
     private UserLocal getUserMessage(HttpServletRequest request,HttpServletResponse response){
-//        UserLocal user = SecurityUtil.getUser();
-        UserLocal user = new UserLocal();
-        user.setUserName("JohnDoe");
-        user.setRoleId(1);
-        user.setUserId(1);
+        UserLocal user = SecurityUtil.getUser();
+//        UserLocal user = new UserLocal();
+//        user.setUserName("JohnDoe");
+//        user.setRoleId(1);
+//        user.setUserId(1);
         return user;
     }
     protected void findMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
