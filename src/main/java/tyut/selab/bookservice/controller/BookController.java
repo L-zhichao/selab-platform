@@ -348,6 +348,9 @@ public class BookController extends HttpServlet {
             if (i > 0) {
                 return Result.success(null);
             }
+            else if(i == -1){
+                return Result.error(500006,"图书处于借阅状态，不可删除");
+            }
             else{
                 return Result.error(500009,"图书信息删除失败");
             }

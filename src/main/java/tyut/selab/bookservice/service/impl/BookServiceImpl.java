@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
             return bookDao.delete(bookId);
         }
         else{
-            return null;
+            return -1;
         }
     }
 
