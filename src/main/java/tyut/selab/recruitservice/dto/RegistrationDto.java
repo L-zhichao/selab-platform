@@ -6,9 +6,13 @@ import java.util.Objects;
 public class RegistrationDto {
 
     /**
-     * 邮箱地址
+     * 面试者
      */
     private String interviewees;
+
+    /**
+     * 邮箱地址
+     */
     private String email;
     /**
      * 联系方式

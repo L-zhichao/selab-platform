@@ -2,6 +2,7 @@ package tyut.selab.recruitservice.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.mysql.cj.protocol.a.BooleanValueEncoder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,9 +16,11 @@ import tyut.selab.utils.Result;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.List;
 import tyut.selab.utils.PageUtil;
 
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 import javax.xml.transform.Templates;
 
 @WebServlet("/registration/*")
@@ -101,6 +104,22 @@ public class RegistrationController extends HttpServlet {
         String requestBody = toJdbc(request);
         System.out.println(requestBody);
         RegistrationDto registrationDto = JSONObject.parseObject(requestBody,RegistrationDto.class);
+        if(registrationDto == null){
+            Result<RegistrationDto> result = new Result<>(500005,registrationDto);
+            result.setMsg("registrationDto不能为空");
+            return result;
+        }
+        int row = dtoIsNull(registrationDto);
+        if(row == 9){
+            Result<RegistrationDto> result = new Result<>(500003,registrationDto);
+            result.setMsg("你的数据没有成功传入");
+            return result;
+        }
+        if(row > 0){
+            Result<RegistrationDto> result = new Result<>(200,registrationDto);
+            result.setMsg("你有部分数据未传入");
+            return result;
+        }
         System.out.println(registrationDto);
        try{RegistrationService.insertRegistration(registrationDto);
            Result<RegistrationDto> result = new Result<>(200,registrationDto);
@@ -114,6 +133,52 @@ public class RegistrationController extends HttpServlet {
        }
     }
 
+    /**
+     * 判断RegistrationDto中是否有空值，并修改
+     * 返回为空的数量
+     * @param registrationDto
+     * @return
+     */
+    private static int dtoIsNull(RegistrationDto registrationDto){
+        int row = 0;
+        if (registrationDto.getIntentDepartment() == null){
+            registrationDto.setIntentDepartment(0);
+            row++;
+        }
+        if (registrationDto.getInterviewTime() == null){
+            registrationDto.setInterviewTime(new Date());
+            row++;
+        }
+        if (registrationDto.getClassroom() == null){
+            registrationDto.setClassroom("0");
+            row++;
+        }
+        if (registrationDto.getEmail() == null){
+            registrationDto.setEmail("0");
+            row++;
+        }
+        if (registrationDto.getPhone() == null){
+            registrationDto.setPhone("0");
+            row++;
+        }
+        if (registrationDto.getIntroduce() == null){
+            registrationDto.setIntroduce("0");
+            row++;
+        }
+        if (registrationDto.getPurpose() == null){
+            registrationDto.setPurpose("0");
+            row++;
+        }
+        if (registrationDto.getRemark() == null){
+            registrationDto.setRemark("0");
+            row++;
+        }
+        if (registrationDto.getGrade() == null){
+            registrationDto.setGrade(0);
+            row++;
+        }
+        return row;
+    }
     /**
      *   修改报名表信息(管理员操作)
      * param: registrationVo
@@ -129,6 +194,22 @@ public class RegistrationController extends HttpServlet {
         String requestBody = toJdbc(request);
         System.out.println(JSON.parseObject(requestBody,RegistrationVo.class));
         RegistrationVo registrationVo = JSON.parseObject(requestBody,RegistrationVo.class);
+        if(registrationVo == null){
+            Result<RegistrationVo> result = new Result<>(500005,registrationVo);
+            result.setMsg("registrationVo不能为空");
+            return result;
+        }
+        int row = voIsNull(registrationVo);
+        if(row == 10){
+            Result<RegistrationVo> result = new Result<>(500003,registrationVo);
+            result.setMsg("你的数据没有成功传入");
+            return result;
+        }
+        if(row > 0){
+            Result<RegistrationVo> result = new Result<>(200,registrationVo);
+            result.setMsg("你有部分数据未传入");
+            return result;
+        }
         try{RegistrationService.updateRegistration(registrationVo);
             Result<RegistrationVo> result = new Result<>(200,registrationVo);
             result.setMsg("成功");
@@ -140,6 +221,56 @@ public class RegistrationController extends HttpServlet {
         }
     }
 
+    /**
+     * 判读registrationVo中的值是否为空，并修改
+     * 返回为空行数
+     * @param registrationVo
+     * @return
+     */
+    private static int voIsNull(RegistrationVo registrationVo){
+        int row = 0;
+        if(registrationVo.getId() == null){
+            row++;
+            registrationVo.setId(1);
+        }
+        if(registrationVo.getEmail() == null){
+            row++;
+            registrationVo.setEmail("0");
+        }
+        if(registrationVo.getPhone() == null){
+            row++;
+            registrationVo.setPhone("0");
+        }
+        if(registrationVo.getIntentDepartment() == null){
+            row++;
+            registrationVo.setIntentDepartment(0);
+        }
+        if(registrationVo.getClassroom() == null){
+            row++;
+            registrationVo.setClassroom("0");
+        }
+        if(registrationVo.getInterviewTime() == null){
+            row++;
+            registrationVo.setInterviewTime(new Date());
+        }
+        if(registrationVo.getIntroduce() == null){
+            row++;
+            registrationVo.setIntroduce("0");
+        }
+        if(registrationVo.getPurpose() == null){
+            row++;
+            registrationVo.setPurpose("0");
+        }
+        if(registrationVo.getRemark() == null){
+            row++;
+            registrationVo.setRemark("0");
+        }
+        if(registrationVo.getGrade() == null){
+            row++;
+            registrationVo.setGrade(0);
+        }
+        return row;
+    }
 
     /**
      *  分页查询所有报名表
@@ -153,12 +284,23 @@ public class RegistrationController extends HttpServlet {
 //            objectResult.setMsg("权限不足");
 //            return objectResult;
 //        }
-        Integer cur = Integer.valueOf(request.getParameter("cur"));
-        Integer size = Integer.valueOf(request.getParameter("size"));
+
+        String cur = request.getParameter("cur");
+        String size = request.getParameter("size");
+        if(cur == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("cur不能为null");
+            return objectResult;
+        }
+        if(size == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("cur不能为null");
+            return objectResult;
+        }
         // 在第一次查询的时候返回total数据说明数据量大小
         PageUtil<RegistrationVo> registrationVos = null;
         try {
-            registrationVos = RegistrationService.selectList(cur, size);
+            registrationVos = RegistrationService.selectList(Integer.valueOf(cur), Integer.valueOf(size));
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -181,16 +323,22 @@ public class RegistrationController extends HttpServlet {
 //            objectResult.setMsg("权限不足");
 //            return objectResult;
 //        }
-        Integer registrationId = Integer.parseInt(request.getParameter("registrationId"));
+        String registrationId = request.getParameter("registrationId");
+        if(registrationId == null){
+            Result<RegistrationVo> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("registrationId不能为null");
+            return objectResult;
+        }
+
         // id为非自然数 或不是数字
-        if(registrationId < 1||!isNumer(String.valueOf(registrationId))){
+        if(Integer.parseInt(registrationId) < 1 || !isNumer(registrationId)){
             Result<RegistrationVo> objectResult = new Result<>(500004, null);
             objectResult.setMsg("输入数据违法或不规范");
             return objectResult;
         }
         RegistrationVo rev = null;
         try {
-            rev = RegistrationService.selectRegistrationById(registrationId);
+            rev = RegistrationService.selectRegistrationById(Integer.parseInt(registrationId));
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -216,16 +364,31 @@ public class RegistrationController extends HttpServlet {
 //            return objectResult;
 //        }
         String intervieweesName = request.getParameter("intervieweesName");
+        if(intervieweesName == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("intervieweesName不能为null");
+            return objectResult;
+        }
         if(!isChineseString(intervieweesName)){
             Result<List<RegistrationVo>> objectResult = new Result<>(500004, null);
             objectResult.setMsg("输入数据违法或不规范");
             return objectResult;
         }
-        Integer cur = Integer.valueOf(request.getParameter("cur"));
-        Integer size = Integer.valueOf(request.getParameter("size"));
+        String cur = request.getParameter("cur");
+        String size = request.getParameter("size");
+        if(cur == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("cur不能为null");
+            return objectResult;
+        }
+        if(size == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("size不能为null");
+            return objectResult;
+        }
         PageUtil<RegistrationVo> registrationVos = null;
         try {
-            registrationVos = RegistrationService.selectByIntervieweesName(cur, size, intervieweesName);
+            registrationVos = RegistrationService.selectByIntervieweesName(Integer.valueOf(cur), Integer.valueOf(size), intervieweesName);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -250,17 +413,32 @@ public class RegistrationController extends HttpServlet {
 //            return objectResult;
 //        }
         String intentDepartment = request.getParameter("intentDepartment");
+        if(intentDepartment == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("intentDepartment不能为null");
+            return objectResult;
+        }
         if(Integer.parseInt(intentDepartment) != 1 && Integer.parseInt(intentDepartment) != 2
                 && Integer.parseInt(intentDepartment) != 3 && Integer.parseInt(intentDepartment) != 4){
             Result<List<RegistrationVo>> objectResult = new Result<>(500004, null);
             objectResult.setMsg("输入数据违法或不规范");
             return objectResult;
         }
-        Integer cur = Integer.valueOf(request.getParameter("cur"));
-        Integer size = Integer.valueOf(request.getParameter("size"));
+        String cur = request.getParameter("cur");
+        String size = request.getParameter("size");
+        if(cur == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("cur不能为null");
+            return objectResult;
+        }
+        if(size == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("size不能为null");
+            return objectResult;
+        }
         PageUtil<RegistrationVo> registrationVos = null;
         try {
-            registrationVos = RegistrationService.selectByIntentDepartment(Integer.valueOf(intentDepartment),cur, size);
+            registrationVos = RegistrationService.selectByIntentDepartment(Integer.valueOf(intentDepartment),Integer.valueOf(cur), Integer.valueOf(size));
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -284,17 +462,32 @@ public class RegistrationController extends HttpServlet {
 //            return objectResult;
 //        }
         String grade = request.getParameter("grade");
+        if(grade == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("grade不能为null");
+            return objectResult;
+        }
         //输入的数据必须等于1，2，3，4
         if(Integer.parseInt(grade) != 1 && Integer.parseInt(grade) != 2 && Integer.parseInt(grade) != 3 && Integer.parseInt(grade) != 4){
             Result<List<RegistrationVo>> objectResult = new Result<>(500004, null);
             objectResult.setMsg("输入数据违法或不规范");
             return objectResult;
         }
-        Integer cur = Integer.valueOf(request.getParameter("cur"));
-        Integer size = Integer.valueOf(request.getParameter("size"));
+        String cur = request.getParameter("cur");
+        String size = request.getParameter("size");
+        if(cur == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("cur不能为null");
+            return objectResult;
+        }
+        if(size == null){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("size不能为null");
+            return objectResult;
+        }
         PageUtil<RegistrationVo> registrationVos = null;
         try {
-            registrationVos = RegistrationService.selectByGradeId(Integer.valueOf(grade),cur, size);
+            registrationVos = RegistrationService.selectByGradeId(Integer.valueOf(grade),Integer.valueOf(cur), Integer.valueOf(size));
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -348,5 +541,6 @@ public class RegistrationController extends HttpServlet {
         String newStr = str.replaceAll("[\\pP\\p{Punct}\\s]+", "");
         return newStr.matches(regex);
     }
+
 
 }

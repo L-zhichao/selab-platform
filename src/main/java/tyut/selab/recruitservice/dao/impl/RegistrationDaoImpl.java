@@ -134,20 +134,21 @@ public class RegistrationDaoImpl implements RegistrationDao {
 //            System.out.println(rows);
 //            JDBCTools.free(connection);
         String sql = """
-                INSERT INTO
+                update
                 selab_platform.registration_form
-                (interview_id,
-                email,
-                phone,
-                intent_department,
-                grade,
-                classroom,
-                interview_time,
-                introduce,
-                purpose,
-                remark,
-                update_time)
-                VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                set
+                 interview_id = ?,
+                 email = ?,
+                 phone = ?,
+                 intent_department = ?,
+                 grade = ?,
+                 classroom = ?,
+                 interview_time = ?,
+                 introduce = ?,
+                 purpose = ?,
+                 remark = ?,
+                 update_time = ?
+             where id = ?
                 """;
         SimpleDateFormat s1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date1 = s1.format(registrationForm.getInterviewTime());
@@ -163,7 +164,8 @@ public class RegistrationDaoImpl implements RegistrationDao {
                 registrationForm.getIntroduce(),
                 registrationForm.getPurpose(),
                 registrationForm.getRemark(),
-                new Date()
+                new Date(),
+                registrationForm.getId()
         );
         return rows;
     }

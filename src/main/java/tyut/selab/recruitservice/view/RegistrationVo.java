@@ -34,7 +34,7 @@ public class RegistrationVo {
     /**
      * 所属年级
      */
-    private int grade;
+    private Integer grade;
     /**
      *面试时间
      */
@@ -132,11 +132,11 @@ public class RegistrationVo {
         this.classroom = classroom;
     }
 
-    public int getGrade() {
+    public Integer getGrade() {
         return grade;
     }
 
-    public void setGrade(int grade) {
+    public void setGrade(Integer grade) {
         this.grade = grade;
     }
 

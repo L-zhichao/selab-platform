@@ -126,9 +126,10 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public RegistrationVo queryMyRecruit(Integer userId) throws QueryMyException {
-        if (registrationDao.selectByRegistrationId(userId).getIntervieweesId() == null) {
+        RegistrationForm registrationForm = registrationDao.selectByRegistrationId(userId);
+        if(registrationForm == null || registrationForm.getIntervieweesId() == null){
             throw new QueryMyException();
-        } else {
+        }else {
                 RegistrationVo registrationVo = toVo(registrationDao.selectByRegistrationId(userId));
                 return registrationVo;
           }
