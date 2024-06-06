@@ -273,7 +273,7 @@ public class TaskController extends HttpServlet {
       Date dealTime = taskInfoDto.getDealTime();
       Date date = new Date();
       if (date.getTime() > dealTime.getTime() || taskInfoDto.getContent() == null || taskInfoDto.getName() == null || taskInfoDto.getGroupIds().isEmpty()){
-          return Result.error(HttpStatus.IncomingDataError,"数据不合理");
+          return Result.error(HttpStatus.IncomingDataError,"截止时间不合理");
       }
 
       //无论更新者是谁，都设置为当前请求者的id
