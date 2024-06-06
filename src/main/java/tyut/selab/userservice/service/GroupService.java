@@ -6,6 +6,7 @@ import tyut.selab.userservice.vo.GroupVo;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface GroupService {
@@ -28,4 +29,9 @@ public interface GroupService {
      * @return
      */
     public Integer update(GroupVo groupVo);
+
+    /**
+     *  查询全部部门id
+     */
+    public List<Integer> selectAllGroupId();
 }

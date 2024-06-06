@@ -14,7 +14,6 @@ import java.util.List;
 public class GroupDaoImpl implements GroupDao {
 
 
-
     @Override
     public Integer insert(Group group) {
 
@@ -110,18 +109,36 @@ public class GroupDaoImpl implements GroupDao {
             Connection conn = JDBCUtils.getConnection();
             String sql = "update sys_group set group_name = ?,create_time = ? ,update_time = ? where group_id = ?;";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1,group.getGroupName());
+            preparedStatement.setString(1, group.getGroupName());
             //时间类型转换
             java.sql.Date createTime = new java.sql.Date(group.getCreateTime().getTime());
             preparedStatement.setDate(2, createTime);
             java.util.Date date = new java.util.Date();
             preparedStatement.setDate(3, new java.sql.Date(date.getTime()));
-            preparedStatement.setInt(4,group.getGroupId());
+            preparedStatement.setInt(4, group.getGroupId());
             int i = preparedStatement.executeUpdate();
             JDBCUtils.closeResource(conn, preparedStatement);
             return i;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public List<Integer> selectAllGroupId() {
+        List<Integer> groupIds = new ArrayList<>();
+        try {
+            Connection conn = JDBCUtils.getConnection();
+            String sql = "SELECT group_id FROM sys_group";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                groupIds.add(resultSet.getInt("group_id"));
+
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return groupIds;
     }
 }

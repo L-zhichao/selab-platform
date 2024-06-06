@@ -62,7 +62,7 @@ public class GroupServiceImpl implements GroupService {
             Integer groupId = group.getGroupId();
             String groupName = group.getGroupName();
             Date createTime = group.getCreateTime();
-            List<UserVo> userVos = userService.selectByGroupId(groupId);
+            List<UserVo> userVos = userService.selectByGroupId(groupId,1,5);
             groupVo.setGroupId(groupId);
             groupVo.setGroupName(groupName);
             groupVo.setCreateTime(createTime);
@@ -90,6 +90,11 @@ public class GroupServiceImpl implements GroupService {
 //
 //        }
 //        return 0;
+    }
+
+    @Override
+    public List<Integer> selectAllGroupId() {
+        return groupDao.selectAllGroupId();
     }
 
 

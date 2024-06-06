@@ -19,7 +19,7 @@ public class UserDaoImpl implements UserDao {
     //完成
     @Override
     public Integer insertUser(User user) {
-        System.out.println("doInsertUserDao");
+
         Connection conn = null;
         PreparedStatement pstmtInsert = null;
         PreparedStatement pstmtSelect = null;
@@ -254,7 +254,7 @@ public class UserDaoImpl implements UserDao {
      * @return
      */
     @Override
-    public List<User> selectAll(){
+    public List<User> selectAll(Integer cur,Integer size){
         Connection conn = null;
         PreparedStatement pstmt = null;
         Long userId = null;
@@ -264,8 +264,10 @@ public class UserDaoImpl implements UserDao {
         try {
             conn = JDBCUtils.getConnection();
             String sql = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ," +
-                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user ";
+                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user limit ?,?";
             pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1,(cur - 1) * size);
+            pstmt.setInt(2,size);
             ResultSet resultSet = pstmt.executeQuery();
             while (resultSet.next()) {
                 User user = new User();
@@ -326,7 +328,7 @@ public class UserDaoImpl implements UserDao {
      * @return
      */
     @Override
-    public List<User> selectByGroupIdUsers(Integer groupId) {
+    public List<User> selectByGroupIdUsers(Integer groupId,Integer cur,Integer size) {
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -335,9 +337,11 @@ public class UserDaoImpl implements UserDao {
 
         try {
             conn = JDBCUtils.getConnection();
-            String sql2 = "select user_id as userId from user_group where group_id = ?";
+            String sql2 = "select user_id as userId from user_group where group_id = ? limit ?,?";
             pstmt = conn.prepareStatement(sql2);
             pstmt.setInt(1,groupId);
+            pstmt.setInt(2,(cur - 1) * size);
+            pstmt.setInt(3,size);
             ResultSet userIds = pstmt.executeQuery();
             while (userIds.next()){
                 Long user = userIds.getLong("userId");

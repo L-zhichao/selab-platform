@@ -70,8 +70,9 @@ public class UserServiceImpl implements UserService {
      */
 
     @Override
-    public List<UserVo> queryAll(){
-        List<User> users = userDao.selectAll();
+    public List<UserVo> queryAll(Integer cur,Integer size){
+
+        List<User> users = userDao.selectAll(cur,size);
         List<UserVo> resultList = new ArrayList<>();
 
         for(User user:users) {
@@ -127,16 +128,17 @@ public class UserServiceImpl implements UserService {
     * @return List<UserVo>
     */
     @Override
-    public List<UserVo> selectByGroupId(Integer groupId) {
+    public List<UserVo> selectByGroupId(Integer groupId,Integer cur,Integer size) {
 
         String groupName = userDao.getGroupName(groupId);
         List<User> userArrayList = new ArrayList<>();
         List<UserVo> userVoList = new ArrayList<>();
-        UserVo userVo = new UserVo();
-        userArrayList = userDao.selectByGroupIdUsers(groupId);
+
+        userArrayList = userDao.selectByGroupIdUsers(groupId,cur,size);
 
 
         for (User user : userArrayList){
+            UserVo userVo = new UserVo();
             Long userid = user.getUserId();
             String username = user.getUserName();
             Integer roleld = user.getRoleId();
@@ -172,6 +174,10 @@ public class UserServiceImpl implements UserService {
         }
         return userVoList;
     }
+
+
+
+
 
 
    /**

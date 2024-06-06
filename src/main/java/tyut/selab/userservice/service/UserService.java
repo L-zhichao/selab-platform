@@ -18,7 +18,7 @@ public interface UserService {
      * @param groupId
      * @return
      */
-    public List<UserVo> selectByGroupId(Integer groupId);
+    public List<UserVo> selectByGroupId(Integer groupId,Integer cur,Integer size);
 
     /**
      *  通过id查询用户信息
@@ -30,7 +30,7 @@ public interface UserService {
     /**
      * 用于获取全部user信息
      */
-    public List<UserVo> queryAll();
+    public List<UserVo> queryAll(Integer cur,Integer size);
 
 
     /**
