@@ -106,7 +106,10 @@ public class HttpStatus {
      * 无数据返回
      */
     public static final int NoDataFromDatabase = 50015;
-
+/*
+请求的范围超出了可用数据的界限
+ */
+    public static final int InvalidRange = 50016;
     /**
      * 系统警告消息
      */

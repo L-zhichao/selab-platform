@@ -310,6 +310,7 @@ import java.util.Objects;
                             List<TaskReportVo> taskInfoVoPage;
                             if (beginIndex > taskReportVos.size() - 1){
                                 taskInfoVoPage = null;
+                                return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
 //                            successT.addAll(taskInfoVoPage);
                             }else if(endIndex > taskReportVos.size() - 1){
                                 taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
@@ -371,6 +372,7 @@ import java.util.Objects;
                         int endIndex = cur * size - 1;
                         if (beginIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
                             if (!taskInfoVoPage.isEmpty()){
@@ -421,6 +423,7 @@ import java.util.Objects;
                         int endIndex = cur * size - 1;
                         if (beginIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
                             if (!taskInfoVoPage.isEmpty()){
@@ -471,6 +474,7 @@ import java.util.Objects;
                         int endIndex = cur * size - 1;
                         if (beginIndex > SuccessTaskReportVos.size() - 1){
                             taskInfoVoPage = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > SuccessTaskReportVos.size() - 1){
                             taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,SuccessTaskReportVos.size());
                             if (!taskInfoVoPage.isEmpty()){
@@ -611,6 +615,7 @@ import java.util.Objects;
                             List<NeedReportUser> Page;
                             if (beginIndex > needReportUsers.size() - 1){
                                 Page = null;
+                                return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
 //                            successN.addAll(Page);
                             }else if(endIndex > needReportUsers.size() - 1){
                                 Page = needReportUsers.subList(beginIndex,needReportUsers.size());
@@ -662,6 +667,7 @@ import java.util.Objects;
                         int endIndex = cur * size - 1;
                         if (beginIndex > needReportUsers.size() - 1){
                             Page = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > needReportUsers.size() - 1){
                             Page = needReportUsers.subList(beginIndex,needReportUsers.size());
                             if (!Page.isEmpty()){
@@ -707,6 +713,7 @@ import java.util.Objects;
                         int endIndex = cur * size - 1;
                         if (beginIndex > needReportUsers.size() - 1){
                             Page = null;
+                            return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
                         }else if(endIndex > needReportUsers.size() - 1){
                             Page = needReportUsers.subList(beginIndex,needReportUsers.size());
                             if (!Page.isEmpty()){
@@ -750,6 +757,7 @@ import java.util.Objects;
                                 List<NeedReportUser> Page;
                                 if (beginIndex > needReportUsers.size() - 1){
                                     Page = null;
+                                    return Result.error(HttpStatus.InvalidRange,"请求的范围超出了可用数据的界限，请检查分页参数是否正确");
 //                                successN.addAll(Page);
                                 }else if(endIndex > needReportUsers.size() - 1){
                                     Page = needReportUsers.subList(beginIndex,needReportUsers.size());
