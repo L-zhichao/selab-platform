@@ -63,6 +63,16 @@ public class BookInfo implements Serializable {
      */
     private String bookRef;
 
+    private Integer delFlag;
+
+    public Integer getDelFlag() {
+        return delFlag;
+    }
+
+    public void setDelFlag(Integer delFlag) {
+        this.delFlag = delFlag;
+    }
+
     private static final long serialVersionUID = 1L;
 
     /**
