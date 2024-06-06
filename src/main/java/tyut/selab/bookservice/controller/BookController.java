@@ -289,19 +289,21 @@ public class BookController extends HttpServlet {
         PageUtil<BookVo> bookVoPageUtil = new PageUtil<BookVo>();
         if(request.getParameter("userId")==null &&request.getParameter("bookName")==null){
             bookVoPageUtil = bookService.selectAllList(cur,size);
-            return Result.success(bookVoPageUtil);
         } else if (request.getParameter("userId")==null &&request.getParameter("bookName")!=null) {
             String bookName = request.getParameter("bookName").toString();
             bookVoPageUtil = bookService.selectBookByBookName(cur,size,bookName);
-            return Result.success(bookVoPageUtil);
         } else if (request.getParameter("userId")!=null &&request.getParameter("bookName")==null) {
             Integer userId = Integer.valueOf(request.getParameter("userId").toString());
             bookVoPageUtil = bookService.selectListByOwnerId(cur,size,userId);
-            return Result.success(bookVoPageUtil);
         } else{
             Integer userId = Integer.valueOf(request.getParameter("userId").toString());
             String bookName = request.getParameter("bookName").toString();
             bookVoPageUtil = bookService.selectList(cur,size,userId,bookName);
+        }
+        // 判断一下是否返回为空
+        if( bookVoPageUtil==null ){
+            return Result.error(500003,"查询信息为空");
+        }else{
             return Result.success(bookVoPageUtil);
         }
     }
