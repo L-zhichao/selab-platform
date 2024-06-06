@@ -35,6 +35,12 @@ public interface GroupDao {
      */
      public Integer update(Group group);
 
+    /**
+     *  查询所有小组id
+     *
+     */
+    public List<Integer> selectAllGroupId();
+
 }
 
 

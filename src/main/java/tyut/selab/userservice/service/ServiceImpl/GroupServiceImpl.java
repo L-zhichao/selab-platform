@@ -92,5 +92,10 @@ public class GroupServiceImpl implements GroupService {
 //        return 0;
     }
 
+    @Override
+    public List<Integer> selectAllGroupId() {
+        return groupDao.selectAllGroupId();
+    }
+
 
 }
