@@ -2,13 +2,11 @@ package tyut.selab.bookservice.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.bookservice.dto.BookDto;
-import tyut.selab.bookservice.dto.BorrowBookDto;
 import tyut.selab.bookservice.exception.ServiceException;
 import tyut.selab.bookservice.service.BookService;
 import tyut.selab.bookservice.service.impl.BookServiceImpl;
@@ -18,7 +16,6 @@ import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.utils.PageUtil;
 import tyut.selab.utils.Result;
 
-import java.awt.print.Book;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -197,9 +194,26 @@ public class BookController extends HttpServlet {
         }
 
         JSONObject jsonObject = tool(request, response);
-        if (!isInteger(jsonObject.get("bookId")) || !isString(jsonObject.get("bookName")) || !isString(jsonObject.get("bookAuthor")) || !isString(jsonObject.get("bookDetails")) || !isDouble(jsonObject.get("price")) || !isInteger(jsonObject.get("owner")) || !isString(jsonObject.get("bookRef"))
-                    || !isInteger(jsonObject.get("status")) || !isString(jsonObject.get("createTime")) || !isString(jsonObject.get("updateTime"))) {
-            return Result.error(500001,"信息输入有误");
+        if (!isInteger(jsonObject.get("bookId"))) {
+            return Result.error(500001, "bookId信息输入有误");
+        } else if (!isString(jsonObject.get("bookName"))) {
+            return Result.error(500001, "bookName信息输入有误");
+        } else if (!isString(jsonObject.get("bookAuthor"))) {
+            return Result.error(500001, "bookAuthor信息输入有误");
+        } else if (!isString(jsonObject.get("bookDetails"))) {
+            return Result.error(500001, "bookDetails信息输入有误");
+        } else if (!isDouble(jsonObject.get("price"))) {
+            return Result.error(500001, "price信息输入有误");
+        } else if (!isInteger(jsonObject.get("owner"))) {
+            return Result.error(500001, "owner信息输入有误");
+        } else if (!isString(jsonObject.get("bookRef"))) {
+            return Result.error(500001, "bookRef信息输入有误");
+        } else if (!isInteger(jsonObject.get("status"))) {
+            return Result.error(500001, "status信息输入有误");
+        } else if (!isString(jsonObject.get("createTime"))) {
+            return Result.error(500001, "createTime信息输入有误");
+        } else if (!isString(jsonObject.get("updateTime"))) {
+            return Result.error(500001, "updateTime信息输入有误");
         }
 
         // 处理JSON对象，从请求体中读取参数
@@ -269,7 +283,7 @@ public class BookController extends HttpServlet {
                 return Result.error(500009, "没有找到该书");
             }
         }
-        return Result.error(500001, "信息输入有误");
+        return Result.error(500001, "bookId信息输入有误");
     }
 
     /**
@@ -279,8 +293,14 @@ public class BookController extends HttpServlet {
      *  @return list<BookVo>
      */
     private Result list(HttpServletRequest request, HttpServletResponse response) {
-        if(request.getParameter("cur") == null || request.getParameter("size") == null || Integer.parseInt(request.getParameter("cur")) <= 0 || Integer.parseInt(request.getParameter("size")) <= 0){
-            return Result.error(500001,"信息错误");
+        if (request.getParameter("cur") == null) {
+            return Result.error(500001, "cur为空");
+        } else if (request.getParameter("size") == null) {
+            return Result.error(500001, "size为空");
+        } else if (!isInteger(request.getParameter("cur"))) {
+            return Result.error(500001, "cur不是大于0的整数");
+        } else if (!isInteger(request.getParameter("size"))) {
+            return Result.error(500001, "size不是大于0的整数");
         }
         //接受请求参数
         int cur = Integer.parseInt(request.getParameter("cur"));
@@ -295,10 +315,16 @@ public class BookController extends HttpServlet {
             bookVoPageUtil = bookService.selectBookByBookName(cur,size,bookName);
             return Result.success(bookVoPageUtil);
         } else if (request.getParameter("userId")!=null &&request.getParameter("bookName")==null) {
+            if (!isInteger(request.getParameter("userId"))){
+                return Result.error(500001, "userId不是大于0的整数");
+            }
             Integer userId = Integer.valueOf(request.getParameter("userId").toString());
             bookVoPageUtil = bookService.selectListByOwnerId(cur,size,userId);
             return Result.success(bookVoPageUtil);
         } else{
+            if (!isInteger(request.getParameter("userId"))){
+                return Result.error(500001, "userId不是大于0的整数");
+            }
             Integer userId = Integer.valueOf(request.getParameter("userId").toString());
             String bookName = request.getParameter("bookName").toString();
             bookVoPageUtil = bookService.selectList(cur,size,userId,bookName);
@@ -318,7 +344,6 @@ public class BookController extends HttpServlet {
         if(request.getParameter("bookId")!=null){
             Integer bookId = Integer.valueOf(request.getParameter("bookId").toString());
             Integer i = bookService.deleteBook(bookId);
-            response.setCharacterEncoding("UTF-8");
             if (i > 0) {
                 return Result.success(null);
             }
@@ -326,7 +351,7 @@ public class BookController extends HttpServlet {
                 return Result.error(500009,"图书信息删除失败");
             }
         }
-        return Result.error(500001,"信息输入有误");
+        return Result.error(500001,"bookId信息输入有误");
     }
 
     /**
