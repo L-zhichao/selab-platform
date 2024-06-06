@@ -65,14 +65,6 @@ public class BookInfo implements Serializable {
 
     private Integer delFlag;
 
-    public Integer getDelFlag() {
-        return delFlag;
-    }
-
-    public void setDelFlag(Integer delFlag) {
-        this.delFlag = delFlag;
-    }
-
     private static final long serialVersionUID = 1L;
 
     /**
@@ -172,6 +164,16 @@ public class BookInfo implements Serializable {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    /**
+     *  删除状态(0为正常 1为删除)
+     */
+    public void setDelFlag(Integer delFlag) {this.delFlag = delFlag; }
+
+    /**
+     *  删除状态(0为正常 1为删除)
+     */
+    public Integer getDelFlag() {return delFlag; }
 
     /**
      * 书籍添加时间

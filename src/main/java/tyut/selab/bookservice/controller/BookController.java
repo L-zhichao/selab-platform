@@ -171,12 +171,11 @@ public class BookController extends HttpServlet {
         bookDto.setBookRef(bookRef);
 
         Integer i = bookService.insertBook(bookDto);
-        Result result = new Result(500002,null);
         if (i > 0) {
-            return result.success(null);
+            return Result.success(null);
         }
         else{
-            return result.error(500005,"图书信息添加失败");
+            return Result.error(500005,"图书信息添加失败");
         }
     }
 
@@ -258,12 +257,14 @@ public class BookController extends HttpServlet {
         //bookVo.setOwnerName(ownerName);
         // 执行更新方法，得到改变行数的返回值
         Integer i = bookService.updateBook(bookVo);
-        Result result = new Result(500002,null);
         if (i > 0) {
-            return result.success(null);
+            return Result.success(null);
+        }
+        else if (i == -1){
+            return Result.error(500009,"该书已被删除");
         }
         else{
-            return result.error(500005,"图书信息修改失败");
+            return Result.error(500005,"图书信息修改失败");
         }
     }
 
