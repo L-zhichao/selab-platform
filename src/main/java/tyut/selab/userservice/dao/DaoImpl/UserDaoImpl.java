@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
-
-
     /**
      * 增加用户
      * @return
@@ -37,6 +35,7 @@ public class UserDaoImpl implements UserDao {
 
         try {
             conn = JDBCUtils.getConnection();
+            conn.setAutoCommit(false);
             String sql1 = "insert into sys_user (user_name,create_time,update_time,role_id,email,phone,sex,del_flag,password) "+
                     "values (?,?,?,?,?,?,?,?,?)";
             pstmtInsert = conn.prepareStatement(sql1);
@@ -66,19 +65,25 @@ public class UserDaoImpl implements UserDao {
             pstmtInsert.setLong(1,userId);
             pstmtInsert.setInt(2,groupId);
             pstmtInsert.executeUpdate();
-            return 0;
+
+            conn.commit();
+            return 1;
 
         } catch (Exception e) {
+
             throw new RuntimeException(e);
+
         }finally {
-            JDBCUtils.closeResource(conn,pstmtInsert);
+
             try {
                 if(pstmtSelect != null) {
                     pstmtSelect.close();
                 }
+                conn.setAutoCommit(true);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+            JDBCUtils.closeResource(conn,pstmtInsert);
         }
     }
 
@@ -97,6 +102,7 @@ public class UserDaoImpl implements UserDao {
 
         try {
             conn = JDBCUtils.getConnection();
+            conn.setAutoCommit(false);
             String sql = "select group_name as groupName from sys_group where group_id = ? ";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1,groupId);
@@ -104,12 +110,17 @@ public class UserDaoImpl implements UserDao {
             while (resultSet.next()){
                 groupName = resultSet.getString("groupName");
             }
-
+            conn.commit();
             return groupName;
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             JDBCUtils.closeResource(conn,pstmt);
         }
 
@@ -195,9 +206,11 @@ public class UserDaoImpl implements UserDao {
         PreparedStatement pstmt = null;
         ResultSet resultSet = null;
         User user = new User();
+        int del_flag = 1;
 
         try {
             conn = JDBCUtils.getConnection();
+            conn.setAutoCommit(false);
             String sql1 = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ,"+
                     "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user where user_id = ?";
             pstmt = conn.prepareStatement(sql1);
@@ -205,7 +218,7 @@ public class UserDaoImpl implements UserDao {
             resultSet = pstmt.executeQuery();
             //仅接收user表内容
             while (resultSet.next()){
-                int del_flag = resultSet.getInt("delFlag");
+                del_flag = resultSet.getInt("delFlag");
 
                 if (del_flag == 0) {
                     Long userid = resultSet.getLong("userId");
@@ -228,6 +241,7 @@ public class UserDaoImpl implements UserDao {
                     user.setEmail(email);
                     user.setPhone(phone);
                     user.setSex(sex);
+                    user.setDelFlag(del_flag);
                 }
             }
             resultSet.close();
@@ -241,12 +255,21 @@ public class UserDaoImpl implements UserDao {
                 user.setGroupId(groupId);
             }
             Group.close();
+            conn.commit();
+
+            return user;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
+
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             JDBCUtils.closeResource(conn,pstmt);
         }
-        return user;
+
     }
 
     /**
@@ -263,6 +286,7 @@ public class UserDaoImpl implements UserDao {
 
         try {
             conn = JDBCUtils.getConnection();
+            conn.setAutoCommit(false);
             String sql = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ," +
                     "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user limit ?,?";
             pstmt = conn.prepareStatement(sql);
@@ -309,12 +333,18 @@ public class UserDaoImpl implements UserDao {
                 userArray.add(user);
             }
             resultSet.close();
+            conn.commit();
             return userArray;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             JDBCUtils.closeResource(conn,pstmt);
 
         }
@@ -337,6 +367,7 @@ public class UserDaoImpl implements UserDao {
 
         try {
             conn = JDBCUtils.getConnection();
+            conn.setAutoCommit(false);
             String sql2 = "select user_id as userId from user_group where group_id = ? limit ?,?";
             pstmt = conn.prepareStatement(sql2);
             pstmt.setInt(1,groupId);
@@ -352,10 +383,16 @@ public class UserDaoImpl implements UserDao {
                 User user = selectByUserIdUser(userId);
                 userArray.add(user);
             }
+            conn.commit();
             return userArray;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             JDBCUtils.closeResource(conn,pstmt);
         }
 
@@ -374,6 +411,7 @@ public class UserDaoImpl implements UserDao {
 
         try {
             conn = JDBCUtils.getConnection();
+            conn.setAutoCommit(false);
             String sql = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ," +
                     "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user where user_name like ?";
             pstmt = conn.prepareStatement(sql);
@@ -420,10 +458,16 @@ public class UserDaoImpl implements UserDao {
                 userArray.add(user);
 
             }
+            conn.commit();
             return userArray;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             JDBCUtils.closeResource(conn,pstmt);
         }
     }

@@ -2,37 +2,43 @@ package tyut.selab.userservice.service.ServiceImpl;
 
 import tyut.selab.loginservice.dto.UserLocal;
 import tyut.selab.loginservice.utils.SecurityUtil;
+import tyut.selab.userservice.dao.DaoImpl.GroupDaoImpl;
 import tyut.selab.userservice.dao.DaoImpl.UserDaoImpl;
 import tyut.selab.userservice.dao.DaoImpl.UserLogoutDaoImpl;
+import tyut.selab.userservice.dao.GroupDao;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.UserLogoutDao;
+import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.UserVo;
 import tyut.selab.utils.JudgeRoleId;
+import tyut.selab.utils.PageUtils;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao = new UserDaoImpl();
     private UserLogoutDao userLogoutDao = new UserLogoutDaoImpl();
+    private GroupDao groupDao = new GroupDaoImpl();
 
     //private Integer judgeRoleId = JudgeRoleId.GetJudgeRoleId();
 
 
-
     /**
-    * Description: 修改用户角色
-    * @param userVo
-    * @return Integer
-    */
+     * Description: 修改用户角色
+     *
+     * @param userVo
+     * @return Integer
+     */
     @Override
     public Integer updateUserRole(UserVo userVo) {
         //测试，判断roleId
@@ -72,19 +78,17 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
     /**
      * 查询所有用户
      */
 
     @Override
-    public List<UserVo> queryAll(Integer cur,Integer size){
+    public List<UserVo> queryAll(Integer cur, Integer size) {
 
-        List<User> users = userDao.selectAll(cur,size);
+        List<User> users = userDao.selectAll(cur, size);
         List<UserVo> resultList = new ArrayList<>();
 
-        for(User user:users) {
+        for (User user : users) {
             UserVo userVo = new UserVo();
 
             Long userid = user.getUserId();
@@ -124,29 +128,26 @@ public class UserServiceImpl implements UserService {
         }
 
 
-
         return resultList;
     }
 
 
-
-
     /**
-    * Description: 根据小组id查询用户
-    * @param groupId
-    * @return List<UserVo>
-    */
+     * Description: 根据小组id查询用户
+     *
+     * @param groupId
+     * @return List<UserVo>
+     */
     @Override
-    public List<UserVo> selectByGroupId(Integer groupId,Integer cur,Integer size) {
+    public List<UserVo> selectByGroupId(Integer groupId, Integer cur, Integer size) {
 
         String groupName = userDao.getGroupName(groupId);
         List<User> userArrayList = new ArrayList<>();
         List<UserVo> userVoList = new ArrayList<>();
 
-        userArrayList = userDao.selectByGroupIdUsers(groupId,cur,size);
+        userArrayList = userDao.selectByGroupIdUsers(groupId, cur, size);
 
-
-        for (User user : userArrayList){
+        for (User user : userArrayList) {
             UserVo userVo = new UserVo();
             Long userid = user.getUserId();
             String username = user.getUserName();
@@ -159,11 +160,11 @@ public class UserServiceImpl implements UserService {
             Date updateTime = (Date) user.getUpdateTime();
 
             //对rolename的判断
-            if(roleld == 1){
+            if (roleld == 1) {
                 userVo.setRoleName("超级管理员");
             } else if (roleld == 2) {
                 userVo.setRoleName("管理员");
-            }else{
+            } else {
                 userVo.setRoleName("用户");
             }
 
@@ -185,29 +186,21 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
-
-
-   /**
-   * Description: 根据用户id查询用户
-   * @param userId
-   * @return UserVo
-   */
+    /**
+     * Description: 根据用户id查询用户
+     *
+     * @param userId
+     * @return UserVo
+     */
     @Override
     public UserVo selectByUserId(Long userId) {
-
         User userSelectByUserId = userDao.selectByUserIdUser(userId);
-
         UserVo userVo = new UserVo();
-
-
         Long userid = userSelectByUserId.getUserId();
         String username = userSelectByUserId.getUserName();
         Integer roleld = userSelectByUserId.getRoleId();
-        Integer groupId= userSelectByUserId.getGroupId();
+        Integer groupId = userSelectByUserId.getGroupId();
         String groupName = userDao.getGroupName(groupId);
-        //组名在业务层加
         String email = userSelectByUserId.getEmail();
         String phone = userSelectByUserId.getPhone();
         Integer sex = userSelectByUserId.getSex();
@@ -217,17 +210,15 @@ public class UserServiceImpl implements UserService {
         Date updateTime = (Date) userSelectByUserId.getUpdateTime();
 
         //对rolename的判断
-        if(roleld == 1){
+        if (roleld == 1) {
 
             userVo.setRoleName("超级管理员");
         } else if (roleld == 2) {
             userVo.setRoleName("管理员");
 
-        }else{
+        } else {
             userVo.setRoleName("用户");
         }
-
-
         userVo.setUserName(username);
         userVo.setGroupId(groupId);
         userVo.setGroupName(groupName);
@@ -244,10 +235,11 @@ public class UserServiceImpl implements UserService {
 
 
     /**
-    * Description: 注销用户
-    * @param userId,adminId
-    * @return Integer
-    */
+     * Description: 注销用户
+     *
+     * @param userId,adminId
+     * @return Integer
+     */
     @Override
     public Integer delete(Integer userId) {
         //测试,判断roleId
@@ -288,16 +280,21 @@ public class UserServiceImpl implements UserService {
 
 
     /**
-    * Description: 新增用户信息
-    * @param userVo
-    * @return Integer
-    */
+     * Description: 新增用户信息
+     *
+     * @param userVo
+     * @return Integer
+     */
     @Override
     public Integer save(UserVo userVo) {
 
+        List<Integer> groupIds = groupDao.selectAllGroupId();
+        boolean flag = false;
+
         User userSave = new User();
 
-        String userName =  userVo.getUserName();
+
+        String userName = userVo.getUserName();
         Integer groupId = userVo.getGroupId();
         Integer roleId = userVo.getRoleId();
         String email = userVo.getEmail();
@@ -308,22 +305,53 @@ public class UserServiceImpl implements UserService {
         java.util.Date date = new java.util.Date();
         Date createTime = new java.sql.Date(date.getTime());
         Date updateTime = new java.sql.Date(date.getTime());
+        //对组是否存在进行判断
+        for (Integer Id : groupIds) {
+            if (Id == groupId) {
+                flag = true;
+                break;
+            }
+            flag = false;
+        }
+        //对role进行判断&&对性别进行判断
+        if (roleId != 1 && roleId != 2 && roleId != 3 && sex!=0 && sex!= 1) {
+            flag = false;
+        }
 
+        //对电话号码进行判断
+        boolean phoneTest = false;
+        String phoneNumberPattern = "[0-9]{11}";
+        phoneTest = phone.matches(phoneNumberPattern);
+        //对用户名判断
+        boolean NameTest = false;
+        String userNamePattern = "^[\\\\u4e00-\\\\u9fa5a-zA-Z0-9]*$";
+        NameTest = userName.matches(userNamePattern);
 
-        userSave.setUserName(userName);
-        userSave.setGroupId(groupId);
-        userSave.setRoleId(roleId);
-        userSave.setEmail(email);
-        userSave.setPhone(phone);
-        userSave.setSex(sex);
-        userSave.setCreateTime(createTime);
-        userSave.setUpdateTime(updateTime);
-        userSave.setDelFlag(0);
-        userSave.setPassword(password);
+        if(phoneTest && NameTest){
+            flag = true;
+        }else{
+            flag = false;
+        }
 
-        Integer insert = userDao.insertUser(userSave);
+        //根据flag判断能否进行添加
+        if (flag) {
+            userSave.setUserName(userName);
+            userSave.setGroupId(groupId);
+            userSave.setRoleId(roleId);
+            userSave.setEmail(email);
+            userSave.setPhone(phone);
+            userSave.setSex(sex);
+            userSave.setCreateTime(createTime);
+            userSave.setUpdateTime(updateTime);
+            userSave.setDelFlag(0);
+            userSave.setPassword(password);
 
-        return insert;
+            Integer insert = userDao.insertUser(userSave);
+
+            return insert;
+        }else {
+            return 0;
+        }
     }
 
 

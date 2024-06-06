@@ -182,12 +182,10 @@ public class UserController extends HttpServlet {
             if (groupId != null && userId == null) {
                 usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId),cur,size);
                 ResultList.addAll(usersByGroupId);
-            }
-            if (userId != null && groupId == null ) {
+            } else if (userId != null && groupId == null ) {
                 userByUserId = userService.selectByUserId(Long.valueOf(userId));
                 ResultList.add(userByUserId);
-            }
-            if (userId == null && groupId == null){
+            } else if (userId == null && groupId == null){
                 Alluser = userService.queryAll(cur,size);
                 ResultList.addAll(Alluser);
             }
@@ -233,10 +231,9 @@ public class UserController extends HttpServlet {
         String jsonData = request.getReader().lines().collect(Collectors.joining());
         UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
         int insert = userService.save(userVo);
-        if (insert == 1) {
-            return Result.error(400, "添加失败");
+        if (insert == 0) {
+            return Result.error(400, "添加失败,请检查添加格式");
         } else {
-
             return Result.success(insert);
         }
     }
