@@ -138,7 +138,7 @@ public class BorrowController extends HttpServlet {
         } else if (!((jsonObject.get("borrowDuration").toString()).matches("^[1-9]\\d*$"))) {
             return Result.error(500001, "borrowDuration不是大于0的整数");
         } else if (nowDate.after(ft.parse((String) jsonObject.get("returnTime")))) {
-            return Result.error(500001, "returnTime不是大于0的整数");
+            return Result.error(500001, "returnTime在当前日期之前");
         }
 
         Integer bookId = Integer.valueOf(jsonObject.get("bookId").toString());
