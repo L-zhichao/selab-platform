@@ -36,8 +36,6 @@ public class BorrowController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
-//        resp.setCharacterEncoding("UTF-8");
-//        resp.setContentType("application/json");
         resp.setContentType("application/json;charset=utf-8");
 
         String requestURI = req.getRequestURI();
@@ -75,8 +73,6 @@ public class BorrowController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
-//        resp.setCharacterEncoding("UTF-8");
-//        resp.setContentType("application/json");
         resp.setContentType("application/json;charset=utf-8");
 
         String requestURI = req.getRequestURI();
@@ -131,8 +127,18 @@ public class BorrowController extends HttpServlet {
         Date nowDate = new Date();
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-        if (jsonObject.get("bookId") == null || jsonObject.get("borrowDuration") == null || jsonObject.get("returnTime") == null || !(jsonObject.get("bookId").toString().matches("^[1-9]\\d*$")) || !((jsonObject.get("borrowDuration").toString()).matches("^[1-9]\\d*$")) || nowDate.after(ft.parse((String) jsonObject.get("returnTime")))) {
-            return Result.error(500001,"信息错误");
+        if (jsonObject.get("borrowDuration") == null) {
+            return Result.error(500001, "borrowDuration为空");
+        } else if (jsonObject.get("bookId") == null) {
+            return Result.error(500001, "bookId为空");
+        } else if (jsonObject.get("returnTime") == null) {
+            return Result.error(500001, "returnTime为空");
+        } else if (!(jsonObject.get("bookId").toString().matches("^[1-9]\\d*$"))) {
+            return Result.error(500001, "bookId不是大于0的整数");
+        } else if (!((jsonObject.get("borrowDuration").toString()).matches("^[1-9]\\d*$"))) {
+            return Result.error(500001, "borrowDuration不是大于0的整数");
+        } else if (nowDate.after(ft.parse((String) jsonObject.get("returnTime")))) {
+            return Result.error(500001, "returnTime不是大于0的整数");
         }
 
         Integer bookId = Integer.valueOf(jsonObject.get("bookId").toString());
@@ -142,7 +148,6 @@ public class BorrowController extends HttpServlet {
 
         //将参数封装为Dto类
         BorrowBookDto borrowBookDto = new BorrowBookDto();
-//      SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
         borrowBookDto.setBookId(bookId);
         borrowBookDto.setBorrowDuration(borrowDuration);
@@ -174,7 +179,7 @@ public class BorrowController extends HttpServlet {
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
         if (split[split.length - 1] == null || !(split[split.length - 1].matches("^[1-9]\\d*$"))){
-            return Result.error(500001,"信息错误");
+            return Result.error(500001,"bookId不是大于0的整数");
         }
 
         Integer borrowId = Integer.valueOf(split[split.length - 1]);
@@ -205,14 +210,20 @@ public class BorrowController extends HttpServlet {
      */
     private Result query(HttpServletRequest request,HttpServletResponse response){
         //接收请求参数
-        if (request.getParameter("cur") == null || request.getParameter("size") == null || !(request.getParameter("cur").matches("^[1-9]\\d*$")) || !(request.getParameter("size").matches("^[1-9]\\d*$"))){
-            return Result.error(500001,"信息错误");
+        if (request.getParameter("cur") == null) {
+            return Result.error(500001, "cur为空");
+        } else if (request.getParameter("size") == null) {
+            return Result.error(500001, "size为空");
+        } else if (!(request.getParameter("cur").matches("^[1-9]\\d*$"))) {
+            return Result.error(500001, "cur不是大于0的整数");
+        } else if (!(request.getParameter("size").matches("^[1-9]\\d*$"))) {
+            return Result.error(500001, "size不是大于0的整数");
         }
         //权限判断
-//        UserLocal user = SecurityUtil.getUser();
-//        if(user.getRoleId() == 2){
-//            return Result.error(500013,"权限不足");
-//        }
+        UserLocal user = SecurityUtil.getUser();
+        if(user.getRoleId() == 2){
+            return Result.error(500013,"权限不足");
+        }
 
 
         Integer cur = Integer.valueOf(request.getParameter("cur"));
@@ -225,18 +236,27 @@ public class BorrowController extends HttpServlet {
 
             return Result.success(borrowBookVoPageUtil);
 
-        }else if (request.getParameter("bookId") != null && request.getParameter("bookId").matches("^[1-9]\\d*$") && request.getParameter("userId") == null && request.getParameter("borrowId") == null){
+        }else if (request.getParameter("bookId") != null && request.getParameter("userId") == null && request.getParameter("borrowId") == null){
+            if(!request.getParameter("bookId").matches("^[1-9]\\d*$")){
+                return Result.error(500001,"bookId不是大于0的整数");
+            }
             Integer bookId = Integer.valueOf(request.getParameter("bookId"));
             PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByBookId(bookId, cur, size);
 
             return Result.success(borrowBookVoPageUtil);
 
-        } else if (request.getParameter("userId") != null && request.getParameter("userId").matches(request.getParameter("userId")) && request.getParameter("bookId") == null && request.getParameter("borrowId") == null) {
+        } else if (request.getParameter("userId") != null && request.getParameter("bookId") == null && request.getParameter("borrowId") == null) {
+            if ( !request.getParameter("userId").matches("^[1-9]\\d*$")){
+                return Result.error(500001,"userId不是大于0的整数");
+            }
             Integer userId = Integer.valueOf(request.getParameter("userId"));
             PageUtil<BorrowBookVo> borrowBookVoPageUtil = borrowService.selectListByUserId(userId, cur, size);
 
             return Result.success(borrowBookVoPageUtil);
-        } else if (request.getParameter("userId") == null && request.getParameter("bookId") == null && request.getParameter("borrowId") != null && request.getParameter("borrowId").matches(request.getParameter("borrowId"))) {
+        } else if (request.getParameter("userId") == null && request.getParameter("bookId") == null && request.getParameter("borrowId") != null) {
+            if (!request.getParameter("borrowId").matches("^[1-9]\\d*$")){
+                return Result.error(500001,"borrowId不是大于0的整数");
+            }
             Integer borrowId = Integer.valueOf(request.getParameter("borrowId"));
             BorrowBookVo borrowBookVo = borrowService.selectByBorrowId(borrowId);
 
@@ -257,8 +277,14 @@ public class BorrowController extends HttpServlet {
      */
 
     private Result queryBorrowLog(HttpServletRequest request,HttpServletResponse response){
-        if(request.getParameter("cur") == null || request.getParameter("size") == null || !(request.getParameter("size").matches("^[1-9]\\d*$")) || !(request.getParameter("cur").matches("^[1-9]\\d*$"))){
-            return Result.error(500001,"信息错误");
+        if (request.getParameter("cur") == null) {
+            return Result.error(500001, "cur为空");
+        } else if (request.getParameter("size") == null) {
+            return Result.error(500001, "size为空");
+        } else if (!(request.getParameter("size").matches("^[1-9]\\d*$"))) {
+            return Result.error(500001, "size不是大于0的整数");
+        } else if (!(request.getParameter("cur").matches("^[1-9]\\d*$"))) {
+            return Result.error(500001, "cur不是大于0的整数");
         }
         Integer cur = Integer.valueOf(request.getParameter("cur"));
         Integer size = Integer.valueOf(request.getParameter("size"));
@@ -274,8 +300,14 @@ public class BorrowController extends HttpServlet {
     }
     private Result queryAllNoReturnBook(HttpServletRequest request,HttpServletResponse response){
         //接受请求参数
-        if (request.getParameter("cur") == null || request.getParameter("size") == null || !(request.getParameter("cur").matches("^[1-9]\\d*$")) || !(request.getParameter("size").matches("^[1-9]\\d*$")) ){
-            return Result.error(500001,"信息错误");
+        if (request.getParameter("cur") == null) {
+            return Result.error(500001, "cur为空");
+        } else if (request.getParameter("size") == null) {
+            return Result.error(500001, "size为空");
+        } else if (!(request.getParameter("cur").matches("^[1-9]\\d*$"))) {
+            return Result.error(500001, "cur不是大于0的整数");
+        } else if (!(request.getParameter("size").matches("^[1-9]\\d*$"))) {
+            return Result.error(500001, "size不是大于0的整数");
         }
 
         UserLocal user = SecurityUtil.getUser();
@@ -295,10 +327,14 @@ public class BorrowController extends HttpServlet {
     private Result queryById(HttpServletRequest request,HttpServletResponse response){
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");
-        if(split[split.length - 1] == null || !(split[split.length - 1].matches("^[1-9]\\d*$"))){
-            return Result.error(500001,"信息错误");
+        if (split[split.length - 1] == null) {
+            return Result.error(500001, "borrowId为空");
+        } else if (!(split[split.length - 1].matches("^[1-9]\\d*$"))) {
+            return Result.error(500001, "borrowId不是大于0的整数");
         }
+
         Integer borrowId = Integer.valueOf(split[split.length - 1]);
+
         BorrowBookVo borrowBookVo = borrowService.selectByBorrowId(borrowId);
 
         return Result.success(borrowBookVo);
