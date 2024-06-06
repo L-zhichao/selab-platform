@@ -265,6 +265,7 @@ import java.util.Objects;
      */
     private Result queryAllResport(HttpServletRequest request,HttpServletResponse response){
         List<TaskReportVo> taskReportVos = new ArrayList<TaskReportVo>();
+        Page pagee=null;
         Integer taskid = null;
         int cur = request.getParameter("cur") != null ? Integer.parseInt(request.getParameter("cur")) : 1;
         int size = request.getParameter("size") != null ? Integer.parseInt(request.getParameter("size")) : Integer.MAX_VALUE;
@@ -313,12 +314,23 @@ import java.util.Objects;
                             }else if(endIndex > taskReportVos.size() - 1){
                                 taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
                                 successT.addAll(taskInfoVoPage);
+                                if (!successT.isEmpty()){
+                                    pagee.setData(successT);
+                                }
                             }else{
                                 taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
                                 successT.addAll(taskInfoVoPage);
+                                if (!successT.isEmpty()){
+                                    pagee.setData(successT);
+                                }
                             }
                        }else {
                           successT.addAll(taskReportVos);
+                           if (!successT.isEmpty()){
+                               pagee.setData(successT);
+                               pagee.setTotal(successT.size());
+                           }
+
                         }
                     }
                 }//循环结束，判断所要返回给前端的内容中是否有内容
@@ -327,7 +339,7 @@ import java.util.Objects;
                     return Result.error(HttpStatus.NoDataFromDatabase,"所有任务暂时还没有汇报记录");
                 }else {
 //                    WebUtil.writeJson(response,Result.success(successT,"请求成功"));
-                    return Result.success(successT,"请求成功");
+                    return Result.success(pagee,"请求成功");
                 }
 
             }
@@ -361,14 +373,24 @@ import java.util.Objects;
                             taskInfoVoPage = null;
                         }else if(endIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
+                            if (!taskInfoVoPage.isEmpty()){
+                                pagee.setData(taskInfoVoPage);
+                            }
                         }else{
                             taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                            if (!taskInfoVoPage.isEmpty()){
+                                pagee.setData(taskInfoVoPage);
+                            }
                         }
                     }else {
                         taskInfoVoPage=taskReportVos;
+                        if (!taskInfoVoPage.isEmpty()){
+                            pagee.setData(taskInfoVoPage);
+                            pagee.setTotal(taskInfoVoPage.size());
+                        }
                     }
 //                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
-                    return Result.success(taskInfoVoPage,"请求成功");
+                    return Result.success(pagee,"请求成功");
                 }
             }
             else {//如果进行查询的用户不是人物的发布者而是其他管理员
@@ -401,15 +423,25 @@ import java.util.Objects;
                             taskInfoVoPage = null;
                         }else if(endIndex > taskReportVos.size() - 1){
                             taskInfoVoPage = taskReportVos.subList(beginIndex,taskReportVos.size());
+                            if (!taskInfoVoPage.isEmpty()){
+                                pagee.setData(taskInfoVoPage);
+                            }
                         }else{
                             taskInfoVoPage = taskReportVos.subList(beginIndex,endIndex+1);
+                            if (!taskInfoVoPage.isEmpty()){
+                                pagee.setData(taskInfoVoPage);
+                            }
                         }
                     }else {
                         taskInfoVoPage=taskReportVos;
+                        if (!taskInfoVoPage.isEmpty()){
+                            pagee.setData(taskInfoVoPage);
+                            pagee.setTotal(taskInfoVoPage.size());
+                        }
                     }
 //                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
 //                    return Result.success(taskInfoVoPage,"请求成功");
-                    return Result.success(taskInfoVoPage,"请求成功");
+                    return Result.success(pagee,"请求成功");
                 }
             }
             else {  //如果参数taskId为null，那么就是查询所有的任务的所有的汇报记录
@@ -441,14 +473,24 @@ import java.util.Objects;
                             taskInfoVoPage = null;
                         }else if(endIndex > SuccessTaskReportVos.size() - 1){
                             taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,SuccessTaskReportVos.size());
+                            if (!taskInfoVoPage.isEmpty()){
+                                pagee.setData(taskInfoVoPage);
+                            }
                         }else{
                             taskInfoVoPage = SuccessTaskReportVos.subList(beginIndex,endIndex+1);
+                            if (!taskInfoVoPage.isEmpty()){
+                                pagee.setData(taskInfoVoPage);
+                            }
                         }
                     }else {
                         taskInfoVoPage=SuccessTaskReportVos;
+                        if (!taskInfoVoPage.isEmpty()){
+                            pagee.setData(taskInfoVoPage);
+                            pagee.setTotal(taskInfoVoPage.size());
+                        }
                     }
 //                    WebUtil.writeJson(response,Result.success(taskInfoVoPage,"请求成功"));
-                    return Result.success(taskInfoVoPage,"请求成功");
+                    return Result.success(pagee,"请求成功");
                 }
             }
         }
@@ -532,6 +574,7 @@ import java.util.Objects;
      */
     private Result queryAllNeedReportUser(HttpServletRequest request,HttpServletResponse response) throws Exception {
         List<NeedReportUser> needReportUsers = new ArrayList<>();
+        Page pagee=null;
         //权限判断
         UserLocal userMessage = getUserMessage(request, response);
         Integer roleId = userMessage.getRoleId();
@@ -572,12 +615,22 @@ import java.util.Objects;
                             }else if(endIndex > needReportUsers.size() - 1){
                                 Page = needReportUsers.subList(beginIndex,needReportUsers.size());
                                 successN.addAll(Page);
+                                if (!successN.isEmpty()){
+                                    pagee.setData(successN);
+                                }
                             }else{
                                 Page = needReportUsers.subList(beginIndex,endIndex+1);
                                 successN.addAll(Page);
+                                if (!successN.isEmpty()){
+                                    pagee.setData(successN);
+                                }
                             }
                         }else {
                             successN.addAll(needReportUsers);
+                            if (!successN.isEmpty()){
+                                pagee.setData(successN);
+                                pagee.setTotal(successN.size());
+                            }
                         }
                     }
                 }
@@ -585,7 +638,7 @@ import java.util.Objects;
                     return Result.error(HttpStatus.NoDataFromDatabase,"所有任务暂时还没有需要汇报的用户");
                 }else {
 //                    WebUtil.writeJson(response,Result.success(successN,"请求成功"));
-                    return Result.success(successN,"请求成功");
+                    return Result.success(pagee,"请求成功");
                 }
             }
             //taksid 输入非法： 不是自己发布的任务的id
@@ -611,14 +664,24 @@ import java.util.Objects;
                             Page = null;
                         }else if(endIndex > needReportUsers.size() - 1){
                             Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                            if (!Page.isEmpty()){
+                                pagee.setData(Page);
+                            }
                         }else{
                             Page = needReportUsers.subList(beginIndex,endIndex+1);
+                            if (!Page.isEmpty()){
+                                pagee.setData(Page);
+                            }
                         }
                     }else {
                         Page.addAll(needReportUsers);
+                        if (!Page.isEmpty()){
+                            pagee.setData(Page);
+                            pagee.setTotal(Page.size());
+                        }
                     }
 //                    WebUtil.writeJson(response,Result.success(Page,"请求成功"));
-                    return Result.success(Page,"请求成功");
+                    return Result.success(pagee,"请求成功");
                 }
             }
         }else {
@@ -646,14 +709,24 @@ import java.util.Objects;
                             Page = null;
                         }else if(endIndex > needReportUsers.size() - 1){
                             Page = needReportUsers.subList(beginIndex,needReportUsers.size());
+                            if (!Page.isEmpty()){
+                                pagee.setData(Page);
+                            }
                         }else{
                             Page = needReportUsers.subList(beginIndex,endIndex+1);
+                            if (!Page.isEmpty()){
+                                pagee.setData(Page);
+                            }
                         }
                     }else {
                         Page.addAll(needReportUsers);
+                        if (!Page.isEmpty()){
+                            pagee.setData(Page);
+                            pagee.setTotal(Page.size());
+                        }
                     }
 //                    WebUtil.writeJson(response,Result.success(Page,"请求成功"));
-                    return Result.success(Page,"请求成功");
+                    return Result.success(pagee,"请求成功");
                 }
             }else {
                 //查询所有任务的汇报用户
@@ -681,12 +754,22 @@ import java.util.Objects;
                                 }else if(endIndex > needReportUsers.size() - 1){
                                     Page = needReportUsers.subList(beginIndex,needReportUsers.size());
                                     successN.addAll(Page);
+                                    if (!successN.isEmpty()){
+                                        pagee.setData(successN);
+                                    }
                                 }else{
                                     Page = needReportUsers.subList(beginIndex,endIndex+1);
                                     successN.addAll(Page);
+                                    if (!successN.isEmpty()){
+                                        pagee.setData(successN);
+                                    }
                                 }
                             }else {
                                 successN.addAll(needReportUsers);
+                                if (!successN.isEmpty()){
+                                    pagee.setData(successN);
+                                    pagee.setTotal(successN.size());
+                                }
                             }
                         }
                     }
@@ -694,7 +777,7 @@ import java.util.Objects;
                         return Result.error(HttpStatus.NoDataFromDatabase,"所有任务暂时还没有需要汇报的用户");
                     }else {
 //                        WebUtil.writeJson(response,Result.success(successN,"请求成功"));
-                        return Result.success(successN,"请求成功");
+                        return Result.success(pagee,"请求成功");
                     }
                 }
             }
