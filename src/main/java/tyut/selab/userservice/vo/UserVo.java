@@ -28,7 +28,7 @@ public class UserVo implements Serializable {
     /**
      * 用户所属小组名称
      */
-    private Integer groupName;
+    private String groupName;
 
     /**
      * 添加时间
@@ -69,15 +69,16 @@ public class UserVo implements Serializable {
      */
     private Integer sex;
 
+    private  String password;
 
 
     private static final long serialVersionUID = 1L;
 
-    public Integer getGroupName() {
+    public String getGroupName() {
         return groupName;
     }
 
-    public void setGroupName(Integer groupName) {
+    public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
 
@@ -87,6 +88,14 @@ public class UserVo implements Serializable {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
@@ -251,7 +260,8 @@ public class UserVo implements Serializable {
             && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
             && (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()))
             && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
-            && (this.getSex() == null ? other.getSex() == null : this.getSex().equals(other.getSex()));
+            && (this.getSex() == null ? other.getSex() == null : this.getSex().equals(other.getSex()))
+                && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()));
     }
 
     @Override
@@ -268,6 +278,7 @@ public class UserVo implements Serializable {
         result = prime * result + ((getRemark() == null) ? 0 : getRemark().hashCode());
         result = prime * result + ((getPhone() == null) ? 0 : getPhone().hashCode());
         result = prime * result + ((getSex() == null) ? 0 : getSex().hashCode());
+        result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
         return result;
     }
 

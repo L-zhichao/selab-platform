@@ -1,12 +1,13 @@
 package tyut.selab.bookservice.controller;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.utils.Result;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 /**
@@ -16,7 +17,7 @@ import java.io.IOException;
  * @date: 2024/5/4 11:40
  * @version: 1.0
  */
-@WebServlet(name = "BorrowController",urlPatterns = {"/borrow/book","/borrow/return/*","/borrow/record","/borrow/my","borrow/noReturn"})
+@WebServlet(name = "BorrowController",urlPatterns = {"/borrow/book","/borrow/return/*","/borrow/record","/borrow/my","/borrow/noReturn"})
 public class BorrowController extends HttpServlet {
 
 

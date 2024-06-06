@@ -4,6 +4,7 @@ import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.vo.GroupVo;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -15,6 +16,8 @@ import java.util.List;
 public interface GroupDao {
 
 
+
+
     public Integer insert(Group group);
 
     public Integer delete(Integer groupId);
@@ -23,7 +26,7 @@ public interface GroupDao {
      *  查询所有小组信息
      * @return
      */
-    public List<Group> selectAllGroup();
+    public List<Group> selectAllGroup(Integer cur,Integer szie);
 
     /**
      *  修改小组信息
@@ -31,6 +34,12 @@ public interface GroupDao {
      * @return
      */
      public Integer update(Group group);
+
+    /**
+     *  查询所有小组id
+     *
+     */
+    public List<Integer> selectAllGroupId();
 
 }
 

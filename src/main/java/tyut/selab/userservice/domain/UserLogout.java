@@ -11,6 +11,7 @@ public class UserLogout implements Serializable {
     /**
      * 唯一标识
      */
+
     private Integer logoutId;
 
     /**
@@ -67,8 +68,8 @@ public class UserLogout implements Serializable {
     /**
      *
      */
-    public Date getCreateTime() {
-        return createTime;
+    public java.sql.Date getCreateTime() {
+        return (java.sql.Date) createTime;
     }
 
     /**

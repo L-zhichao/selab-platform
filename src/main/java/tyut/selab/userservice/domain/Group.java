@@ -3,6 +3,7 @@ package tyut.selab.userservice.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+
 /**
  * 小组信息表
  * @TableName sys_group
@@ -13,6 +14,11 @@ public class Group implements Serializable {
      * 唯一标识
      */
     private Integer groupId;
+
+    /**
+     * 父组ID
+     */
+    private Integer parentId;
 
     /**
      * 小组名称
@@ -43,13 +49,26 @@ public class Group implements Serializable {
         return groupId;
     }
 
+
     /**
      * 唯一标识
      */
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
     }
+    /**
+     * 父组id
+     */
+    public Integer getParentIdId() {
+        return parentId;
+    }
 
+    /**
+     * 父组id
+     */
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
     /**
      * 小组名称
      */

@@ -1,7 +1,7 @@
 package tyut.selab.userservice.Dto;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @className: GroupDto
@@ -10,6 +10,7 @@ import java.util.Date;
  * @date: 2024/5/8 10:09
  * @version: 1.0
  */
+
 public class GroupDto implements Serializable {
     /**
      * 小组名称
@@ -18,5 +19,18 @@ public class GroupDto implements Serializable {
 
 
 
+    @Serial
     private static final long serialVersionUID = 1L;
+
+    public GroupDto(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }
