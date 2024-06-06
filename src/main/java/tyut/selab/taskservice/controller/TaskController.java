@@ -458,12 +458,12 @@ public class TaskController extends HttpServlet {
      * user 中的 roleId   1 标识超级管理员，返回 2 标识管理员，返回 3 表示普通用户
      */
     private UserLocal getUserMessage() {
-//        UserLocal user = SecurityUtil.getUser();
-        UserLocal user = new UserLocal();
-        user.setUserName("zhangsan");
-        user.setRoleId(1);
-        user.setUserId(1);
-        user.setGroupId(1);
+        UserLocal user = SecurityUtil.getUser();
+//        UserLocal user = new UserLocal();
+//        user.setUserName("zhangsan");
+//        user.setRoleId(1);
+//        user.setUserId(1);
+//        user.setGroupId(1);
         return user;
     }
 
