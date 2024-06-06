@@ -380,10 +380,20 @@ public class UserServiceImpl implements UserService {
         userLocal.setRoleId(2);
         if (userLocal.getRoleId().equals(2)) {
             User user = new User();
-            user.setUserId(userVo.getUserId());
-            user.setGroupId(userVo.getGroupId());
-            int rows = userDao.updateGroup(user);
-            return rows;
+            //调用查询当前groupId,判断修改后的groupId是否存在？
+            if (true) {
+                if (true){
+                    //修改的groupId = 用户当前所在groupId
+                }
+                user.setUserId(userVo.getUserId());
+                user.setGroupId(userVo.getGroupId());
+                int rows = userDao.updateGroup(user);
+                return rows;
+            }else {
+                return 2;
+                //groupId不存在
+            }
+
         } else {
             return 0;
         }

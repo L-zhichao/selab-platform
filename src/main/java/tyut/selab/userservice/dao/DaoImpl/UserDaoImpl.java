@@ -460,7 +460,7 @@ public class UserDaoImpl implements UserDao {
     public Integer updateGroup(User user) {
         Connection conn = null;
         PreparedStatement ps = null;
-        int rows = 0;
+        int rows;
         try {
             conn = JDBCUtils.getConnection();
             String sql = "UPDATE user_group SET group_id = ? where user_id = ?";

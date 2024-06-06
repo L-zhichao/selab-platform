@@ -305,12 +305,12 @@ public class UserController extends HttpServlet {
          * @param response
         * @return Result
         */
-        private Result updateGroup(HttpServletRequest request, HttpServletResponse response){
+        private Result updateGroup(HttpServletRequest request, HttpServletResponse response) throws IOException {
             System.out.println("updateGroup");
             Result result = new Result(33,11);
             UserVo userVo = new UserVo();
-            userVo.setUserId(Long.valueOf(request.getParameter("userId")));
-            userVo.setGroupId(Integer.valueOf(request.getParameter("groupId")));
+            String jsonData = request.getReader().lines().collect(Collectors.joining());
+            userVo = JSON.parseObject(jsonData, UserVo.class);
             int rows = userService.updateGroup(userVo);
             if (rows < 1) {
                 return Result.error(400,"操作失败");
