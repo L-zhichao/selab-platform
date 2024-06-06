@@ -100,7 +100,7 @@ import java.util.Objects;
                 return Result.success(HttpStatus.NO_CONTENT,"汇报成功");
             }
         }
-        return Result.error(HttpStatus.UnknowError,"存在相同汇报信息");
+        return Result.error(HttpStatus.CONFLICT,"存在相同汇报信息");
     }
 
     /**
@@ -140,12 +140,12 @@ import java.util.Objects;
 
         //权限
         if ( roleId == 3) {
-            return Result.error(HttpStatus.PermissionNotAllowed, "权限不够,禁止查询：普通用户");
+            return Result.error(HttpStatus.PermissionNotAllowed, "权限不足，无法查询：普通用户");
         } else if (roleId==2) {
 
             Integer userId=userMessage.getUserId();
             if(!Objects.equals(publisherId,userId)){
-                return Result.error(HttpStatus.PermissionNotAllowed, "权限不够,禁止查询：非本人发布任务");
+                return Result.error(HttpStatus.PermissionNotAllowed, "权限不足，无法查询：非本人发布任务");
             }else{
                 //查询
                 Integer count = taskReportService.queryTaskReportCount(taskId);
@@ -708,8 +708,8 @@ import java.util.Objects;
        // UserLocal user = SecurityUtil.getUser();
         UserLocal user = new UserLocal();
         user.setUserName("JohnDoe");
-        user.setRoleId(1);
-        user.setUserId(1);
+        user.setRoleId(2);
+        user.setUserId(2);
         return user;
     }
     protected void findMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -13,7 +13,6 @@
         </element>
       </element>
       <element id="javaee-facet-resources" facet="selab-platform/web/Web" />
-      <element id="library" level="project" name="fastjson-1.2.83" />
     </root>
   </artifact>
 </component>
