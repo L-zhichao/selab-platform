@@ -104,15 +104,17 @@ public class BookController extends HttpServlet {
         if (obj == null) {
             return false;
         }
-        String str = obj.toString();
-        return str.matches("^[a-zA-Z]+$");
+        return true;
+//        String str = obj.toString();
+//        return str.matches("^[a-zA-Z]+$");
     }
     public static boolean isInteger(Object obj) {
         if (obj == null) {
             return false;
         }
         // 使用双反斜杠转义正则表达式中的反斜杠
-        String regex = "^-?\\\\d+$";
+//        String regex = "^-?\\\\d+$";
+        String regex = "^[1-9]\\d*$";
         return obj.toString().matches(regex);
     }
     public static boolean isDouble(Object obj) {
@@ -131,17 +133,27 @@ public class BookController extends HttpServlet {
      */
     private Result<Void> save(HttpServletRequest request, HttpServletResponse response) {
         //权限判断
-        UserLocal user = SecurityUtil.getUser();
-        if(user.getRoleId() == 2){
-            return Result.error(500013,"权限不足");
-        }
+//        UserLocal user = SecurityUtil.getUser();
+//        if(user.getRoleId() == 2){
+//            return Result.error(500013,"权限不足");
+//        }
 
         JSONObject jsonObject = tool(request, response);
-        if (isString(jsonObject.get("bookName")) || isString(jsonObject.get("bookAuthor")) || isString(jsonObject.get("bookDetails")) || isDouble(jsonObject.get("price")) || isInteger(jsonObject.get("owner"))
-                || isString(jsonObject.get("remark")) || isString(jsonObject.get("bookRef"))) {
-            return Result.error(500001,"信息输入有误");
+        if (!isString(jsonObject.get("bookName"))) {
+            return Result.error(500001, "bookName信息输入有误");
+        } else if (!isString(jsonObject.get("bookAuthor"))) {
+            return Result.error(500001, "bookAuthor信息输入有误");
+        } else if (!isString(jsonObject.get("bookDetails"))) {
+            return Result.error(500001, "bookDetails信息输入有误");
+        } else if (!isDouble(jsonObject.get("price"))) {
+            return Result.error(500001, "price信息输入有误");
+        } else if (!isInteger(jsonObject.get("owner"))) {
+            return Result.error(500001, "owner信息输入有误");
+        } else if (!isString(jsonObject.get("remark"))) {
+            return Result.error(500001, "remark信息输入有误");
+        } else if (!isString(jsonObject.get("bookRef"))) {
+            return Result.error(500001, "bookRef信息输入有误");
         }
-
         String bookName = String.valueOf(jsonObject.get("bookName"));
         String bookAuthor = String.valueOf(jsonObject.get("bookAuthor"));
         String bookDetails = String.valueOf(jsonObject.get("bookDetails"));
@@ -305,6 +317,7 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result delete(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(request.getParameter("bookId"));
         if(request.getParameter("bookId")!=null){
             Integer bookId = Integer.valueOf(request.getParameter("bookId").toString());
             Integer i = bookService.deleteBook(bookId);
