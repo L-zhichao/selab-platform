@@ -204,6 +204,10 @@ import java.util.Objects;
         }
         TaskReport report = taskReportDao.selectByUserId(userId, taskId);
 
+        if (report == null){
+            return Result.error(HttpStatus.IncomingDataError,"该任务没有汇报记录");
+        }
+
         TaskInfoForUser taskInfoForUser = new TaskInfoForUser();
 
         //发布者
@@ -277,8 +281,8 @@ import java.util.Objects;
                     return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
-            if (request.getParameter("taskid")!=null){
-                taskid = Integer.parseInt(request.getParameter("taskid"));
+            if (request.getParameter("taskId")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskId"));
             }
             //不输入id情况
             if (taskid==null){
@@ -377,8 +381,8 @@ import java.util.Objects;
                     return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
-            if (request.getParameter("taskid")!=null){
-                taskid = Integer.parseInt(request.getParameter("taskid"));
+            if (request.getParameter("taskId")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskId"));
             }
             if (taskid!=null){//如果参数不是null，那么就查询指定任务的汇报记录
                 try {
@@ -464,7 +468,7 @@ import java.util.Objects;
         Integer roleId = userMessage.getRoleId();
         Integer reportid=null;
         //读取参数
-        String reportidStr = request.getParameter("reportid");
+        String reportidStr = request.getParameter("reportId");
         if (reportidStr == null) {
             return Result.error(HttpStatus.IncomingDataError,"没用传入必要参数");
         } else {
@@ -546,8 +550,8 @@ import java.util.Objects;
                 }
 
 
-            if (request.getParameter("taskid")!=null){
-                taskid = Integer.parseInt(request.getParameter("taskid"));
+            if (request.getParameter("taskId")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskId"));
             }
             //无id，获取自己发布的所有任务
             if (taskid==null){
@@ -738,12 +742,12 @@ import java.util.Objects;
             WebUtil.writeJson(resp,result);
         } catch (NullPointerException e1){
             e1.printStackTrace();
-            result = Result.error(HttpStatus.NOT_FOUND,"缺少参数");
+            result = Result.error(HttpStatus.IncomingDataError,"缺少参数");
             WebUtil.writeJson(resp,result);
         }
         catch (Exception e2) {
             e2.printStackTrace();
-            result = Result.error(HttpStatus.NOT_FOUND,"未找到该接口");
+            result = Result.error(HttpStatus.UnknowError,"未知报错");
             WebUtil.writeJson(resp,result);
         }
     }
