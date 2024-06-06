@@ -276,7 +276,7 @@ public class UserController extends HttpServlet {
             Integer userId = Integer.valueOf((request.getParameter("userId")));
             Integer rows = userService.delete(userId);
             if (rows<1) {
-                Result.error(400, "操作失败");;
+                Result.error(400, "您没有操作权限，操作失败");;
             }
             return Result.success(rows);
         }
@@ -290,14 +290,16 @@ public class UserController extends HttpServlet {
          * @return
          * 请求路径 :user/role/update
          */
-        private Result updateRole (HttpServletRequest request, HttpServletResponse response){
+        private Result updateRole (HttpServletRequest request, HttpServletResponse response) throws IOException {
             System.out.println("updateRole");
             UserVo userVo = new UserVo();
-            userVo.setUserId(Long.valueOf(request.getParameter("userId")));
-            userVo.setRoleId(Integer.valueOf(request.getParameter("roleId")));
+            String jsonData = request.getReader().lines().collect(Collectors.joining());
+            userVo = JSON.parseObject(jsonData, UserVo.class);
             int rows = userService.updateUserRole(userVo);
-            if (rows<1) {
-                return Result.error(400, "操作失败");
+            if (rows == -1) {
+                return Result.error(400, "您修改的用户权限不正确，操作失败");
+            } else if (rows == 0) {
+                return Result.error(400,"您没有操作权限，操作失败");
             }
             return Result.success(rows);
         }
@@ -312,15 +314,16 @@ public class UserController extends HttpServlet {
         */
         private Result updateGroup(HttpServletRequest request, HttpServletResponse response) throws IOException {
             System.out.println("updateGroup");
-            Result result = new Result(33,11);
             UserVo userVo = new UserVo();
             String jsonData = request.getReader().lines().collect(Collectors.joining());
             userVo = JSON.parseObject(jsonData, UserVo.class);
             int rows = userService.updateGroup(userVo);
-            if (rows < 1) {
-                return Result.error(400,"操作失败");
+            if (rows == -1) {
+                return Result.error(400,"没有该小组，操作失败");
+            } else if (rows == 0) {
+                return Result.error(400,"您没有操作权限，操作失败");
             }
-                return Result.success(rows);
+            return Result.success(rows);
 
         }
 

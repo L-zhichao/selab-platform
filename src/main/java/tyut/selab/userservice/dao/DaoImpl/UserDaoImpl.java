@@ -437,25 +437,20 @@ public class UserDaoImpl implements UserDao {
     public Integer deleteByUserId(Integer userId) {
         int rows;
         Connection conn = null;
-        PreparedStatement ps1 = null;
-        PreparedStatement ps2 = null;
+        PreparedStatement ps = null;
         try {
             conn = JDBCUtils.getConnection();
             //修改唯一标识，1为删除
-            String sql1 = "UPDATE sys_user SET del_flag = 1 where user_id = ?";
-            ps1 = conn.prepareStatement(sql1);
-            ps1.setLong(1,userId);
-            ps1.executeUpdate();
-            //删除用户
-            String sql2 = "DELETE FROM sys_user WHERE user_id= ? ";
-            ps2 = conn.prepareStatement(sql2);
-            ps2.setInt(1, userId);
-            rows = ps2.executeUpdate();
+            String sql1 = "UPDATE sys_user SET del_flag = 1,update_time=? where user_id = ?";
+            ps = conn.prepareStatement(sql1);
+            ps.setTimestamp(1,new Timestamp(System.currentTimeMillis()));
+            ps.setLong(2,userId);
+            ps.executeUpdate();
+            rows = ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            JDBCUtils.closeResource(conn, ps1);
-            JDBCUtils.closeResource(conn, ps2);
+            JDBCUtils.closeResource(conn, ps);
         }
         return rows;
     }
