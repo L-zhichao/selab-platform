@@ -277,8 +277,8 @@ import java.util.Objects;
                     return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
-            if (request.getParameter("taskid")!=null){
-                taskid = Integer.parseInt(request.getParameter("taskid"));
+            if (request.getParameter("taskId")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskId"));
             }
             //不输入id情况
             if (taskid==null){
@@ -377,8 +377,8 @@ import java.util.Objects;
                     return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
-            if (request.getParameter("taskid")!=null){
-                taskid = Integer.parseInt(request.getParameter("taskid"));
+            if (request.getParameter("taskId")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskId"));
             }
             if (taskid!=null){//如果参数不是null，那么就查询指定任务的汇报记录
                 try {
@@ -464,12 +464,12 @@ import java.util.Objects;
         Integer roleId = userMessage.getRoleId();
         Integer reportid=null;
         //读取参数
-        String reportidStr = request.getParameter("reportid");
-        if (reportidStr == null) {
+        String reportIdStr = request.getParameter("reportId");
+        if (reportIdStr == null) {
             return Result.error(HttpStatus.IncomingDataError,"没用传入必要参数");
         } else {
             try {
-                 reportid = Integer.parseInt(reportidStr);
+                 reportid = Integer.parseInt(reportIdStr);
             } catch (NumberFormatException e) {
                 return Result.error(HttpStatus.IncomingDataError,"参数非法");
             }
@@ -546,8 +546,8 @@ import java.util.Objects;
                 }
 
 
-            if (request.getParameter("taskid")!=null){
-                taskid = Integer.parseInt(request.getParameter("taskid"));
+            if (request.getParameter("taskId")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskId"));
             }
             //无id，获取自己发布的所有任务
             if (taskid==null){
@@ -623,8 +623,8 @@ import java.util.Objects;
                     return Result.error(HttpStatus.IncomingDataError,"参数非法");
                 }
 
-            if (request.getParameter("taskid")!=null){
-                taskid = Integer.parseInt(request.getParameter("taskid"));
+            if (request.getParameter("taskId")!=null){
+                taskid = Integer.parseInt(request.getParameter("taskId"));
             }
             //超级管理员能查看所有发布的需要汇报的用户信息
            //超级管理员也可以输入id
