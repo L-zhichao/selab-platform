@@ -32,13 +32,13 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public Integer delete(Integer bookId) {
-        String sql = "update book_info set delFlag=1 where bookId=?";
+        String sql = "update book_info set del_flag=1 where book_id=?";
         return baseDao.baseUpdate(sql,bookId);
     }
 
     @Override
     public List<BookInfo> selectByOwnerBookName(Integer cur, Integer size, Integer userId, String bookName) {
-        String sql ="select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where del_flag=0 and owner=? and book_name like ? limit ?,?";
+        String sql ="select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef,del_flag delFlag from book_info where owner=? and book_name like ? limit ?,?";
         int index = (cur - 1) * size;
         List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class,sql,userId,"%"+bookName+"%",index,size);
         return bookInfos;
@@ -46,7 +46,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public List<BookInfo> selectByOwnerBookInfo(Integer cur, Integer size, Integer userId) {
-        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where del_flag=0 and owner=? limit ?,?;";
+        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef,del_flag delFlag from book_info where owner=? limit ?,?;";
         int index = (cur - 1) * size;
         List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class,sql,userId,index,size);
         return bookInfos;
@@ -55,7 +55,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
     @Override
     public List<BookInfo> selectAllByBookName(Integer cur, Integer size, String bookName) {
         // 使用通配符之后的模糊匹配
-        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where del_flag=0 and book_name like ? limit ?,?;";
+        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef,,del_flag delFlag from book_info where book_name like ? limit ?,?;";
         int index = (cur - 1) * size;
         List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class, sql,"%"+bookName+"%",index,size);
         return bookInfos;
@@ -63,7 +63,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public BookInfo selectByBookIdBookInfo(Integer bookId) {
-        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where del_flag=0 and book_id=?";
+        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef,del_flag delFlag from book_info where book_id=?";
         List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class, sql, bookId);
         if (!bookInfos.isEmpty()) {
             return bookInfos.get(0);
@@ -74,7 +74,7 @@ public class BookInfoDaoImpl extends BaseDao implements BookInfoDao {
 
     @Override
     public List<BookInfo> selectAllList(Integer cur, Integer size) {
-        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef from book_info where del_flag=0 limit ?,?";
+        String sql = "select book_id bookId,book_name bookName,book_author bookAuthor,book_details bookDetails,price,owner,status,create_time createTime,update_time updateTime,book_ref bookRef,del_flag delFlag from book_info limit ?,?";
         int index = (cur - 1) * size;
         List<BookInfo> bookInfos = baseDao.baseQuery(BookInfo.class,sql,index,size);
         return bookInfos;
