@@ -126,7 +126,7 @@ public class BookController extends HttpServlet {
      * @return
      */
     private Result<Void> save(HttpServletRequest request, HttpServletResponse response) {
-        //权限判断
+//        权限判断
         UserLocal user = SecurityUtil.getUser();
         if(user.getRoleId() == 2){
             return Result.error(500013,"权限不足");
@@ -261,7 +261,7 @@ public class BookController extends HttpServlet {
             return Result.success(null);
         }
         else if (i == -1){
-            return Result.error(500009,"该书已被删除");
+            return Result.error(500009,"没有找到该书");
         }
         else{
             return Result.error(500005,"图书信息修改失败");
@@ -351,7 +351,9 @@ public class BookController extends HttpServlet {
             else if(i == -1){
                 return Result.error(500006,"图书处于借阅状态，不可删除");
             }
-            else{
+            else if(i == -2) {
+                return Result.error(500009, "没有找到该书籍");
+            }else{
                 return Result.error(500009,"图书信息删除失败");
             }
         }
