@@ -36,7 +36,7 @@ public class BookServiceImpl implements BookService {
         BookInfo bookInfo = bookVoToBookInfo(bookVo);
         Integer bookId = bookInfo.getBookId();
         BookInfo book = bookDao.selectByBookIdBookInfo(bookId);
-        if(book == null){
+        if(book == null || book.getDelFlag() == 1){
             return -1;
         }else{
             return bookDao.update(bookInfo);
@@ -46,6 +46,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public Integer deleteBook(Integer bookId) {
         BookInfo bookInfo = bookDao.selectByBookIdBookInfo(bookId);
+        if (bookInfo == null || bookInfo.getDelFlag() == 1){
+            return -2;
+        }
         Integer status = bookInfo.getStatus();
         if (status == 0 || status == 2){
             return bookDao.delete(bookId);
@@ -58,7 +61,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookVo selectBookById(Integer bookId) {
         BookInfo bookInfo = bookDao.selectByBookIdBookInfo(bookId);
-        if (bookInfo == null) {
+        if (bookInfo == null || bookInfo.getDelFlag() == 1) {
             return null;
         }
         BookVo bookVo = bookIofoToBookVo(bookInfo);
@@ -70,23 +73,29 @@ public class BookServiceImpl implements BookService {
         PageUtil<BookVo> pageUtil = new PageUtil<BookVo>();
         pageUtil.setCur(cur);
         pageUtil.setSize(size);
-        List<BookVo> list = new ArrayList<BookVo>();
-        List<BookInfo> bookInfos = bookDao.selectByOwnerBookName(cur, size,userId,bookName);
+
         if(cur == 1){
             Integer count = bookDao.selectCount(bookName,userId);
             pageUtil.setTotal(count);
         }
-        if (bookInfos!=null && !bookInfos.isEmpty()){
-            for (BookInfo bookInfo : bookInfos) {
+
+        List<BookInfo> bookInfos = bookDao.selectByOwnerBookName(cur, size,userId,bookName);
+
+        if (bookInfos.isEmpty()){
+            pageUtil.setData(null);
+            return pageUtil;
+        }
+
+        List<BookVo> list = new ArrayList<BookVo>();
+
+        for (BookInfo bookInfo : bookInfos) {
+            if (bookInfo.getDelFlag() == 0) {
                 BookVo bookVo = bookIofoToBookVo(bookInfo);
                 list.add(bookVo);
             }
-            pageUtil.setData(list);
-            return pageUtil;
         }
-        else{
-            return null;
-        }
+        pageUtil.setData(list);
+        return pageUtil;
     }
 
     @Override
@@ -100,20 +109,25 @@ public class BookServiceImpl implements BookService {
             page.setTotal(count);
         }
         // 创建集合，并执行查询操作
-        List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectAllByBookName(cur,size,bookName);
-        // 判断集合是否为空
-        if (bookVos!=null && !bookVos.isEmpty()){
-            for(BookInfo bookInfo:bookInfos){
+
+        if (bookInfos.isEmpty()){
+            page.setData(null);
+            return page;
+        }
+
+        List<BookVo> bookVos = new ArrayList<>();
+
+        for(BookInfo bookInfo:bookInfos){
+            if (bookInfo.getDelFlag() == 0){
                 BookVo bookVo = bookIofoToBookVo(bookInfo);
                 bookVos.add(bookVo);
             }
-            page.setData(bookVos);
-
-            return page;
-        }else {
-            return null;
         }
+        page.setData(bookVos);
+
+        return page;
+
     }
 
     @Override
@@ -125,18 +139,25 @@ public class BookServiceImpl implements BookService {
             Integer count = bookDao.selectCount(null,userId);
             page.setTotal(count);
         }
-        List<BookVo> bookVos = new ArrayList<>();
+
         List<BookInfo> bookInfos = bookDao.selectByOwnerBookInfo(cur, size, userId);
-        if (bookVos!=null && !bookVos.isEmpty()){
-            for (BookInfo bookInfo : bookInfos) {
+
+        if (bookInfos.isEmpty()){
+            page.setData(null);
+            return page;
+        }
+
+        List<BookVo> bookVos = new ArrayList<>();
+
+        for (BookInfo bookInfo : bookInfos) {
+            if (bookInfo.getDelFlag() == 0) {
                 BookVo bookVo = bookIofoToBookVo(bookInfo);
                 bookVos.add(bookVo);
             }
-            page.setData(bookVos);
-            return page;
-        }else{
-            return null;
         }
+        page.setData(bookVos);
+        return page;
+
     }
 
     @Override
@@ -148,18 +169,24 @@ public class BookServiceImpl implements BookService {
             Integer count = bookDao.selectCount(null,null);
             page.setTotal(count);
         }
-        List<BookVo> bookVos = new ArrayList<>();
         List<BookInfo> bookInfos = bookDao.selectAllList(cur, size);
-        if (bookVos !=null && !bookVos.isEmpty()){
-            for (BookInfo bookInfo : bookInfos) {
+
+        if(bookInfos.isEmpty()){
+            page.setData(null);
+            return page;
+        }
+        List<BookVo> bookVos = new ArrayList<>();
+
+        for (BookInfo bookInfo : bookInfos) {
+            if (bookInfo.getDelFlag() == 0){
                 BookVo bookVo = bookIofoToBookVo(bookInfo);
                 bookVos.add(bookVo);
             }
-            page.setData(bookVos);
-            return page;
-        }else{
-            return null;
         }
+
+        page.setData(bookVos);
+        return page;
+
     }
 
     @Override
