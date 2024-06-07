@@ -14,8 +14,10 @@ import java.util.List;
 * @Entity tyut.selab.userservice.domain.User
 */
 public interface UserDao {
-
-
+    /**
+     *获取用户总数
+     */
+    public Integer getUserTotal();
 
     /**
      * 增加用户

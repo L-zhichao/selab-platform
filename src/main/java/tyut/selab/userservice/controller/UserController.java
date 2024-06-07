@@ -8,6 +8,7 @@ import tyut.selab.userservice.Dto.UserDto;
 import tyut.selab.userservice.common.Constant;
 import tyut.selab.userservice.dao.DaoImpl.UserDaoImpl;
 import tyut.selab.userservice.dao.DaoImpl.UserLogoutDaoImpl;
+import tyut.selab.userservice.domain.Page;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.userservice.service.ServiceImpl.UserServiceImpl;
@@ -171,29 +172,33 @@ public class UserController extends HttpServlet {
         Integer cur = Integer.valueOf((request.getParameter("cur") == null) ? "1" : request.getParameter("cur"));
         Integer size = Integer.valueOf((request.getParameter("size") == null) ? "5" : request.getParameter("size"));
 
-        List<UserVo>  usersByGroupId = new ArrayList<>();
-        List<UserVo> Alluser = new ArrayList<>();
-        List<UserVo> ResultList = new ArrayList<>();
+
+        Page<UserVo> page = new Page<>();
+
+
+
         UserVo userByUserId = null;
         if (userId != null && groupId != null){
-            userByUserId = userService.selectByUserId(Long.valueOf(userId));
-            ResultList.add(userByUserId);
+            page = userService.selectByUserId(Long.valueOf(userId));
         }else {
             if (groupId != null && userId == null) {
-                usersByGroupId = userService.selectByGroupId(Integer.valueOf(groupId),cur,size);
-                ResultList.addAll(usersByGroupId);
+                page = userService.selectByGroupId(Integer.valueOf(groupId),cur,size);
+
             } else if (userId != null && groupId == null ) {
-                userByUserId = userService.selectByUserId(Long.valueOf(userId));
-                ResultList.add(userByUserId);
+                page = userService.selectByUserId(Long.valueOf(userId));
+
             } else if (userId == null && groupId == null){
-                Alluser = userService.queryAll(cur,size);
-                ResultList.addAll(Alluser);
+                page = userService.queryAll(cur,size);
             }
         }
-        if(ResultList == null){
+        page.setCur(cur);
+        page.setSize(size);
+
+
+        if(page.getData() == null){
             return Result.error(400,"查询失败");
         }else {
-            return Result.success(ResultList);
+            return Result.success(page);
         }
     }
 
@@ -206,14 +211,16 @@ public class UserController extends HttpServlet {
      * @return
      */
     private Result queryById(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        System.out.println("doQueryById");
+
         String path = request.getPathInfo();
         String[] split = path.split("/");
         String userId = split[split.length-1];
-//        System.out.println(userId);
-        UserVo userVo = userService.selectByUserId(Long.valueOf(userId));
+        Page<UserVo> page = new Page<UserVo>();
 
-        return Result.success(userVo);
+
+        page = userService.selectByUserId(Long.valueOf(userId));
+
+        return Result.success(page);
     }
 
 

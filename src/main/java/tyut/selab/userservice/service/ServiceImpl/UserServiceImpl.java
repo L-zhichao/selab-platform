@@ -1,28 +1,21 @@
 package tyut.selab.userservice.service.ServiceImpl;
 
-import tyut.selab.loginservice.dto.UserLocal;
-import tyut.selab.loginservice.utils.SecurityUtil;
 import tyut.selab.userservice.dao.DaoImpl.GroupDaoImpl;
 import tyut.selab.userservice.dao.DaoImpl.UserDaoImpl;
 import tyut.selab.userservice.dao.DaoImpl.UserLogoutDaoImpl;
 import tyut.selab.userservice.dao.GroupDao;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.dao.UserLogoutDao;
-import tyut.selab.userservice.domain.Group;
+import tyut.selab.userservice.domain.Page;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.domain.UserLogout;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.UserVo;
-import tyut.selab.utils.JudgeRoleId;
-import tyut.selab.utils.PageUtils;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class UserServiceImpl implements UserService {
 
@@ -83,10 +76,12 @@ public class UserServiceImpl implements UserService {
      */
 
     @Override
-    public List<UserVo> queryAll(Integer cur, Integer size) {
+    public Page<UserVo> queryAll(Integer cur, Integer size) {
 
         List<User> users = userDao.selectAll(cur, size);
         List<UserVo> resultList = new ArrayList<>();
+        Page<UserVo> page = new Page<>();
+        Integer total = userDao.getUserTotal();
 
         for (User user : users) {
             UserVo userVo = new UserVo();
@@ -126,9 +121,9 @@ public class UserServiceImpl implements UserService {
 
             resultList.add(userVo);
         }
-
-
-        return resultList;
+        page.setTotal(total);
+        page.setData(resultList);
+        return page;
     }
 
 
@@ -139,12 +134,13 @@ public class UserServiceImpl implements UserService {
      * @return List<UserVo>
      */
     @Override
-    public List<UserVo> selectByGroupId(Integer groupId, Integer cur, Integer size) {
+    public Page<UserVo> selectByGroupId(Integer groupId, Integer cur, Integer size) {
 
         String groupName = userDao.getGroupName(groupId);
+        Integer total = userDao.getUserTotal();
         List<User> userArrayList = new ArrayList<>();
         List<UserVo> userVoList = new ArrayList<>();
-
+        Page<UserVo> page = new Page<>();
         userArrayList = userDao.selectByGroupIdUsers(groupId, cur, size);
 
         for (User user : userArrayList) {
@@ -182,7 +178,9 @@ public class UserServiceImpl implements UserService {
             userVoList.add(userVo);
 
         }
-        return userVoList;
+        page.setTotal(total);
+        page.setData(userVoList);
+        return page;
     }
 
 
@@ -193,7 +191,11 @@ public class UserServiceImpl implements UserService {
      * @return UserVo
      */
     @Override
-    public UserVo selectByUserId(Long userId) {
+    public Page<UserVo> selectByUserId(Long userId) {
+        Page<UserVo> page = new Page<>();
+        List<UserVo> list = new ArrayList<>();
+        Integer total = userDao.getUserTotal();
+
         User userSelectByUserId = userDao.selectByUserIdUser(userId);
         UserVo userVo = new UserVo();
         Long userid = userSelectByUserId.getUserId();
@@ -230,7 +232,11 @@ public class UserServiceImpl implements UserService {
         userVo.setCreateTime(createTime);
         userVo.setUpdateTime(updateTime);
 
-        return userVo;
+        list.add(userVo);
+        page.setData(list);
+        page.setTotal(total);
+
+        return page;
     }
 
 

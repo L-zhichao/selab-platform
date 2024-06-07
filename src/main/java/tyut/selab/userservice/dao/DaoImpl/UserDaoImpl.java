@@ -10,6 +10,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
+
+    /**
+     *获取用户总数
+     */
+    public Integer getUserTotal(){
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        Integer total = 0;
+
+        try {
+            conn = JDBCUtils.getConnection();
+            conn.setAutoCommit(false);
+            String sql = "select count(*) as count from sys_user";
+            pstmt = conn.prepareStatement(sql);
+            ResultSet resultSet = pstmt.executeQuery();
+            while(resultSet.next()){
+                total = resultSet.getInt("count");
+            }
+            resultSet.close();
+            conn.commit();
+
+            return total;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+
+        }finally {
+
+            try {
+                conn.setAutoCommit(true);
+                if(pstmt != null) {
+                    pstmt.close();
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            JDBCUtils.closeResource(conn,pstmt);
+        }
+
+
+
+
+    }
+
+
+
     /**
      * 增加用户
      * @return
