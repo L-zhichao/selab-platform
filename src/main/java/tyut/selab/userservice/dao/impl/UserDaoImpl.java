@@ -102,7 +102,7 @@ public class UserDaoImpl implements UserDao {
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 int delFlag = resultSet.getInt("del_flag");
-                if (delFlag==0){
+                //if (delFlag==0){
                 Long userId = resultSet.getLong("user_id");
                 String userName = resultSet.getString("user_name");
                 Date createTime = resultSet.getDate("create_time");
@@ -131,7 +131,7 @@ public class UserDaoImpl implements UserDao {
                 //user.setUserId(userId);
                 //group.setCreateTime(createTime);
                 //list.add(user);
-                }
+                //}
             }//else {
             //    throw new RuntimeException("此小组已删除");
             //}
@@ -266,7 +266,7 @@ public class UserDaoImpl implements UserDao {
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 int delFlag = resultSet.getInt("del_flag");
-                if (delFlag==0){
+                //if (delFlag==0){
                     String userName = resultSet.getString("user_name");
                     //int groupId = resultSet.getInt("group_id");
                     Date createTime = resultSet.getDate("create_time");
@@ -286,9 +286,9 @@ public class UserDaoImpl implements UserDao {
                     user.setRemark(remark);
                     user.setPhone(phone);
                     user.setSex(sex);
-                }else {
-                    throw new RuntimeException("此用户已删除");
-                }
+                //}else {
+                //    throw new RuntimeException("此用户已删除");
+                //}
 
             }
         } catch (Exception e) {
@@ -356,7 +356,7 @@ public class UserDaoImpl implements UserDao {
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 int delFlag = resultSet.getInt("del_flag");
-                if (delFlag==0) {
+                //if (delFlag==0) {
                     Long userId = resultSet.getLong("user_id");
                     String userName = resultSet.getString("user_name");
                     Date createTime = resultSet.getDate("create_time");
@@ -385,7 +385,7 @@ public class UserDaoImpl implements UserDao {
                     //加之后data数据穿不进去 不加会爆异常空指针
                     //user.setUserId(userId);
                     //list.add(user);
-                }
+                //}
                 //}else {
                 //   throw new RuntimeException("此小组已删除");
                 //}
@@ -434,7 +434,7 @@ public class UserDaoImpl implements UserDao {
             preparedStatement.setInt(3,szie);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
-                //int delFlag = resultSet.getInt("del_flag");
+                int delFlag = resultSet.getInt("del_flag");
                 //if (delFlag==0){
                     Long userId = resultSet.getLong("user_id");
                     User user = selectByUserIdUser(userId);
@@ -576,7 +576,7 @@ public class UserDaoImpl implements UserDao {
                 //User user ;
                 //long userId;
                 int delFlag = resultSet.getInt("del_flag");
-                if (delFlag==0){
+                //if (delFlag==0){
                     Long userId = resultSet.getLong("user_id");
                     String userName = resultSet.getString("user_name");
                     Date createTime = resultSet.getDate("create_time");
@@ -601,9 +601,9 @@ public class UserDaoImpl implements UserDao {
                     user.setGroupId(groupId);
                     user.setUserId(userId);
                     list.add(user);
-                }else {
-                    throw new RuntimeException("已删除");
-                }
+                //}else {
+                //    throw new RuntimeException("已删除");
+                //}
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

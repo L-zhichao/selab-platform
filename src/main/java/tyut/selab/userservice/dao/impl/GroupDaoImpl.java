@@ -29,20 +29,19 @@ public class GroupDaoImpl implements GroupDao {
             prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
             DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
             connection = dataSource.getConnection();
-            /*String s="select sys_group.group_name,del_flag from sys_group";
+            //加上s前端报错33-46
+            String s="select sys_group.group_name from sys_group";
             preparedStatement1= connection.prepareStatement(s);
             resultSet=preparedStatement1.executeQuery();
             while (resultSet.next()){
                 String groupName1 = resultSet.getString("group_name");
-                int delFlag = resultSet.getInt("del_flag");
+
                 if (groupName1.equals(groupName)){
                     return 0;
                 }
-                if (delFlag==1){
-                    return 0;
-                }
 
-            }*/
+
+            }
             String sql = "insert into sys_group(parent_id,group_name,sys_group.create_time,update_time,update_user) values(?,?,?,?,?)";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, group.getParentId());
@@ -135,8 +134,8 @@ public class GroupDaoImpl implements GroupDao {
             preparedStatement.setInt(2,szie);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
-                int delFlag = resultSet.getInt("del_flag");
-                if (delFlag==0){
+                    int delFlag = resultSet.getInt("del_flag");
+                //if (delFlag==0){
                     String groupName = resultSet.getString("group_name");
                     int groupId = resultSet.getInt("group_id");
                     Date createTime = resultSet.getDate("create_time");
@@ -145,9 +144,9 @@ public class GroupDaoImpl implements GroupDao {
                     group.setGroupName(groupName);
                     group.setCreateTime(createTime);
                     list.add(group);
-                }else {
-                    throw new RuntimeException("此小组已删除");
-                }
+                //}else {
+                //    throw new RuntimeException("此小组已删除");
+                //}
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

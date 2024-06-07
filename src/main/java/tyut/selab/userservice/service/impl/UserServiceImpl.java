@@ -69,6 +69,9 @@ public class UserServiceImpl implements UserService {
         Long userId = userVo.getUserId();
         Integer roleId = userVo.getRoleId();
         user.setUserId(userId);
+        if (roleId != 1 && roleId != 2 && roleId != 3) {
+            return 0;
+        }
         user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
         user.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
         user.setRoleId(roleId);
@@ -136,6 +139,17 @@ public class UserServiceImpl implements UserService {
             String email = userVo.getEmail();
             String phone = userVo.getPhone();
             Integer sex = userVo.getSex();
+            if (roleId != 1 && roleId != 2 && roleId != 3 && sex!=0 && sex!= 1) {
+                return 0;
+            }
+            String phoneNumberPattern = "[0-9]{11}";
+            if (!phone.matches(phoneNumberPattern)){
+                return 0;
+            }
+            String userNamePattern = "^[\\\\u4e00-\\\\u9fa5a-zA-Z0-9]*$";
+            if (!userName.matches(userNamePattern)){
+                return 0;
+            }
             user.setUserId(userId);
             user.setUserName(userName);
             user.setGroupId(groupId);
@@ -158,11 +172,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         Long userId = userVo.getUserId();
         Integer groupId = userVo.getGroupId();
-        String name =null;
-        /*name = userDao.getgroupName(groupId);
-        if (name==null){
-            return 0;
-        }*/
+        //String name = userDao.getgroupName(groupId);
         user.setUserId(userId);
         user.setGroupId(groupId);
         Integer update=userDao.groupUpdate(user);
@@ -196,7 +206,7 @@ public class UserServiceImpl implements UserService {
                 userVo.setRoleName("用户");
             }/*else {
             throw new RuntimeException("找不到该用户类别");
-        }*/
+            }*/
             userVo.setUserName(username);
             userVo.setGroupId(groupId);
             userVo.setGroupName(groupName);
@@ -231,7 +241,7 @@ public class UserServiceImpl implements UserService {
     public List<UserVo> selectAll(Integer cur, Integer szie) {
         List<UserVo> userVos = new ArrayList<>();
         List<User> users = userDao.selectAll(cur,szie);
-        if (!users.isEmpty()){
+        //if (!users.isEmpty()){
 
             for (User user: users){
                 UserVo userVo = new UserVo();
@@ -266,8 +276,8 @@ public class UserServiceImpl implements UserService {
             }
 
             return userVos;
-        }
-        return null;
+        //}
+        //return null;
     }
 
     @Override
@@ -325,6 +335,18 @@ public class UserServiceImpl implements UserService {
         String phone = userVo.getPhone();
         Integer sex = userVo.getSex();
         String password = userVo.getPassword();
+        if (roleId != 1 && roleId != 2 && roleId != 3 && sex!=0 && sex!= 1) {
+            return 0;
+        }
+        String phoneNumberPattern = "[0-9]{11}";
+        if (!phone.matches(phoneNumberPattern)){
+            return 0;
+        }
+        String userNamePattern = "^[\\\\u4e00-\\\\u9fa5a-zA-Z0-9]*$";
+        if (!userName.matches(userNamePattern)){
+            return 0;
+        }
+
         user.setUserName(userName);
         user.setGroupId(groupId);
         user.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
