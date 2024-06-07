@@ -40,7 +40,7 @@ public class BorrowServiceImpl implements BorrowService {
 
         // 查询书籍状态
         BookInfo bookInfo = bookInfoDao.selectByBookIdBookInfo(borrowBookDto.getBookId());
-        if(bookInfo == null){
+        if(bookInfo == null || bookInfo.getDelFlag() == 1){
             return -5;
         }
         Integer status = bookInfo.getStatus();
@@ -115,7 +115,7 @@ public class BorrowServiceImpl implements BorrowService {
         }
 
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllByUserId(userId, cur, size);
-        if(borrowBooks == null){
+        if(borrowBooks.isEmpty()){
             borrowBookVoPageUtil.setData(null);
             return borrowBookVoPageUtil;
         }
@@ -144,7 +144,7 @@ public class BorrowServiceImpl implements BorrowService {
         }
 
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllByBookId(bookId,cur,size);
-        if(borrowBooks == null){
+        if(borrowBooks.isEmpty()){
             borrowBookVoPageUtil.setData(null);
             return borrowBookVoPageUtil;
         }
@@ -174,7 +174,7 @@ public class BorrowServiceImpl implements BorrowService {
 
         List<BorrowBook> borrowBooks = borrowBookDao.selectAll(cur, size);
 
-        if (borrowBooks == null){
+        if (borrowBooks.isEmpty()){
             borrowBookVoPageUtil.setData(null);
             return borrowBookVoPageUtil;
         }
@@ -203,7 +203,7 @@ public class BorrowServiceImpl implements BorrowService {
 
         List<BorrowBook> borrowBooks = borrowBookDao.selectAllForNoReturn(cur,size);
 
-        if (borrowBooks == null){
+        if (borrowBooks.isEmpty()){
             borrowBookVoPageUtil.setData(null);
             return borrowBookVoPageUtil;
         }
