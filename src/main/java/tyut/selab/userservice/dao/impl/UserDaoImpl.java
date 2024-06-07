@@ -434,7 +434,7 @@ public class UserDaoImpl implements UserDao {
             preparedStatement.setInt(3,szie);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
-                int delFlag = resultSet.getInt("del_flag");
+                //int delFlag = resultSet.getInt("del_flag");
                 //if (delFlag==0){
                     Long userId = resultSet.getLong("user_id");
                     User user = selectByUserIdUser(userId);
