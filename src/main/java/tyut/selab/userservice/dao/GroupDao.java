@@ -41,6 +41,8 @@ public interface GroupDao {
      */
     public List<Integer> selectAllGroupId();
 
+
+    public Integer getGroupTotal();
 }
 
 

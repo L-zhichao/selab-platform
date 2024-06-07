@@ -12,6 +12,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import tyut.selab.userservice.Dto.GroupDto;
+import tyut.selab.userservice.domain.Page;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.ServiceImpl.GroupServiceImpl;
 import tyut.selab.userservice.vo.GroupVo;
@@ -230,14 +231,12 @@ public class GroupController extends HttpServlet {
             //条件查询
             Integer cur = Integer.valueOf((request.getParameter("cur") == null) ? "1" : request.getParameter("cur"));
             Integer szie = Integer.valueOf((request.getParameter("szie") == null) ? "5" : request.getParameter("szie"));
-            List<GroupVo> groupVos = groupService.selectAllGroup(cur, szie);
+            Page<GroupVo> groupVos = groupService.selectAllGroup(cur, szie);
             if(groupVos == null){
                 return Result.error(400,"查询失败，没有权限");
             }
             return Result.success(groupVos);
         }
-
-
     }
 
 

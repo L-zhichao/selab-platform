@@ -1,6 +1,5 @@
 package tyut.selab.userservice.dao.DaoImpl;
 
-import com.alibaba.fastjson.JSONObject;
 import tyut.selab.userservice.dao.UserDao;
 import tyut.selab.userservice.domain.User;
 import tyut.selab.utils.JDBCUtils;
@@ -12,9 +11,9 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
 
     /**
-     *获取用户总数
+     * 获取用户总数
      */
-    public Integer getUserTotal(){
+    public Integer getUserTotal() {
         Connection conn = null;
         PreparedStatement pstmt = null;
         Integer total = 0;
@@ -22,10 +21,10 @@ public class UserDaoImpl implements UserDao {
         try {
             conn = JDBCUtils.getConnection();
             conn.setAutoCommit(false);
-            String sql = "select count(*) as count from sys_user";
+            String sql = "select count(*) as count from sys_user WHERE del_flag <>1";
             pstmt = conn.prepareStatement(sql);
             ResultSet resultSet = pstmt.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 total = resultSet.getInt("count");
             }
             resultSet.close();
@@ -37,11 +36,11 @@ public class UserDaoImpl implements UserDao {
 
             throw new RuntimeException(e);
 
-        }finally {
+        } finally {
 
             try {
                 conn.setAutoCommit(true);
-                if(pstmt != null) {
+                if (pstmt != null) {
                     pstmt.close();
                 }
 
@@ -49,18 +48,16 @@ public class UserDaoImpl implements UserDao {
                 throw new RuntimeException(e);
             }
 
-            JDBCUtils.closeResource(conn,pstmt);
+            JDBCUtils.closeResource(conn, pstmt);
         }
-
-
 
 
     }
 
 
-
     /**
      * 增加用户
+     *
      * @return
      */
     //完成
@@ -71,7 +68,7 @@ public class UserDaoImpl implements UserDao {
         PreparedStatement pstmtInsert = null;
         PreparedStatement pstmtSelect = null;
 
-        String userName =  user.getUserName();
+        String userName = user.getUserName();
         Integer groupId = user.getGroupId();
         Integer roleId = user.getRoleId();
         String email = user.getEmail();
@@ -85,34 +82,34 @@ public class UserDaoImpl implements UserDao {
         try {
             conn = JDBCUtils.getConnection();
             conn.setAutoCommit(false);
-            String sql1 = "insert into sys_user (user_name,create_time,update_time,role_id,email,phone,sex,del_flag,password) "+
+            String sql1 = "insert into sys_user (user_name,create_time,update_time,role_id,email,phone,sex,del_flag,password) " +
                     "values (?,?,?,?,?,?,?,?,?)";
             pstmtInsert = conn.prepareStatement(sql1);
-            pstmtInsert .setString(1,userName);
-            pstmtInsert .setDate(2,createTime);
-            pstmtInsert .setDate(3,updateTime);
-            pstmtInsert .setInt(4,roleId);
-            pstmtInsert .setString(5,email);
-            pstmtInsert .setString(6,phone);
-            pstmtInsert .setInt(7,sex);
-            pstmtInsert .setInt(8,delFlag);
-            pstmtInsert.setString(9,password);
-            pstmtInsert .execute();
+            pstmtInsert.setString(1, userName);
+            pstmtInsert.setDate(2, createTime);
+            pstmtInsert.setDate(3, updateTime);
+            pstmtInsert.setInt(4, roleId);
+            pstmtInsert.setString(5, email);
+            pstmtInsert.setString(6, phone);
+            pstmtInsert.setInt(7, sex);
+            pstmtInsert.setInt(8, delFlag);
+            pstmtInsert.setString(9, password);
+            pstmtInsert.execute();
 
-            String sql2 = "select LAST_INSERT_ID() as user_id from sys_user; ";
+            String sql2 = "select LAST_INSERT_ID() as user_id from sys_user WHERE del_flag <> 1; ";
             pstmtSelect = conn.prepareStatement(sql2);
             ResultSet resultSet = pstmtSelect.executeQuery();
             System.out.println(resultSet);
             Long userId = null;
             while (resultSet.next()) {
-                 userId = resultSet.getLong("user_id");
+                userId = resultSet.getLong("user_id");
             }
             resultSet.close();
 
             String sql3 = "insert into user_group (user_id,group_id) values (?,?)";
             pstmtInsert = conn.prepareStatement(sql3);
-            pstmtInsert.setLong(1,userId);
-            pstmtInsert.setInt(2,groupId);
+            pstmtInsert.setLong(1, userId);
+            pstmtInsert.setInt(2, groupId);
             pstmtInsert.executeUpdate();
 
             conn.commit();
@@ -122,26 +119,23 @@ public class UserDaoImpl implements UserDao {
 
             throw new RuntimeException(e);
 
-        }finally {
+        } finally {
 
             try {
-                if(pstmtSelect != null) {
+                if (pstmtSelect != null) {
                     pstmtSelect.close();
                 }
                 conn.setAutoCommit(true);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            JDBCUtils.closeResource(conn,pstmtInsert);
+            JDBCUtils.closeResource(conn, pstmtInsert);
         }
     }
 
 
-
-
-
     /**
-     通过grouoId查询小组的名字
+     * 通过grouoId查询小组的名字
      */
     @Override
     public String getGroupName(Integer groupId) {
@@ -152,11 +146,11 @@ public class UserDaoImpl implements UserDao {
         try {
             conn = JDBCUtils.getConnection();
             conn.setAutoCommit(false);
-            String sql = "select group_name as groupName from sys_group where group_id = ? ";
+            String sql = "select group_name as groupName from sys_group where group_id = ? AND del_flag <>1";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1,groupId);
-            ResultSet resultSet =  pstmt.executeQuery();
-            while (resultSet.next()){
+            pstmt.setInt(1, groupId);
+            ResultSet resultSet = pstmt.executeQuery();
+            while (resultSet.next()) {
                 groupName = resultSet.getString("groupName");
             }
             conn.commit();
@@ -164,19 +158,20 @@ public class UserDaoImpl implements UserDao {
 
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             try {
                 conn.setAutoCommit(true);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            JDBCUtils.closeResource(conn,pstmt);
+            JDBCUtils.closeResource(conn, pstmt);
         }
 
     }
 
     /**
      * Description: 修改用户信息
+     *
      * @param user
      * @return Integer
      */
@@ -187,7 +182,7 @@ public class UserDaoImpl implements UserDao {
         int rows;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "UPDATE sys_user SET user_name=?,email=?,phone=?,sex=?,update_time=? where user_id=?";
+            String sql = "UPDATE sys_user SET user_name=?,email=?,phone=?,sex=?,update_time=? where user_id=? AND del_flag <>1";
             ps = conn.prepareStatement(sql);
             //是用if判断吗？？
             if (user.getUserName() != null) {
@@ -214,11 +209,13 @@ public class UserDaoImpl implements UserDao {
         }
         return rows;
     }
+
     /**
-    * Description: 修改用户权限
-    * @param user
-    * @return Integer
-    */
+     * Description: 修改用户权限
+     *
+     * @param user
+     * @return Integer
+     */
     @Override
     public Integer updateUserRole(User user) {
         Connection conn = null;
@@ -226,22 +223,23 @@ public class UserDaoImpl implements UserDao {
         int rows;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "UPDATE sys_user SET role_id=? ,update_time = ? where user_id=?";
+            String sql = "UPDATE sys_user SET role_id=? ,update_time = ? where user_id=? AND del_flag <>1";
             ps = conn.prepareStatement(sql);
-            ps.setInt(1,user.getRoleId());
-            ps.setTimestamp(2,new Timestamp(user.getUpdateTime().getTime()));
-            ps.setLong(3,user.getUserId());
+            ps.setInt(1, user.getRoleId());
+            ps.setTimestamp(2, new Timestamp(user.getUpdateTime().getTime()));
+            ps.setLong(3, user.getUserId());
             rows = ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
-            JDBCUtils.closeResource(conn,ps);
+        } finally {
+            JDBCUtils.closeResource(conn, ps);
         }
         return rows;
     }
 
     /**
      * 通过用户id查询用户信息
+     *
      * @param userId
      * @return
      */
@@ -260,46 +258,45 @@ public class UserDaoImpl implements UserDao {
         try {
             conn = JDBCUtils.getConnection();
             conn.setAutoCommit(false);
-            String sql1 = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ,"+
-                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user where user_id = ?";
+            String sql1 = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ," +
+                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user where user_id = ? AND del_flag <>1";
             pstmt = conn.prepareStatement(sql1);
-            pstmt.setLong(1,userId);
+            pstmt.setLong(1, userId);
             resultSet = pstmt.executeQuery();
             //仅接收user表内容
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 del_flag = resultSet.getInt("delFlag");
 
-                if (del_flag == 0) {
-                    Long userid = resultSet.getLong("userId");
-                    String username = resultSet.getString("userName");
-                    Integer roleld = resultSet.getInt("roleId");
-                    //rolename在业务层
-                    //组名在业务层加
-                    String email = resultSet.getString("email");
-                    String phone = resultSet.getString("phone");
-                    Integer sex = resultSet.getInt("sex");
-                    Date createTime = resultSet.getDate("createTime");
-                    Date updateTime = resultSet.getDate("updateTime");
+                Long userid = resultSet.getLong("userId");
+                String username = resultSet.getString("userName");
+                Integer roleld = resultSet.getInt("roleId");
+                //rolename在业务层
+                //组名在业务层加
+                String email = resultSet.getString("email");
+                String phone = resultSet.getString("phone");
+                Integer sex = resultSet.getInt("sex");
+                Date createTime = resultSet.getDate("createTime");
+                Date updateTime = resultSet.getDate("updateTime");
 
 
-                    user.setUserId(userid);
-                    user.setUserName(username);
-                    user.setRoleId(roleld);
-                    user.setCreateTime(createTime);
-                    user.setUpdateTime(updateTime);
-                    user.setEmail(email);
-                    user.setPhone(phone);
-                    user.setSex(sex);
-                    user.setDelFlag(del_flag);
-                }
+                user.setUserId(userid);
+                user.setUserName(username);
+                user.setRoleId(roleld);
+                user.setCreateTime(createTime);
+                user.setUpdateTime(updateTime);
+                user.setEmail(email);
+                user.setPhone(phone);
+                user.setSex(sex);
+                user.setDelFlag(del_flag);
             }
+
             resultSet.close();
             //接收groupId
             String sql2 = "select group_id as groupId from user_group where user_id = ?";
             pstmt = conn.prepareStatement(sql2);
-            pstmt.setLong(1,userId);
+            pstmt.setLong(1, userId);
             ResultSet Group = pstmt.executeQuery();
-            while (Group.next()){
+            while (Group.next()) {
                 Integer groupId = Group.getInt("groupId");
                 user.setGroupId(groupId);
             }
@@ -309,24 +306,25 @@ public class UserDaoImpl implements UserDao {
             return user;
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
 
             try {
                 conn.setAutoCommit(true);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            JDBCUtils.closeResource(conn,pstmt);
+            JDBCUtils.closeResource(conn, pstmt);
         }
 
     }
 
     /**
      * 查询所有用户
+     *
      * @return
      */
     @Override
-    public List<User> selectAll(Integer cur,Integer size){
+    public List<User> selectAll(Integer cur, Integer size) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         Long userId = null;
@@ -337,40 +335,37 @@ public class UserDaoImpl implements UserDao {
             conn = JDBCUtils.getConnection();
             conn.setAutoCommit(false);
             String sql = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ," +
-                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user limit ?,?";
+                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user WHERE del_flag <>1 limit ?,?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1,(cur - 1) * size);
-            pstmt.setInt(2,size);
+            pstmt.setInt(1, (cur - 1) * size);
+            pstmt.setInt(2, size);
             ResultSet resultSet = pstmt.executeQuery();
             while (resultSet.next()) {
                 User user = new User();
-                int del_flag = resultSet.getInt("delFlag");
-
-                if (del_flag == 0) {
-                    userId = resultSet.getLong("userId");
-                    String username = resultSet.getString("userName");
-                    Integer roleld = resultSet.getInt("roleId");
-                    //rolename在业务层
-                    //组名在业务层加
-                    String email = resultSet.getString("email");
-                    String phone = resultSet.getString("phone");
-                    Integer sex = resultSet.getInt("sex");
-                    Date createTime = resultSet.getDate("createTime");
-                    Date updateTime = resultSet.getDate("updateTime");
+                userId = resultSet.getLong("userId");
+                String username = resultSet.getString("userName");
+                Integer roleld = resultSet.getInt("roleId");
+                //rolename在业务层
+                //组名在业务层加
+                String email = resultSet.getString("email");
+                String phone = resultSet.getString("phone");
+                Integer sex = resultSet.getInt("sex");
+                Date createTime = resultSet.getDate("createTime");
+                Date updateTime = resultSet.getDate("updateTime");
 
 
-                    user.setUserId(userId);
-                    user.setUserName(username);
-                    user.setRoleId(roleld);
-                    user.setCreateTime(createTime);
-                    user.setUpdateTime(updateTime);
-                    user.setEmail(email);
-                    user.setPhone(phone);
-                    user.setSex(sex);
-                }
+                user.setUserId(userId);
+                user.setUserName(username);
+                user.setRoleId(roleld);
+                user.setCreateTime(createTime);
+                user.setUpdateTime(updateTime);
+                user.setEmail(email);
+                user.setPhone(phone);
+                user.setSex(sex);
+
 
                 //接收groupId
-                String sql2 = "select group_id as groupId from user_group where user_id = ?";
+                String sql2 = "select group_id as groupId from user_group where user_id = ?;";
                 pstmt = conn.prepareStatement(sql2);
                 pstmt.setLong(1, userId);
                 ResultSet Group = pstmt.executeQuery();
@@ -388,26 +383,27 @@ public class UserDaoImpl implements UserDao {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             try {
                 conn.setAutoCommit(true);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            JDBCUtils.closeResource(conn,pstmt);
+            JDBCUtils.closeResource(conn, pstmt);
 
         }
 
     }
 
 
-        /**
+    /**
      * 通过groupId查询用户信息
+     *
      * @param groupId
      * @return
      */
     @Override
-    public List<User> selectByGroupIdUsers(Integer groupId,Integer cur,Integer size) {
+    public List<User> selectByGroupIdUsers(Integer groupId, Integer cur, Integer size) {
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -419,16 +415,16 @@ public class UserDaoImpl implements UserDao {
             conn.setAutoCommit(false);
             String sql2 = "select user_id as userId from user_group where group_id = ? limit ?,?";
             pstmt = conn.prepareStatement(sql2);
-            pstmt.setInt(1,groupId);
-            pstmt.setInt(2,(cur - 1) * size);
-            pstmt.setInt(3,size);
+            pstmt.setInt(1, groupId);
+            pstmt.setInt(2, (cur - 1) * size);
+            pstmt.setInt(3, size);
             ResultSet userIds = pstmt.executeQuery();
-            while (userIds.next()){
+            while (userIds.next()) {
                 Long user = userIds.getLong("userId");
                 users.add(user);
             }
             //根据users获取的userid获取对象
-            for (Long userId: users){
+            for (Long userId : users) {
                 User user = selectByUserIdUser(userId);
                 userArray.add(user);
             }
@@ -436,18 +432,20 @@ public class UserDaoImpl implements UserDao {
             return userArray;
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             try {
                 conn.setAutoCommit(true);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            JDBCUtils.closeResource(conn,pstmt);
+            JDBCUtils.closeResource(conn, pstmt);
         }
 
     }
+
     /**
-     *  通过用户名称查询用户信息
+     * 通过用户名称查询用户信息
+     *
      * @param userName
      * @return
      */
@@ -462,11 +460,11 @@ public class UserDaoImpl implements UserDao {
             conn = JDBCUtils.getConnection();
             conn.setAutoCommit(false);
             String sql = "select del_flag as delFlag , user_id as  userId , user_name as userName,role_id as roleId,email as email ," +
-                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user where user_name like ?";
+                    "phone as phone,sex as sex ,create_time as createTime , update_time as updateTime from sys_user where user_name like ? AND del_flag <> 1";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1,"%"+userName+"%");
+            pstmt.setString(1, "%" + userName + "%");
             ResultSet resultSet = pstmt.executeQuery();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 User user = new User();
                 int del_flag = resultSet.getInt("delFlag");
 
@@ -494,11 +492,11 @@ public class UserDaoImpl implements UserDao {
                 }
                 resultSet.close();
                 //接收groupId
-                String sql2 = "select group_id as groupId from user_group where user_id = ?";
+                String sql2 = "select group_id as groupId from user_group where user_id = ?;";
                 pstmt = conn.prepareStatement(sql2);
-                pstmt.setLong(1,userId);
+                pstmt.setLong(1, userId);
                 ResultSet Group = pstmt.executeQuery();
-                while (Group.next()){
+                while (Group.next()) {
                     Integer groupId = Group.getInt("groupId");
                     user.setGroupId(groupId);
                 }
@@ -511,21 +509,22 @@ public class UserDaoImpl implements UserDao {
             return userArray;
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             try {
                 conn.setAutoCommit(true);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            JDBCUtils.closeResource(conn,pstmt);
+            JDBCUtils.closeResource(conn, pstmt);
         }
     }
 
     /**
-    * Description: 注销用户
-    * @param userId
-    * @return Integer
-    */
+     * Description: 注销用户
+     *
+     * @param userId
+     * @return Integer
+     */
     @Override
     public Integer deleteByUserId(Integer userId) {
         int rows;
@@ -536,8 +535,8 @@ public class UserDaoImpl implements UserDao {
             //修改唯一标识，1为删除
             String sql1 = "UPDATE sys_user SET del_flag = 1,update_time=? where user_id = ?";
             ps = conn.prepareStatement(sql1);
-            ps.setTimestamp(1,new Timestamp(System.currentTimeMillis()));
-            ps.setLong(2,userId);
+            ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+            ps.setLong(2, userId);
             ps.executeUpdate();
             rows = ps.executeUpdate();
         } catch (Exception e) {
@@ -557,13 +556,13 @@ public class UserDaoImpl implements UserDao {
             conn = JDBCUtils.getConnection();
             String sql = "UPDATE user_group SET group_id = ? where user_id = ?";
             ps = conn.prepareStatement(sql);
-            ps.setInt(1,user.getGroupId());
-            ps.setLong(2,user.getUserId());
+            ps.setInt(1, user.getGroupId());
+            ps.setLong(2, user.getUserId());
             rows = ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
-            JDBCUtils.closeResource(conn,ps);
+        } finally {
+            JDBCUtils.closeResource(conn, ps);
         }
         return rows;
     }

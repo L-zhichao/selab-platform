@@ -6,6 +6,7 @@ import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.dao.DaoImpl.GroupDaoImpl;
 import tyut.selab.userservice.dao.GroupDao;
 import tyut.selab.userservice.domain.Group;
+import tyut.selab.userservice.domain.Page;
 import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.GroupVo;
@@ -54,22 +55,29 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupVo> selectAllGroup(Integer cur, Integer szie) {
+    public Page<GroupVo> selectAllGroup(Integer cur, Integer szie) {
+        Page<GroupVo> page = new Page<>();
         List<GroupVo> list = new ArrayList<>();
         List<Group> groups = groupDao.selectAllGroup(cur, szie);
+        Integer groupTotal = groupDao.getGroupTotal();
         for (Group group : groups) {
             GroupVo groupVo = new GroupVo();
             Integer groupId = group.getGroupId();
             String groupName = group.getGroupName();
             Date createTime = group.getCreateTime();
-//            List<UserVo> userVos = userService.selectByGroupId(groupId,1,5);
+            Page<UserVo> pageuserVos = userService.selectByGroupId(groupId,1,5);
             groupVo.setGroupId(groupId);
             groupVo.setGroupName(groupName);
             groupVo.setCreateTime(createTime);
-//            groupVo.setUserVos(userVos);
+            groupVo.setUserVos(pageuserVos.getData());
             list.add(groupVo);
         }
-        return list;
+        page.setCur(cur);
+        page.setSize(szie);
+        page.setTotal(groupTotal);
+        page.setData(list);
+
+        return page;
 //        Integer roleId = JudgeRoleId.GetJudgeRoleId();
 //        if (roleId.equals(1) || roleId.equals(2)) {
 //
