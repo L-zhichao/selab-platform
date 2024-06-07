@@ -17,10 +17,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import javax.management.relation.Role;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +35,7 @@ import java.util.stream.Collectors;
  * @date: 2024/5/5 23:31
  * @version: 1.0
  */
-@WebServlet(name="UserController",urlPatterns = "/user/*")
+@WebServlet(name="UserController",value = "/user/*")
 public class UserController extends HttpServlet {
     private UserVo userVo=new UserVo();
     //private Result result=new Result(200,null);
@@ -68,7 +73,7 @@ public class UserController extends HttpServlet {
                     throw new RuntimeException(e);
                 }
             }
-        }else if (methodName.equals("role")){
+        }/*else if (methodName.equals("role")){
             if (s.equals("update")){
                 try {
                     Result delete = updateRole(req, resp);
@@ -82,7 +87,7 @@ public class UserController extends HttpServlet {
                     throw new RuntimeException(e);
                 }
             }
-        } else if (methodName.equals("queryById")) {
+        } */else if (methodName.equals("queryById")) {
             try {
                 Result result = queryById(req, resp);
                 JSONObject jsonObject = new JSONObject();
@@ -95,7 +100,7 @@ public class UserController extends HttpServlet {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }else if (methodName.equals("group")) {
+        }/*else if (methodName.equals("group")) {
             try {
                 Result result = groupUpdate(req, resp);
                 JSONObject jsonObject = new JSONObject();
@@ -107,7 +112,7 @@ public class UserController extends HttpServlet {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }
+        }*/
 
         //super.doGet(req, resp);
     }
@@ -119,29 +124,60 @@ public class UserController extends HttpServlet {
         String requestURI = req.getRequestURI();
         String[] split = requestURI.split("/");
         String methodName = split[split.length - 1];
-        if(methodName.equals("save")){
-            try {
-                Result delete = save(req, resp);;
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("code", delete.getCode());
-                jsonObject.put("msg", delete.getMsg());
-                resp.setCharacterEncoding("UTF-8");
-                resp.setContentType("text/html;charset=UTF-8");
-                resp.getWriter().write(jsonObject.toJSONString());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        String s=split[split.length-2];
+        if (s.equals("user")){
+            if(methodName.equals("save")){
+                try {
+                    Result delete = save(req, resp);;
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("code", delete.getCode());
+                    jsonObject.put("msg", delete.getMsg());
+                    resp.setCharacterEncoding("UTF-8");
+                    resp.setContentType("text/html;charset=UTF-8");
+                    resp.getWriter().write(jsonObject.toJSONString());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (methodName.equals("update")) {
+                try {
+                    Result delete = update(req, resp);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("code", delete.getCode());
+                    jsonObject.put("msg", delete.getMsg());
+                    resp.setCharacterEncoding("UTF-8");
+                    resp.setContentType("text/html;charset=UTF-8");
+                    resp.getWriter().write(jsonObject.toJSONString());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
-        } else if (methodName.equals("update")) {
-            try {
-                Result delete = update(req, resp);
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("code", delete.getCode());
-                jsonObject.put("msg", delete.getMsg());
-                resp.setCharacterEncoding("UTF-8");
-                resp.setContentType("text/html;charset=UTF-8");
-                resp.getWriter().write(jsonObject.toJSONString());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        }else if (s.equals("role")){
+            if (methodName.equals("update")){
+                try {
+                    Result delete = updateRole(req, resp);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("code", delete.getCode());
+                    jsonObject.put("msg", delete.getMsg());
+                    resp.setCharacterEncoding("UTF-8");
+                    resp.setContentType("text/html;charset=UTF-8");
+                    resp.getWriter().write(jsonObject.toJSONString());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else if (s.equals("group")) {
+            if (methodName.equals("update")){
+                try {
+                    Result result = groupUpdate(req, resp);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("code", result.getCode());
+                    jsonObject.put("msg", result.getMsg());
+                    resp.setCharacterEncoding("UTF-8");
+                    resp.setContentType("text/html;charset=UTF-8");
+                    resp.getWriter().write(jsonObject.toJSONString());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         //super.doPost(req, resp);
@@ -153,14 +189,14 @@ public class UserController extends HttpServlet {
      * @param resp
      * @return
      */
-    private Result groupUpdate(HttpServletRequest req, HttpServletResponse resp) {
+    private Result groupUpdate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         //判断权限
         /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 3||userSecurity.getRoleId()==2){
             return Result.error(500010,"权限不足");
         }*/
-        String userIdStr = req.getParameter("userId");
+        /*String userIdStr = req.getParameter("userId");
         Long userId = null;
         boolean isInteger = true;
         for (int i = 0; i < userIdStr.length(); i++) {
@@ -190,10 +226,22 @@ public class UserController extends HttpServlet {
         } else {
             return Result.error(50009,"输入信息错误");
         }
-        userVo.setUserId(userId);
+        userVo.setUserId(userId);*/
+        req.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
+        String jsonData = req.getReader().lines().collect(Collectors.joining());
+        UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
         //userVo.setUserId(Long.valueOf(req.getParameter("userId")));
         //userVo.setGroupId(Integer.valueOf(req.getParameter("groupId")));
+        System.out.println(jsonData);
+        System.out.println(userVo);
+        //Integer groupId = userVo.getGroupId();
+        //List<UserVo> userVos = userService.selectByGroupId(groupId, 1, 5);
+        /*if (userVos.isEmpty()){
+            return Result.error(50005,"修改用户信息失败");
+        }*/
         Integer update=userService.groupUpdate(userVo);
+
         if (update>0){
             return Result.success(null);
         }
@@ -205,6 +253,14 @@ public class UserController extends HttpServlet {
      *  查询小组所有用户
      *  success
      *  param: cur size groupId  roleId 两个中有一个不为空或全为空，全为空则查询全部
+     *  java.lang.RuntimeException: java.sql.SQLNonTransientConnectionException: Data source rejected establishment of connection,  message from server: &quot;Too many connections&quot;
+     * 	tyut.selab.userservice.dao.impl.UserDaoImpl.selectAll(UserDaoImpl.java:489)
+     * 	tyut.selab.userservice.service.impl.UserServiceImpl.selectAll(UserServiceImpl.java:169)
+     * 	tyut.selab.userservice.controller.UserController.query(UserController.java:315)
+     * 	tyut.selab.userservice.controller.UserController.doGet(UserController.java:48)
+     * 	jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+     * 	jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+     * 	org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
      * @param request
      * @param response
      * @return list<User>
@@ -248,10 +304,48 @@ public class UserController extends HttpServlet {
                 return Result.error(50009,"输入信息错误");
             }
         }
+        Integer cur=0;
+        String curStr=null;
+        if (request.getParameter("cur")==null){
+            cur=1;
+        }else if (request.getParameter("cur")!=null){
+            curStr = request.getParameter("cur");
+            boolean isInteger = true;
+            for (int i = 0; i < curStr.length(); i++) {
+                if (!Character.isDigit(curStr.charAt(i))) {
+                    isInteger = false;
+                    break;
+                }
+            }
+            if (isInteger) {
+                cur = Integer.parseInt(curStr);
+            } else {
+                return Result.error(50009,"输入信息错误");
+            }
+        }
+        Integer szie=0;
+        String szieStr=null;
+        if (request.getParameter("szie")==null){
+            szie=10;
+        }else if (request.getParameter("szie")!=null){
+            szieStr = request.getParameter("szie");
+            boolean isInteger = true;
+            for (int i = 0; i < szieStr.length(); i++) {
+                if (!Character.isDigit(szieStr.charAt(i))) {
+                    isInteger = false;
+                    break;
+                }
+            }
+            if (isInteger) {
+                szie = Integer.parseInt(szieStr);
+            } else {
+                return Result.error(50009,"输入信息错误");
+            }
+        }
         //Integer groupId = Integer.valueOf((request.getParameter("groupId") == null) ? "0" : request.getParameter("groupId"));
         //Integer roleId = Integer.valueOf((request.getParameter("roleId") == null) ? "0" : request.getParameter("roleId"));
         if (groupId!=0&&roleId==0){
-            List<UserVo> userVos = userService.selectByGroupId(groupId);
+            List<UserVo> userVos = userService.selectByGroupId(groupId,cur,szie);
             if (userVos.isEmpty()){
                 //Result error = result.error(400,"未查询到相关用户");
                 return Result.error(50006,"查询用户失败");
@@ -260,7 +354,7 @@ public class UserController extends HttpServlet {
             //Result success=result.success(userVos);
             return Result.success(userVos);
         } else if (groupId==0&&roleId!=0) {
-            List<UserVo> userVos=userService.selectByRoleId(roleId);
+            List<UserVo> userVos=userService.selectByRoleId(roleId,cur,szie);
 //            userVoArrayList.addAll(userVos);
             if (userVos.isEmpty()){
                 //Result error = result.error(400, "未查询到相关用户");
@@ -269,7 +363,7 @@ public class UserController extends HttpServlet {
             //Result success=result.success(userVos);
             return Result.success(userVos);
         }else if(groupId==0&&roleId==0){
-            List<UserVo> userVos=userService.selectAll();
+            List<UserVo> userVos=userService.selectAll(cur,szie);
             if (userVos.isEmpty()){
                 //Result error = result.error(400,"未查询到相关用户");
                 return Result.error(50006,"查询用户失败");
@@ -306,6 +400,7 @@ public class UserController extends HttpServlet {
         } else {
             return Result.error(50009,"输入信息错误");
         }
+        System.out.println(userId);
         UserVo selected = userService.selectByUserId(userId);
         if(selected!=null) {
             //Result success=result.success(selected);
@@ -324,20 +419,21 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result save(HttpServletRequest request,HttpServletResponse response) {
+    private Result save(HttpServletRequest request,HttpServletResponse response) throws IOException {
         //判断权限
         /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 2||userSecurity.getRoleId()==3){
             return Result.error(500010,"权限不足");
         }*/
-        UserVo userVo = null;
-        try {
+
+
+            request.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
             String jsonData = request.getReader().lines().collect(Collectors.joining());
-            userVo = JSON.parseObject(jsonData, UserVo.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        System.out.println(jsonData);
+            UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
+        System.out.println(userVo);
         Integer save = userService.save(userVo);
         if (save>0){
             //Result success=result.success(null);
@@ -430,14 +526,14 @@ public class UserController extends HttpServlet {
      * @param response
      * @return
      */
-    private Result updateRole(HttpServletRequest request, HttpServletResponse response){
+    private Result updateRole(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //判断权限
         /*SecurityUtil SecurityUtil = new SecurityUtil();
         UserLocal userSecurity = SecurityUtil.getUser();
         if(userSecurity.getRoleId() == 3||userSecurity.getRoleId()==2){
             return Result.error(500010,"权限不足");
         }*/
-        String roleIdStr = request.getParameter("roleId");
+        /*String roleIdStr = request.getParameter("roleId");
         Integer roleId=0;
         boolean isInteger = true;
         for (int i = 0; i < roleIdStr.length(); i++) {
@@ -467,11 +563,23 @@ public class UserController extends HttpServlet {
             return Result.error(50009,"输入信息错误");
         }
         //Integer roleId = Integer.valueOf(request.getParameter("roleId"));
-        //Long userId = Long.valueOf(request.getParameter("userId"));
+        //Long userId = Long.valueOf(request.getParameter("userId"));*/
         //Date date = new Date();
-        userVo.setUserId(userId);
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        String jsonData = request.getReader().lines().collect(Collectors.joining());
+        UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
+        Integer roleId = userVo.getRoleId();
+        /*if (roleId!=1||roleId!=2||roleId!=3){
+            return Result.error(50005,"修改用户信息失败");
+        }*/
+        /*List<UserVo> userVos = userService.selectByGroupId(roleId, 1, 5);
+        if (userVos.isEmpty()){
+            return Result.error(50005,"修改用户信息失败");
+        }*/
+        //userVo.setUserId(userId);
         //userVo.setGroupName();
-        userVo.setRoleId(roleId);
+        //userVo.setRoleId(roleId);
         //userVo.setRoleName();
         Integer save = userService.updateUserRole(userVo);
         if (save > 0){

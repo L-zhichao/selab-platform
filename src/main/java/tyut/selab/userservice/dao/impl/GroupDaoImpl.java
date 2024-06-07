@@ -1,6 +1,7 @@
 package tyut.selab.userservice.dao.impl;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
+import com.sun.nio.file.ExtendedWatchEventModifier;
 import tyut.selab.userservice.dao.GroupDao;
 import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.vo.GroupVo;
@@ -16,15 +17,32 @@ import java.util.Properties;
 public class GroupDaoImpl implements GroupDao {
     @Override
     public Integer insert(Group group) {
+        String groupName = group.getGroupName();
         PreparedStatement preparedStatement;
         preparedStatement = null;
         Connection connection = null;
+        PreparedStatement preparedStatement1=null;
+        ResultSet resultSet=null;
         Integer count;
         Properties prop = new Properties();
         try {
             prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
             DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
             connection = dataSource.getConnection();
+            /*String s="select sys_group.group_name,del_flag from sys_group";
+            preparedStatement1= connection.prepareStatement(s);
+            resultSet=preparedStatement1.executeQuery();
+            while (resultSet.next()){
+                String groupName1 = resultSet.getString("group_name");
+                int delFlag = resultSet.getInt("del_flag");
+                if (groupName1.equals(groupName)){
+                    return 0;
+                }
+                if (delFlag==1){
+                    return 0;
+                }
+
+            }*/
             String sql = "insert into sys_group(parent_id,group_name,sys_group.create_time,update_time,update_user) values(?,?,?,?,?)";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, group.getParentId());
@@ -45,6 +63,18 @@ public class GroupDaoImpl implements GroupDao {
             try {
                 if (connection!=null)
                     connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (resultSet!=null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (preparedStatement1!=null)
+                    preparedStatement1.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

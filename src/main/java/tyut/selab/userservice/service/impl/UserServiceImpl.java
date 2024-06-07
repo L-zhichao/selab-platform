@@ -1,6 +1,8 @@
 package tyut.selab.userservice.service.impl;
 
+import tyut.selab.userservice.dao.GroupDao;
 import tyut.selab.userservice.dao.UserDao;
+import tyut.selab.userservice.dao.impl.GroupDaoImpl;
 import tyut.selab.userservice.dao.impl.UserDaoImpl;
 import tyut.selab.userservice.dao.impl.UserLogoutDao;
 import tyut.selab.userservice.domain.Group;
@@ -10,11 +12,54 @@ import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.UserVo;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
     private UserDao userDao=new UserDaoImpl();
+
+
+    @Override
+    public List<UserVo> selectGroupId(Integer groupId) {
+        ArrayList<UserVo> userVos = new ArrayList<>();
+        List<User> users = userDao.selectGroupIdUsers(groupId);
+        //if (!users.isEmpty()){
+
+            for (User user: users){
+                UserVo userVo = new UserVo();
+                Long userId = user.getUserId();
+                String userName = user.getUserName();
+                String groupName = userDao.getgroupName(groupId);
+                Integer roleId = user.getRoleId();
+                String email = user.getEmail();
+                String phone = user.getPhone();
+                Integer sex = user.getSex();
+                userVo.setUserName(userName);
+                userVo.setGroupId(groupId);
+                userVo.setGroupName(groupName);
+                userVo.setRoleId(roleId);
+                if(roleId == 1){
+                    userVo.setRoleName("超级管理员");
+                } else if (roleId == 2) {
+                    userVo.setRoleName("管理员");
+
+                }else if(roleId==3){
+                    userVo.setRoleName("用户");
+                }/*else {
+            throw new RuntimeException("找不到该用户类别");
+            }*/
+                userVo.setEmail(email);
+                userVo.setPhone(phone);
+                userVo.setSex(sex);
+                userVo.setUserId(userId);
+                userVo.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
+                userVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
+                userVos.add(userVo);
+            }
+
+            return userVos;
+        //}
+        //return null;
+    }
 
     @Override
     public Integer updateUserRole(UserVo userVo) {
@@ -33,50 +78,58 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserVo> selectByGroupId(Integer groupId) {
+    public List<UserVo> selectByGroupId(Integer groupId, Integer cur, Integer szie) {
         ArrayList<UserVo> userVos = new ArrayList<>();
-        List<User> users = userDao.selectByGroupIdUsers(groupId);
-        for (User user: users){
-            UserVo userVo = new UserVo();
-            Long userId = user.getUserId();
-            String userName = user.getUserName();
-            String groupName = userDao.getgroupName(groupId);
-            Integer roleId = user.getRoleId();
-            String email = user.getEmail();
-            String phone = user.getPhone();
-            Integer sex = user.getSex();
-            userVo.setUserName(userName);
-            userVo.setGroupId(groupId);
-            userVo.setGroupName(groupName);
-            userVo.setRoleId(roleId);
-            if(roleId == 1){
-                userVo.setRoleName("超级管理员");
-            } else if (roleId == 2) {
-                userVo.setRoleName("管理员");
+        List<User> users = userDao.selectByGroupIdUsers(groupId,cur,szie);
+        //if(!users.isEmpty()){
 
-            }else if(roleId==3){
-                userVo.setRoleName("用户");
-            }/*else {
+            for (User user: users){
+                UserVo userVo = new UserVo();
+                Long userId = user.getUserId();
+                String userName = user.getUserName();
+                String groupName = userDao.getgroupName(groupId);
+                Integer roleId = user.getRoleId();
+                String email = user.getEmail();
+                String phone = user.getPhone();
+                Integer sex = user.getSex();
+                userVo.setUserName(userName);
+                userVo.setGroupId(groupId);
+                userVo.setGroupName(groupName);
+                userVo.setRoleId(roleId);
+                if(roleId == 1){
+                    userVo.setRoleName("超级管理员");
+                } else if (roleId == 2) {
+                    userVo.setRoleName("管理员");
+
+                }else if(roleId==3){
+                    userVo.setRoleName("用户");
+                }/*else {
             throw new RuntimeException("找不到该用户类别");
             }*/
-            userVo.setEmail(email);
-            userVo.setPhone(phone);
-            userVo.setSex(sex);
-            userVo.setUserId(userId);
-            userVo.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
-            userVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
-            userVos.add(userVo);
-        }
-
-        return userVos;
+                userVo.setEmail(email);
+                userVo.setPhone(phone);
+                userVo.setSex(sex);
+                userVo.setUserId(userId);
+                userVo.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
+                userVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
+                userVos.add(userVo);
+            }
+            return userVos;
+        //}
+        //return null;
     }
 
-
+    /**
+     * 完成页面回显
+     * @param userVo
+     * @return
+     */
     @Override
     public Integer update(UserVo userVo) {
-
-            User user = new User();
+            
+            //User user = new User();
             Long userId = userVo.getUserId();
+            User user = userDao.selectByUserIdUser(userId);
             String userName = userVo.getUserName();
             Integer groupId = userVo.getGroupId();
             Integer roleId = userVo.getRoleId();
@@ -105,6 +158,11 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         Long userId = userVo.getUserId();
         Integer groupId = userVo.getGroupId();
+        String name =null;
+        /*name = userDao.getgroupName(groupId);
+        if (name==null){
+            return 0;
+        }*/
         user.setUserId(userId);
         user.setGroupId(groupId);
         Integer update=userDao.groupUpdate(user);
@@ -115,40 +173,44 @@ public class UserServiceImpl implements UserService {
     public UserVo selectByUserId(Long userId) {
         UserVo userVo=new UserVo();
         User user = userDao.selectByUserIdUser(userId);
-        //Long userid = user.getUserId();
-        String username = user.getUserName();
-        //根据userId查询groupId
-        Integer groupId=userDao.getGroupId(userId);
-        Integer roleId = user.getRoleId();
-        //根据groupId查询groupName返回
-        String groupName=userDao.getgroupName(groupId);
-        //根据roleId查询roleName返回//无
-        String email = user.getEmail();
-        String phone = user.getPhone();
-        Integer sex = user.getSex();
+        //if (user==null){
 
-        if(roleId == 1){
-            userVo.setRoleName("超级管理员");
-        } else if (roleId == 2) {
-            userVo.setRoleName("管理员");
+            //Long userid = user.getUserId();
+            String username = user.getUserName();
+            //根据userId查询groupId
+            Integer groupId=userDao.getGroupId(userId);
+            Integer roleId = user.getRoleId();
+            //根据groupId查询groupName返回
+            String groupName=userDao.getgroupName(groupId);
+            //根据roleId查询roleName返回//无
+            String email = user.getEmail();
+            String phone = user.getPhone();
+            Integer sex = user.getSex();
 
-        }else if(roleId==3){
-            userVo.setRoleName("用户");
-        }/*else {
+            if(roleId == 1){
+                userVo.setRoleName("超级管理员");
+            } else if (roleId == 2) {
+                userVo.setRoleName("管理员");
+
+            }else if(roleId==3){
+                userVo.setRoleName("用户");
+            }/*else {
             throw new RuntimeException("找不到该用户类别");
         }*/
-        userVo.setUserName(username);
-        userVo.setGroupId(groupId);
-        userVo.setGroupName(groupName);
-        userVo.setRoleId(roleId);
+            userVo.setUserName(username);
+            userVo.setGroupId(groupId);
+            userVo.setGroupName(groupName);
+            userVo.setRoleId(roleId);
 //      userVo.setRoleName();nonono
-        userVo.setEmail(email);
-        userVo.setPhone(phone);
-        userVo.setSex(sex);
-        userVo.setUserId(userId);
-        userVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
-        userVo.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
-        return userVo;
+            userVo.setEmail(email);
+            userVo.setPhone(phone);
+            userVo.setSex(sex);
+            userVo.setUserId(userId);
+            userVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
+            userVo.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
+            return userVo;
+
+
     }
 
     @Override
@@ -166,81 +228,90 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserVo> selectAll() {
+    public List<UserVo> selectAll(Integer cur, Integer szie) {
         List<UserVo> userVos = new ArrayList<>();
-        List<User> users = userDao.selectAll();
-        for (User user: users){
-            UserVo userVo = new UserVo();
-            Long userId = user.getUserId();
-            String userName = user.getUserName();
-            String groupName = userDao.getgroupName(user.getGroupId());
-            Integer roleId = user.getRoleId();
-            String email = user.getEmail();
-            String phone = user.getPhone();
-            Integer sex = user.getSex();
-            userVo.setUserName(userName);
-            userVo.setGroupId(user.getGroupId());
-            userVo.setGroupName(groupName);
-            userVo.setRoleId(roleId);
-            if(roleId == 1){
-                userVo.setRoleName("超级管理员");
-            } else if (roleId == 2) {
-                userVo.setRoleName("管理员");
+        List<User> users = userDao.selectAll(cur,szie);
+        if (!users.isEmpty()){
 
-            }else if(roleId==3){
-                userVo.setRoleName("用户");
-            }/*else {
+            for (User user: users){
+                UserVo userVo = new UserVo();
+                Long userId = user.getUserId();
+                String userName = user.getUserName();
+                String groupName = userDao.getgroupName(user.getGroupId());
+                Integer roleId = user.getRoleId();
+                String email = user.getEmail();
+                String phone = user.getPhone();
+                Integer sex = user.getSex();
+                userVo.setUserName(userName);
+                userVo.setGroupId(user.getGroupId());
+                userVo.setGroupName(groupName);
+                userVo.setRoleId(roleId);
+                if(roleId == 1){
+                    userVo.setRoleName("超级管理员");
+                } else if (roleId == 2) {
+                    userVo.setRoleName("管理员");
+
+                }else if(roleId==3){
+                    userVo.setRoleName("用户");
+                }/*else {
             throw new RuntimeException("找不到该用户类别");
             }*/
-            userVo.setEmail(email);
-            userVo.setPhone(phone);
-            userVo.setSex(sex);
-            userVo.setUserId(userId);
-            userVo.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
-            userVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
-            userVos.add(userVo);
-        }
+                userVo.setEmail(email);
+                userVo.setPhone(phone);
+                userVo.setSex(sex);
+                userVo.setUserId(userId);
+                userVo.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
+                userVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
+                userVos.add(userVo);
+            }
 
-        return userVos;
+            return userVos;
+        }
+        return null;
     }
 
     @Override
-    public List<UserVo> selectByRoleId(Integer roleId) {
+    public List<UserVo> selectByRoleId(Integer roleId, Integer cur, Integer szie) {
         ArrayList<UserVo> userVos = new ArrayList<>();
-        ArrayList<User> users=userDao.selectByRoleIdUsers(roleId);
-        for (User user: users){
-            UserVo userVo = new UserVo();
-            Long userId = user.getUserId();
-            String userName = user.getUserName();
-            Integer groupId = userDao.getGroupId(userId);
-            String groupName = userDao.getgroupName(groupId);
-            //roleId = user.getRoleId();
-            String email = user.getEmail();
-            String phone = user.getPhone();
-            Integer sex = user.getSex();
-            userVo.setUserName(userName);
-            userVo.setGroupId(groupId);
-            userVo.setGroupName(groupName);
-            userVo.setRoleId(roleId);
-            if(roleId == 1){
-                userVo.setRoleName("超级管理员");
-            } else if (roleId == 2) {
-                userVo.setRoleName("管理员");
+        ArrayList<User> users=userDao.selectByRoleIdUsers(roleId,cur,szie);
+        //if (!users.isEmpty()){
 
-            }else if(roleId==3){
-                userVo.setRoleName("用户");
-            }/*else {
+            for (User user: users){
+                UserVo userVo = new UserVo();
+                Long userId = user.getUserId();
+                String userName = user.getUserName();
+                Integer groupId = user.getGroupId();
+                //Integer groupId = userDao.getGroupId(userId);
+                String groupName = userDao.getgroupName(groupId);
+                //roleId = user.getRoleId();
+                String email = user.getEmail();
+                String phone = user.getPhone();
+                Integer sex = user.getSex();
+                userVo.setUserName(userName);
+                userVo.setGroupId(groupId);
+                userVo.setGroupName(groupName);
+                userVo.setRoleId(roleId);
+                if(roleId == 1){
+                    userVo.setRoleName("超级管理员");
+                } else if (roleId == 2) {
+                    userVo.setRoleName("管理员");
+
+                }else if(roleId==3){
+                    userVo.setRoleName("用户");
+                }/*else {
             throw new RuntimeException("找不到该用户类别");
             }*/
-            userVo.setEmail(email);
-            userVo.setPhone(phone);
-            userVo.setSex(sex);
-            userVo.setUserId(userId);
-            userVo.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
-            userVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
-            userVos.add(userVo);
-        }
-        return userVos;
+                userVo.setEmail(email);
+                userVo.setPhone(phone);
+                userVo.setSex(sex);
+                userVo.setUserId(userId);
+                userVo.setUpdateTime(new java.sql.Date(System.currentTimeMillis()));
+                userVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
+                userVos.add(userVo);
+            }
+            return userVos;
+        //}
+        //return null;
     }
 
     @Override

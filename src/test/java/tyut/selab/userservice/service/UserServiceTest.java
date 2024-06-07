@@ -10,7 +10,7 @@ public class UserServiceTest {
     private UserService userService = new UserServiceImpl();
     @Test
     public void testQueryByRoleId(){
-        List<UserVo> userVos = userService.selectAll();
-        System.out.println(userVos);
+        /*List<UserVo> userVos = userService.selectAll(cur, szie);
+        System.out.println(userVos);*/
     }
 }

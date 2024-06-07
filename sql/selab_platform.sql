@@ -233,5 +233,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 select *
 from sys_group
 limit 1,10;
-delete from user_group
+
+
+delete from sys_logout
 

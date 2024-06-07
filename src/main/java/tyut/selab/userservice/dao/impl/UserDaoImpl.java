@@ -2,7 +2,6 @@ package tyut.selab.userservice.dao.impl;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import tyut.selab.userservice.dao.UserDao;
-import tyut.selab.userservice.domain.Group;
 import tyut.selab.userservice.domain.User;
 
 import javax.sql.DataSource;
@@ -35,7 +34,7 @@ public class UserDaoImpl implements UserDao {
             prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
             DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
             connection = dataSource.getConnection();
-            String sql = "insert into sys_user(user_name,sys_user.create_time,update_time,role_id,email,remark,phone,sex,del_flag) values(?,?,?,?,?,?,?,?,?)";
+            String sql = "insert into sys_user(user_name,sys_user.create_time,update_time,role_id,email,remark,phone,sex,del_flag,password) values(?,?,?,?,?,?,?,?,?,?)";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement .setString(1,userName);
             preparedStatement .setTimestamp(2,new Timestamp(user.getCreateTime().getTime()));
@@ -46,6 +45,7 @@ public class UserDaoImpl implements UserDao {
             preparedStatement .setString(7,phone);
             preparedStatement .setInt(8,sex);
             preparedStatement .setInt(9,delFlag);
+            preparedStatement.setString(10,password);
             count = preparedStatement.executeUpdate();
             String sql1="select LAST_INSERT_ID() from sys_user";
             preparedStatement=connection.prepareStatement(sql1);
@@ -68,6 +68,7 @@ public class UserDaoImpl implements UserDao {
                 throw new RuntimeException(e);
             }
             try {
+                //System.out.println("==============");
                 if (connection!=null)
                     connection.close();
             } catch (SQLException e) {
@@ -81,6 +82,83 @@ public class UserDaoImpl implements UserDao {
             }
         }
         return count;
+    }
+
+    @Override
+    public List<User> selectGroupIdUsers(Integer groupId) {
+        PreparedStatement preparedStatement;
+        preparedStatement = null;
+        Connection connection = null;
+        ResultSet resultSet =null;
+        ArrayList<User> list = new ArrayList<>();
+        Properties prop = new Properties();
+        try {
+            prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
+            DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
+            connection = dataSource.getConnection();
+            String sql = "select * from user_group where group_id=?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1,groupId);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                int delFlag = resultSet.getInt("del_flag");
+                if (delFlag==0){
+                Long userId = resultSet.getLong("user_id");
+                String userName = resultSet.getString("user_name");
+                Date createTime = resultSet.getDate("create_time");
+                Date updateTime = resultSet.getDate("update_time");
+                int roleId = resultSet.getInt("role_id");
+                String email = resultSet.getString("email");
+                String remark = resultSet.getString("remark");
+                String phone = resultSet.getString("phone");
+                int sex = resultSet.getInt("sex");
+                //user = selectByUserIdUser(userId);
+                User user = new User();
+                user.setUserName(userName);
+                //user.setGroupId(groupId);
+                user.setCreateTime(createTime);
+                user.setUpdateTime(updateTime);
+                user.setRoleId(roleId);
+                user.setEmail(email);
+                user.setRemark(remark);
+                user.setPhone(phone);
+                user.setSex(sex);
+                //Integer groupId = getGroupId(userId);
+                user.setGroupId(groupId);
+                user.setUserId(userId);
+                list.add(user);
+                //User user = selectByUserIdUser(userId);
+                //user.setUserId(userId);
+                //group.setCreateTime(createTime);
+                //list.add(user);
+                }
+            }//else {
+            //    throw new RuntimeException("此小组已删除");
+            //}
+            //}
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (preparedStatement!=null)
+                    preparedStatement.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (connection!=null)
+                    connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (resultSet!=null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return list;
     }
 
     @Override
@@ -259,7 +337,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public ArrayList<User> selectByRoleIdUsers(Integer roleId) {
+    public ArrayList<User> selectByRoleIdUsers(Integer roleId, Integer cur, Integer szie) {
         PreparedStatement preparedStatement;
         preparedStatement = null;
         Connection connection = null;
@@ -270,18 +348,44 @@ public class UserDaoImpl implements UserDao {
             prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
             DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
             connection = dataSource.getConnection();
-            String sql = "select * from sys_user where role_id=?";
+            String sql = "select * from sys_user where role_id=? limit ?,?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1,roleId);
+            preparedStatement.setInt(2,(cur-1)*szie);
+            preparedStatement.setInt(3,szie);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
-                //int delFlag = resultSet.getInt("del_flag");
-                //if (delFlag==0){
+                int delFlag = resultSet.getInt("del_flag");
+                if (delFlag==0) {
                     Long userId = resultSet.getLong("user_id");
-                    User user = selectByUserIdUser(userId);
-                    //加之后data数据穿不进去 不加会爆异常空指针
+                    String userName = resultSet.getString("user_name");
+                    Date createTime = resultSet.getDate("create_time");
+                    Date updateTime = resultSet.getDate("update_time");
+                    //int roleId = resultSet.getInt("role_id");
+                    String email = resultSet.getString("email");
+                    String remark = resultSet.getString("remark");
+                    String phone = resultSet.getString("phone");
+                    int sex = resultSet.getInt("sex");
+                    //user = selectByUserIdUser(userId);
+                    User user = new User();
+                    user.setUserName(userName);
+                    //user.setGroupId(groupId);
+                    user.setCreateTime(createTime);
+                    user.setUpdateTime(updateTime);
+                    user.setRoleId(roleId);
+                    user.setEmail(email);
+                    user.setRemark(remark);
+                    user.setPhone(phone);
+                    user.setSex(sex);
+                    Integer groupId = getGroupId(userId);
+                    user.setGroupId(groupId);
                     user.setUserId(userId);
                     list.add(user);
+                    //User user = selectByUserIdUser(userId);
+                    //加之后data数据穿不进去 不加会爆异常空指针
+                    //user.setUserId(userId);
+                    //list.add(user);
+                }
                 //}else {
                 //   throw new RuntimeException("此小组已删除");
                 //}
@@ -312,7 +416,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> selectByGroupIdUsers(Integer groupId) {
+    public List<User> selectByGroupIdUsers(Integer groupId, Integer cur, Integer szie) {
         PreparedStatement preparedStatement;
         preparedStatement = null;
         Connection connection = null;
@@ -323,9 +427,11 @@ public class UserDaoImpl implements UserDao {
             prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
             DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
             connection = dataSource.getConnection();
-            String sql = "select * from user_group where group_id=?";
+            String sql = "select * from user_group where group_id=? limit ?,?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1,groupId);
+            preparedStatement.setInt(2,(cur-1)*szie);
+            preparedStatement.setInt(3,szie);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 //int delFlag = resultSet.getInt("del_flag");
@@ -449,7 +555,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> selectAll() {
+    public List<User> selectAll(Integer cur, Integer szie) {
         PreparedStatement preparedStatement;
         preparedStatement = null;
         Connection connection = null;
@@ -461,16 +567,36 @@ public class UserDaoImpl implements UserDao {
             prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
             DataSource dataSource = DruidDataSourceFactory.createDataSource(prop);
             connection = dataSource.getConnection();
-            String sql = "select * from sys_user";
+            String sql = "select * from sys_user limit ?,?";
             preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1,(cur-1)*szie);
+            preparedStatement.setInt(2,szie);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
-                User user ;
-                long userId;
+                //User user ;
+                //long userId;
                 int delFlag = resultSet.getInt("del_flag");
                 if (delFlag==0){
-                    userId = resultSet.getLong("user_id");
-                    user = selectByUserIdUser(userId);
+                    Long userId = resultSet.getLong("user_id");
+                    String userName = resultSet.getString("user_name");
+                    Date createTime = resultSet.getDate("create_time");
+                    Date updateTime = resultSet.getDate("update_time");
+                    int roleId = resultSet.getInt("role_id");
+                    String email = resultSet.getString("email");
+                    String remark = resultSet.getString("remark");
+                    String phone = resultSet.getString("phone");
+                    int sex = resultSet.getInt("sex");
+                    //user = selectByUserIdUser(userId);
+                    User user=new User();
+                    user.setUserName(userName);
+                    //user.setGroupId(groupId);
+                    user.setCreateTime(createTime);
+                    user.setUpdateTime(updateTime);
+                    user.setRoleId(roleId);
+                    user.setEmail(email);
+                    user.setRemark(remark);
+                    user.setPhone(phone);
+                    user.setSex(sex);
                     Integer groupId = getGroupId(userId);
                     user.setGroupId(groupId);
                     user.setUserId(userId);
@@ -559,6 +685,7 @@ public class UserDaoImpl implements UserDao {
         Connection connection = null;
         Integer count;
         PreparedStatement preparedStatement1=null;
+        PreparedStatement preparedStatement2=null;
         Properties prop = new Properties();
         try {
             prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties"));
@@ -566,11 +693,14 @@ public class UserDaoImpl implements UserDao {
             connection = dataSource.getConnection();
             String sql = "UPDATE sys_user SET del_flag = 1 where user_id = ?";
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, userId);
+            preparedStatement.setLong(1, userId);
             String sql1="DELETE FROM sys_user WHERE user_id= ? ";
             preparedStatement1 = connection.prepareStatement(sql1);
-            preparedStatement1.setInt(1,userId);
-            count = preparedStatement.executeUpdate()+preparedStatement1.executeUpdate();//影响的行数
+            preparedStatement1.setLong(1,userId);
+            String sql2="DELETE FROM user_group WHERE user_id= ? ";
+            preparedStatement2 = connection.prepareStatement(sql2);
+            preparedStatement2.setLong(1,userId);
+            count = preparedStatement.executeUpdate()+preparedStatement1.executeUpdate()+preparedStatement2.executeUpdate();//影响的行数
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {

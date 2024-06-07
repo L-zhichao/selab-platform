@@ -1,6 +1,5 @@
 package tyut.selab.userservice.service;
 
-import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.vo.UserVo;
 
 import java.util.List;
@@ -15,11 +14,15 @@ public interface UserService {
     public Integer updateUserRole(UserVo userVo);
 
     /**
-     *  查询指定小组全部用户
+     * 查询指定小组全部用户
+     *
      * @param groupId
+     * @param cur
+     * @param szie
      * @return
      */
-    public List<UserVo> selectByGroupId(Integer groupId);
+    public List<UserVo> selectByGroupId(Integer groupId, Integer cur, Integer szie);
+    public List<UserVo> selectGroupId(Integer groupId);
 
     /**
      *  通过id查询用户信息
@@ -45,7 +48,8 @@ public interface UserService {
 
     Integer groupUpdate(UserVo userVo);
 
-    List<UserVo> selectByRoleId(Integer roleId);
+    List<UserVo> selectByRoleId(Integer roleId, Integer cur, Integer szie);
 
-    List<UserVo> selectAll();
+    List<UserVo> selectAll(Integer cur, Integer szie);
+
 }

@@ -11,17 +11,16 @@ import tyut.selab.userservice.service.GroupService;
 import tyut.selab.userservice.service.UserService;
 import tyut.selab.userservice.vo.GroupVo;
 import tyut.selab.userservice.vo.UserVo;
-import tyut.selab.utils.Result;
 
 
 import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroupServiceImpl implements GroupService {
     private GroupDao groupDao=new GroupDaoImpl();
     private UserService userService= new UserServiceImpl();
+    private UserDao userDao=new UserDaoImpl();
     @Override
     public Integer insert(GroupDto groupDto) {
         String groupName = groupDto.getGroupName();
@@ -38,6 +37,11 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Integer delete(Integer groupId) {
         Integer delete = groupDao.delete(groupId);
+        /*List<User> users = userDao.selectGroupIdUsers(groupId);
+        for (User user:users){
+            Long userId = user.getUserId();
+            userDao.deleteByUserId(userId);
+        }*/
         return delete;
     }
 
@@ -45,22 +49,25 @@ public class GroupServiceImpl implements GroupService {
     public List<GroupVo> selectAllGroup(Integer cur,Integer szie) {
         List<Group> groups = groupDao.selectAllGroup(cur,szie);
         ArrayList<GroupVo> groupVos = new ArrayList<>();
-        for (Group group:groups){
-            GroupVo groupVo = new GroupVo();
-            Integer groupId = group.getGroupId();
-            String groupName = group.getGroupName();
-            Date createTime = group.getCreateTime();
-            Date updateTime = group.getUpdateTime();
-            //通过groupid查询所有的uservo对象
-            List<UserVo> userVos = userService.selectByGroupId(groupId);
-            groupVo.setUserVos(userVos);
-            groupVo.setGroupId(groupId);
-            groupVo.setGroupName(groupName);
-            groupVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
-            //groupVo.setUserVos(userVos);
-            groupVos.add(groupVo);
-        }
-        return groupVos;
+
+
+            for (Group group:groups){
+                GroupVo groupVo = new GroupVo();
+                Integer groupId = group.getGroupId();
+                String groupName = group.getGroupName();
+                Date createTime = group.getCreateTime();
+                Date updateTime = group.getUpdateTime();
+                //通过groupid查询所有的uservo对象
+                List<UserVo> userVos = userService.selectByGroupId(groupId, cur, szie);
+                groupVo.setUserVos(userVos);
+                groupVo.setGroupId(groupId);
+                groupVo.setGroupName(groupName);
+                groupVo.setCreateTime(new java.sql.Date(System.currentTimeMillis()));
+                //groupVo.setUserVos(userVos);
+                groupVos.add(groupVo);
+            }
+            return groupVos;
+
     }
 
     @Override

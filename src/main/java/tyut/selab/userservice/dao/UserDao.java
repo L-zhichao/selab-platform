@@ -36,10 +36,13 @@ public interface UserDao {
 
     /**
      * 通过groupId查询用户信息
+     *
      * @param groupId
+     * @param cur
+     * @param szie
      * @return
      */
-    public List<User> selectByGroupIdUsers(Integer groupId);
+    public List<User> selectByGroupIdUsers(Integer groupId, Integer cur, Integer szie);
 
     /**
      *  通过用户名称查询用户信息
@@ -61,9 +64,11 @@ public interface UserDao {
 
     Integer getGroupId(Long userId);
 
-    ArrayList<User> selectByRoleIdUsers(Integer roleId);
+    ArrayList<User> selectByRoleIdUsers(Integer roleId, Integer cur, Integer szie);
 
-    List<User> selectAll();
+    List<User> selectAll(Integer cur, Integer szie);
+
+    List<User> selectGroupIdUsers(Integer groupId);
 }
 
 

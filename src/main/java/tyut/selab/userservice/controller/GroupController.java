@@ -19,8 +19,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.xml.transform.Source;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -122,8 +124,11 @@ public class GroupController extends HttpServlet {
         GroupDto groupDto = null;
         try {
             req.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
             jsonData = req.getReader().lines().collect(Collectors.joining());
             groupDto = JSON.parseObject(jsonData, GroupDto.class);
+            System.out.println(groupDto);
+            System.out.println(jsonData);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -155,6 +160,7 @@ public class GroupController extends HttpServlet {
         GroupVo groupVo=null;
         try {
             req.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=UTF-8");
             jsonData = req.getReader().lines().collect(Collectors.joining());
             groupVo = JSON.parseObject(jsonData, GroupVo.class);
         } catch (IOException e) {
