@@ -32,8 +32,6 @@ public class GroupVo implements Serializable {
      */
     private List<UserVo> userVos;
 
-    private Integer total;
-
 
     private static final long serialVersionUID = 1L;
 
@@ -45,7 +43,6 @@ public class GroupVo implements Serializable {
         this.groupName = groupName;
         this.createTime = createTime;
         this.userVos = userVos;
-        this.total = total;
     }
 
     /**
@@ -116,19 +113,5 @@ public class GroupVo implements Serializable {
         return "GroupVo{groupId = " + groupId + ", groupName = " + groupName + ", createTime = " + createTime + ", userVos = " + userVos + ", serialVersionUID = " + serialVersionUID + "}";
     }
 
-    /**
-     * 获取
-     * @return total
-     */
-    public Integer getTotal() {
-        return total;
-    }
 
-    /**
-     * 设置
-     * @param total
-     */
-    public void setTotal(Integer total) {
-        this.total = total;
-    }
 }

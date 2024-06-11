@@ -83,8 +83,6 @@ public class GroupServiceImpl implements GroupService {
             groupVo.setGroupName(groupName);
             groupVo.setCreateTime(createTime);
             groupVo.setUserVos(pageuserVos.getData());
-            Integer total = pageuserVos.getTotal();
-            groupVo.setTotal(total);
             list.add(groupVo);
         }
         page.setCur(cur);
