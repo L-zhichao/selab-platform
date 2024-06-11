@@ -29,7 +29,7 @@ public class RegistrationDaoImpl implements RegistrationDao {
     public Integer insert(RegistrationForm registrationForm) {
         try {
             Connection connection = JDBCTools.getConnection();
-            registrationForm.setIntervieweesId(123456);
+            registrationForm.setIntervieweesId(SecurityUtil().getUser().getuserId());
             /*registrationForm.setIntervieweesId(getUser());*/
             String sql = """
                     INSERT INTO
@@ -154,7 +154,7 @@ public class RegistrationDaoImpl implements RegistrationDao {
         String date1 = s1.format(registrationForm.getInterviewTime());
 
         int rows = baseDao.baseUpdate(sql,
-                4,
+                SecurityUtil().getUser().getuserId(),
                 registrationForm.getEmail(),
                 String.valueOf(registrationForm.getPhone()),
                 registrationForm.getIntentDepartment(),

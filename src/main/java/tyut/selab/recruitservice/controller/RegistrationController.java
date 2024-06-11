@@ -1,5 +1,6 @@
 package tyut.selab.recruitservice.controller;
 
+import tyut.selab.loginservice.utils.SecurityUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.cj.protocol.a.BooleanValueEncoder;
@@ -186,11 +187,11 @@ public class RegistrationController extends HttpServlet {
      */
     private Result update(HttpServletRequest request,HttpServletResponse response){
         //权限方法
-//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
-//            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
-//            objectResult.setMsg("权限不足");
-//            return objectResult;
-//        }
+        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
+            objectResult.setMsg("权限不足");
+            return objectResult;
+        }
         String requestBody = toJdbc(request);
         System.out.println(JSON.parseObject(requestBody,RegistrationVo.class));
         RegistrationVo registrationVo = JSON.parseObject(requestBody,RegistrationVo.class);
@@ -280,11 +281,11 @@ public class RegistrationController extends HttpServlet {
      */
     private Result<List<RegistrationVo>> selectList(HttpServletRequest request,HttpServletResponse response){
         //权限方法
-//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
-//            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
-//            objectResult.setMsg("权限不足");
-//            return objectResult;
-//        }
+        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
+            objectResult.setMsg("权限不足");
+            return objectResult;
+        }
 
         String cur = request.getParameter("cur");
         String size = request.getParameter("size");
@@ -319,11 +320,11 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result<RegistrationVo> selectRegistrationById(HttpServletRequest request,HttpServletResponse response){
-//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
-//            Result<RegistrationVo> objectResult = new Result<>(500002, null);
-//            objectResult.setMsg("权限不足");
-//            return objectResult;
-//        }
+        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+            Result<RegistrationVo> objectResult = new Result<>(500002, null);
+            objectResult.setMsg("权限不足");
+            return objectResult;
+        }
         String registrationId = request.getParameter("registrationId");
         if(registrationId == null){
             Result<RegistrationVo> objectResult = new Result<>(500005, null);
@@ -358,11 +359,11 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result<List<RegistrationVo>> selectRegistrationByUserName(HttpServletRequest request,HttpServletResponse response){
-//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
-//            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
-//            objectResult.setMsg("权限不足");
-//            return objectResult;
-//        }
+        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
+            objectResult.setMsg("权限不足");
+            return objectResult;
+        }
         String intervieweesName = request.getParameter("intervieweesName");
         if(intervieweesName == null){
             Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
@@ -407,11 +408,11 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result<List<RegistrationVo>> intentDepartment(HttpServletRequest request,HttpServletResponse response){
-//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
-//            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
-//            objectResult.setMsg("权限不足");
-//            return objectResult;
-//        }
+        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
+            objectResult.setMsg("权限不足");
+            return objectResult;
+        }
         String intentDepartment = request.getParameter("intentDepartment");
         if(intentDepartment == null){
             Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
@@ -456,11 +457,11 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result<List<RegistrationVo>> selectByGradeId(HttpServletRequest request,HttpServletResponse response){
-//        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
-//            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
-//            objectResult.setMsg("权限不足");
-//            return objectResult;
-//        }
+        if (SecurityUtil.getUser().getRoleId() != 0 || SecurityUtil.getUser().getRoleId() != 1){
+            Result<List<RegistrationVo>> objectResult = new Result<>(500002, null);
+            objectResult.setMsg("权限不足");
+            return objectResult;
+        }
         String grade = request.getParameter("grade");
         if(grade == null){
             Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
@@ -504,19 +505,9 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result queryMy(HttpServletRequest request,HttpServletResponse response){
-        String userId = request.getParameter("userId");
-        if(userId == null){
-            Result<RegistrationVo> objectResult = new Result<>(500005, null);
-            objectResult.setMsg("userId不能为null");
-            return objectResult;
-        }
+        int userId = SecurityUtil().getUser().getuserId();
         // userid必需为自然数
         Integer registrationId = Integer.valueOf(userId);
-        if(!isNumer(userId) || registrationId < 1){
-            Result<RegistrationVo> objectResult = new Result<>(500004, null);
-            objectResult.setMsg("userid必需为自然数");
-            return objectResult;
-        }
         try{RegistrationVo registrationVo =RegistrationService.queryMyRecruit(registrationId);
             RegistrationVo [] data = {registrationVo};
             Result<RegistrationVo[]> result = new Result<>(200,data);
