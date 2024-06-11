@@ -172,7 +172,7 @@ public class RegistrationVo {
         this.remark = remark;
     }
 
-    public RegistrationVo(Integer id, UserVo interviewees, String email, String phone, Integer intentDepartment, String classroom, Date interviewTime, String introduce, String purpose, String remark) {
+    public RegistrationVo(Integer id, UserVo interviewees, String email, String phone, Integer intentDepartment, String classroom, Date interviewTime, String introduce, String purpose, String remark ,Integer grade) {
         this.id = id;
         this.interviewees = interviewees;
         this.email = email;
@@ -183,5 +183,6 @@ public class RegistrationVo {
         this.introduce = introduce;
         this.purpose = purpose;
         this.remark = remark;
+        this.grade = grade;
     }
 }

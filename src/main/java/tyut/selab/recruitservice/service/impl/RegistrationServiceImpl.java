@@ -145,7 +145,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                 registrationForm.getInterviewTime(),
                 registrationForm.getIntroduce(),
                 registrationForm.getPurpose(),
-                registrationForm.getRemark()
+                registrationForm.getRemark(),
+                registrationForm.getGrade()
         );
     }
 }

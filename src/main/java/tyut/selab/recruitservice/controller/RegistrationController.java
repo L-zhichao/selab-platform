@@ -229,6 +229,7 @@ public class RegistrationController extends HttpServlet {
      */
     private static int voIsNull(RegistrationVo registrationVo){
         int row = 0;
+        registrationVo.setInterviewees(null);
         if(registrationVo.getId() == null){
             row++;
             registrationVo.setId(1);
@@ -294,7 +295,7 @@ public class RegistrationController extends HttpServlet {
         }
         if(size == null){
             Result<List<RegistrationVo>> objectResult = new Result<>(500005, null);
-            objectResult.setMsg("cur不能为null");
+            objectResult.setMsg("size不能为null");
             return objectResult;
         }
         // 在第一次查询的时候返回total数据说明数据量大小
@@ -329,11 +330,10 @@ public class RegistrationController extends HttpServlet {
             objectResult.setMsg("registrationId不能为null");
             return objectResult;
         }
-
         // id为非自然数 或不是数字
-        if(Integer.parseInt(registrationId) < 1 || !isNumer(registrationId)){
+        if(!isNumer(registrationId) || Integer.parseInt(registrationId) < 1){
             Result<RegistrationVo> objectResult = new Result<>(500004, null);
-            objectResult.setMsg("输入数据违法或不规范");
+            objectResult.setMsg("registrationId必须为自然数");
             return objectResult;
         }
         RegistrationVo rev = null;
@@ -371,7 +371,7 @@ public class RegistrationController extends HttpServlet {
         }
         if(!isChineseString(intervieweesName)){
             Result<List<RegistrationVo>> objectResult = new Result<>(500004, null);
-            objectResult.setMsg("输入数据违法或不规范");
+            objectResult.setMsg("名字必须为中文");
             return objectResult;
         }
         String cur = request.getParameter("cur");
@@ -418,10 +418,10 @@ public class RegistrationController extends HttpServlet {
             objectResult.setMsg("intentDepartment不能为null");
             return objectResult;
         }
-        if(Integer.parseInt(intentDepartment) != 1 && Integer.parseInt(intentDepartment) != 2
+        if(!isNumer(intentDepartment) || Integer.parseInt(intentDepartment) != 1 && Integer.parseInt(intentDepartment) != 2
                 && Integer.parseInt(intentDepartment) != 3 && Integer.parseInt(intentDepartment) != 4){
             Result<List<RegistrationVo>> objectResult = new Result<>(500004, null);
-            objectResult.setMsg("输入数据违法或不规范");
+            objectResult.setMsg("intentDepartment必须为1,2,3,4");
             return objectResult;
         }
         String cur = request.getParameter("cur");
@@ -468,9 +468,9 @@ public class RegistrationController extends HttpServlet {
             return objectResult;
         }
         //输入的数据必须等于1，2，3，4
-        if(Integer.parseInt(grade) != 1 && Integer.parseInt(grade) != 2 && Integer.parseInt(grade) != 3 && Integer.parseInt(grade) != 4){
+        if(!isNumer(grade) || Integer.parseInt(grade) != 1 && Integer.parseInt(grade) != 2 && Integer.parseInt(grade) != 3 && Integer.parseInt(grade) != 4){
             Result<List<RegistrationVo>> objectResult = new Result<>(500004, null);
-            objectResult.setMsg("输入数据违法或不规范");
+            objectResult.setMsg("grade必须为1,2,3,4");
             return objectResult;
         }
         String cur = request.getParameter("cur");
@@ -504,11 +504,17 @@ public class RegistrationController extends HttpServlet {
      * @return
      */
     private Result queryMy(HttpServletRequest request,HttpServletResponse response){
-        Integer registrationId = Integer.valueOf(request.getParameter("userId"));
-        // id为非自然数 或不是数字
-        if(registrationId < 1||!isNumer(String.valueOf(registrationId))){
+        String userId = request.getParameter("userId");
+        if(userId == null){
+            Result<RegistrationVo> objectResult = new Result<>(500005, null);
+            objectResult.setMsg("userId不能为null");
+            return objectResult;
+        }
+        // userid必需为自然数
+        Integer registrationId = Integer.valueOf(userId);
+        if(!isNumer(userId) || registrationId < 1){
             Result<RegistrationVo> objectResult = new Result<>(500004, null);
-            objectResult.setMsg("输入数据违法或不规范");
+            objectResult.setMsg("userid必需为自然数");
             return objectResult;
         }
         try{RegistrationVo registrationVo =RegistrationService.queryMyRecruit(registrationId);
