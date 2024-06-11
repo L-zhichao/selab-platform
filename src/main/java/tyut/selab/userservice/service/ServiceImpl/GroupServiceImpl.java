@@ -24,9 +24,22 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Integer insert(GroupDto groupDto) {
-
         Group group = new Group();
-        group.setGroupName(groupDto.getGroupName());
+
+        boolean NameTest = false;
+        String groupNamePattern = "^[\\\\u4e00-\\\\u9fa5a-zA-Z0-9]*$";
+
+        NameTest = groupDto.getGroupName().matches(groupNamePattern);
+        boolean flag;
+        if(NameTest){
+            flag = true;
+        }else{
+            flag = false;
+        }
+        if(flag){
+            group.setGroupName(groupDto.getGroupName());
+        }
+
 //        Integer roleId = JudgeRoleId.GetJudgeRoleId();
 //        if (roleId.equals(1) || roleId.equals(2)) {
 //
@@ -70,6 +83,8 @@ public class GroupServiceImpl implements GroupService {
             groupVo.setGroupName(groupName);
             groupVo.setCreateTime(createTime);
             groupVo.setUserVos(pageuserVos.getData());
+            Integer total = pageuserVos.getTotal();
+            groupVo.setTotal(total);
             list.add(groupVo);
         }
         page.setCur(cur);
@@ -88,8 +103,21 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Integer update(GroupVo groupVo) {
         Group group = new Group();
-        group.setGroupName(groupVo.getGroupName());
-        group.setCreateTime(groupVo.getCreateTime());
+        String groupNamePattern = "^[\\\\u4e00-\\\\u9fa5a-zA-Z0-9]*$";
+        String groupCreateTimePattern = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$";
+        boolean NameTest = groupVo.getGroupName().matches(groupNamePattern);
+        boolean CreateTimeTest = groupVo.getCreateTime().toString().matches(groupCreateTimePattern);
+        boolean flag;
+        if(NameTest && CreateTimeTest){
+            flag = true;
+        }else{
+            flag = false;
+        }
+        if(flag){
+            group.setGroupName(groupVo.getGroupName());
+            group.setCreateTime(groupVo.getCreateTime());
+        }
+
         group.setGroupId(groupVo.getGroupId());
         return groupDao.update(group);
 
