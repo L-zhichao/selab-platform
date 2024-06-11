@@ -7,6 +7,7 @@ import tyut.selab.utils.JDBCUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,7 +65,7 @@ public class GroupDaoImpl implements GroupDao {
     public Integer delete(Integer groupId) {
         try {
             Connection conn = JDBCUtils.getConnection();
-            String sql = "DELETE FROM sys_group WHERE group_id = ?;";
+            String sql = "update sys_group set del_flag = 1 where group_id = ?;";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, groupId);
             int i = preparedStatement.executeUpdate();
@@ -85,7 +86,7 @@ public class GroupDaoImpl implements GroupDao {
         List<Group> groups = new ArrayList<>();
         try {
             Connection conn = JDBCUtils.getConnection();
-            String sql = "SELECT * FROM sys_group LIMIT ?,?;";
+            String sql = "SELECT * FROM sys_group WHERE del_flag <>1 LIMIT ?,? ;";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, (cur - 1) * szie);
             preparedStatement.setInt(2, szie);
@@ -107,7 +108,7 @@ public class GroupDaoImpl implements GroupDao {
     public Integer update(Group group) {
         try {
             Connection conn = JDBCUtils.getConnection();
-            String sql = "update sys_group set group_name = ?,create_time = ? ,update_time = ? where group_id = ?;";
+            String sql = "update sys_group set group_name = ?,create_time = ? ,update_time = ? where group_id = ? AND del_flag <>1;";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, group.getGroupName());
             //时间类型转换
@@ -129,7 +130,7 @@ public class GroupDaoImpl implements GroupDao {
         List<Integer> groupIds = new ArrayList<>();
         try {
             Connection conn = JDBCUtils.getConnection();
-            String sql = "SELECT group_id FROM sys_group";
+            String sql = "SELECT group_id FROM sys_group WHERE del_flag <>1;";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -141,4 +142,25 @@ public class GroupDaoImpl implements GroupDao {
         }
         return groupIds;
     }
+
+
+    /**
+     *获取小组总数
+     */
+    public Integer getGroupTotal(){
+        Integer total = 0;
+        try {
+            Connection conn = JDBCUtils.getConnection();
+            String sql = "select count(*) as count from sys_group WHERE del_flag <>1";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet resultSet = pstmt.executeQuery();
+            while(resultSet.next()){
+                total = resultSet.getInt("count");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return total;
+    }
 }
+

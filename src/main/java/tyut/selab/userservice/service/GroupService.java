@@ -2,6 +2,7 @@ package tyut.selab.userservice.service;
 
 import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.domain.Group;
+import tyut.selab.userservice.domain.Page;
 import tyut.selab.userservice.vo.GroupVo;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public interface GroupService {
      */
 
 
-    public List<GroupVo> selectAllGroup(Integer cur,Integer szie);
+    public Page<GroupVo> selectAllGroup(Integer cur, Integer szie);
     /**
      *  修改小组信息
      * @param groupVo

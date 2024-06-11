@@ -1,5 +1,6 @@
 package tyut.selab.userservice.service;
 
+import tyut.selab.userservice.domain.Page;
 import tyut.selab.userservice.vo.UserVo;
 
 import java.util.List;
@@ -18,19 +19,19 @@ public interface UserService {
      * @param groupId
      * @return
      */
-    public List<UserVo> selectByGroupId(Integer groupId,Integer cur,Integer size);
+    public Page<UserVo> selectByGroupId(Integer groupId, Integer cur, Integer size);
 
     /**
      *  通过id查询用户信息
      * @param userId
      * @return
      */
-    public UserVo selectByUserId(Long userId);
+    public Page<UserVo> selectByUserId(Long userId);
 
     /**
      * 用于获取全部user信息
      */
-    public List<UserVo> queryAll(Integer cur,Integer size);
+    public Page<UserVo> queryAll(Integer cur,Integer size);
 
 
     /**
