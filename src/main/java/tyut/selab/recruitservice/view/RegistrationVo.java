@@ -2,7 +2,6 @@ package tyut.selab.recruitservice.view;
 
 import tyut.selab.userservice.vo.UserVo;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 

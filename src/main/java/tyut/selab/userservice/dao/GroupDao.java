@@ -1,8 +1,6 @@
 package tyut.selab.userservice.dao;
 
-import tyut.selab.userservice.Dto.GroupDto;
 import tyut.selab.userservice.domain.Group;
-import tyut.selab.userservice.vo.GroupVo;
 
 import java.util.List;
 

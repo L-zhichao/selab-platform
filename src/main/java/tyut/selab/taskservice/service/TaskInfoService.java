@@ -1,6 +1,5 @@
 package tyut.selab.taskservice.service;
 
-import tyut.selab.taskservice.domain.TaskInfo;
 import tyut.selab.taskservice.dto.TaskInfoDto;
 import tyut.selab.taskservice.view.TaskInfoVo;
 

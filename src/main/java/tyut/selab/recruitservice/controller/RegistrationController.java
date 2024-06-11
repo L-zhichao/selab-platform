@@ -1,16 +1,19 @@
 package tyut.selab.recruitservice.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.recruitservice.dto.RegistrationDto;
 import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
 import tyut.selab.recruitservice.service.RegistrationService;
 import tyut.selab.recruitservice.view.RegistrationVo;
 import tyut.selab.utils.Result;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import tyut.selab.recruitservice.service.RegistrationService;
+import tyut.selab.recruitservice.service.impl.RegistrationServiceImpl;
+import tyut.selab.utils.Result;
 
 import java.io.IOException;
 import java.util.List;

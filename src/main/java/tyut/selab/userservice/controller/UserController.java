@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.utils.Result;
 
-
 import java.io.IOException;
 
 /**
@@ -28,7 +27,7 @@ public class UserController extends HttpServlet {
         super.doPost(req, resp);
     }
 
-    private Result queryByUserId(HttpServletRequest request, HttpServletResponse response){
+    private Result queryByUserId(HttpServletRequest request,HttpServletResponse response){
         return null;
     }
 

@@ -1,7 +1,6 @@
 package tyut.selab.loginservice.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @className: UserRegisterDto
@@ -16,6 +15,7 @@ public class UserRegisterDto implements Serializable {
      * 用户名称
      */
     private String userName;
+    private String password;
 
     /**
      * 用户所属小组编号
@@ -38,7 +38,99 @@ public class UserRegisterDto implements Serializable {
      * 用户性别
      */
     private Integer sex;
-
-
+    /**
+     * 验证码信息
+     */
+    private String identify;
     private static final long serialVersionUID = 1L;
+
+    public UserRegisterDto() {
+    }
+
+    public UserRegisterDto(String userName, String password, Integer groupId, String email, String phone, Integer sex, String identify) {
+        this.userName = userName;
+        this.password = password;
+        this.groupId = groupId;
+        this.email = email;
+        this.phone = phone;
+        this.sex = sex;
+        this.identify = identify;
+    }
+
+    public UserRegisterDto(String userName, String password, Integer groupId, String email, String phone, Integer sex) {
+        this.userName = userName;
+        this.password = password;
+        this.groupId = groupId;
+        this.email = email;
+        this.phone = phone;
+        this.sex = sex;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getIdentify() {
+        return identify;
+    }
+
+    public void setIdentify(String identify) {
+        this.identify = identify;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRegisterDto{" +
+                "userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", groupId=" + groupId +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", sex=" + sex +
+                ", identify='" + identify + '\'' +
+                '}';
+    }
 }

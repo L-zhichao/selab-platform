@@ -1,7 +1,5 @@
 package tyut.selab.bookservice.service;
 
-import tyut.selab.bookservice.domain.BookInfo;
-import tyut.selab.bookservice.domain.BorrowBook;
 import tyut.selab.bookservice.vo.BorrowBookVo;
 
 import java.util.List;

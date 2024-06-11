@@ -1,6 +1,5 @@
 package tyut.selab.userservice.service;
 
-import tyut.selab.userservice.domain.User;
 import tyut.selab.userservice.vo.UserVo;
 
 import java.util.List;

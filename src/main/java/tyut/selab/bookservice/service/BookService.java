@@ -1,6 +1,5 @@
 package tyut.selab.bookservice.service;
 
-import tyut.selab.bookservice.domain.BookInfo;
 import tyut.selab.bookservice.dto.BookDto;
 import tyut.selab.bookservice.vo.BookVo;
 
