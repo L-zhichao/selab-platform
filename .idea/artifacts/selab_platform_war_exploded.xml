@@ -7,10 +7,14 @@
           <element id="module-output" name="selab-platform" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="javax.activation-api-1.2.0" />
+          <element id="library" level="module" name="JUnit5.8.1" module-name="selab-platform" />
+          <element id="library" level="project" name="mysql-connector-j-8.0.32" />
+          <element id="library" level="project" name="druid-1.1.12" />
+          <element id="library" level="project" name="fastjson-1.2.83" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="selab-platform/web/Web" />
+      <element id="javaee-facet-resources" facet="selab-platform/javaeeApplication/javaEEApplication" />
     </root>
   </artifact>
 </component>

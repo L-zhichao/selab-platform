@@ -35,7 +35,7 @@ public class BookVo {
     /**
      * 价格
      */
-    private Integer price;
+    private Double price;
 
     /**
      * 书籍拥有者
@@ -128,14 +128,14 @@ public class BookVo {
     /**
      * 价格
      */
-    public Integer getPrice() {
+    public Double getPrice() {
         return price;
     }
 
     /**
      * 价格
      */
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -151,6 +151,13 @@ public class BookVo {
      */
     public void setOwner(Integer owner) {
         this.owner = owner;
+    }
+
+    public String getOwnerName(){
+        return ownerName;
+    }
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     /**

@@ -52,6 +52,7 @@ CREATE TABLE `book_info`  (
   `update_time` datetime NOT NULL COMMENT '书籍信息修改时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注信息',
   `book_ref` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '书籍编号(定位书籍位置)',
+  `del_flag` int NOT NULL COMMENT '删除标识( 0 为正常 1 为删除)',
   PRIMARY KEY (`book_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '书籍信息表' ROW_FORMAT = DYNAMIC;
 

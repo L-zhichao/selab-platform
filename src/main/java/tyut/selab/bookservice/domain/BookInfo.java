@@ -31,12 +31,12 @@ public class BookInfo implements Serializable {
     /**
      * 价格
      */
-    private Integer price;
+    private Double price;
 
     /**
      * 书籍拥有者
      */
-    private Long owner;
+    private Integer owner;
 
     /**
      * 书籍状态(0为可借阅 1为借阅 2为不可借阅)
@@ -62,6 +62,8 @@ public class BookInfo implements Serializable {
      * 书籍编号(定位书籍位置)
      */
     private String bookRef;
+
+    private Integer delFlag;
 
     private static final long serialVersionUID = 1L;
 
@@ -124,28 +126,28 @@ public class BookInfo implements Serializable {
     /**
      * 价格
      */
-    public Integer getPrice() {
+    public Double getPrice() {
         return price;
     }
 
     /**
      * 价格
      */
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
     /**
      * 书籍拥有者
      */
-    public Long getOwner() {
+    public Integer getOwner() {
         return owner;
     }
 
     /**
      * 书籍拥有者
      */
-    public void setOwner(Long owner) {
+    public void setOwner(Integer owner) {
         this.owner = owner;
     }
 
@@ -162,6 +164,16 @@ public class BookInfo implements Serializable {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    /**
+     *  删除状态(0为正常 1为删除)
+     */
+    public void setDelFlag(Integer delFlag) {this.delFlag = delFlag; }
+
+    /**
+     *  删除状态(0为正常 1为删除)
+     */
+    public Integer getDelFlag() {return delFlag; }
 
     /**
      * 书籍添加时间

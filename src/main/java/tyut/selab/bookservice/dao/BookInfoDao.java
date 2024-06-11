@@ -27,6 +27,13 @@ public interface BookInfoDao {
     public Integer update(BookInfo bookInfo);
 
     /**
+     *  删除图书信息
+     * @param bookId
+     * @return
+     */
+    public Integer delete(Integer bookId);
+
+    /**
      * 通过id查询书籍信息
      * @param bookId
      * @return
@@ -38,22 +45,24 @@ public interface BookInfoDao {
      * @param userId
      * @return
      */
-    public List<BookInfo> selectByOwnerBookInfo(Integer userId);
-
-    /**
-     * 查询所有书籍
-     * @return
-     */
-    public List<BookInfo> selectAll();
+    public List<BookInfo> selectByOwnerBookInfo(Integer cur, Integer size, Integer userId);
 
     /**
      * 通过书籍名称<模糊查询>书籍信息
      * @return
      */
-    public List<BookInfo> selectAllByBookName();
+    public List<BookInfo> selectAllByBookName(Integer cur, Integer size, String bookName);
 
 
+    /**
+     *  通过书籍名称和拥有者id查询书籍信息
+     * @return
+     */
+    public List<BookInfo> selectByOwnerBookName(Integer cur, Integer size, Integer userId, String bookName);
 
+    public List<BookInfo> selectAllList(Integer cur, Integer size);
+
+    public Integer selectCount(String bookName,Integer userId);
 }
 
 

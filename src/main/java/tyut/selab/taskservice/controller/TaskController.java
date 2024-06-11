@@ -1,5 +1,11 @@
 package tyut.selab.taskservice.controller;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import tyut.selab.taskservice.dto.TaskInfoDto;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,13 +13,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tyut.selab.taskservice.service.TaskInfoService;
+import tyut.selab.taskservice.service.TaskReportService;
 import tyut.selab.taskservice.service.impl.TaskServiceImpl;
 import tyut.selab.taskservice.view.TaskInfoVo;
 import tyut.selab.utils.Result;
 
+
 import java.io.IOException;
 
-@WebServlet(name = "TaskController",urlPatterns = {"/task"})
+@WebServlet(name = "TaskController",urlPatterns = {"/"})
 public class TaskController extends HttpServlet {
     private TaskInfoService taskInfoService = new TaskServiceImpl();
     @Override
@@ -24,6 +32,7 @@ public class TaskController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.doPost(req, resp);
+
     }
 
     /**
