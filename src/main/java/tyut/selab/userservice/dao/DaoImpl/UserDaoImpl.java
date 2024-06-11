@@ -127,7 +127,7 @@ public class UserDaoImpl implements UserDao {
         int rows;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "UPDATE sys_user SET user_name=?,email=?,phone=?,sex=?,update_time=? where user_id=?";
+            String sql = "UPDATE sys_user SET user_name=?,email=?,phone=?,sex=?,update_time=? where user_id=? and del_flag=0";
             ps = conn.prepareStatement(sql);
             //是用if判断吗？？
             if (user.getUserName() != null) {
@@ -166,7 +166,7 @@ public class UserDaoImpl implements UserDao {
         int rows;
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "UPDATE sys_user SET role_id=? ,update_time = ? where user_id=?";
+            String sql = "UPDATE sys_user SET role_id=? ,update_time = ? where user_id=? and del_flag=0 ";
             ps = conn.prepareStatement(sql);
             ps.setInt(1,user.getRoleId());
             ps.setTimestamp(2,new Timestamp(user.getUpdateTime().getTime()));
@@ -294,6 +294,7 @@ public class UserDaoImpl implements UserDao {
                     user.setEmail(email);
                     user.setPhone(phone);
                     user.setSex(sex);
+                    user.setDelFlag(del_flag);
                 }
 
                 //接收groupId
@@ -441,8 +442,8 @@ public class UserDaoImpl implements UserDao {
         try {
             conn = JDBCUtils.getConnection();
             //修改唯一标识，1为删除
-            String sql1 = "UPDATE sys_user SET del_flag = 1,update_time=? where user_id = ?";
-            ps = conn.prepareStatement(sql1);
+            String sql = "UPDATE sys_user SET del_flag = 1,update_time=? where user_id = ? and del_flag = 0";
+            ps = conn.prepareStatement(sql);
             ps.setTimestamp(1,new Timestamp(System.currentTimeMillis()));
             ps.setLong(2,userId);
             ps.executeUpdate();

@@ -257,8 +257,10 @@ public class UserController extends HttpServlet {
         String jsonData = request.getReader().lines().collect(Collectors.joining());
         userVo = JSON.parseObject(jsonData, UserVo.class);
         int rows = userService.updateUser(userVo);
-        if (rows < 1) {
-            return Result.error(400,"操作失败");
+        if (rows == -1) {
+            return Result.error(400,"所修改信息的格式不正确，操作失败");
+        } else if (rows == 0) {
+            return Result.error(400,"您没有操作权限，操作失败");
         }
         return Result.success(rows);
     }
@@ -275,8 +277,10 @@ public class UserController extends HttpServlet {
             System.out.println("logout");
             Integer userId = Integer.valueOf((request.getParameter("userId")));
             Integer rows = userService.delete(userId);
-            if (rows<1) {
-                Result.error(400, "您没有操作权限，操作失败");;
+            if (rows == 0) {
+                return  Result.error(400, "您没有操作权限，操作失败");
+            } else if (rows == -1) {
+                return  Result.error(400,"该用户已经被删除");
             }
             return Result.success(rows);
         }
@@ -297,7 +301,7 @@ public class UserController extends HttpServlet {
             userVo = JSON.parseObject(jsonData, UserVo.class);
             int rows = userService.updateUserRole(userVo);
             if (rows == -1) {
-                return Result.error(400, "您修改的用户权限不正确，操作失败");
+                return Result.error(400, "请填写正确的用户权限标识，操作失败");
             } else if (rows == 0) {
                 return Result.error(400,"您没有操作权限，操作失败");
             }
@@ -319,9 +323,11 @@ public class UserController extends HttpServlet {
             userVo = JSON.parseObject(jsonData, UserVo.class);
             int rows = userService.updateGroup(userVo);
             if (rows == -1) {
-                return Result.error(400,"没有该小组，操作失败");
+                return Result.error(400,"不存在该小组，操作失败");
             } else if (rows == 0) {
                 return Result.error(400,"您没有操作权限，操作失败");
+            } else if (rows == -2) {
+                return Result.error(400,"该用户不存在，请重新操作");
             }
             return Result.success(rows);
 
