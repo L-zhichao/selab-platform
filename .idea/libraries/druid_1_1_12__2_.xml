@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="druid-1.1.12 (2)">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/druid-1.1.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/fastjson-1.2.83.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jakarta.servlet-api-6.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mysql-connector-j-8.0.32.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
