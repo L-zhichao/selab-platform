@@ -22,19 +22,17 @@ import java.util.List;
 public class LoginFilter implements Filter {
     public List<String> ignoreUrl
             = Arrays.asList(
-            "/login","/register","/sendEmail","/");
+            "/login","/register","/register/sendEmail","/");
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String requestURI =request.getRequestURI();
-        String msg = "";
-        boolean flag = false;
         if (!ignoreUrl.contains(requestURI)) {
             UserLocal userLocal = new UserLocal();
             String token = request.getHeader("Authorization");
             // token获取不到
-            flag = null != token && (!JwtHelperUtils.isExpiration(token));
+            boolean flag = null != token && (!JwtHelperUtils.isExpiration(token));
             if (flag) {
                 userLocal.setUserId(JwtHelperUtils.getUserId(token));
                 userLocal.setUserName(JwtHelperUtils.getUsername(token));
@@ -50,6 +48,7 @@ public class LoginFilter implements Filter {
         }else{
             filterChain.doFilter(request, response);
         }
+
     }
 
 }

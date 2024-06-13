@@ -21,9 +21,7 @@ public abstract class BaseDao {
         }
         int rows = statement.executeUpdate();
         statement.close();
-        if(connection.getAutoCommit()){
-            JdbcUtilsV2.freeConnection();
-        }
+        JdbcUtilsV2.freeConnection();
         return rows;
     }
 
@@ -55,6 +53,7 @@ public abstract class BaseDao {
             }
             arrayList.add(t);
         }
+        JdbcUtilsV2.freeConnection();
         return arrayList;
     }
     public <T> T executeQueryOne(Class<T> clazz, String sql, Object ... args) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {

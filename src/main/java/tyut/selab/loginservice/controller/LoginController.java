@@ -21,6 +21,7 @@ import tyut.selab.loginservice.utils.WebUtils;
 import tyut.selab.utils.Result;
 
 import java.io.IOException;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static tyut.selab.loginservice.common.Constant.*;
@@ -32,11 +33,20 @@ import static tyut.selab.loginservice.common.Constant.*;
  * @date: 2024/5/8 9:12
  * @version: 1.0
  */
-@WebServlet(name="LoginController",urlPatterns = {"/login","/register","/sendEmail"})
+@WebServlet(name="LoginController",urlPatterns = {"/login","/register","/register/sendEmail"})
 public class LoginController extends HttpServlet {
     EmailServiceImpl emailService = new EmailServiceImpl();
     UserServiceImpl userService = new UserServiceImpl();
     LoginServiceImpl loginService = new LoginServiceImpl();
+    @Override
+    public void destroy() {
+        super.destroy();
+        try{
+            DriverManager.deregisterDriver(DriverManager.getDrivers().nextElement());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.doPost(req,resp);//因为前端发的关于登录的请求都是post类型，所以我们处理Get也用post的方式
