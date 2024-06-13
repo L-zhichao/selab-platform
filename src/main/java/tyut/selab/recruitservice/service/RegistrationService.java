@@ -2,6 +2,7 @@ package tyut.selab.recruitservice.service;
 
 import tyut.selab.recruitservice.dto.RegistrationDto;
 import tyut.selab.recruitservice.view.RegistrationVo;
+import tyut.selab.utils.PageUtil;
 
 import java.util.List;
 
@@ -13,52 +14,52 @@ public interface RegistrationService {
      * @return
      */
 
-    public Integer insertRegistration(RegistrationDto registrationDto);
+    public Integer insertRegistration(RegistrationDto registrationDto)throws InsertException;
 
     /**
      *   修改报名表信息(管理员操作)
      * @param registrationVo
      * @return
      */
-    public Integer updateRegistration(RegistrationVo registrationVo);
+    public Integer updateRegistration(RegistrationVo registrationVo)throws UpdateException;
 
     /**
      *  分页查询所有报名表
      * @return
      */
-    public List<RegistrationVo> selectList(Integer cur,Integer size);
+    public PageUtil<RegistrationVo> selectList(Integer cur, Integer size) throws ServiceException;
 
     /**
      *   通过 registrationId 查询报名表信息
      * @param registrationId 报名表id
      * @return
      */
-    public RegistrationVo selectRegistrationById(Integer registrationId);
+    public RegistrationVo selectRegistrationById(Integer registrationId) throws ServiceException;
 
     /**
      *   通过面试者Name查询报名表信息(支持模糊查询)
      * @param intervieweesName
      * @return
      */
-    public List<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size,String intervieweesName);
+    public PageUtil<RegistrationVo> selectByIntervieweesName(Integer cur, Integer size,String intervieweesName) throws ServiceException;
 
     /**
      *  通过意向部门查询报名表
      * @return
      */
-    List<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size);
+    public PageUtil<RegistrationVo> selectByIntentDepartment(Integer intentDepartment, Integer cur, Integer size) throws ServiceException;
 
     /**
      *  通过年级查询报名表
      * @param grade
      * @return
      */
-    List<RegistrationVo> selectByGradeId(Integer grade,Integer cur,Integer size);
+    public PageUtil<RegistrationVo> selectByGradeId(Integer grade,Integer cur,Integer size) throws ServiceException;
 
     /**
      *  查询本人提交报名表
      * @return
      */
-    RegistrationVo queryMyRecruit(Integer userId);
+    RegistrationVo queryMyRecruit(Integer userId)throws QueryMyException;
 
 }

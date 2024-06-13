@@ -1,6 +1,8 @@
 package tyut.selab.recruitservice.dao;
 
 import tyut.selab.recruitservice.domain.RegistrationForm;
+import tyut.selab.recruitservice.view.RegistrationVo;
+import tyut.selab.utils.PageUtil;
 
 import java.util.List;
 
@@ -28,30 +30,37 @@ public interface RegistrationDao {
     RegistrationForm selectByRegistrationId(Integer registrationId);
 
     /**
-     *  查询面试者的报名表
+     * 通过面试者姓名查询报名表
+     *
      * @param intervieweesName
      * @return
      */
-    RegistrationForm selectByIntervieweesName(String intervieweesName);
+    PageUtil<RegistrationForm> selectByIntervieweesName(String intervieweesName,Integer cur,Integer size);
+
+    /**
+     *  查询面试者的报名表
+     * @param intervieweesName
+     */
+    List<RegistrationForm> selectList(String intervieweesName);
 
     /**
      * 查询所有报名表
      * @return
      */
-    List<RegistrationForm> selectAll(Integer cur,Integer size);
+    PageUtil<RegistrationForm> selectAll(Integer cur, Integer size);
 
     /**
      *  通过意向部门查询报名表
      * @return
      */
-    List<RegistrationForm> selectByIntentDepartment(Integer intentDepartment,Integer cur,Integer size);
+    PageUtil<RegistrationForm> selectByIntentDepartment(Integer intentDepartment,Integer cur,Integer size);
 
     /**
      *  通过年级查询报名表
      * @param grade
      * @return
      */
-    List<RegistrationForm> selectByGradeId(Integer grade,Integer cur,Integer size);
+    PageUtil<RegistrationForm> selectByGradeId(Integer grade,Integer cur,Integer size);
 
 
 }

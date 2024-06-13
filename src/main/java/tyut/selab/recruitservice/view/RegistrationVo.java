@@ -21,7 +21,7 @@ public class RegistrationVo {
     /**
      *联系方式
      */
-    private Integer phone;
+    private String phone;
     /**
      *意向部门
      */
@@ -30,6 +30,10 @@ public class RegistrationVo {
      *所属班级（注：class为关键字）
      */
     private String classroom;
+    /**
+     * 所属年级
+     */
+    private Integer grade;
     /**
      *面试时间
      */
@@ -102,11 +106,11 @@ public class RegistrationVo {
         this.email = email;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -125,6 +129,14 @@ public class RegistrationVo {
 
     public void setClassroom(String classroom) {
         this.classroom = classroom;
+    }
+
+    public Integer getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Integer grade) {
+        this.grade = grade;
     }
 
     public Date getInterviewTime() {
@@ -159,7 +171,7 @@ public class RegistrationVo {
         this.remark = remark;
     }
 
-    public RegistrationVo(Integer id, UserVo interviewees, String email, Integer phone, Integer intentDepartment, String classroom, Date interviewTime, String introduce, String purpose, String remark) {
+    public RegistrationVo(Integer id, UserVo interviewees, String email, String phone, Integer intentDepartment, String classroom, Date interviewTime, String introduce, String purpose, String remark) {
         this.id = id;
         this.interviewees = interviewees;
         this.email = email;
