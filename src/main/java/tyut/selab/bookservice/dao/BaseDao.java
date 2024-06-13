@@ -1,6 +1,8 @@
 package tyut.selab.bookservice.dao;
 
-import tyut.selab.utils.JdbcUtil;
+
+
+import tyut.selab.utils.JDBCUtil;
 
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -12,7 +14,7 @@ public class BaseDao {
     // 公共的查询方法  返回的是单个对象
     public <T> T baseQueryObject(Class<T> clazz, String sql, Object ... args) {
         T t = null;
-        Connection connection = JdbcUtil.getConnection();
+        Connection connection = JDBCUtil.getConnection();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         int rows = 0;
@@ -47,7 +49,7 @@ public class BaseDao {
                 }
 
             }
-            JdbcUtil.releaseConnection();
+            JDBCUtil.releaseConnection();
         }
         return t;
     }
@@ -55,7 +57,7 @@ public class BaseDao {
 
     public <T> List<T> baseQuery(Class clazz, String sql, Object ... args){
         List<T> list =new ArrayList<>();
-        Connection connection = JdbcUtil.getConnection();
+        Connection connection = JDBCUtil.getConnection();
         PreparedStatement preparedStatement=null;
         ResultSet resultSet =null;
         int rows = 0;
@@ -110,7 +112,7 @@ public class BaseDao {
                     throw new RuntimeException(e);
                 }
             }
-            JdbcUtil.releaseConnection();
+            JDBCUtil.releaseConnection();
         }
         return list;
     }
@@ -118,7 +120,7 @@ public class BaseDao {
     // 通用的增删改方法
     public int baseUpdate(String sql,Object ... args) {
         // 获取连接
-        Connection connection = JdbcUtil.getConnection();
+        Connection connection = JDBCUtil.getConnection();
         PreparedStatement preparedStatement=null;
         int rows = 0;
         try {
@@ -145,7 +147,7 @@ public class BaseDao {
                 }
 
             }
-            JdbcUtil.releaseConnection();
+            JDBCUtil.releaseConnection();
         }
         // 返回的是影响数据库记录数
         return rows;
