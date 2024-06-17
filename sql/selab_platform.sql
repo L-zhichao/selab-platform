@@ -142,18 +142,20 @@ INSERT INTO `sys_role` VALUES (3, '用户', '限定权限');
 -- Table structure for sys_user
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user`;
-CREATE TABLE `sys_user`  (
-  `user_id` bigint NOT NULL COMMENT '主键id',
-  `user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名称',
-  `create_time` datetime NOT NULL COMMENT '添加时间',
-  `update_time` datetime NOT NULL COMMENT '修改时间',
-  `role_id` int NULL DEFAULT NULL COMMENT '角色id',
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮箱地址',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `phone` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '手机号码',
-  `sex` int NOT NULL COMMENT '用户性别',
-  `del_flag` int NOT NULL COMMENT '删除标识( 0 为正常 1 为删除)',
-  PRIMARY KEY (`user_id`) USING BTREE
+create table sys_user
+(
+    user_id     int auto_increment comment '主键id'
+        primary key,
+    user_name   varchar(255) not null comment '用户名称',
+    password    varchar(255) not null,
+    create_time datetime     not null comment '添加时间',
+    update_time datetime     not null comment '修改时间',
+    role_id     int          null comment '角色id',
+    email       varchar(255) not null comment '邮箱地址',
+    remark      varchar(255) null comment '备注',
+    phone       char(11)     not null comment '手机号码',
+    sex         int          not null comment '用户性别',
+    del_flag    int          not null comment '删除标识( 0 为正常 1 为删除)'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
