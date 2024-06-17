@@ -230,3 +230,14 @@ CREATE TABLE `user_group`  (
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;
+-- ----------------------------
+-- Records of sys_email
+-- ----------------------------
+DROP TABLE IF EXISTS 'sys_email';
+create table sys_email
+(
+    user_id     int auto_increment
+        primary key,
+    email       varchar(17) not null,
+    create_time date        not null
+);
