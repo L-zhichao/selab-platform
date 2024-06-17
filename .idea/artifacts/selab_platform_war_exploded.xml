@@ -15,6 +15,8 @@
           <element id="file-copy" path="$PROJECT_DIR$/lib/jjwt-0.9.1.jar" />
           <element id="file-copy" path="$PROJECT_DIR$/lib/mysql-connector-j-8.0.32.jar" />
           <element id="library" level="module" name="JUnit4" module-name="selab-platform" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/jakarta.activation-2.0.1.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/jakarta.mail-2.0.1.jar" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="selab-platform/web/Web" />
