@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="mysql-connector-j-8.0.32">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/mysql-connector-j-8.0.32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jjwt-0.9.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jakarta.servlet.jsp.jstl-api-3.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jakarta.servlet-api-6.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jakarta.mail-api-2.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-databind-2.17.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-core-2.16.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-annotations-2.16.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/fastjson-1.2.83.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/druid-1.1.12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
