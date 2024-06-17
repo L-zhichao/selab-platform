@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @version: 1.0
  */
 public class SecurityUtil {
-    private static ThreadLocal<UserLocal> tl = new ThreadLocal<>();
+    private static final ThreadLocal<UserLocal> tl = new ThreadLocal<>();
     /**
      * 在用户登录后，调用该方法返回一个UserLocal对象的信息并将该对象的Token与前端传来的Token进行对比判断是否过期等
      * 在我们调用该方法前一定要先设置线程本地变量的值
@@ -28,8 +28,11 @@ public class SecurityUtil {
      * @param userLocal
      */
     public static void setUser(UserLocal userLocal){
-        tl.remove();
+        removeUser();
         tl.set(userLocal);
+    }
+    public static void removeUser(){
+        tl.remove();
     }
     /**
      * 并发安全的方式生成六位数验证码

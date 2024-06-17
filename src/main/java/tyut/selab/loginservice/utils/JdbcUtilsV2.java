@@ -13,7 +13,7 @@ import java.util.Properties;
  * 封装该类的目的是为了使注册驱动，获取连接，释放资源变得更容易，减少重复书写相同代码的次数，降低代码的耦合性
  */
 public class JdbcUtilsV2 {
-    private static ThreadLocal<Connection> threadLocal =new ThreadLocal<>();
+    private static final ThreadLocal<Connection> threadLocal =new ThreadLocal<>();
 
     private static DataSource dataSource;
     // 初始化连接池
@@ -26,7 +26,6 @@ public class JdbcUtilsV2 {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         try {
             dataSource = DruidDataSourceFactory.createDataSource(properties);
         } catch (Exception e) {
@@ -39,8 +38,6 @@ public class JdbcUtilsV2 {
                 throw new RuntimeException(e);
             }
         }
-
-
     }
     /*1 向外提供连接池的方法*/
     public static DataSource getDataSource(){
@@ -58,7 +55,6 @@ public class JdbcUtilsV2 {
             }
             threadLocal.set(connection);
         }
-
         return connection;
     }
 
