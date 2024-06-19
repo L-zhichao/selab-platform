@@ -196,7 +196,7 @@ public class UserController extends HttpServlet {
 
 
         if(page.getData() == null){
-            return Result.error(400,"查询失败");
+            return Result.error(202,"查询失败");
         }else {
             return Result.success(page);
         }
@@ -240,7 +240,7 @@ public class UserController extends HttpServlet {
         UserVo userVo = JSON.parseObject(jsonData, UserVo.class);
         int insert = userService.save(userVo);
         if (insert == 0) {
-            return Result.error(400, "添加失败,请检查添加格式");
+            return Result.error(202, "添加失败,请检查添加格式");
         } else {
             return Result.success(insert);
         }
@@ -263,9 +263,9 @@ public class UserController extends HttpServlet {
         userVo = JSON.parseObject(jsonData, UserVo.class);
         int rows = userService.updateUser(userVo);
         if (rows == -1) {
-            return Result.error(400,"所修改信息的格式不正确，操作失败");
+            return Result.error(202,"所修改信息的格式不正确，操作失败");
         } else if (rows == 0) {
-            return Result.error(400,"您没有操作权限，操作失败");
+            return Result.error(202,"您没有操作权限，操作失败");
         }
         return Result.success(rows);
     }
@@ -283,9 +283,9 @@ public class UserController extends HttpServlet {
             Integer userId = Integer.valueOf((request.getParameter("userId")));
             Integer rows = userService.delete(userId);
             if (rows == 0) {
-                return  Result.error(400, "您没有操作权限，操作失败");
+                return  Result.error(202, "您没有操作权限，操作失败");
             } else if (rows == -1) {
-                return  Result.error(400,"该用户已经被删除");
+                return  Result.error(200,"该用户已经被删除");
             }
             return Result.success(rows);
         }
@@ -306,9 +306,9 @@ public class UserController extends HttpServlet {
             userVo = JSON.parseObject(jsonData, UserVo.class);
             int rows = userService.updateUserRole(userVo);
             if (rows == -1) {
-                return Result.error(400, "请填写正确的用户权限标识，操作失败");
+                return Result.error(202, "请填写正确的用户权限标识，操作失败");
             } else if (rows == 0) {
-                return Result.error(400,"您没有操作权限，操作失败");
+                return Result.error(202,"您没有操作权限，操作失败");
             }
             return Result.success(rows);
         }
@@ -328,11 +328,11 @@ public class UserController extends HttpServlet {
             userVo = JSON.parseObject(jsonData, UserVo.class);
             int rows = userService.updateGroup(userVo);
             if (rows == -1) {
-                return Result.error(400,"不存在该小组，操作失败");
+                return Result.error(202,"不存在该小组，操作失败");
             } else if (rows == 0) {
-                return Result.error(400,"您没有操作权限，操作失败");
+                return Result.error(202,"您没有操作权限，操作失败");
             } else if (rows == -2) {
-                return Result.error(400,"该用户不存在，请重新操作");
+                return Result.error(202,"该用户不存在，请重新操作");
             }
             return Result.success(rows);
 
