@@ -247,7 +247,7 @@ public class UserDaoImpl implements UserDao {
     //基本完善
     @Override
     public User selectByUserIdUser(Long userId) {
-        System.out.println("doSelectByUserIdUserDao");
+
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet resultSet = null;
@@ -463,9 +463,7 @@ public class UserDaoImpl implements UserDao {
             ResultSet resultSet = pstmt.executeQuery();
             while (resultSet.next()) {
                 User user = new User();
-                int del_flag = resultSet.getInt("delFlag");
-
-                if (del_flag == 0) {
+                    int del_flag = resultSet.getInt("delFlag");
                     userId = resultSet.getLong("userId");
                     String username = resultSet.getString("userName");
                     Integer roleld = resultSet.getInt("roleId");
@@ -486,7 +484,7 @@ public class UserDaoImpl implements UserDao {
                     user.setEmail(email);
                     user.setPhone(phone);
                     user.setSex(sex);
-                }
+
                 resultSet.close();
                 //接收groupId
                 String sql2 = "select group_id as groupId from user_group where user_id = ?;";

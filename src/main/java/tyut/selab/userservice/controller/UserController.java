@@ -216,11 +216,12 @@ public class UserController extends HttpServlet {
         String[] split = path.split("/");
         String userId = split[split.length-1];
         Page<UserVo> page = new Page<UserVo>();
-
-
+        List<UserVo> Uservo = new ArrayList<>();
+        UserVo user = new UserVo();
         page = userService.selectByUserId(Long.valueOf(userId));
-
-        return Result.success(page);
+        Uservo = page.getData();
+        user = Uservo.get(0);
+        return Result.success(user);
     }
 
 
